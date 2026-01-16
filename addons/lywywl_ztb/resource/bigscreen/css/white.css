@@ -1,0 +1,46 @@
+/*定义主题色*/
+:root {
+	--color-blue:#fff;
+    --color-blue-dark: #F7F8FC;
+	--color-blue-900:#fff;    
+	--color-blue-800:#eef0fc;    
+	--color-blue-700:#9939e5;  
+	--color-blue-600:#b410a5;
+	--color-blue-500:#5689ff;
+	--color-blue-400:#686AF1;
+	--color-blue-200:#a2bdfe;
+	--color-blue-100:#fda606;
+	/*--color-blue-100:#8921DB;*/
+	--color-blue-rgba-50:rgba(132,30,239,0.87);
+	--color-blue-rgba-0:rgba(132,30,239,0);
+	--color-blue-500-rgba-50:rgba(86,137,255,0.5);
+	--color-blue-600-rgba-50:rgba(180,16,165,0.87);
+	--color-blue-600-rgba-0:rgba(180,16,165,0);
+	--color-blue-100-rgba-0:rgba(49,90,208,0);
+	--color-blue-700-rgba-0:rgba(14,55,137,0); 
+	--color-green: #5C8DFF;  
+	--color-green-900:#5e8dff;
+	--color-green-900-rgba-0:rgba(215,166,254,0); 
+}
+body{ color: #333; line-height: 1.5;background:var(--color-blue-dark)}
+
+
+/* 重定义 */
+.headCenter h1::before,.headCenter h1::after{ border-top: 4.5rem solid var(--color-blue-900); }
+.title{ height:3.125rem; text-align: center; position: relative; line-height:3.125rem ;background:#fff}
+.title:after{ background: linear-gradient(to right, var(--color-green-900-rgba-0),var(--color-green-900),var(--color-green-900-rgba-0)); left:0; bottom: 0; width: 100%;}
+.sourceRanking th { background: var(--color-blue-500); color: #fff;}
+.headLeft,.headRight{ color: #333;}
+.headCenter{ color:var(--color-green);}
+.background-color-lineGra-blue{background: linear-gradient(to right, var(--color-blue-dark), var(--color-blue-500), var(--color-blue-dark)); color: #fff;}
+.paihang li:nth-child(1),.paihang li:nth-child(2),.paihang li:nth-child(3){ background: none!important;}
+.con-center .cell:before{ background: none;}
+.tableHeader{ height: 2.56rem; margin-bottom: 1rem;}
+
+/* .container {     display: flex;    flex-wrap: wrap; display: ;}
+.list {width: 24%;   height: 100px;  background-color: skyblue;   margin-top: 15px;}
+.list:not(:nth-child(4n)) {   margin-right: calc(4% / 3);}
+
+
+.container {    display: flex;    justify-content: space-between;    flex-wrap: wrap;}
+.list {    width: 24%; height: 100px;    background-color: skyblue;    margin-top: 15px;} */

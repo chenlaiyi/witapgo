@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest xmlns="http://www.w7.cc" versionCode="">
+	<application setting="false">
+		<name><![CDATA[语音合成]]></name>
+		<identifie><![CDATA[lywywl_ztb_plugin_texttoaudio]]></identifie>
+		<version><![CDATA[1.0.0]]></version>
+		<ability><![CDATA[助推宝,语音合成,语音合成插件,文本转语音,合成语音]]></ability>
+		<type><![CDATA[business]]></type>
+		<description><![CDATA[语音合成是助推宝应用中的插件,致力于将自定义的文字保存为朗读语音,作为相关活动的背景音,使商家更加自由的定义自己的活动]]></description>
+		<author><![CDATA[洛阳维奕网络科技有限公司]]></author>
+		<url><![CDATA[https://www.jikym.cn]]></url>
+		<setting><![CDATA[]]></setting>
+	</application>
+	<platform>
+		<subscribes>
+			<message type="text"/>
+			<message type="image"/>
+			<message type="voice"/>
+			<message type="video"/>
+			<message type="shortvideo"/>
+			<message type="location"/>
+			<message type="link"/>
+			<message type="subscribe"/>
+			<message type="qr"/>
+			<message type="trace"/>
+			<message type="click"/>
+			<message type="merchant_order"/>
+			<message type="user_get_card"/>
+			<message type="user_del_card"/>
+			<message type="user_consume_card"/>
+		</subscribes>
+
+		<handles>
+			<message type="text"/>
+			<message type="image"/>
+			<message type="voice"/>
+			<message type="video"/>
+			<message type="shortvideo"/>
+			<message type="location"/>
+			<message type="link"/>
+			<message type="subscribe"/>
+			<message type="qr"/>
+			<message type="trace"/>
+			<message type="click"/>
+			<message type="merchant_order"/>
+			<message type="user_get_card"/>
+			<message type="user_del_card"/>
+			<message type="user_consume_card"/>
+		</handles>
+		<rule embed="false"/>
+		<rule embed="false"/>
+	<supports>
+			<item type="app"/>
+	</supports>
+		<plugin-main name="lywywl_ztb"/>
+	</platform>
+	
+	<bindings>
+	</bindings>
+
+	<install><![CDATA[install.php]]></install>
+	<uninstall><![CDATA[uninstall.php]]></uninstall>
+	<upgrade><![CDATA[upgrade.php]]></upgrade>
+</manifest>

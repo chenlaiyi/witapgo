@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keywords" http-equiv="{$school['title']} - 交互功能统计">
+    <link rel="shortcut icon" href="{$_W['siteroot']}{$_W['config']['upload']['attachdir']}/{if !empty($_W['setting']['copyright']['icon'])}{$_W['setting']['copyright']['icon']}{else}images/global/wechat.jpg{/if}" />
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/sp_public.css">
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/sp_population.css">
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/index.css">
+    <script src="{MODULE_URL}public/web/js/faceMap.js?v=5.61" type="text/javascript"></script>
+    <title>{$school['title']} - 交互功能统计</title>
+    <style>
+        .textC {position:relative;float:left;min-width:1rem;margin-top: 0.01rem;overflow:hidden;line-height:0.3rem;height:0.3rem;margin-right: 0.1rem;}
+        .textC span {color: #13BEEC;font-size: 0.3rem;position: absolute;}
+        .c-left_mix{width:50%;padding-left:0.15rem}
+        .teacher_sex {position: relative;width: 45%;height: 100%;margin-bottom: 1%;float:left;}
+        .student_sex {position: relative;width: 45%;height: 100%;margin-bottom: 1%;float:right;}
+        .activity-img{padding: 0.05rem;float:left}
+        .activity-desc{float:left;width:calc(100% - 0.6rem)}
+        .activity-desc h5{ height: 0.2rem;line-height: 0.2rem;padding-top: 0.05rem}
+        .activity-time{font-weight: lighter;background-color: rgba(255, 255, 255, 0.12);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .activity-bj{font-weight: lighter;background-color: rgba(58, 102, 239, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .pull-right{float:right !important;}
+        .activity-bjtz{font-weight: lighter;background-color: rgba(129, 117, 199, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .activity-xyqf{font-weight: lighter;background-color: rgba(255, 108, 96, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .activity-zytz{font-weight: lighter;background-color: rgba(89, 172, 226, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_text{font-weight: lighter;background-color: rgba(169, 216, 110, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_voice{font-weight: lighter;background-color: rgba(252, 179, 34, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_vedio{font-weight: lighter;background-color: rgba(255, 108, 96, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_share{font-weight: lighter;background-color: rgba(129, 117, 199, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_media{font-weight: lighter;background-color: rgba(89, 172, 226, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .in_check_detail{height: 100%;width:40%;float:left}
+        .head_image{border:1px solid rgba(42, 197, 243, 0.5);width:2rem;height:2rem;margin-left:0.8rem;margin-top:0.2rem}
+        .check_name{margin-left:0.8rem;height: 0.5rem;line-height: 0.5rem;font-size: 0.25rem;width:78%;overflow: hidden;white-space: nowrap;/*不换行*/
+            text-overflow:ellipsis;/*超出部分文字以...显示*/
+        }
+    </style>
+</head>
+<body class="background">
+<div class="expand">
+    <div class="expand_left"></div>
+    <div class="expand_right"></div>
+    <div class="expand_circle"></div>
+</div>
+<div class="open-page">
+    <div class="circle-red">
+        <div class="circle-blue">
+            <div class="circle-yellow"></div>
+        </div>
+    </div>
+</div>
+{template 'common/header_base'}
+<section class="c-content-pop l-center-flex l-content-pop">
+    <div class="c-content_item l-content_item">
+        <div class="o-box c-content_box-up1"></div>
+        <div class="o-box c-content_box-down1"></div>
+    </div>
+    <div class="c-content_item l-content_item">
+        <div class="o-box c-right_box1 in_check_list" style="height: 48.5%;margin:0 .1rem 0;" >
+            <div class="o-list">
+                <div class="o-list_title">班级圈动态</div>
+                <div class="data-list_wrap">
+                    <ul class="o-list_wrap bjq_ul">
+                        {loop $lastbjq $row}
+                        <li class="o-list_item inddexs">
+                            <div class="activity-row1">
+                                <div class="col-xs-3 activity-img" style="width:0.6rem;"><img style="width:0.4rem;height:0.4rem;border-radius:50%;" src="{php echo tomedia($row['avatar'])}" class="img-responsive" alt="">
+                                </div>
+                                <div class="col-xs-8 activity-desc">
+                                    <h5>
+                                        <span >{$row['shername']}</span>
+                                        <span class="activity-bj">{$row['bjname']}</span>
+                                        <span class="activity-time" >{php echo date("Y-m-d H:i",$row['createtime'])}</span>
+
+                                        {if $row['msgtype'] == 1}<span class="bjq_text  pull-right">图文</span>{/if}
+                                        {if $row['msgtype'] == 2}<span class="bjq_voice  pull-right">语音</span>{/if}
+                                        {if $row['msgtype'] == 3}<span class="bjq_video pull-right">视频</span>{/if}
+                                        {if $row['msgtype'] == 4}<span class="bjq_share pull-right">分享</span>{/if}
+                                        {if $row['msgtype'] == 5}<span class="bjq_media pull-right">多媒体</span>{/if}
+                                    </h5>
+                                    <h5 class="bjq_content">{$row['content']}</h5>
+                                </div>
+
+                            </div>
+                        </li>
+                        {/loop}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="o-box c-content_box-down2"></div>
+    </div>
+    <div class="c-content_item l-content_item">
+        <div class="o-box c-right_box1 in_check_list" style="height: 48.5%;margin:0 .1rem 0;" >
+            <div class="o-list">
+                <div class="o-list_title">校园动态</div>
+                <div class="data-list_wrap">
+                    <ul class="o-list_wrap xytz_ul">
+                        {loop $lasttz $row}
+                        <li class="o-list_item inddexs">
+                            <div class="activity-row1">
+                                <div class="col-xs-3 activity-img" style="width:0.6rem;"><img style="width:0.4rem;height:0.4rem;border-radius:50%;" src="{php echo tomedia($row['thumb'])}" class="img-responsive" alt="">
+                                </div>
+                                <div class="col-xs-8 activity-desc">
+                                    <h5>
+                                        <span >{$row['tname']}</span>
+                                        <span class="activity-bj">{$row['bjname']}</span>
+                                        <span class="activity-time" >{php echo date("Y-m-d H:i",$row['createtime'])}</span>
+                                        {if $row['type'] == 2}<span class="activity-xyqf pull-right">校园通知</span>{/if}
+                                        {if $row['type'] == 1}<span class="activity-bjtz pull-right">班级通知</span>{/if}
+                                        {if $row['type'] == 3}<span class="activity-zytz pull-right">作业通知</span>{/if}
+                                    </h5>
+                                    <h5>{$row['title']}</h5>
+                                </div>
+
+                            </div>
+                        </li>
+                        {/loop}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="o-box c-content_box-down3"></div>
+    </div>
+</section>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/jquery.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/echarts.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/index.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/sp_bg.js"></script>
+<script src="{MODULE_URL}public/web/js/faceMap.js?v=5.61" type="text/javascript"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/title.js"></script>
+<script type="text/javascript">
+    var GPC_do = "{$_GPC['do']}";
+    //打开时加载动画
+    setTimeout(function () {
+        $(".expand_circle").css({"display": "none"});
+        $(".expand_left").css({"transform": "translateX(100%)"});
+        $(".expand_right").css({"transform": "translateX(-100%)"});
+        setTimeout(function () {
+            $(".expand").css({"z-index": -1});
+        }, 500)
+    }, 1000);
+    //替换表情
+    icon_replace($(".bjq_content"));
+    function icon_replace(content_box) {
+        var face_map_url = "{MODULE_URL}public/web/images/face/";
+        $(content_box).each(function () {
+            //替换表情
+            if (typeof ($(this).html()) != 'undefined') {
+                var desc = $(this).html().replace(/\[([^\]]+)\]/g, function (a, b) {
+                    return "<img class='face_icon' style='width: 0.15rem;' src='" + face_map_url + objMap[b] + ".gif'>";
+                });
+                $(this).html(desc);
+            }
+        })
+    }
+
+
+    $.ajax({
+        url: "{php echo $this->createMobileUrl('bdactivity',array('op'=>'firstdata','schoolid'=>$schoolid))}",
+        type: "POST",
+        dataType: "json",
+        success: function (res) {
+            drawCharts($('.c-content_box-up1')[0], res.jhgn);
+            drawCharts($('.c-content_box-down2')[0], res.new_bjq_data);
+            drawCharts($('.c-content_box-down3')[0], res.new_tz_data);
+            drawCharts($('.c-content_box-down1')[0], res.new_news_data);
+        }
+    });
+    setTimeout(function () {
+        checknewinfo({$lasttime});
+
+    }, 2000);
+    //实时ajax
+    function checknewinfo(lasttime){
+        $.ajax({
+            url: "{php echo $this->createMobileUrl('bdactivity',array('op'=>'real_time_data','schoolid'=>$schoolid))}",
+            data: {weid: "{$weid}",lasttime:lasttime},
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                //校园动态
+                if(data.lasttz.check == true){
+                    let xydt_html = ' <li class="o-list_item inddexs" style="height: 0rem">' +
+                        '   <div class="activity-row1">' +
+                        '       <div class="col-xs-3 activity-img" style="width:0.6rem;"><img style="width:0.4rem;height:0.4rem;border-radius:50%;" src="'+data.lasttz.data.thumb +'" class="img-responsive" alt="">' +
+                        '       </div>' +
+                        '       <div class="col-xs-8 activity-desc">' +
+                        '           <h5>' +
+                        '               <span >'+data.lasttz.data.tname +'</span>' +
+                        '               <span class="activity-bj">'+data.lasttz.data.bjname +'</span>' +
+                        '               <span class="activity-time" >'+data.lasttz.data.createtime +'</span>';
+                    if(data.lasttz.data.type == 2){
+                        xydt_html += '<span class="activity-xyqf pull-right">校园通知</span>';
+                    }
+                    if(data.lasttz.data.type == 1){
+                        xydt_html += '<span class="activity-bjtz pull-right">班级通知</span>';
+                    }
+                    if(data.lasttz.data.type == 3){
+                        xydt_html += '<span class="activity-zytz pull-right">作业通知</span>';
+                    }
+                    xydt_html +=   '           </h5>' +
+                        '           <h5>'+ data.lasttz.data.title + '</h5>' +
+                        '       </div>' +
+                        '   </div>\n' +
+                        ' </li>';
+                    $(xydt_html).prependTo('.xytz_ul').fadeIn('slow');
+                    let _first=$('.xytz_ul li:first');
+                    _first.animate({height: '+0.52rem'}, "normal");
+                    let _last=$('.xytz_ul li:last');
+                    setTimeout(function () {
+                        _last.remove();
+                    }, 2000);
+                }
+                //班级圈
+                if(data.lastbjq.check == true){
+                    let bjq_html = '<li class="o-list_item inddexs"  style="height: 0rem">' +
+                        '   <div class="activity-row1">' +
+                        '       <div class="col-xs-3 activity-img" style="width:0.6rem;"><img style="width:0.4rem;height:0.4rem;border-radius:50%;" src="' +data.lastbjq.data.avatar + '" class="img-responsive" alt="">' +
+                        '       </div>' +
+                        '       <div class="col-xs-8 activity-desc">' +
+                        '           <h5>' +
+                        '               <span >'+ data.lastbjq.data.shername +'</span>' +
+                        '               <span class="activity-bj">' + data.lastbjq.data.bjname +'</span>' +
+                        '               <span class="activity-time" >' +data.lastbjq.data.createtime +'</span>' ;
+
+                    if(data.lastbjq.data.msgtype == 1){
+                        bjq_html += '<span class="bjq_text  pull-right">图文</span>';
+                    }
+                    if(data.lastbjq.data.msgtype == 2){
+                        bjq_html += '<span class="bjq_voice  pull-right">语音</span>';
+                    }
+                    if(data.lastbjq.data.msgtype == 3){
+                        bjq_html += '<span class="bjq_video pull-right">视频</span>';
+                    }
+                    if(data.lastbjq.data.msgtype == 4){
+                        bjq_html += '<span class="bjq_share pull-right">分享</span>';
+                    }
+                    if(data.lastbjq.data.msgtype == 5){
+                        bjq_html += '<span class="bjq_media pull-right">多媒体</span>';
+                    }
+                    bjq_html += '           </h5>' +
+                        '           <h5 class="bjq_content">' + data.lastbjq.data.content +'</h5>' +
+                        '       </div>' +
+                        '   </div>' +
+                        '</li>';
+
+                    $(bjq_html).prependTo('.bjq_ul').fadeIn('slow');
+                    let _first=$('.bjq_ul li:first');
+                    _first.animate({height: '+0.52rem'}, "normal");
+                    let _last=$('.bjq_ul li:last');
+                    setTimeout(function () {
+                        _last.remove();
+                    }, 2000);
+                    icon_replace($(".bjq_content"));
+                }
+                setTimeout(function(){checknewinfo(data.lasttime)}, 2000);
+            },
+            error: function () {
+                setTimeout(function(){checknewinfo(lasttime)}, 2000);
+            },
+        });
+    };
+</script>
+</body>
+</html>

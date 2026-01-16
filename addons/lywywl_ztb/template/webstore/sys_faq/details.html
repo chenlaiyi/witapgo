@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">帮助中心</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            {loop $classList $index $class}
+                            <li class="{php echo $class['id']==$class_id?'active':''}"><a href="{php echo $this->createWebAppUrl('sys_faq', array('act' => 'index','class_id'=>$class['id']));}">{$class['name']}</a></li>
+                            {/loop}
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box-body no-padding">
+                                <div class="mailbox-read-info">
+                                    <h3>{$model['title']}</h3>
+                                    <h5>来源: {$config['name']} <span class="mailbox-read-time pull-right">{php echo date('Y-m-d H:i:s', $model['createtime'])}</span></h5>
+                                </div><!-- /.mailbox-read-info -->
+                                <div class="mailbox-read-message">
+                                    {php echo htmlspecialchars_decode($model['content'])}
+                                </div><!-- /.mailbox-read-message -->
+                            </div><!-- /.box-body -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script>
+    $(function () {
+        SelectNav("常见问题");
+    });
+</script>
+</body>
+</html>

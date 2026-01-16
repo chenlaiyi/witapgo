@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">订单管理</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            {loop $statusArr $index $value}
+                            <li class="{php echo $index==$model['status']?'active':''}"><a
+                                    href="{php echo $this->createWebAppUrl('order_intmall', array('act' => 'index','status'=>$index));}">{$value}</a>
+                            </li>
+                            {/loop}
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-circle-o"></i> 商城订单信息</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                    </div>
+                                </div>
+                                <div class="box-body">
+                                    <table class="table">
+                                        <tbody>
+                                        <tr class="active">
+                                            <th class="col-sm-4">订单编号</th>
+                                            <th class="col-sm-4">下单用户</th>
+                                            <th class="col-sm-4">下单时间</th>
+                                        </tr>
+                                        <tr>
+                                            <td>{$model['ordernumber']}</td>
+                                            <td>{php echo getUserByOpenID($model['openid'])['nickname']}
+                                                ({$model['openid']})
+                                            </td>
+                                            <td>{php echo date('Y-m-d H:i:s', $model['createtime'])}</td>
+                                        </tr>
+                                        <tr class="active">
+                                            <th>余额支付</th>
+                                            <th>在线支付</th>
+                                            <th>结算金额</th>
+                                        </tr>
+                                        <tr>
+                                            <td>{$model['sys_money']}</td>
+                                            <td>{$model['pay_money']}</td>
+                                            <td>{$model['endmoney']}</td>
+                                        </tr>
+                                        <tr class="active">
+                                            <th>订单总额 (积分+金额)</th>
+                                            <th>订单状态</th>
+                                            <th>备注信息</th>
+                                        </tr>
+                                        <tr>
+                                            <td>{$model['score']} 积分 + {$model['total_money']}</td>
+                                            <td>
+                                                {if $model['status'] == 1}
+                                                <span class='label bg-gray'>等待付款</span>
+                                                {elseif $model['status'] == 2}
+                                                <span class='label bg-red'>等待发货</span>
+                                                {elseif $model['status'] == 3}
+                                                <span class='label bg-aqua'>等待收货</span>
+                                                {elseif $model['status'] == 4}
+                                                <span class='label bg-green'>交易完成</span>
+                                                {else}
+                                                <span class='label bg-gray'>取消订单</span>
+                                                {/if}
+                                                {if $admins_model}
+                                                【核销员：{$admins_model['name']}({$admins_model['openid']})】
+                                                {/if}
+                                            </td>
+                                            <td>{$model['note']}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            {if $model['is_fedex'] == 1}
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-circle-o"></i> 收货地址信息</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                    </div>
+                                </div>
+                                <div class="box-body">
+                                    <table class="table">
+                                        <tbody>
+                                        <tr class="active">
+                                            <th class="col-sm-4">收货人</th>
+                                            <th class="col-sm-4">联系电话</th>
+                                            <th class="col-sm-4">行政区域</th>
+                                        </tr>
+                                        <tr>
+                                            <td>{$model['username']}</td>
+                                            <td>{$model['mobile']}</td>
+                                            <td>{$model['province']} - {$model['city']} - {$model['county']}</td>
+                                        </tr>
+                                        <tr class="active">
+                                            <th colspan="2">详细地址</th>
+                                            <th>邮政编码</th>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">{$model['address']}</td>
+                                            <td>{$model['postcode']}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            {/if}
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-circle-o"></i> 订单商品详情</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                    </div>
+                                </div>
+                                <div class="box-body">
+                                    <table class="table">
+                                        <tbody>
+                                        <tr class="active">
+                                            <th class="col-sm-2">商品封面</th>
+                                            <th class="col-sm-8">商品名称</th>
+                                            <th class="col-sm-2">市场价格</th>
+                                        </tr>
+                                        <tr>
+                                            <td><img src="{php echo tomedia($model['product_thumb'])}" width="100" height="100" alt="{$model['product_title']}"></td>
+                                            <td style="line-height: 100px;">{$model['product_title']}</td>
+                                            <td style="line-height: 100px;">{$model['market_price']}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-circle-o"></i> 订单状态日志</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                    </div>
+                                </div>
+                                <div class="box-body">
+                                    <table class="table">
+                                        <tbody>
+                                        <tr class="active">
+                                            <th class="col-sm-2">订单状态</th>
+                                            <th class="col-sm-2">变更时间</th>
+                                            <th class="col-sm-8">备注信息</th>
+                                        </tr>
+                                        {loop $logList $index $item}
+                                        <tr>
+                                            <td>
+                                                {if $item['status'] == 1}
+                                                <span class='label bg-gray'>等待付款</span>
+                                                {elseif $item['status'] == 2}
+                                                <span class='label bg-red'>等待发货</span>
+                                                {elseif $item['status'] == 3}
+                                                <span class='label bg-aqua'>等待收货</span>
+                                                {elseif $item['status'] == 4}
+                                                <span class='label bg-green'>交易完成</span>
+                                                {else}
+                                                <span class='label bg-gray'>取消订单</span>
+                                                {/if}
+                                            </td>
+                                            <td>{php echo date('Y-m-d H:i:s', $item['createtime'])}</td>
+                                            <td>{$item['note']}</td>
+                                        </tr>
+                                        {/loop}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            {if $model['is_fedex'] == 1}
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-circle-o"></i> 订单物流信息</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                    </div>
+                                </div>
+                                <div class="box-body">
+                                    <table class="table">
+                                        <tbody>
+                                        <tr class="active">
+                                            <th class="col-sm-2">物流名称</th>
+                                            <th class="col-sm-2">物流单号</th>
+                                            <th class="col-sm-8">物流信息</th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                {$model['fedex_name']}
+                                            </td>
+                                            <td>{$model['fedex_number']}</td>
+                                            <td>
+                                                {if intval($model['fedex_id'])>0}
+                                                {if !empty($config['express_uid']) && !empty($config['express_key'])}
+                                                <button class="express btn btn-default btn-xs" title="查看物流"><i
+                                                        class="fa fa-truck"></i> 点击查看物流信息
+                                                </button>
+                                                {else}
+                                                <button class="btn btn-default btn-xs" title="查看物流"><i
+                                                        class="fa fa-truck"></i> 点击查看物流信息
+                                                </button>
+                                                {/if}
+                                                {else}
+                                                <span> <i class="fa fa-truck"></i> 商家配送或上门服务无物流信息</span>
+                                                {/if}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            {else}
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-circle-o"></i> 订单物流信息</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                    </div>
+                                </div>
+                                <div class="box-body">
+                                    <span> <i class="fa fa-truck"></i> 自行到门店核销提货</span>
+                                </div>
+                            </div>
+                            {/if}
+                            <div>
+                                <div class="box-body">
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            {if $model['is_fedex'] == 1}
+                                            <button type="button" class="btn btn-info {php echo $model['status']==2?'':'disabled'}" id="{php echo $model['status']==2?'SubmitBtn':''}">
+                                                <i class="fa fa-edit"></i> 发货
+                                            </button>
+                                            {/if}
+                                            <button type="button" class="btn btn-default"
+                                                    onClick="javascript :history.back(-1);"><i
+                                                    class="fa fa-mail-reply"></i> 返回
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script id="expresstpl" type="text/html">
+    <%for(i = 0; i < Traces.length; i ++) {%>
+    <p><%=Traces[i]["AcceptTime"]%>：<%=Traces[i]["AcceptStation"]%></p>
+    <%}%>
+</script>
+<script id="fedextpl" type="text/html">
+    <form class="form-horizontal" name="form_content" id="form_content" method="post">
+        <div class=link-modal>
+            <div class="form-group">
+                <label for="fedex_id" class="col-sm-2 control-label">发货快递公司</label>
+                <div class="col-sm-10">
+                    <select id="fedex_id" class="form-control" style = "width: 100%;">
+                        <option value="0" data-code="">上门服务</option>
+                        {loop $fedexList $fedex}
+                        <option value="{$fedex['id']}" data-code="{$fedex['code']}">{$fedex['name']}</option>
+                        {/loop}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0px;">
+                <label for="fedex_number" class="col-sm-2 control-label">快递单号/信息</label>
+                <div class="col-sm-10">
+                    <input class="form-control" id="fedex_number" maxlength="50" placeholder="请输入快递单号或信息！" type="text" value=""/>
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<script>
+    $(function () {
+        SelectNav("商城订单");
+        //查看物流
+        $(".express").click(function(){
+            $.ajax({
+                type: "post",
+                url: "{php echo $this->createWebAppUrl('sys_fedex', array());}",
+                data: {
+                    "code": '{$model['fedex_code']}',
+                    "number": '{$model['fedex_number']}',
+                    "mobile": '{$model['mobile']}'
+                },
+                dataType:'json',
+                success: function (jsonData, status) {
+                    var expressHtml = "";
+                    if(jsonData['Success'])
+                    {
+                        myrequire([ 'arttemplate'], function (template) {
+                            expressHtml = template("expresstpl", jsonData);
+                            require(["jquery", "util"], function(){
+                                var footer = '<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                                var modalobj = util.dialog('快递鸟物流({$model['fedex_name']} {$model['fedex_number']})','<div class=link-modal>'+ expressHtml +'<div></div></div>',footer,{containerName:'details-container'});
+                                modalobj.modal({'keyboard': true});
+                                modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                                modalobj.modal('show');
+                            });
+                        });
+                    }
+                    else
+                    {
+                        Command: toastr["error"]('获取物流信息失败，请稍后重试！', "错误提示");
+                    }
+                }
+            });
+        });
+
+        //订单发货
+        $("#SubmitBtn").click(function(){
+            var fedexHtml="";
+            myrequire([ 'arttemplate'], function (template) {
+                fedexHtml = template("fedextpl", []);
+                require(["jquery", "util"], function(){
+                    var footer = '<button type="button" class="btn btn-default" data-dismiss="modal" id="fedexBtn">发货</button> <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                    var modalobj = util.dialog('订单发货操作',fedexHtml ,footer,{containerName:'fedex-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+            });
+        });
+
+        //确认发货
+        $(document).delegate("#fedexBtn", "click", function() {
+            var fedex_id=$("#fedex_id").val();
+            var fedex_name=$("#fedex_id").find("option:selected").text();
+            var fedex_code=$("#fedex_id").find("option:selected").data("code");
+            var fedex_number=$("#fedex_number").val();
+            $.ajax({
+                type: "post",
+                url: "{php echo $this->createWebAppUrl('order_intmall', array('act' => 'deliver'));}",
+                data: {
+                    ordernumber: '{$model['ordernumber']}',
+                    fedex_id: fedex_id,
+                    fedex_name: fedex_name,
+                    fedex_code: fedex_code,
+                    fedex_number: fedex_number
+                },
+                dataType:'json',
+                success: function (data, status) {
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 2000);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

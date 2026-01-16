@@ -1,0 +1,119 @@
+{template 'common/header-base'}
+
+<div class="upgrade-content" id="js-cloud-setsms"  ng-controller="CloudSetSms" style="background:#fff"> 
+	<form action="" method="post" class="we7-form form" id="form">
+		<div class="form-group">
+			<label class="col-sm-1 control-label">配置说明</label>
+			<div class="col-sm-11">
+				<div class="form-control-static">短信服务目前只支持阿里云短信，其他短信服务器商后续添加</div>
+				<div class="form-control-static">模板类型 ：消息通知  目前设置了  text  code name 三个变量 </div>
+				<div class="form-control-static">范例 ： 您的${text}为：${code}，您正在使用 ${custom} 的相关功能，需要您进行身份确认。</div>
+				<div class="form-control-static">用户收到短信形式为：您的短信验证码为：888888，您正在使用 密码找回 的相关功能，需要您进行身份确认。 </div>
+			</div>
+		</div>
+	
+		<div class="form-group">
+			<label class="col-sm-2 control-label">签名设置【全局通用】</label>
+			<div class="col-sm-9">
+				<textarea name="signs" class="form-control" rows="4">{$cloud_sms['signs']}</textarea>
+				<div class="help-block">全局短信签名库：多个签名用 “|” 符号分开</div>
+			</div>			
+		</div>
+		
+	<h5 class="page-header">短信平台相关设置</h5>
+		<div class="form-group">
+			<div class="col-sm-12">
+				<input type="radio" name="type" id="type-0" value="off" onclick="$('.off-all').show();$('.set-alisms').hide();" {if $cloud_sms['type'] == 'off'} checked{/if} />
+				<label for="type-0" class="radio-inline">
+					 关闭
+				</label>
+				<input type="radio" name="type" id="type-1" value="alisms" onclick="$('.off-all').hide();$('.set-alisms').show();$('.set-other').hide();" {if $cloud_sms['type'] == 'alisms'} checked{/if} />
+				<label for="type-1" class="radio-inline">
+					 阿里云短信
+				</label>
+				<input type="radio" name="type" id="type-2" value="2" onclick="$('.off-all').hide();$('.set-alisms').hide();$('.set-other').show();" {if $cloud_sms['type'] == '2'} checked{/if} />
+				<label for="type-2" class="radio-inline">
+					 待添加...
+				</label>
+			</div>
+		</div>
+		
+		<!-- ALISMS -->
+		<div class="set-alisms" {if empty($cloud_sms['type']) || $cloud_sms['type'] != 'alisms'} style="display:none;" {/if}>
+		
+		<div class="alert alert-info">
+			阿里云短信 申请地址 ：https://aliyun.com
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">AccessKey ID</label>
+			<div class="col-sm-9">
+				<input type="text" name="alisms[accesskey]" class="form-control" value="{$cloud_sms['alisms']['accesskey']}" placeholder="" />
+				<span class="help-block">用户 AccessKey ID	</span>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label">Access Key Secret	</label>
+			<div class="col-sm-9">
+				<input type="text" name="alisms[secret]" class="form-control encrypt" value="{$cloud_sms['alisms']['secret']}" placeholder="" />
+				<span class="help-block">Access Key Secret	</span>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label">短信签名</label>
+			<div class="col-sm-9">
+				<input type="text" name="alisms[sign]" class="form-control" value="{$cloud_sms['alisms']['sign']}" placeholder="" />
+				<span class="help-block">站点系统短信签名，签名类型需申请通用类型。</span>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-sm-2 control-label">模板ID [注册绑定找密]</label>
+			<div class="col-sm-9">
+				<input type="text" name="alisms[system_tpl]" class="form-control" value="{$cloud_sms['alisms']['system_tpl']}" placeholder="" />
+				<span class="help-block">用于注册绑定找密短息验证，需申请模板类型：短信通知，模板变量 ${text}  ${code} ${custom}</span>
+				<span class="help-block">模板格式样例：您的${text}为：${code}，您正在使用 ${custom} 的相关功能，需要您进行身份确认。</span>
+				<span class="help-block">&nbsp;</span>
+			</div>
+			<label class="col-sm-2 control-label">模板ID [用户到期通知]</label>
+			<div class="col-sm-9">
+				<input type="text" name="alisms[expire_tpl]" class="form-control" value="{$cloud_sms['alisms']['expire_tpl']}" placeholder="" />
+				<span class="help-block">用于平台消息类通知，需申请模板类型：短信通知 ， 模板变量  ${name}=用户账号 ， ${text}=文本“用户过期”</span>
+				<span class="help-block">模板样例：${text}提醒；尊敬的用户 您的账号${name}即将过期，请及时续费。</span>
+				<span class="help-block">&nbsp;</span>
+			</div>
+			<label class="col-sm-2 control-label">模板ID [全局其他通知]</label>
+			<div class="col-sm-9">
+				<input type="text" name="alisms[message_tpl]" class="form-control" value="{$cloud_sms['alisms']['message_tpl']}" placeholder="" />
+				<span class="help-block">用于平台消息类通知，需申请模板类型：短信通知 ， 模板变量  $custom} = 用户账号 ， ${text} = 文本 “用户过期”</span>
+				<span class="help-block">模板样例：${text}提醒；尊敬的用户 您的账号${custom}即将过期，请及时续费。</span>
+				<span class="help-block">&nbsp;</span>
+			</div>
+		</div>
+		</div>
+		<!-- ALISMS  END-->
+		
+		<div class="set-other" {if empty($cloud_sms['type']) || $cloud_sms['type'] != '2'} style="display:none;" {/if}>
+
+		</div>
+		
+		<div class="form-group">
+			<div class="">
+				<button name="submit" class="btn btn-primary" value="submit">保存配置</button>
+				<input type="hidden" name="token" value="{$_W['token']}" />
+			</div>
+		</div>
+	</form>
+	
+</div>
+<script type="text/javascript">
+	angular.module('cloudUpgradeApp',[]);
+	angular.module('cloudUpgradeApp').controller('CloudSetSms',['$scope','$http', function($scope,$http){
+		$scope.submit = function() {
+			console.log($scope.user);
+		}
+	}])
+	angular.bootstrap($('#js-cloud-setsms'), ['cloudUpgradeApp']);;
+
+</script>

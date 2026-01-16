@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <script type="text/javascript" src="{MODULE_URL}public/mobile/js/jquery-1.11.3.min.js?v=4.6"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes"/>
+    <title>手写签名</title>
+    <style type="text/css">
+        html,body{
+            margin: 0;
+            padding: 0;
+        }
+        .saveimg{
+            text-align: center;
+        }
+        .saveimgs span{
+            display: inline-block;
+            margin-top:5px;
+        }
+        .portraitBox{
+            text-align: center;
+        }
+        .landscapeBox{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+ 
+<div class="portraitBox" id="DrawBox">
+    <canvas id="myCanvas" width="500" height="300" style="border:1px solid #6699cc"></canvas>
+    <div class="control-ops control">
+        <button type="button" class="btn btn-primary" onclick="javascript:clearArea();return false;">清空画板</button>
+        
+        
+        <button type="button" class="saveimg" onclick="javascript:saveImageInfo();return false;">保存</button>
+    </div>
+    <div class="saveimgs"></div>
+</div>
+ 
+</body>
+ 
+<script type="text/javascript">
+    var mousePressed = false;
+    var lastX, lastY;
+    var ctx = document.getElementById('myCanvas').getContext("2d");
+    var c = document.getElementById("myCanvas");
+    //      console.log(c)
+    //      console.log(c2)
+    var control = document.getElementsByClassName("control")[0];
+    var saveimgs = document.getElementsByClassName("saveimgs")[0];
+ 
+    window.onload = function(){
+        InitThis();
+    }
+ 
+    function saveImageInfo(){
+        var image = c.toDataURL("image/png");
+        var ctximg = document.createElement("span");
+        ctximg.innerHTML = "<img src='"+image+"' alt='from canvas'/>";
+        if(saveimgs.getElementsByTagName('span').length >= 1){
+            var span_old = saveimgs.getElementsByTagName("span")[0];
+            saveimgs.replaceChild(ctximg,span_old)
+        }
+        else{
+            saveimgs.appendChild(ctximg);
+        }
+//          console.log(image)
+    }
+ 
+ 
+    var selected1,selected2;
+ 
+ 
+    function InitThis() {
+//          触摸屏
+        c.addEventListener('touchstart', function (event) {
+            console.log(1)
+            if (event.targetTouches.length == 1) {
+                event.preventDefault();// 阻止浏览器默认事件，重要
+                var touch = event.targetTouches[0];
+                mousePressed = true;
+                Draw(touch.pageX - this.offsetLeft, touch.pageY - this.offsetTop, false);
+            }
+ 
+        },false);
+ 
+        c.addEventListener('touchmove', function (event) {
+            console.log(2)
+            if (event.targetTouches.length == 1) {
+                event.preventDefault();// 阻止浏览器默认事件，重要
+                var touch = event.targetTouches[0];
+                if (mousePressed) {
+                    Draw(touch.pageX - this.offsetLeft, touch.pageY - this.offsetTop, true);
+                }
+            }
+ 
+        },false);
+ 
+        c.addEventListener('touchend', function (event) {
+            console.log(3)
+            if (event.targetTouches.length == 1) {
+                event.preventDefault();// 阻止浏览器默认事件，防止手写的时候拖动屏幕，重要
+//                  var touch = event.targetTouches[0];
+                mousePressed = false;
+            }
+        },false);
+        /*c.addEventListener('touchcancel', function (event) {
+            console.log(4)
+            mousePressed = false;
+        },false);*/
+ 
+ 
+ 
+//         鼠标
+        c.onmousedown = function (event) {
+            mousePressed = true;
+            Draw(event.pageX - this.offsetLeft, event.pageY - this.offsetTop, false);
+        };
+ 
+        c.onmousemove = function (event) {
+            if (mousePressed) {
+                Draw(event.pageX - this.offsetLeft, event.pageY - this.offsetTop, true);
+            }
+        };
+ 
+        c.onmouseup = function (event) {
+            mousePressed = false;
+        };
+    }
+ 
+    function Draw(x, y, isDown) {
+        if (isDown) {
+            ctx.beginPath();
+            ctx.strokeStyle = selected2;
+            ctx.lineWidth = selected1;
+            ctx.lineJoin = "round";
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.closePath();
+            ctx.stroke();
+        }
+        lastX = x; lastY = y;
+    }
+ 
+    function clearArea() {
+        // Use the identity matrix while clearing the canvas
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+ 
+        // 清除签名图片
+        if(saveimgs.getElementsByTagName('span').length >= 1){
+            var clearImg = saveimgs.getElementsByTagName('span')[0];
+            saveimgs.removeChild(clearImg);
+        }
+ 
+    }
+
+
+//监控手机是竖屏还是横屏
+    (function(){
+    var supportsOrientation = (typeof window.orientation == 'number' && typeof window.onorientationchange == 'object');
+    var HTMLNode = document.body.parentNode;
+    var OldWindowWidth = $(window).width();
+    var OldWindowHeight = $(window).height();
+    var ChangeWidth = function(){
+        let orientation = window.orientation;
+        switch(orientation) {
+            case 90: case -90:
+              orientation = 'landscape';
+            break;
+            default:
+              orientation = 'portrait';
+          }
+        let WindowWidth = $(window).width();
+        let WindowHeight = $(window).height();
+ 
+        if(orientation === 'portrait'){
+            $("#myCanvas").attr("width",WindowWidth);
+            $("#myCanvas").attr("height",WindowWidth*3/4);
+            $("#DrawBox").removeClass("landscapeBox");
+            $("#DrawBox").addClass("portraitBox");
+          }else{
+            $("#myCanvas").attr("width",WindowWidth*3/4);
+            $("#myCanvas").attr("height",WindowHeight - 2);
+            $("#DrawBox").removeClass("portraitBox");
+            $("#DrawBox").addClass("landscapeBox");
+          }
+    }
+
+    var updateOrientation = function() {
+      // rewrite the function depending on what's supported
+      if(supportsOrientation) {
+        updateOrientation = function() {
+          var orientation = window.orientation; 
+          switch(orientation) {
+            case 90: case -90:
+              orientation = 'landscape';
+            break;
+            default:
+              orientation = 'portrait';
+          }
+   
+        
+
+
+          // set the class on the HTML element (i.e. )
+          HTMLNode.setAttribute('class', orientation);
+        }
+      } else {
+        updateOrientation = function() {
+          // landscape when width is biggest, otherwise portrait
+          var orientation = (window.innerWidth > window.innerHeight) ? 'landscape': 'portrait';
+            alert(orientation)
+          // set the class on the HTML element (i.e. )
+          HTMLNode.setAttribute('class', orientation);
+        }
+      }
+ 
+      updateOrientation();
+    }
+    var init = function() {
+      // initialize the orientation
+      updateOrientation();
+      ChangeWidth();
+      if(supportsOrientation) {
+        window.addEventListener('orientationchange', updateOrientation, false);
+        window.addEventListener('resize', ChangeWidth, false);
+
+      } else {
+        // fallback: update every 5 seconds
+        setInterval(updateOrientation, 5000);
+      }
+ 
+    }
+    window.addEventListener('DOMContentLoaded', init, false);
+  })();
+
+</script>
+ 
+</html>

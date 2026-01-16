@@ -1,0 +1,296 @@
+{template '_header'}
+<style>
+    .popover{
+        width:170px;
+        font-size:12px;
+        line-height: 21px;
+        color: #0d0706;
+    }
+    .popover span{
+        color: #b9b9b9;
+    }
+    .nickname{
+        display: inline-block;
+        max-width:150px;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .tooltip-inner{
+        border:none;
+    }
+
+    ._cover {
+        color: #337ab7 !important;
+    }
+</style>
+<div class="page-header">
+    当前位置：<span class="text-primary">银联机构管理</span>
+</div>
+<div class="page-content">
+
+
+
+   <form action="./index.php" method="get" class="form-horizontal" role="form" id="form1">
+            <input type="hidden" name="c" value="site" />
+            <input type="hidden" name="a" value="entry" />
+            <input type="hidden" name="m" value="ewei_shopv2" />
+            <input type="hidden" name="do" value="web" />
+            <input type="hidden" name="r" value="unionpay.agent" />
+        <div class="page-toolbar m-b-sm m-t-sm">
+            <span class="pull-left">{php echo tpl_daterange('time', array('sm'=>true, 'placeholder'=>'成为分销商时间'),true);}</span>
+            <div class="input-group">
+                        <div class="input-group-select">
+                            <select name='lockstatus' class='form-control' style="width:120px;"  >
+                                <option value=''>绑定状态</option>
+                                <option value='0' {if $_GPC['lockstatus']=='0'}selected{/if}>全部机构</option>
+                                <option value='1' {if $_GPC['lockstatus']=='1'}selected{/if}>新生机构</option>
+                                <option value='2' {if $_GPC['lockstatus']=='2'}selected{/if}>绑定新生</option>
+                                <option value='3' {if $_GPC['lockstatus']=='3'}selected{/if}>新大陆机构</option>
+                                <option value='4' {if $_GPC['lockstatus']=='4'}selected{/if}>绑定新大陆</option>
+                            </select>
+                        </div>
+                        <div class="input-group-select">
+                            <select name='searchfield'  class='form-control'   style="width:100px;"  >
+                                <option value='unionchannel' {if $_GPC['searchfield']=='unionchannel'}selected{/if}>银联机构</option>
+                                <option value='member' {if $_GPC['searchfield']=='member'}selected{/if}>分销商</option>
+                                <option value='parent' {if $_GPC['searchfield']=='parent'}selected{/if}>推荐人</option>
+                            </select>
+                        </div>
+                    <div class="input-group-select">
+                        <select name='uplevellist' class='form-control' style="width:140px">
+                            <option value=''>机构分润等级</option>
+                            {loop $uplevellist $level}
+                            <option value='{$level['upagentlevel']}' {if $_GPC['uplevellist']==$level['upagentlevel']}selected{/if}>L{$level['upagentlevel']}-{$level['levelname']}</option>
+                            {/loop}
+                        </select>
+                    </div>
+                    <div class="input-group-select">
+                        <select name='agentlevel' class='form-control' style="width:130px;"  >
+                            <option value=''>分销商等级</option>
+                            {loop $agentlevels $level}
+                            <option value='{$level['id']}' {if $_GPC['agentlevel']==$level['id']}selected{/if}>{$level['levelname']}</option>
+                            {/loop}
+                        </select>
+                    </div>
+                    <!--<div class="input-group-select">-->
+                        <!--<select name='isagentblack'  class='form-control'   style="width:90px;"  >-->
+                            <!--<option value=''>黑名单</option>-->
+                            <!--<option value='0' {if $_GPC['isagentblack']=='0'}selected{/if}>否</option>-->
+                            <!--<option value='1' {if $_GPC['isagentblack']=='1'}selected{/if}>是</option>-->
+                        <!--</select>-->
+                    <!--</div>-->
+                          <input type="text" class="form-control input-sm"  name="keyword" value="{$_GPC['keyword']}" placeholder="昵称/姓名/手机号/机构名/机构号/机构密钥"/>
+                         <span class="input-group-btn">
+                            <button class="btn  btn-primary" type="submit"> 搜索</button>
+                             {ifp 'commission.agent.export'}
+                            <button type="submit" name="export" value="1" class="btn btn-success ">导出</button>
+                            {/if}
+                        </span>
+                </div>
+        </div>
+  </form>
+
+
+{if count($list)>0}
+        <table class="table table-hover table-responsive">
+            <thead class="navbar-inner" >
+            <tr>
+                <th style="width:25px;"></th>
+                <th style='width:120px;'>会员</th>
+                <th style='width:110px;padding-left:45px'>会员姓名<br/>手机号码<br>分润-分销等级</th>
+                <th style='width:110px;'>上级机构</th>
+                <th style='width:190px;padding-left:30px'>新生机构<br/>机构号<br/>机构密钥</th>
+                <th style='width:180px;'>新大陆机构<br/>机构号<br/>机构密钥</th>
+                <th style='width:90px;'>下级机构<br/>总机构<br/>直属机构</th>
+                <th style='width:90px;'>新生账单日</br>新大陆账单日</br>绑定机构时间</th>
+                <th style='width:70px;'>状态</th>
+                <th style='width:40px;'>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop $list $row}
+           <tr>
+                <td>
+                    <input type='checkbox' value="{$row['id']}"/>
+                </td>
+               
+                <td style="overflow: visible">
+                    <div  style="display: flex"  rel="pop" data-content="
+                    <span>ID: </span>{$row['id']} </br>
+                     <span>推荐人：</span> {if empty($row['agentid'])}
+                                  {if $row['isagent']==1}
+                                      总店
+                                      {else}
+                                     暂无
+                                      {/if}
+                                {else}
+                    {if !empty($row['parentavatar'])}
+                         <img class='radius50' src='{$row['parentavatar']}' style='width:20px;height:20px;padding1px;border:1px solid #ccc' onerror='this.src='../addons/ewei_shopv2/static/images/noface.png''/>
+                    {/if}
+                       [{$row['agentid']}]
+                        {if empty($row['parentname'])}未更新
+                            {else}{$row['parentname']}
+                        {/if}
+					   {/if}</br>
+                        <span>是否关注：</span>
+                         {if empty($row['followed'])}
+                                {if empty($row['unfollowtime'])}
+                                未关注
+                                {else}
+                                取消关注
+                                {/if}
+                            {else}
+                                已关注
+                            {/if}</br>
+                            <span>状态:</span>  {if $row['isblack']==1}黑名单{else}正常{/if}
+					   ">
+                        {ifp 'member.list.view'}
+                        <a href="{php echo webUrl('member/list/detail',array('id' => $row['id']));}" title='查看会员信息' target='_blank' style="display: flex">
+                            {if !empty($row['avatar'])}
+                            <img class="radius50" src='{php echo tomedia($row['avatar'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' onerror="this.src='../addons/ewei_shopv2/static/images/noface.png'"/>
+                            {/if}
+                        <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
+                            <span class="nickname">
+                                {if strexists($row['openid'],'sns_wa')}<i class="icow icow-xiaochengxu" style="color: #7586db;vertical-align: middle;" data-toggle="tooltip" data-placement="top" title="" data-original-title="来源: 小程序"></i>{/if}
+                                {if empty($row['nickname'])}未更新{else}{$row['nickname']}{/if}
+                            </span>
+                            {if $row['agentblack']==1}
+                            <span class="text-danger">黑名单<i class="icow icow-heimingdan1"style="color: #db2228;margin-left: 2px;font-size: 13px;"></i></span>
+                            {/if}
+                        </span>
+                        </a>
+                        {else}
+                        {if !empty($row['avatar'])}
+                        <img class="radius50" src='{php echo tomedia($row['avatar'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' onerror="this.src='../addons/ewei_shopv2/static/images/noface.png'"/>
+                        {/if}
+                        <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
+                            <span class="nickname">
+                                {if empty($row['nickname'])}未更新{else}{$row['nickname']}{/if}
+                            </span>
+                            {if $row['agentblack']==1}
+                            <span class="text-danger">黑名单<i class="icow icow-heimingdan1"style="color: #db2228;margin-left: 2px;font-size: 13px;"></i></span>
+                            {/if}
+                        </span>
+
+                        {/if}
+                    </div>
+                </td>
+
+                <td style="padding-left:45px">
+                    {$row['realname']} <br/>
+                    {$row['mobile']} <br>
+                    {if !empty($row['upagentlevel'])}L{$row['upagentlevel']}-{/if}
+                    {if empty($row['levelname'])} {php echo empty($this->set['levelname'])?'普通等级':$this->set['levelname']}{else}{$row['levelname']}{/if}
+                </td>
+                <td style="overflow: visible">
+                    <div  style="display: flex"  rel="pop" data-content="
+                    上级姓名：{php echo empty($row['parentrealname']) ? '-' : $row['parentrealname']}
+                    <br/>
+                    手机号：{php echo empty($row['parentmobile']) ? '-' : $row['parentmobile']}
+                    <br/>
+                    等级：{php echo empty($row['parentlevelname']) ? '-' : $row['parentlevelname']} 
+					   ">
+                        <a
+                            {if !empty($row['pid'])}
+                            href="{php echo webUrl('member/list/detail', array('id' => $row['pid']))}"
+                            {else}
+                            href= "javascript:void(0)"
+                            {/if}
+                        >
+                        <img class='radius50' src='{$row['parentavatar']}' style='width:20px;height:20px;padding1px;border:1px solid #ccc' onerror="this.src='../addons/ewei_shopv2/static/images/noface.png'"/>
+                        <span class="nickname">{php echo empty($row['parentname']) ? '总店' : $row['parentname']}</span>
+                        </a>
+                    </div>
+                </td>
+
+                <td style="padding-left:30px"><span class="text-danger">{$row['hnapay_realname']}</span><br/><span class="text-warning">{$row['hnapay_channelId']}</span><br/><span class="text-warning">{php echo substr_replace($row['hnapay_secret'],'*****',8,16)}</span></td>
+                <td><span class="text-danger">{$row['newland_realname']}</span><br/><span class="text-warning">{$row['newland_channelId']}</span><br/><span class="text-warning">{php echo substr_replace($row['newland_secret'],'*****',8,16)}</span></td>
+                <td >
+
+                    {ifp 'unionpay.agent.user'}
+                    <a class="_cover" href="{php echo webUrl('unionpay/agent/user',array('id' => $row['id'], 'level' => 1));}"  target='_blank' data-toggle='popover' data-placement='right' data-html="true" data-trigger='hover' data-content='查看下级机构'>
+                        {$row['uplevel1count']} / {$row['alldowncount']}
+                    </a>
+                    {else}
+                        {$row['levelcount']}
+                    {/if}
+                        
+                <br/>-<br/>-<!--总商户/直属商户-->
+                </td>
+
+                       <td>
+                           {php echo empty($row['hnabilldatetime']) ? date('Y-m-d',$row['agenttime']) : $row['hnabilldatetime']} <br/>
+                           {php echo empty($row['nlbilldatetime']) ? date('Y-m-d',$row['agenttime']) : $row['nlbilldatetime']} <br/>
+                           {php echo !empty($row['upupdatetime']) ? date('Y-m-d H:i',strtotime($row['upupdatetime'])) : '-'}
+                       </td>
+
+                <td>
+                    <a data-toggle="ajaxModal" href="{php echo webUrl('unionpay/bindchannel', array('type'=>'hnapay','upid'=>$row['id']))}" >
+                        <span class='label {if $row['hnapay_lock']==1}label-primary{else}label-default{/if}'>
+						    {if $row['hnapay_lock']==1}新生已绑定{else}新生未绑定{/if}
+						</span>
+				    </a>
+                    <br/>
+                    <a data-toggle="ajaxModal" href="{php echo webUrl('unionpay/bindchannel', array('type'=>'newland','upid'=>$row['id']))}" >
+                        <span class='label {if $row['newland_lock']==1}label-primary{else}label-default{/if}'>
+                            {if $row['newland_lock']==1}新大陆已绑{else}新大陆未绑{/if}
+                        </span>
+                    </a>
+                </td>
+
+                <td  style="overflow:visible;">
+                            {ifp 'unionpay.bindchannel.hnapay|unionpay.bindchannel.newland'}
+                                <a class="btn  btn-op btn-operation" data-toggle="ajaxModal" href="{php echo webUrl('unionpay/bindchannel', array('type'=>'hnapay','upid'=>$row['id']))}" >
+                                    <span data-toggle="tooltip" data-placement="top" title="" data-original-title="绑定机构号">
+                                       <i class='icow icow-gengxinbanben'></i>
+                                    </span>
+                                </a>
+                            {/if}
+                </td>
+            </tr>
+            {/loop}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td colspan="8" class="text-right">{$pager}</td>
+                </tr>
+            </tfoot>
+        </table>
+        {else}
+            <div class='panel panel-default'>
+                <div class='panel-body' style='text-align: center;padding:30px;'>
+                     暂时没有任何银联机构!
+                </div>
+            </div>
+            {/if}
+</div>
+<script language="javascript">
+		require(['bootstrap'],function(){
+            $("[rel=pop]").popover({
+                trigger:'manual',
+                placement : 'right',
+                title : $(this).data('title'),
+                html: 'true',
+                content : $(this).data('content'),
+                animation: false
+            }).on("mouseenter", function () {
+                    var _this = this;
+                    $(this).popover("show");
+                    $(this).siblings(".popover").on("mouseleave", function () {
+                        $(_this).popover('hide');
+                    });
+                }).on("mouseleave", function () {
+                    var _this = this;
+                    setTimeout(function () {
+                        if (!$(".popover:hover").length) {
+                            $(_this).popover("hide")
+                        }
+                    }, 100);
+                });
+	   });
+</script>
+{template '_footer'}

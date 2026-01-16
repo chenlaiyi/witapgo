@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>编辑门店</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+    <style>
+        form{
+            padding-right:15px ;
+        }
+	.layui-form-label{
+			width:115px;
+        }
+		.layui-input-block{
+			margin-left:145px;
+		}
+    </style>
+</head>
+<body>
+<form class="layui-form" style="margin-top:21px;">
+
+	<input type="hidden" name="id" value="{$srdb['id']}">
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">新闻标题</label>
+    <div class="layui-input-block">
+      <input type="text" name="title" required lay-verify="required" placeholder="请输入新闻标题" autocomplete="off" class="layui-input" value="{$srdb['title']}">
+    </div>
+  </div>
+  
+  <div class="layui-form-item">
+    <label class="layui-form-label">所属分类</label>
+    <div class="layui-input-block">
+      <select name="categoryid">
+      	{if empty($categoryList)}
+	      	<option value="">暂无分类</option>
+	    {else}
+	    	{foreach  $categoryList as $v}
+	        <option value="{$v.id}" {eq name="$srdb.categoryid" value="$v.id"} selected="" {/eq}>{$v.name}</option>
+	        {/foreach}
+	    {/if}
+      </select>
+    </div>
+  </div>    <div class="layui-form-item">    <label class="layui-form-label">标题图片</label>    <div class="layui-upload col-sm-9">        <button type="button" class="layui-btn" id="test1"  >选择图片</button>        <div class="layui-form-mid layui-word-aux">建议上传120px * 78px尺寸</div>       <div class="layui-input-block">           <img class="layui-upload-img" id="demo1" style="margin-top: 10px;height: 78px;width: 120px" {if $srdb['pic_url']==''}{else}src="{$srdb['pic_url']}"{/if}">           <input type="hidden" name="pic_url" id="pic_url" value="{$srdb['pic_url']}">       </div>    </div>  </div>  
+  
+  <div class="layui-form-item">
+    <label class="layui-form-label">新闻详情</label>
+    
+    <div class="layui-input-block">
+    	<script id="ueditor" name="content" type="text/plain" >{$srdb['content']|raw}</script>
+    </div>
+  </div><div class="layui-form-item">    <label class="layui-form-label">是否显示</label>    <div class="layui-input-block">      <input type="radio" name="is_display" value="1" title="显示" {if $srdb['is_display'] == '1' || $srdb['is_display'] == ''}checked{/if}>      <input type="radio" name="is_display" value="2" title="隐藏" {if $srdb['is_display'] == '2'}checked{/if}>    </div>  </div>    <div class="layui-form-item">    <label class="layui-form-label">是否推荐</label>    <div class="layui-input-block">      <input type="radio" name="is_recommend" value="1" title="推荐" {if $srdb['is_recommend'] == '1' || $srdb['is_recommend'] == ''}checked{/if}>      <input type="radio" name="is_recommend" value="2" title="不推荐" {if $srdb['is_recommend'] == '2'}checked{/if}>    </div>  </div>
+  
+  <div class="layui-form-item">
+    <label class="layui-form-label">排序</label>
+    <div class="layui-input-block">
+      <input type="number" name="sort" placeholder="请输入排序值 ，数值越高，越在前显示" autocomplete="off" class="layui-input" value="{$srdb['sort']}">
+    </div>
+  </div>
+  
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit lay-filter="demo1">立即提交</button>
+      <input type="button" class="layui-btn layui-btn-primary" onclick="history.go(-1)" value="返回列表"> 
+    </div>
+  </div>
+  <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="__PUBLIC__/static/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/static/ueditor/ueditor.all.js"></script>
+<script>
+	layui.config({
+	    base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+	}).extend({
+	    index: 'lib/index' //主入口模块
+	    	, layarea: '../layui/layui_exts/city-picker/layarea'
+	}).use(['jquery','layer', 'index', 'table','upload', 'layarea','layedit'], function(){
+		var $ = layui.$
+		, layer = layui.layer
+		, layedit = layui.layedit
+	    , table = layui.table
+	    , form = layui.form
+	    , layarea = layui.layarea
+	    , upload = layui.upload;
+    			upload.render({            elem: '#test1'            ,url: "{:siteUrl('admin/index/upload','','web')}"             ,done: function(res){                if(res.code < 0){                    return layer.msg('上传失败');                }else{                    $('#demo1').attr('src', res.msg);                     $('#pic_url').val(res.msg);                }            }        });
+		var ue = UE.getEditor('ueditor', {
+
+         zIndex: 99,
+
+         maximumWords: 999,
+
+         scaleEnabled: true,
+
+         initialFrameWidth: 800,
+
+         initialFrameHeight: 300,
+
+         autoHeightEnabled: false,}
+
+         );
+
+
+        form.on('submit(demo1)', function(data){
+            var admin = layui.admin
+
+            $.ajax({
+            	url:"{:siteUrl('admin/news/edit_news','','web')}",
+                data:data.field,
+                type:"POST",
+                success: function(data){
+                	console.log(data);
+                	var res = JSON.parse(data);
+                	if(res.code == 0 ){
+                		layer.msg(res.msg,{icon: 1,time:3000},function(){
+                			window.location.href="{:siteUrl('admin/news/index','','web')}";
+                		});
+                	}else{
+                		layer.msg(res.msg,{icon: 2,time:3000},function(){
+                			window.location.href="{:siteUrl('admin/news/index','','web')}";
+                		});
+                	}
+                }
+            })
+            return false
+  
+        });
+
+
+    });
+</script>
+</body>
+<div class="layui-footer" style="margin-top:20px;display: flex;justify-content: center;align-items: flex-end;">
+	{include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}
+</div>
+</html>

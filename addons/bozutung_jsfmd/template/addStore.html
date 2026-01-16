@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li class="layui-this">
+						<a href="{php echo webUrl('addStore')}">添加门店</a>
+					</li>
+					<li>
+						<a href="{php echo webUrl('storeList')}">返回</a>
+					</li>
+				</ul>
+			</div>
+
+			<form class="layui-form fixed" action="" method="post" enctype="multipart/form-data" id="data-form">
+				<!-- 门店名 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">门店名</label>
+					<div class="layui-input-block">
+						<input type="text" name="store" lay-verify="required" class="layui-input">
+					</div>
+				</div>
+				<!-- 排序 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">排序</label>
+					<div class="layui-input-block">
+						<input type="text" name="sort" class="layui-input" placeholder="数字越大越靠前">
+					</div>
+				</div>
+				<!-- 门店地址 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">门店地址</label>
+					<div class="layui-input-block">
+						<input type="text" name="address" lay-verify="required" class="layui-input">
+					</div>
+				</div>
+				<!-- 地铁站名 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">地铁站名</label>
+					<div class="layui-input-block">
+						<input type="text" name="subway_name" class="layui-input">
+					</div>
+				</div>
+				<!-- 地铁步行距离 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">地铁步行距离</label>
+					<div class="layui-input-block">
+						<input type="text" name="subway_distance" class="layui-input">
+						<div class="layui-form-mid layui-word-aux">单位：米</div>
+					</div>
+				</div>
+				<!-- 地铁乘坐提示 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">地铁乘坐提示</label>
+					<div class="layui-input-block">
+						<textarea name="subway_description" class="layui-textarea"></textarea>
+					</div>
+				</div>
+				<!-- 公交站名 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">公交站名</label>
+					<div class="layui-input-block">
+						<input type="text" name="bus_stop_name" lay-verify="required" class="layui-input">
+					</div>
+				</div>
+				<!-- 公交步行距离 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">公交步行距离</label>
+					<div class="layui-input-block">
+						<input type="text" name="bus_stop_distance" lay-verify="required" class="layui-input">
+						<div class="layui-form-mid layui-word-aux">单位：米</div>
+					</div>
+				</div>
+				<!-- 公交乘坐提示 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">公交乘坐提示</label>
+					<div class="layui-input-block">
+						<textarea name="bus_stop_description" class="layui-textarea"></textarea>
+					</div>
+				</div>
+				<!-- 自驾目的地 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">自驾目的地</label>
+					<div class="layui-input-block">
+						<input type="text" name="drive_place" lay-verify="required" class="layui-input">
+					</div>
+				</div>
+				<!-- 自驾提示 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">自驾提示</label>
+					<div class="layui-input-block">
+						<textarea name="drive_description" class="layui-textarea" lay-verify="required"></textarea>
+					</div>
+				</div>
+				<!-- 推荐到达方式 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">推荐到达方式</label>
+					<div class="layui-input-block">
+						<select name="way" lay-verify="required">
+							<option value="">请选择...</option>
+							<option value="1">公交</option>
+							<option value="2">地铁</option>
+							<option value="3">自驾</option>
+						</select>
+					</div>
+				</div>
+				<!-- 展示图片 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">展示图片</label>
+					<div class="layui-input-block">
+						{php echo slwl_tpl_form_field_image('image');}
+						<div class="layui-form-mid layui-word-aux">推荐尺寸：331 x 172，或同比例</div>
+					</div>
+				</div>
+				<!-- 地理位置 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">地理位置</label>
+					<div class="layui-input-block">
+						{php echo slwl_tpl_form_field_coordinate('map', $tmp_map)}
+					</div>
+				</div>
+
+
+				<div class="layui-tab-content fixed" id="data-submit">
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="save">保存</button>
+							<button class="layui-btn" lay-submit lay-filter="save" data-type="saveAndAdd">保存并新增</button>
+							<a href="{php echo webUrl('storeList')}" class="layui-btn layui-btn-primary">取消</a>
+							<input type="hidden" name="token" value="{$_W['token']}" />
+						</div>
+					</div>
+				</div>
+			</form>
+			<script>
+				layui.use('form', function(){
+					var form = layui.form;
+
+					form.on('submit(save)', function(data){
+						let subType = data.elem.dataset.type;
+						let url = "{php echo webUrl('addStore')}";
+						var $obj = $(this);
+
+						if (!$obj.hasClass('lock')) {
+							$obj.addClass('lock'); // 不能再点击
+
+							$.ajax({
+								type: "POST",
+								url: url,
+								dataType: 'json',
+								data: data.field,
+								success: function (rs) {
+
+									if (rs && rs.code.toString() === '0') {
+										layer.msg('保存成功' , {
+											time: 500
+										}, function () {
+											if (subType && subType.toString() === 'saveAndAdd') {
+												window.location.href = "{php echo webUrl('addStore')}";
+											} else {
+												window.location.href = "{php echo webUrl('storeList')}";
+											}
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+										});
+									}
+									$obj.removeClass('lock');
+								},
+								error: function () {
+									layer.msg('保存过程发生错误，请与管理员联系', {
+										offset: '20%',
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						}
+
+						return false;
+					});
+				});
+			</script>
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

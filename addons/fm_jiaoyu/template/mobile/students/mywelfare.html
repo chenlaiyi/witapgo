@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{$title}</title>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes" />
+<link type="text/css" rel="stylesheet" href="{OSSURL}public/mobile/css/mGrzx.css?v=4.8" />
+<link href="{$_W['siteroot']}web/resource/css/font-awesome.min.css" rel="stylesheet">
+<style>
+.colorInfo{
+    width: auto !important;
+    padding: 2px;
+    margin: 0px !important;
+}
+/**无数据空盒子**/
+.empty_box{background:#fafafa;width:100%;height:100%;margin-top:20%;    text-align: center;}
+.empty_box_imgbox{width:100%;padding-bottom: 11px;}
+.empty_box_imgbox img{width:30%;}
+</style>
+{php echo register_jssdks();}
+<script type="text/javascript" src="{MODULE_URL}public/mobile/js/jquery-1.10.1.min.js?v=4.9"></script>
+{php include $this->template('port');} 
+</head>
+<body>
+<div class="all" style="padding-bottom:55px;">
+	<div class="parentBox">
+        {if $list}
+		<ul>
+		{loop $list $item}
+			<li>
+				<div class="parentInfo">
+					<div class="left">
+					  <div class="stuHeader_new">
+						<img src="{if !empty($item['thumb'])}{php echo tomedia($item['thumb'],false,true)}{else}{OSSURL}public/mobile/img/boyteacher.jpg{/if}"/>
+					  </div>
+					</div>
+					<div class="center">
+						<div class="lineInfo">
+                            <span class="colorInfo green" style="background-color: #14c682;color:#fff;!important"> {$item['title']}</span>
+                            {if $item['status'] == 0}
+                                <span class="colorInfo green" style="background-color: #14c682;color:#fff;!important; margin-left: 5px !important;"> 有效时间:{$item['day']}天</span>
+                            {else if $item['status'] == 1}
+                            {php $time = $item['time'] + $item['day'] *86400}
+							<span class="colorInfo green" style="background-color: #14c682;color:#fff;!important; margin-left: 5px !important;"> 有效期:{php echo date("Y-m-d",$time)}</span>
+							{else if $item['status'] == 2}
+                            <span class="colorInfo green" style="background-color: #14c682;color:#fff;!important; margin-left: 5px !important;"> 使用时间:{php echo date("Y-m-d",$item['usetime'])}</span>
+                            {/if}
+                            
+						</div>	
+						<div class="lineInfo">
+                            <span class="colorInfo red" style="color:#fff;!important"> 满{$item['maxrange']}减{$item['cose']}</span>
+						</div>
+                    </div>
+                    {if $item['status'] == 0}
+                    <div class="righta" style="right: 10px;margin-top: 0px;width: 60px;">
+						<a onclick="lq(`{$item['id']}`);" style=" border: 1px solid #17b056; border-radius: 10px; text-align: center;">领取</a>
+						<!-- <button type="button" class="btn btn-info" onclick="lq(`{$item['id']}`);">领取</button> -->
+					</div>
+					{else if $item['status'] == 1}
+					<div class="righta" style="width: 60px;right: 10px;">
+						<a style="color: #ccc !important;">已领取</a>
+					</div>
+                    {else if $item['status'] == 2}
+                    <div class="righta" style="width: 60px;right: 10px;">
+						<a style="color: #ccc !important;"><i class="fa fa-ban" style=" position: relative; margin-right: -36px; font-size: 30px; top: 5px;"></i>已使用</a>
+					</div>
+                    {/if}
+					
+				</div>
+			 </li>
+		{/loop}
+        </ul>
+        {else}
+        <div class="empty_box">
+			<div class="empty_box_imgbox">
+				<img src="{OSSURL}public/mobile/img/sginNoContent.png">
+			</div>
+			<span>抱歉你暂时没有可领取的礼品哦!</span>
+		</div>
+        {/if}
+        
+	</div>
+</div>
+{php include $this->template('footer');}	
+</body>
+<script type="text/javascript">
+function lq(id) {
+	var submitData = {
+        id : id,
+        schoolid : `{$schoolid}`,
+	};
+	jConfirm("确认现在领取吗？", "确认确定对话框", function (isConfirm) {
+		if (isConfirm) {
+			$.post("{php echo $this->createMobileUrl('indexajax',array('op'=>'lqwelfare'))}",submitData, function(data) {
+				if (data.result) {
+					jTips(data.msg);
+					location.reload();
+				} else {
+					jTips(data.msg);
+				}
+			},'json');
+		}
+	});
+}
+</script>
+</html>

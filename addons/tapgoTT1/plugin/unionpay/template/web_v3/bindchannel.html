@@ -1,0 +1,201 @@
+<style>
+    .bingchannel_info{
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 10px;
+    }
+    .bingchannel_info>div{
+        -webkit-box-flex: 1;
+        -webkit-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+        border:1px solid #efefef;
+        margin: 0 10px;
+        padding:10px 22px;
+        line-height: 25px;
+        color: #333;
+    }
+    .we7-form .form-group,form .form-group{margin-bottom:10px}
+</style>
+<form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
+    <input type="hidden" name="c" value="site" />
+    <input type="hidden" name="a" value="entry" />
+    <input type="hidden" name="m" value="tapgo_ttv2" />
+    <input type="hidden" name="do" value="web" />
+    <input type="hidden" name="r" value="unionpay.bindchannel" />
+    <input type='hidden' name='type' value="{$type}" />
+    <input type='hidden' name='upid' value="{$id}" />
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">×</button>
+                <h4 class="modal-title">机构号绑定</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="bingchannel_info">
+                    <div>
+                        <label class="pull-left" style="margin-right: 25px">粉丝</label>
+                        <div class="pull-left">
+                            会员ID: {$profile['id']}</br>
+                            <img class="radius50" src='{$profile['avatar']}' style='width:20px;height:20px;padding:1px;border:1px solid #ccc' onerror="this.src='../addons/tapgo_ttv2/static/images/noface.png'"/>
+                            {$profile['nickname']}
+                        </div>
+                    </div>
+                    <div>
+                        <label class="pull-left " style="margin-right: 25px">会员信息</label>
+                            <div class="pull-left">
+                                姓名: {$profile['realname']}</br>
+                                手机号: {$profile['mobile']}</br>
+                                分销商等级：{php echo empty($profile_levelname['levelname'])?'代理(默认等级)':$profile_levelname['levelname']}
+                            </div>
+                    </div>
+
+                </div>
+                <div class="tabs-container">
+
+                    <div class="tabs">
+                        <ul class="nav nav-tabs">
+                            {ifp 'unionpay.bingchannel.hnapay'}
+                            <li {if $type=='hnapay'}class="active"{/if}><a data-toggle="tab" href="#tab-1" data-rechargetype="hnapay" aria-expanded="true"> 新生机构信息</a></li>
+                            {/if}
+
+                            {ifp 'unionpay.bingchannel.newland'}
+                            <li {if $type=='newland'}class="active"{/if}><a data-toggle="tab" href="#tab-2"  data-rechargetype="newland" aria-expanded="false"> 新大陆机构信息</a></li>
+                            {/if}
+
+                        </ul>
+                        <div class="tab-content ">
+                            <div id="tab-1" class="tab-pane {if $type=='hnapay'}active{/if}">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"><span class="text-danger">*</span> 审核状态</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <label class='radio-inline'>
+                                            <input type='radio' name='hnapay_lock' value='0' {if $upinfo['hnapay_lock']==0}checked{/if} /> 未审核
+                                        </label>
+                                        <label class='radio-inline'>
+                                            <input type='radio' name='hnapay_lock' value='1' {if $upinfo['hnapay_lock']==1}checked{/if}/> 审核通过
+                                        </label>
+                                        <span class="text-danger">* 请正确选择审核状态</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label mustl"><span class="text-danger">*</span> 新生机构名称</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <input type="text" name="hnapay_realname" class="form-control" value="{$upinfo['hnapay_realname']}" data-rule-maxlength='20' data-rule-required='true'/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label mustl"><span class="text-danger">*</span> 新生机构编号</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <input type="text" name="hnapay_channelId" class="form-control" value="{$upinfo['hnapay_channelId']}" data-rule-maxlength='20' data-rule-required='true' onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label mustl"><span class="text-danger">*</span> 新生机构密钥</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <input type="text" name="hnapay_secret" class="form-control" value="{$upinfo['hnapay_secret']}" data-rule-maxlength='32' data-rule-required='true' onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label mustl">新生结算费率</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <input type="text" name="hnapay_feilv" class="form-control" placeholder="按分润等级费率结算的机构不需填写，请留空即可" value="{if $upinfo['hnapay_feilv']!=0}{$upinfo['hnapay_feilv']}{/if}" data-rule-number='true' data-rule-range='0.0021,0.0038' />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label mustl">新生银联1000+结算费率</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <input type="text" name="hnapay_upfeilv" class="form-control" placeholder="按分润等级费率结算的机构不需填写，请留空即可" value="{if $upinfo['hnapay_upfeilv']!=0}{$upinfo['hnapay_upfeilv']}{/if}" data-rule-number='true' data-rule-range='0.0050,0.0058' />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div id="tab-2" class="tab-pane {if $type=='newland'}active{/if}">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"><span class="text-danger">*</span> 审核状态</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <label class='radio-inline'>
+                                            <input type='radio' name='newland_lock' value='0' {if $upinfo['newland_lock']==0}checked{/if} /> 未审核
+                                        </label>
+                                        <label class='radio-inline'>
+                                            <input type='radio' name='newland_lock' value='1' {if $upinfo['newland_lock']==1}checked{/if} /> 审核通过
+                                        </label>
+                                        <span class="text-danger">* 请正确选择审核状态</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label mustl"><span class="text-danger">*</span> 新大陆机构名称</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <input type="text" name="newland_realname" class="form-control" value="{$upinfo['newland_realname']}" data-rule-maxlength='20' data-rule-required='true' />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label mustl"><span class="text-danger">*</span> 新大陆机构编号</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <input type="text" name="newland_channelId" class="form-control" value="{$upinfo['newland_channelId']}" data-rule-maxlength='20' data-rule-required='true' onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label mustl"><span class="text-danger">*</span> 新大陆机构密钥</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <input type="text" name="newland_secret" class="form-control" value="{$upinfo['newland_secret']}" data-rule-maxlength='32' data-rule-required='true' onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label mustl">新大陆结算费率</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <input type="text" name="newland_feilv" class="form-control" placeholder="按分润等级费率结算的机构不需填写，请留空即可" value="{if $upinfo['newland_feilv']!=0}{$upinfo['newland_feilv']}{/if}" data-rule-number='true' data-rule-range='0.0021,0.0038' />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label mustl">新大陆银联1000+结算费率</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <input type="text" name="newland_upfeilv" class="form-control" placeholder="按分润等级费率结算的机构不需填写，请留空即可" value="{if $upinfo['newland_upfeilv']!=0}{$upinfo['newland_upfeilv']}{/if}" data-rule-number='true' data-rule-range='0.0050,0.0058' />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label mustl"><span class="text-danger">*</span> 银联分润等级</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <select id=“upagentlevel” name="upagentlevel">
+                            <option value=''>选择银联分润等级</option>
+                            {loop $uplevel $level}
+                            <option value='{$level['upagentlevel']}' {if $upagentlevel==$level['upagentlevel']}selected{/if}>L{$level['upagentlevel']}-{$level['levelname']}</option>
+                            {/loop}
+                        </select><span class="text-danger">    * 请确保等级选择正确</span>
+                    </div>
+                </div>
+
+            </div> <div class="modal-footer">
+            <button class="btn btn-primary btn-submit" type="submit">确认绑定{if $type=='hnapay'}新生机构信息{else}新大陆机构信息{/if}</button>
+            <button data-dismiss="modal" class="btn btn-default" type="button">取消</button>
+        </div>
+        </div>
+    </div>
+
+</form>
+<script language='javascript'>
+    $(function(){
+        $('[data-toggle="tab"]').click(function(){
+            var type =$(this).data('rechargetype');
+            if(type=='hnapay') {
+                $('.name').html('新生');
+                $(".btn-submit").text('确认绑定新生机构信息');
+            }else{
+                $('.name').html('新大陆');
+                $(".btn-submit").text('确认绑定新大陆机构信息');
+            }
+            $(':hidden[name=type]').val( type) ;
+        });
+
+    })
+</script>

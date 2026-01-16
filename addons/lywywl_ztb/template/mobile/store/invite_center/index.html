@@ -1,0 +1,219 @@
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name = "format-detection" content ="telephone=no">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>{$title} - {$config['name']}</title>
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_CSS__}/base.css">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_CSS__}/index.css?v=20191120">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_PLUGIN__}/storeinvite/css/invite.css?v=20200219">
+    <!-- 解决引用mui时ios输入框失去焦点页面跳到顶部问题 -->
+    <style type="text/css">
+        body{overflow: scroll; -webkit-overflow-scrolling: touch;}
+    </style>
+    <!-- 移动端适配 -->
+    <script>
+        var html = document.querySelector('html');
+        changeRem();
+        window.addEventListener('resize', changeRem);
+        function changeRem() {
+            var width = html.getBoundingClientRect().width;
+            html.style.fontSize = width / 10 + 'px';
+        }
+    </script>
+    <script src="{__MOBILE_STORE_JS__}/jquery-2.1.4.min.js"></script>
+    <script src="{__PLUGIN__}/layer/mobile/2.0/layer.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script>
+        // jssdk config 对象
+        jssdkconfig = {php echo json_encode($_W['account']['jssdkconfig']);} || {};
+        // 是否启用调试
+        jssdkconfig.debug = false;
+        jssdkconfig.jsApiList = [
+            'checkJsApi',
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'getLocation',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'hideMenuItems'
+        ];
+        wx.config(jssdkconfig);
+        wx.error(function (res) {
+            layer.open({ content: '对不起，微信JSSDK信息验证失败！', skin: 'msg', time: 2 });
+        });
+        wx.ready(function () {
+            var title = "{$_share['title']}";
+            var imgUrl = "{$_share['imgUrl']}";
+            var link = "{$_share['link']}";
+            var desc = "{$_share['desc']}";
+
+            if (wx.onMenuShareTimeline) {
+                //转发到朋友圈
+                wx.onMenuShareTimeline({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                //转发给朋友
+                wx.onMenuShareAppMessage({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    type: 'link',
+                    dataUrl: '',
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareQQ({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareWeibo({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+            }
+            else{
+                //新版发送朋友圈
+                wx.updateTimelineShareData({
+                    title: title, // 分享标题
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+                wx.updateAppMessageShareData({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+            }
+        });
+    </script>
+    <link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+    <script src="{__MOBILE_STORE_JS__}/swiper.jquery.min.js"></script>
+</head>
+<body>
+<!--商家中心-->
+<section class="bgfff">
+    <section class="business_info">
+        <section class="info_toux">
+            <section class="rel"> <img src="{php echo tomedia($_W['store_user']['headurl'])}" alt="商家头像"> </section>
+        </section>
+        <h2 class="font32 fn ">{$_W['store']['name']}</h2>
+        <section class="font22 mt20">邀请商家：{$rec_storename}</section>
+    </section>
+    <!--总资产-->
+    <section class="pd0_24">
+        <section class="Assets">
+            <ul class="retail">
+                <li> <span class="font26 c9">累计佣金(元)</span>
+                    <section class="money_info clearfix">
+                        <h2 class="fn" style="padding:auto;">{$_W['store']['invite_money']}</h2>
+                    </section>
+                </li>
+                <li> <span class="font26 c9">业务结算(元)</span>
+                    <section class="money_info clearfix">
+                        <h2 class="fn" style="padding: auto;">{$refundMoney}</h2>
+                    </section>
+                </li>
+            </ul>
+        </section>
+    </section>
+    <ul class="retalMenu clearfix">
+        {if getPluginConfig($uniacid,'lywywl_ztb_plugin_storeinvite','is_show_share')==1}
+        <li><a href="{php echo $this->createMobileUrl('store.invite_share',array('act'=>'index'))}">
+            <img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/icon01.png">
+            <h6>分享链接
+                <p class=" font24 c9">专属链接二维码</p>
+            </h6>
+        </a></li>
+        {/if}
+        {if getPluginConfig($uniacid,'lywywl_ztb_plugin_storeinvite','is_show_promoter')==1}
+        <li><a href="{php echo $this->createMobileUrl('store.invite_promoter',array('act'=>'index'))}">
+            <img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/icon02.png">
+            <h6>分销业务员
+                <p class=" font24 c9">业务员 {$promoterTotal} 人</p>
+            </h6>
+        </a></li>
+        {/if}
+        {if getPluginConfig($uniacid,'lywywl_ztb_plugin_storeinvite','is_show_team')==1}
+        <li><a href="{php echo $this->createMobileUrl('store.invite_team',array('act'=>'index'))}">
+            <img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/icon03.png">
+            <h6>下线商家
+                <p class=" font24 c9">下线 {$inviteTotal} 家</p>
+            </h6>
+        </a></li>
+        {/if}
+        {if getPluginConfig($uniacid,'lywywl_ztb_plugin_storeinvite','is_show_ranking')==1}
+        <li><a href="{php echo $this->createMobileUrl('store.invite_ranking',array('act'=>'index'))}">
+            <img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/icon04.png">
+            <h6>分销排行
+                <p class=" font24 c9">赚取佣金排行</p>
+            </h6>
+        </a></li>
+        {/if}
+        {if getPluginConfig($uniacid,'lywywl_ztb_plugin_storeinvite','is_show_draw')==1}
+        <li><a href="{php echo $this->createMobileUrl('store.invite_draw',array('act'=>'index'))}">
+            <img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/icon05.png">
+            <h6>返利记录
+                <p class=" font24 c9">赚取佣金 {$_W['store']['invite_count']} 笔</p>
+            </h6>
+        </a></li>
+        {/if}
+        {if getPluginConfig($uniacid,'lywywl_ztb_plugin_storeinvite','is_show_refund')==1}
+        <li><a href="{php echo $this->createMobileUrl('store.invite_refund',array('act'=>'index'))}">
+            <img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/icon06.png">
+            <h6>业务员结算
+                <p class=" font24 c9">佣金结算 {$refundTotal} 笔</p>
+            </h6>
+        </a></li>
+        {/if}
+    </ul>
+</section>
+<section class="h24"></section>
+<section class="buttonBox">
+    <section class="buttonFloat">
+        <a href="{php echo $this->createMobileUrl('store.store_member',array('act'=>'index'))}" class="db font32 yellowBtn" style="background: #FFD112;">商家中心</a>
+    </section>
+</section>
+</body>
+</html>

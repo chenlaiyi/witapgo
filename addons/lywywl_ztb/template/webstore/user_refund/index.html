@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">用户会员</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="">数据列表</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchKey" class="col-sm-1 control-label">用户信息</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="SearchKey"
+                                                       placeholder="微信昵称/OPENID" value="{$openid}">
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchStatus">处理状态</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchStatus">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $statusArr $type $value}
+                                                    <option value="{$type}">{$value}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchTime">申请时间</label>
+                                            <div class="col-sm-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control pull-right" id="SearchTime"
+                                                           placeholder="开始时间 - 结束时间" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索
+                                            </button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置检索</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="box" class="table-responsive">
+                                <div id="toolbar" class="btn-group">
+                                    <button id="btn_export" type="button" class="btn btn-success">
+                                        <span class="fa fa-download" aria-hidden="true"></span>&nbsp;导出
+                                    </button>
+                                </div>
+                                <table id="tb_bandlist" class="table text-nowrap" data-reorderable-columns="true" ></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script id="paymenttpl" type="text/html">
+    <form class="form-horizontal" name="form_content" id="form_content" method="post">
+        <div class=link-modal>
+            <div class="form-group"  style="margin-bottom: 10px;">
+                <label class="col-sm-2 control-label">用户提现说明</label>
+                <div class="col-sm-10" style="padding-top: 7px; margin-bottom: 0;">
+                    系统默认通过<code>企业付款接口</code>直接转入用户微信零钱，如提现失败请联系平台客服。
+                </div>
+            </div>
+            <div class="form-group"  style="margin-bottom: 10px;">
+                <label class="col-sm-2 control-label">用户提现金额</label>
+                <div class="col-sm-10" style="padding-top: 7px; margin-bottom: 0;">
+                    <%= money%> 元
+                </div>
+            </div>
+            <div class="form-group"  style="margin-bottom: 10px;">
+                <label class="col-sm-2 control-label">用户提现类型</label>
+                <div class="col-sm-10" style="padding-top: 7px; margin-bottom: 0;">
+                    <span class='label bg-green'>微信</span>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label class="col-sm-2 control-label">申请处理结果</label>
+                <div class="col-sm-10">
+                    <label>
+                        <input type="radio" value="1" name="payment_status" class="flat-blue" checked> 返款成功
+                    </label>&nbsp;&nbsp;
+                    <label>
+                        <input type="radio" value="2" name="payment_status" class="flat-blue" > 系统驳回
+                    </label>&nbsp;&nbsp;
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label for="payment_note" class="col-sm-2 control-label">申请驳回原因</label>
+                <div class="col-sm-10">
+                    <textarea rows = "3" id="payment_note" class="form-control" placeholder = "驳回操作时请填写原因..." ><%= note%></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<script>
+    $(function () {
+        SelectNav("用户提现管理");
+
+        require(["daterangepicker"], function () {
+            //时间搜索
+            $('#SearchTime').daterangepicker({
+                format: "YYYY/MM/DD"
+            });
+        });
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            myrequire(['bootstrap-table-zh-cn', 'bootstrap-table-editable','bootstrap-table-fixed-columns'], function () {
+                $(".select2").select2();
+                //1.初始化Table
+                var oTable = new TableInit();
+                oTable.Init();
+                //2.初始化Button的点击事件
+                var oButtonInit = new ButtonInit();
+                oButtonInit.Init();
+            });
+        });
+    });
+
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#tb_bandlist').bootstrapTable({
+                url: "{php echo $this->createWebAppUrl('user_refund', array('act' => 'getJsonList','status' => $status));}",         //请求后台的URL（*）
+                method: 'get',                      //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: true,                    //是否启用排序
+                sortName: "id",                   //排序字段
+                sortOrder: "desc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: false,                //是否启用点击选中行
+                height: 575,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                fixedColumns: true,                    //冻结列开启关闭
+                fixedNumber: 1,                        //冻结列数量
+                onLoadError: function () {  //加载失败时执行
+                    Command: toastr["error"]("对不起，网络繁忙，请稍后再试！", "错误提示");
+                },
+                rowStyle: function (row, index) {
+                    var style={css:{'line-height':'30px'}};
+                    return style;
+                },
+                columns: [{
+                    checkbox: true,
+                }, {
+                    field: 'id',
+                    title: '编号',
+                    titleTooltip: '当前信息的唯一编号，数据主键',
+                    sortable: true
+                }, {
+                    field: 'nickname',
+                    title: '微信昵称',
+                    titleTooltip: '注册用户的微信昵称',
+                    sortable: true,
+                }, {
+                    field: 'headurl',
+                    title: '微信头像',
+                    titleTooltip: '注册用户的微信昵称',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return " <img height='30' width='30' src='"+ value +"' alt='"+ row.nickname +"'>"
+                    }
+                }, {
+                    field: 'openid',
+                    title: 'OPENID',
+                    titleTooltip: '注册用户对于微信公众号的唯一身份标识',
+                    sortable: true,
+                }, {
+                    field: 'money',
+                    title: '提现金额',
+                    titleTooltip: '申请提现的金额',
+                    sortable: true,
+                }, {
+                    field: 'status',
+                    title: '处理状态',
+                    titleTooltip: '申请的当前状态',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value == 0) {
+                            return "<span class='label bg-yellow'>等待处理</span>";
+                        }else if(value == 1)  {
+                            return "<span class='label bg-green'>返款成功</span>";
+                        }else {
+                            return "<span class='label bg-red'>系统驳回</span>";
+                        }
+                    }
+                }, {
+                    field: 'note',
+                    title: '备注信息',
+                    titleTooltip: '申请提现备注信息',
+                    sortable: true,
+                }, {
+                    field: 'createtime',
+                    title: '申请时间',
+                    titleTooltip: '创建信息的时间',
+                    sortable: true,
+                }, {
+                    field: 'updatetime',
+                    title: '处理时间',
+                    titleTooltip: '编辑信息的时间',
+                    sortable: true,
+                }, {
+                    field: 'action',
+                    title: '操作',
+                    titleTooltip: '点击下方按钮对信息进行操作',
+                    width: 120,
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                //search: params.search,
+                pageSize: params.limit,  //每页大小
+                page: params.offset / params.limit + 1,//页码
+                sortOrder: params.order,//排序
+                sortName: params.sort,//排序字段
+                key: $("#SearchKey").val(), //关键词
+                status: $("#SearchStatus").val(), //处理状态
+                timer: $("#SearchTime").val() //创建时间
+            };
+            return temp;
+        };
+        return oTableInit;
+    };
+
+    function operateFormatter(value, row, index) {
+        if(row.status==0)
+        {
+            return [
+                '<button class="deliver btn btn-info btn-xs" href="javascript:void(0)" title="处理">',
+                '<i class="fa fa-edit"></i>处理',
+                '</button>  ',
+            ].join('');
+        }
+        else
+        {
+            return [
+                '<button class="btn btn-info btn-xs disabled" href="javascript:void(0)" title="处理">',
+                '<i class="fa fa-edit"></i>处理',
+                '</button>  ',
+            ].join('');
+        }
+    }
+    window.operateEvents = {
+        'click .deliver': function (e, value, row, index) {
+            var fedexHtml="";
+            myrequire([ 'arttemplate','icheck'], function (template) {
+                fedexHtml = template("paymenttpl", row);
+                require(["jquery", "util"], function(){
+                    var footer = '<button type="button" class="btn btn-default" data-dismiss="modal" id="paymentBtn" data-refundid="'+ row.id +'">处理</button> <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                    var modalobj = util.dialog('提现审核操作',fedexHtml ,footer,{containerName:'fedex-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                    //初始化icheck控件radio
+                    $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+                        checkboxClass: 'icheckbox_flat-blue',
+                        radioClass: 'iradio_flat-blue'
+                    });
+                });
+            });
+        }
+    };
+
+    //加载成功时执行
+    $('#tb_bandlist').on('load-success.bs.table column-switch.bs.table', function (data) {
+        $('#tb_bandlist').bootstrapTable('resetView');
+    });
+
+    var ButtonInit = function () {
+        var oInit = new Object();
+        var postdata = {};
+
+        oInit.Init = function () {
+
+            //查询操作
+            $("#btn_query").click(function () {
+                $("#tb_bandlist").bootstrapTable('refresh');
+            });
+            //导出操作
+            $("#btn_export").click(function(){
+                var key = $("#SearchKey").val();
+                var status = $("#SearchStatus").val();
+                var timer = $("#SearchTime").val();
+                //询问框
+                layer.open({
+                    content: '您确定要导出记录到Excel吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        layer.close(index);
+                        window.location.href = "{php echo $this->createWebAppUrl('user_refund', array('act' => 'exportData'));}&key="+ key +"&status="+ status +"&timer="+ timer;
+                    }
+                });
+            });
+
+            //确认操作
+            $(document).delegate("#paymentBtn", "click", function() {
+                var status=$("input:radio[name='payment_status']:checked").val();
+                var note = $("#payment_note").val();
+                var id = $(this).data("refundid");
+
+                if(status==2 && note=="")
+                {
+                    Command: toastr["warning"]('对不起，请填写驳回申请原因！', "错误提示");
+                    return;
+                }
+
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createWebAppUrl('user_refund', array('act' => 'payment'));}",
+                    data: {
+                        id: id,
+                        status: status,
+                        note: note
+                    },
+                    dataType:'json',
+                    success: function (data, status) {
+                        if (data.status == 1) {
+                            Command: toastr["success"](data.msg, "成功提示");
+                            $("#tb_bandlist").bootstrapTable('refresh');
+                        }
+                        else {
+                            Command: toastr["error"](data.msg, "错误提示");
+                        }
+                    }
+                });
+            });
+
+        };
+        return oInit;
+    };
+</script>
+</body>
+</html>

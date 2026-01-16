@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	<link href="{MODULE_URL}template/public/css/iconfont.css?v={SLWL_VERSION}" rel="stylesheet">
+	<link href="{MODULE_URL}template/public/awesome/css/all.min.css?v={SLWL_VERSION}" rel="stylesheet">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+	<div class="layui-tab box-tab-my">
+		<div id="box-font-slwl-style"></div>
+		<div id="box-font-awesome-style"></div>
+		<ul class="layui-tab-title">
+			<li data-op="box-font-slwl" class="layui-this">系统图标</li>
+			<li data-op="box-font-awesome">奥森图标</li>
+		</ul>
+		<div class="layui-tab-content">
+
+			<!-- 系统 -->
+			<div class="layui-tab-item layui-show box-font-slwl">
+
+				<div class="layui-form-item">
+					<div class="input-group">
+						<input type="text" class="layui-input" name="" id="input-font-slwl-search" placeholder="请输入标题">
+						<span class="input-group-btn">
+							<a href="javascript:;" class="btn btn-default" id="btn-font-slwl-search">搜索</a>
+						</span>
+					</div>
+				</div>
+				<div class="layui-form box-body-search">
+					<div class="box-font-panel">
+						<ul class="box-font-ul">
+						{loop $font_slwl $key $value}
+							<li class="box-font-li" data-class="{$value}" data-val="{$key}">
+								<i class="{$key}"></i>
+								<span>{$value}</span>
+							</li>
+						{/loop}
+						</ul>
+					</div>
+				</div>
+				<div class="box-body-search-not">抱歉！未查询到与“ <span></span> ”相关的系统字体，请更换关键字后重试。</div>
+			</div>
+
+			<!-- 奥森 -->
+			<div class="layui-tab-item box-font-awesome">
+
+				<div class="layui-form-item">
+					<div class="input-group">
+						<input type="text" class="layui-input" name="" id="input-font-awesome-search" placeholder="请输入标题">
+						<span class="input-group-btn">
+							<a href="javascript:;" class="btn btn-default" id="btn-font-awesome-search">搜索</a>
+						</span>
+					</div>
+				</div>
+				<div class="layui-form box-body-search">
+					<div class="box-font-panel">
+						<ul class="box-font-ul">
+							{loop $font_awesome $key $value}
+							<li class="box-font-li" data-class="{$value}" data-val="{$key}">
+								<i class="{$key}"></i>
+								<span>{$value}</span>
+							</li>
+						{/loop}
+						</ul>
+					</div>
+				</div>
+				<div class="box-body-search-not">抱歉！未查询到与“ <span></span> ”相关的奥森字体，请更换关键字后重试。</div>
+			</div>
+
+
+		</div>
+	</div>
+
+	<script>
+		$(function () {
+			// 搜索-系统图标
+			$(document).on('click', '#btn-font-slwl-search', function () {
+				let $obj = $(this);
+				let $input = $('#input-font-slwl-search').val();
+				if ($input) {
+					let $_style = '<style>.box-font-slwl .box-font-li:not([data-class*="' + $input + '"]){ display: none; }</style>';
+					$('#box-font-slwl-style').html($_style);
+				} else {
+					$('#box-font-slwl-style').html('');
+				}
+			});
+
+			// 搜索-奥森图标
+			$(document).on('click', '#btn-font-awesome-search', function () {
+				let $obj = $(this);
+				let $input = $('#input-font-awesome-search').val();
+				if ($input) {
+					let $_style = '<style>.box-font-awesome .box-font-li:not([data-class*="' + $input + '"]){ display: none; }</style>';
+					$('#box-font-awesome-style').html($_style);
+				} else {
+					$('#box-font-awesome-style').html('');
+				}
+			});
+
+			$(document).on('click', '.box-font-li', function () {
+				let $class = $(this).data('val');
+				if($.isFunction(myShowFontSelectComplete)){
+					myShowFontSelectComplete($class);
+				}
+			});
+		});
+
+	</script>
+</div>
+</body>
+</html>

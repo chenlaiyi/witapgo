@@ -1,0 +1,376 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<!--CSS-->
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+
+<body class="bgf2">
+<!--中心区域-->
+<section>
+    {if checkAuthStatus($_W['uniacid'], false) }
+    <form action="{php echo $this->createMobileUrl('store.register',array('act'=>'register'));}" id="store_register" method="post">
+    <h2 class="fn title">填写商家信息</h2>
+    <ul class="registerList">
+        <li>
+            <input class="regInput font32" type="text" placeholder="请输入商家名称" name="model[name]" id="name" maxlength="30" datatype="*" nullmsg="请输入商家名称！">
+        </li>
+        <li>
+            <select class="select" id="industry_id" name="model[industry_id]" datatype="*" nullmsg="请选择所属行业！">
+                <option value="">请选择行业</option>
+                {loop $industryList $value}
+                <option value="{$value['id']}">{$value['name']}</option>
+                {/loop}
+            </select>
+            <i class="arrow"></i> </li>
+    </ul>
+    <h2 class="fn title">选择省/市/区县</h2>
+    <ul class="registerList">
+        <li>
+            <select class="select" id="ddlProvince" name="model[province_code]" datatype="*" nullmsg="请选择所在省份！">
+                <option value="">请选择所在省份</option>
+            </select>
+            <i class="arrow"></i> </li>
+        <li>
+            <select class="select" id="ddlCity" name="model[city_code]" datatype="*" nullmsg="请选择所在城市！">
+                <option value="">请选择所在城市</option>
+            </select>
+            <i class="arrow"></i> </li>
+        <li>
+            <select class="select" id="ddlDistrict" name="model[county_code]" datatype="*" nullmsg="请选择所在区/县">
+                <option value="">请选择所在区/县</option>
+            </select>
+            <i class="arrow"></i> </li>
+    </ul>
+    <h2 class="fn title">注册信息</h2>
+    <ul class="registerList">
+        <li>
+            <input class="regInput font32" type="text" placeholder="请输入手机号码" name="model[mobile]" id="mobile" maxlength="11" datatype="m" nullmsg="请输入手机号码！" errormsg="请输入正确的手机号码！">
+        </li>
+        <li class="codepd">
+            <input class="regInput font32" type="text" placeholder="请输入验证码" name="verifyCode" maxlength="6" datatype="n" nullmsg="请输入手机验证码！">
+            <button type="button" class="codeBtn" id="btnSendSmsCode">获取验证码</button>
+        </li>
+    </ul>
+    <h2 class="fn title">设置密码</h2>
+    <ul class="registerList">
+        <li>
+            <input class="regInput font32" type="password" placeholder="请设置密码（6-16字母和数字组合）" name="model[password]" id="password" maxlength="16" value="" datatype="*6-16" nullmsg="请输入密码！" errormsg="密码范围在6~16位之间！">
+        </li>
+    </ul>
+    <ul class="registerList mt24">
+        <li class="protocol">
+            <section><section class="yuedu rel d_ib">
+                <input type="checkbox" id="agree" name="agree" datatype="*" nullmsg="您还未接受{$config['name']}用户协议！">
+                <label for="agree"></label>阅读并接受
+            </section><a href="javascript:;" id="agreement" class="ml10 blue">《{$config['name']}用户协议》</a></section>
+        </li>
+    </ul>
+    <section class="btn-de">
+        <input name="invite_sid" value="{$invite_sid}" type="hidden" />
+        <input name="invite_pid" value="{$invite_pid}" type="hidden" />
+        <input name="token" value="{$_W['token']}" type="hidden" />
+        <input type="hidden" name="submit" value="submit"/>
+        <button type="submit" class="Button" id="SubmitBtn">提交注册</button>
+        <p class="mt40"> <a href="{php echo $this->createMobileUrl('store.login');}" class="returnLink">返回登录</a> </p>
+    </section>
+    </form>
+    {else}
+    <form action="{php echo $this->createMobileUrl('store.register', array('act' => 'invest'));}" id="investForm" method="post" >
+        <h2 class="fn title">注册信息（提交后请等待客服联系您！）</h2>
+        <ul class="registerList">
+            <li>
+                <input class="regInput font32" type="text" name="username" maxlength="10" placeholder="请输入您的称呼" datatype="*" nullmsg="请输入您的称呼">
+            </li>
+            <li>
+                <input class="regInput font32" type="number" name="mobile" maxlength="11" placeholder="请输入您的手机号码" datatype="m" nullmsg="请输入您的手机号码">
+            </li>
+        </ul>
+        <section class="btn-de">
+            <input name="token" value="{$_W['token']}" type="hidden" />
+            <input type="hidden" name="submit" value="submit"/>
+            <button type="submit" class="Button" id="InvestSubmitBtn">提交注册</button>
+            <p class="mt40"> <a href="{php echo $this->createMobileUrl('store.login');}" class="returnLink">返回登录</a> </p>
+        </section>
+    </form>
+    {/if}
+</section>
+
+<script src="{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js"></script>
+<script>
+    $(function(){
+        //为formContent 添加验证事件
+        $("#store_register").Validform({
+            tiptype: function (msg, o, cssctl) {
+                if (!o.obj.is("form")) {
+                    if (o.type == 2) {
+                        //loading带文字
+                        layer.open({
+                            type: 2
+                            , content: '数据提交中'
+                            , time: 999 //999秒后自动关闭
+                        });
+                    } else {
+                        layer.closeAll();
+                        layer.open({
+                            content: msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                    }
+                }
+            },
+            ajaxPost: true,
+            tipSweep: true,
+            beforeSubmit: function (curform) {
+                $("#SubmitBtn").attr("disabled", true);
+            },
+            callback: function (data) {
+                layer.closeAll();
+                if(data.status == 1){
+                    layer.open({
+                        content: data.msg
+                        , skin: 'msg'
+                        , time: 2 //2秒后自动关闭
+                        , style: 'bottom:0;'
+                    });
+
+                    setTimeout(function () {
+                        window.location.href = data.url;
+                    }, 2000);
+
+                }else{
+                    layer.open({
+                        content: data.msg
+                        , skin: 'msg'
+                        , time: 2 //2秒后自动关闭
+                        , style: 'bottom:0;'
+                    });
+                    $("#SubmitBtn").attr("disabled", false);
+                }
+            }
+        });
+        $("#investForm").Validform({
+            tiptype: function (msg, o, cssctl) {
+                if (!o.obj.is("form")) {
+                    if (o.type == 2) {
+                        //loading带文字
+                        layer.open({
+                            type: 2
+                            , content: '数据提交中'
+                            , time: 999 //999秒后自动关闭
+                        });
+                    } else {
+                        layer.closeAll();
+                        layer.open({
+                            content: msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                    }
+                }
+            },
+            ajaxPost: true,
+            tipSweep: true,
+            beforeSubmit: function (curform) {
+                $("#InvestSubmitBtn").attr("disabled", true);
+            },
+            callback: function (data) {
+                layer.closeAll();
+                if(data.status == 1){
+                    layer.open({
+                        content: data.msg
+                        , skin: 'msg'
+                        , time: 2 //2秒后自动关闭
+                        , style: 'bottom:0;'
+                    });
+                    setTimeout(function () {
+                        window.location.href = data.url;
+                    }, 2000);
+
+                }else{
+                    layer.open({
+                        content: data.msg
+                        , skin: 'msg'
+                        , time: 2 //2秒后自动关闭
+                        , style: 'bottom:0;'
+                    });
+                    $("#InvestSubmitBtn").attr("disabled", false);
+                }
+            }
+        });
+
+        //获取省市县
+        GetProvince();
+        $("#ddlProvince").change(function () {GetCity(); });
+        $("#ddlCity").change(function () { GetDistrict(); });
+
+        //发送短信验证码
+        $("#btnSendSmsCode").click(function () {
+            var mobile = $("#mobile");
+            if (mobile.val() == "") {
+                layer.open({
+                    content: '请输入手机号码!'
+                    , skin: 'msg'
+                    , time: 2 //2秒后自动关闭
+                    , style: 'bottom:0;'
+                });
+                mobile.focus();
+                return;
+            }
+            var resg = /^1[3|4|5|6|7|8|9]\d{9}$/;
+            var reg = new RegExp(resg);
+            if (!reg.test(mobile.val())) {
+                layer.open({ content: '手机号码输入有误,请重新输入！', skin: 'msg', time: 2,style: 'bottom:0;' });
+                mobile.focus();
+                return;
+            }
+            else {
+                $(this).attr("disabled", true);
+                var n = $(this).attr("time");
+                if (n == null || parseInt(n) <= 0) {
+                    $.ajax({
+                        url: "{php echo $this->createMobileUrl('store.register',array('act'=>'sendSmsCode'));}",
+                        type: "post",
+                        dataType: "json",
+                        data: { "mobile": $("#mobile").val() },
+                        success: function (result) {
+                            if (result.status == 0) {
+                                layer.open({
+                                    content: result.msg
+                                    , skin: 'msg'
+                                    , time: 2 //2秒后自动关闭
+                                    , style: 'bottom:0;'
+                                });
+                                $("#btnSendSmsCode").removeAttr("disabled");
+                            } else {
+                                layer.open({
+                                    content: result.msg
+                                    , skin: 'msg'
+                                    , time: 2 //2秒后自动关闭
+                                    , style: 'bottom:0;'
+                                });
+                                SetTime(120);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
+        //用户协议
+        $("#agreement").click(function(){
+            $.ajax({
+                type: "get",
+                url: "{php echo $this->createMobileUrl('store.register',array('act'=>'agreement'))}",
+                success: function (data) {
+                    var html = data;
+                    layer.open({
+                        type: 1
+                        ,content: html
+                        ,anim: 'up'
+                        ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+                    });
+                },
+                beforeSend: function () {
+                    //loading
+                    layer.open({
+                        type: 2
+                        , time: 0.2 //999秒后自动关闭
+                    });
+                }
+            });
+        });
+
+    });
+    function GetProvince() {
+        $.ajaxSetup({ cache: false });
+        $("#ddlProvince").empty(); //清空模板SELECT控件
+
+        $.ajax({
+            type: "GET",
+            url: "{php echo $this->createMobileUrl('store.register',array('act'=>'getArea'));}",
+            data: { parent_code: 0 },
+            async: false,
+            dataType: "json",
+            success: function (data) {
+                $("<option></option>")
+                    .val("")
+                    .text("请选择所在省份")
+                    .appendTo($("#ddlProvince"));
+                $.each(data, function (i, item) {
+                    $("<option></option>")
+                        .val(item["code"])
+                        .text(item["name"])
+                        .appendTo($("#ddlProvince"));
+                });
+            }
+        });
+    }
+    function GetCity() {
+        $.ajaxSetup({ cache: false });
+        $("#ddlCity").empty(); //清空模板SELECT控件
+        $.ajax({
+            type: "GET",
+            url: "{php echo $this->createMobileUrl('store.register',array('act'=>'getArea'));}",
+            data: { parent_code: $("#ddlProvince").val() },
+            async: false,
+            dataType: "json",
+            success: function (data) {
+                $("<option></option>")
+                    .val("")
+                    .text("请选择所在城市")
+                    .appendTo($("#ddlCity"));
+                $.each(data, function (i, item) {
+                    $("<option></option>")
+                        .val(item["code"])
+                        .text(item["name"])
+                        .appendTo($("#ddlCity"));
+                });
+            }
+        });
+    }
+    function GetDistrict() {
+        $.ajaxSetup({ cache: false });
+        $("#ddlDistrict").empty(); //清空模板SELECT控件
+        $.ajax({
+            type: "GET",
+            url: "{php echo $this->createMobileUrl('store.register',array('act'=>'getArea'));}",
+            data: { parent_code: $("#ddlCity").val() },
+            async: false,
+            dataType: "json",
+            success: function (data) {
+                $("<option></option>")
+                    .val("")
+                    .text("请选择所在区/县")
+                    .appendTo($("#ddlDistrict"));
+                $.each(data, function (i, item) {
+                    $("<option></option>")
+                        .val(item["code"])
+                        .text(item["name"])
+                        .appendTo($("#ddlDistrict"));
+                });
+            }
+        });
+    }
+    //短信发送计时
+    function SetTime(n) {
+        n--;
+        var a = $("#btnSendSmsCode");
+        if (n < 0) {
+            $("#btnSendSmsCode").html("获取验证码");
+            $("#btnSendSmsCode").removeAttr("disabled");
+        } else {
+            $("#btnSendSmsCode").attr("time", n).html(n + "秒重新获取");
+            setTimeout("SetTime(" + n + ")", 1000);
+        }
+    };
+
+    //关闭layer弹窗
+    function closeWindows(){
+        layer.closeAll();
+    }
+</script>
+</body>
+</html>

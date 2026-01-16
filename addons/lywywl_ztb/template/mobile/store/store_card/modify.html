@@ -1,0 +1,242 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+<link href="{MODULE_URL}resource/mobile/plugin/css/common.min.css?v=20170802" rel="stylesheet">
+<link href="{__MOBILE_STORE_CSS__}/LCalendar.css" rel="stylesheet">
+<script src="{__MOBILE_STORE_JS__}/LCalendar.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/util.js"></script>
+<script src="{__MOBILE_STORE_JS__}/index.js"></script>
+<script src="{MODULE_URL}resource/mobile/plugin/js/require.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js//lib/mui.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/common.js"></script>
+<body class="bgf2">
+<form action="{php echo $this->createMobileUrl('store.store_card',array('act'=>'modify'));}" id="store_form" method="post">
+<section class="bgfff">
+    <ul class="publish">
+        <li class="float">
+            <p>商家卡券名称</p>
+            <section class="form_con selectBox">
+                <input type="text" datatype="*" id="name" maxlength="50"  name="model[name]" class="form_float_txt" nullmsg="请输入商家卡券名称！" placeholder="必填，请输入商家卡券名称" value="{$model['name']}">
+            </section>
+        </li>
+        <li class="float">
+            <p>卡券核销次数</p>
+            <section class="form_con">
+                <section class="num_box clearfix"> <span class="minus"></span> <span class="num_edit">
+          <input type="number" datatype="n" id="writeoff_num" name="model[writeoff_num]" nullmsg="请选择卡券核销次数！"  maxlength="10" onkeyup="if(isNaN(this.value)){this.value='0';}"
+                 value="{$model['writeoff_num']}">
+          </span> <span class="plus"></span> <span class="ml30">次</span> </section>
+            </section>
+        </li>
+        <li class="float">
+            <p>商家卡券面值</p>
+            <section class="form_con selectBox">
+                <input type="number" class="form_float_txt"  id="money"
+                       maxlength="10" name="model[money]"  placeholder="请输入商家卡券面值 单位：元" onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                       onblur = "this.value=FloatMoney(this.value)" step="0.01" min="0.01" value="{$model['money']}">
+            </section>
+        </li>
+        <li class="float">
+            <p>卡券使用门槛</p>
+            <section class="form_con selectBox">
+                <input type="text" datatype="*" id="use_limit"  maxlength="10" name="model[use_limit]" class="form_float_txt" placeholder="请输入使用卡券门槛" nullmsg="请输入使用卡券门槛！" value="{$model['use_limit']}">
+            </section>
+        </li>
+        <li class="float">
+            <p>卡券过期类型</p>
+            <section class="form_con clearfix">
+                <section class="input_item">
+                    <input type="radio" class="time_types" value="0"  id="time_types0" name="model[time_types]"  {if $model['time_types']==0}checked {/if}>
+                    <label for="time_types0"></label>
+                    <span>领取计时</span> </section>
+                <section class="input_item">
+                    <input type="radio"  class="time_types" value="1" name="model[time_types]" id="time_types1" {if $model['time_types']==1} checked {/if}>
+                    <label for="time_types1"></label>
+                    <span>截止日期</span> </section>
+                <section class="input_item">
+                    <input type="radio"  class="time_types" value="2" name="model[time_types]" id="time_types2" {if $model['time_types']==2} checked {/if}>
+                    <label for="time_types2"></label>
+                    <span>核销计时</span> </section>
+            </section>
+        </li>
+        <li class="float" id="time_day_box" style="display: {if $model['time_types'] != 0} none{/if};">
+            <p>卡券过期天数</p>
+            <section class="form_con">
+                <section class="num_box clearfix"> <span class="minus"></span> <span class="num_edit">
+          <input datatype="n" id="time_day" maxlength="10" name="model[time_day]" nullmsg="请输入卡券过期天数！" type="number"  onkeyup="if(isNaN(this.value)){this.value='0';}"
+                 value="{$model['time_day']}">
+          </span> <span class="plus"></span> <span class="ml30">天</span> </section>
+            </section>
+        </li>
+        <li class="float" id="time_end_box" style="display: {if $model['time_types'] != 1} none{/if};">
+            <p>卡券截止日期</p>
+            <section class="form_con selectBox">
+                <section>
+                    <input class="form_float_txt" id="time_end" name="model[time_end]" placeholder="请选择日期" type="text" value="{$model['time_end']}" readonly="true">
+                </section>
+                <span class="arrow"></span> </section>
+        </li>
+
+        <li class="float" id="begin_time_day_box" style="display: {if $model['time_types'] != 2} none{/if};">
+            <p>核销过期天数</p>
+            <section class="form_con">
+                <section class="num_box clearfix"> <span class="minus"></span> <span class="num_edit">
+            <input datatype="n" id="begin_time_day" maxlength="10" name="model[time_day]" nullmsg="请输入首次核销后卡券过期天数！" type="number"  onkeyup="if(isNaN(this.value)){this.value='0';}"
+                 value="{$model['time_day']}">
+            </span> <span class="plus"></span> <span class="ml30">天</span> </section>
+            </section>
+        </li>
+        <li class="float">
+            <p>商家卡券模板</p>
+            <section class="form_con clearfix">
+                <section class="input_item coupon_item">
+                    <input type="radio" id="pic_url_card1" name="model[pic_url]" value="{php echo MODULE_URL.'resource/template/card/card1.png'}" {if $model['pic_url']==MODULE_URL.'resource/template/card/card1.png'}checked {/if}>
+                    <label for="pic_url_card1"></label>
+                    <img src="{MODULE_URL}resource/template/card/card1.png"></section>
+                <section class="input_item coupon_item">
+                    <input type="radio" id="pic_url_card2" name="model[pic_url]" value="{php echo MODULE_URL.'resource/template/card/card2.png'}" {if $model['pic_url']==MODULE_URL.'resource/template/card/card2.png'}checked {/if}>
+                    <label for="pic_url_card2"></label>
+                    <img src="{MODULE_URL}resource/template/card/card2.png"></section>
+                <section class="input_item coupon_item">
+                    <input type="radio" id="pic_url_card3" name="model[pic_url]" value="{php echo MODULE_URL.'resource/template/card/card3.png'}" {if $model['pic_url']==MODULE_URL.'resource/template/card/card3.png'}checked {/if}>
+                    <label for="pic_url_card3"></label>
+                    <img src="{MODULE_URL}resource/template/card/card3.png"></section>
+            </section>
+        </li>
+        <li>
+            <p>商家卡券状态</p>
+            <section class="form_con rel">
+                <section class="font26 c9 form_tips">选择商家卡券开启/关闭状态，关闭后卡券将不能被用户领取 用户已领取的卡券仍然有效</section>
+                <input type="hidden" name="model[status]" id="status" value="{$model['status']}">
+                <span class="switch {php echo $model['status']==1?"switch_on":"switch_off"}"><i class="slider"></i></span>
+            </section>
+        </li>
+        <li class="float">
+            <p>卡券排序信息</p>
+            <section class="form_con selectBox">
+                <input class="form_float_txt"  type="number" datatype="n" id="sort" maxlength="10" name="model[sort]" value="{$model['sort']}" onkeyup="if(isNaN(this.value)) this.value='0';" nullmsg="信息排序必须填写！" placeholder="请输入数字 数字越小越靠前">
+            </section>
+        </li>
+    </ul>
+</section>
+<section class="h24"></section>
+<section class="buttonBox">
+    <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+    <input name="token" value="{$_W['token']}" type="hidden" />
+    <input type="hidden" name="submit" value="submit"/>
+    <section class="buttonFloat clickBtn">
+        <a href="{php echo $this->createMobileUrl('store.store_card',array('act'=>'index'))}" class="db font32" style="width: 50%;    float: left;   color: #fff;   border-radius: 0.6rem 0 0 0.6rem;    background: #f92f4a;">返回列表</a>
+        <button type="submit" id="SubmitBtn" style="width: 50%;   float: left;    background: #FFD112;    color: #0e0e0e;border-radius: 0 0.6rem 0.6rem 0;">确认提交</button>
+    </section>
+</section>
+</form>
+<script>
+    $(function () {
+        //初始化日期控件
+        var time_end = new LCalendar();
+        time_end.init({
+            'trigger': '#time_end',
+            'type': 'datetime'
+        });
+        //ios开关
+        $(".switch").click(function(e) {
+            if($(this).hasClass("switch_on")){
+                $(this).removeClass("switch_on");
+                $(this).addClass("switch_off");
+                $("#status").val(0);
+            }
+            else{
+                $(this).removeClass("switch_off");
+                $(this).addClass("switch_on");
+                $("#status").val(1);
+            }
+        });
+
+        //选择卡券到期类型
+        $(".time_types").click(function(){
+            var obj_types = $("input[name='model[time_types]']:checked").val();
+            if(obj_types==0)
+            {
+                $("#time_day_box").show();
+                $("#time_end_box").hide();
+                $("#begin_time_day_box").hide();
+            }
+            else if(obj_types==1)
+            {
+                $("#time_day_box").hide();
+                $("#time_end_box").show();
+                $("#begin_time_day_box").hide();
+            }else {
+                $("#time_day_box").hide();
+                $("#time_end_box").hide();
+                $("#begin_time_day_box").show();
+            }
+        });
+
+        require(['{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js'], function () {
+            //为formContent 添加验证事件
+            $("#store_form").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                                , style: 'bottom:0;'
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if(data.status == 1){
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createMobileUrl('store.store_card', array('act' => 'index'));}";
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+
+                    }else{
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+        });
+    });
+
+
+</script>
+</body>
+</html>

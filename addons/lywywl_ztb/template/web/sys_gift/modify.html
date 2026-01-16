@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">系统</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebUrl('sys_gift_class', array('act' => 'index'));}">返回分类</a></li>
+                            <li><a href="{php echo $this->createWebUrl('sys_gift', array('act' => 'index','cid' => $cid));}">礼物列表</a></li>
+                            <li class="active"><a href="#">{if !empty($model['id'])}编辑{else}创建{/if}礼物</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content" id="form_content" method="post">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> {if !empty($model['id'])}编辑{else}创建{/if}礼物信息</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="name" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>礼物赠品名称</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="name" maxlength="50" name="model[name]" nullmsg="请输入礼物赠品名称！" placeholder="请输入礼物赠品名称" type="text" value="{$model['name']}"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>礼物赠品图标</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('model[icon_url]',$model['icon_url']);}
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请上传礼物赠品图标，建议尺寸150*150像素。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>礼物赠品图片</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('model[cartoon_url]',$model['cartoon_url']);}
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请上传礼物赠品图片，可为GIF动画图片，建议尺寸300*300像素。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="paymoney" class="col-sm-2 control-label"><span class="text-red">(*)</span>购买支付金额</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="paymoney"
+                                                           maxlength="10" name="model[paymoney]"
+                                                           placeholder="请输入购买支付金额"
+                                                           onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                           onblur = "this.value=FloatMoney(this.value)"
+                                                           step="0.01" min="0"
+                                                           type="number" value="{$model['paymoney']}"/>
+                                                    <span class="input-group-addon">元</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 填写购买需要礼物所需要支付的金额,支付后可将礼物赠送于所属对象。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="endmoney" class="col-sm-2 control-label"><span class="text-red">(*)</span>商家结算金额</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="endmoney"
+                                                           maxlength="10" name="model[endmoney]"
+                                                           placeholder="请输入商家结算金额"
+                                                           onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                           onblur = "this.value=FloatMoney(this.value)"
+                                                           step="0.01" min="0"
+                                                           type="number" value="{$model['endmoney']}"/>
+                                                    <span class="input-group-addon">元</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 填写用户支付购买后结算给活动创建商家的金额，商家选择可赠送礼品后将展示给商家。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="vote" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>增加投票数量
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="n" id="vote"
+                                                       maxlength="10"
+                                                       name="model[vote]" nullmsg="请输入增加投票数量！"
+                                                       placeholder="请输入增加投票数量"
+                                                       type="number"
+                                                       onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                       value="{$model['vote']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>请输入赠送该礼品增加投票的数量！</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="status2" class="col-sm-2 control-label">礼物赠品状态</label>
+                                            <div class="col-sm-10">
+                                                <input data-off-text="关闭" data-on-text="开启" data-size="mini" id="status"
+                                                       type="checkbox" value="true" {if $model['status']==1}checked{/if}/>
+                                                <input id="status2" name="model[status]" type="hidden"
+                                                       value="{$model['status']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 选择礼物开启/关闭状态，关闭礼物后该礼物将不会在可选列表中展示</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sort" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>礼物赠品排序
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control"  datatype="n" id="sort" name="model[sort]" nullmsg="信息排序必须填写！" onkeyup="if(isNaN(this.value)) this.value='0';" placeholder="请输入信息排序字段" type="text" value="{$model['sort']}">
+                                                <p class="help-block">请输入数字 例如：1|6|10等数字，注意：此字段只能为数字 信息将按照排序字段正序排列</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+                                                <input type="hidden" name="token" value="{$_W['token']}"/>
+                                                <input type="hidden" name="submit" value="submit"/>
+                                                <button type="submit" class="btn btn-primary" id="SubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script>
+    $(function () {
+        SelectNav("礼物赠品");
+
+        myrequire(['select2','bootstrap-switch','icheck', 'validform'], function () {
+
+            //初始化icheck控件radio
+            $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+                checkboxClass: 'icheckbox_flat-blue',
+                radioClass: 'iradio_flat-blue'
+            });
+
+            //绑定更改状态操作
+            $('#status').bootstrapSwitch({
+                onSwitchChange: function (event, state) {
+                    var status = state ? 1 : 0;
+                    $("#status2").val(status);
+                }
+            });
+
+            //初始化select2控件
+            $(".select2").select2();
+
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createWebUrl('sys_gift', array('act' => 'index','cid' => $cid));}";
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+                    }
+                }
+            });
+
+        });
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<html style="font-size: 41.2px;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name = "format-detection" content ="telephone=no">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>{$title} - {$config['name']}</title>
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_CSS__}/base.css">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_CSS__}/index.css?v=20191120">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_PLUGIN__}/storeinvite/css/invite.css?v=20200219">
+    <!-- 解决引用mui时ios输入框失去焦点页面跳到顶部问题 -->
+    <style type="text/css">
+        body{overflow: scroll; -webkit-overflow-scrolling: touch;}
+    </style>
+    <!-- 移动端适配 -->
+    <script>
+        var html = document.querySelector('html');
+        changeRem();
+        window.addEventListener('resize', changeRem);
+        function changeRem() {
+            var width = html.getBoundingClientRect().width;
+            html.style.fontSize = width / 10 + 'px';
+        }
+    </script>
+    <script src="{__MOBILE_STORE_JS__}/jquery-2.1.4.min.js"></script>
+    <script src="{__PLUGIN__}/layer/mobile/2.0/layer.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script>
+        // jssdk config 对象
+        jssdkconfig = {php echo json_encode($_W['account']['jssdkconfig']);} || {};
+        // 是否启用调试
+        jssdkconfig.debug = false;
+        jssdkconfig.jsApiList = [
+            'checkJsApi',
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'getLocation',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'hideMenuItems'
+        ];
+        wx.config(jssdkconfig);
+        wx.error(function (res) {
+            layer.open({ content: '对不起，微信JSSDK信息验证失败！', skin: 'msg', time: 2 });
+        });
+        wx.ready(function () {
+            var title = "{$_share['title']}";
+            var imgUrl = "{$_share['imgUrl']}";
+            var link = "{$_share['link']}";
+            var desc = "{$_share['desc']}";
+
+            if (wx.onMenuShareTimeline) {
+                //转发到朋友圈
+                wx.onMenuShareTimeline({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                //转发给朋友
+                wx.onMenuShareAppMessage({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    type: 'link',
+                    dataUrl: '',
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareQQ({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareWeibo({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+            }
+            else{
+                //新版发送朋友圈
+                wx.updateTimelineShareData({
+                    title: title, // 分享标题
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+                wx.updateAppMessageShareData({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+            }
+        });
+    </script>
+    <script src="{__MOBILE_STORE_JS__}/swiper.jquery.min.js"></script>
+    <link rel="stylesheet" href="{__PLUGIN__}/clipboard/clipboard.min.js">
+</head>
+
+<body >
+<section class="obj_preview mb50">
+    <em class="pcOWap">移动端分享链接</em>
+    <ul>
+        <li>
+            {if $create_qr_types == 1}
+            <p class="ewmRetail"><img class="ewm" src="{php echo $this->createMobileUrl('store.invite_share', array('act' => 'qrPreview','ispc' => false ));}"></p>
+            {else}
+            <p class="ewmRetail"><span class="billEwm"><img src="{$file_h5_path}"></span></p>
+            {/if}
+            <p id="copyh5txt" class="copytxt">{php echo replaceDieDomain($config, __MURL('store.register', array('act' => 'index','invite_sid'=>$store['id']), true, true),0,0,0)}</p>
+            <a href="javascript:;" class="copybtn" onClick="copyH5TXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a> </li>
+    </ul>
+</section>
+<section class="obj_preview mb50">
+    <em class="pcOWap">电脑端分享链接</em>
+    <ul>
+        <li>
+            {if $create_qr_types == 1}
+            <p class="ewmRetail"><img class="ewm" src="{php echo $this->createMobileUrl('store.invite_share', array('act' => 'qrPreview','ispc' => true ));}"></p>
+            {else}
+            <p class="ewmRetail"><span class="billEwm"><img src="{$file_pc_path}"></span></p>
+            {/if}
+            <p id="copypctxt" class="copytxt">{php echo replaceDieDomain($config, __PURL('register', array('act' => 'index','invite_sid'=>$store['id']), true, true),0,0,0)}</p>
+            <a href="javascript:;" class="copybtn" onClick="copyPCTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a> </li>
+    </ul>
+</section>
+<section style="height:1.27rem"></section>
+<section class="buttonFloat">
+    <a href="{php echo $this->createMobileUrl('store.invite_center',array('act'=>'index'))}" class="db font32 yellowBtn" style="background: #FFD112;">分销中心</a>
+</section>
+<script>
+        //复制文本到剪切板
+        function copyH5TXT(){
+            var copyDOM = document.querySelector('#copyh5txt'); //指定的DOM元素
+            var range = document.createRange(); // 创建容器
+            range.selectNode(copyDOM); // 选中需要复制的节点
+            window.getSelection().addRange(range); // 执行选中元素
+            var successful = document.execCommand('copy');// 执行 copy 操作
+            try {
+                var msg = successful ? 'successful' : 'unsuccessful';
+                if(msg == 'successful'){
+                    //提示
+                    layer.open({
+                        content: '已复制到剪切板'
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                }
+            } catch(err) {
+                console.log('unable to copy');
+            }
+            window.getSelection().removeAllRanges(); // 移除选中的元素
+        }
+        //复制文本到剪切板
+        function copyPCTXT(){
+            var copyDOM = document.querySelector('#copypctxt'); //指定的DOM元素
+            var range = document.createRange(); // 创建容器
+            range.selectNode(copyDOM); // 选中需要复制的节点
+            window.getSelection().addRange(range); // 执行选中元素
+            var successful = document.execCommand('copy');// 执行 copy 操作
+            try {
+                var msg = successful ? 'successful' : 'unsuccessful';
+                if(msg == 'successful'){
+                    //提示
+                    layer.open({
+                        content: '已复制到剪切板'
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                }
+            } catch(err) {
+                console.log('unable to copy');
+            }
+            window.getSelection().removeAllRanges(); // 移除选中的元素
+        }
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+	#poster_btn .btn-default {margin: 5px 0;}
+	#poster{width:320px;height:auto;border:1px solid #ccc;position:relative}
+	#poster .bg{position:relative;width:100%;z-index:0;}
+	#poster .drag[type=img] img,#poster .drag[type=thumb] img{width:175px;height:175px}
+	#poster .drag{position:absolute;width:175px;height:175px;border:1px solid #000}
+	#poster .drag[type=head]{width:80px;height:80px;}
+	#poster .drag[type=qr]{width:80px;height:80px;}
+	#poster .drag[type=pic]{width:120px;height:92px;}
+
+	#poster .drag[type=nickname]{width:80px;height:40px;font-size:16px;font-family:黑体}
+	#poster .drag[type=storename]{width:80px;height:40px;font-size:16px;font-family:黑体}
+	#poster .drag[type=name]{width:120px;height:40px;font-size:16px;font-family:黑体}
+	#poster .drag[type=number]{width:60px;height:40px;font-size:16px;font-family:黑体}
+	#poster .drag[type=text]{width:120px;height:40px;font-size:16px;font-family:黑体}
+
+	#poster .drag img{position:absolute;z-index:0;width:100%;height: 100%;}
+	#poster .rRightDown,.rDown,.rLeft,.rLeftDown,.rLeftUp,.rRight,.rRightUp,.rUp{position:absolute;width:7px;height:7px;z-index:1;font-size:0}
+	#poster .rRightDown,.rDown,.rLeft,.rLeftDown,.rLeftUp,.rRight,.rRightUp,.rUp{background:#C00}
+	.rLeftDown,.rRightUp{cursor:ne-resize}
+	.rLeftUp,.rRightDown{cursor:nw-resize}
+	.rLeft,.rRight{cursor:e-resize}
+	.rDown,.rUp{cursor:n-resize}
+	.rLeftDown{left:-4px;bottom:-4px}
+	.rRightUp{right:-4px;top:-4px}
+	.rRightDown{right:-4px;bottom:-4px}
+	.rRightDown{background-color:#00F}
+	.rLeftUp{left:-4px;top:-4px}
+	.rRight{right:-4px;top:50%;margin-top:-4px}
+	.rLeft{left:-4px;top:50%;margin-top:-4px}
+	.rUp{top:-4px;left:50%;margin-left:-4px}
+	.rDown{bottom:-4px;left:50%;margin-left:-4px}
+	.context-menu-layer{z-index:9999}
+	.context-menu-list{z-index:9999}
+
+	.red{float:left;color:red}
+	.white{float:left;color:#fff}
+	.tooltipbox{background:#fef8dd;border:1px solid #c40808;position:absolute;left:0;top:0;text-align:center;height:20px;color:#c40808;padding:2px 5px 1px 5px;border-radius:3px;z-index:1000}
+	.red{float:left;color:red}

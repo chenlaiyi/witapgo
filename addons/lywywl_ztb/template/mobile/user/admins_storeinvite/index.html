@@ -1,0 +1,549 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name = "format-detection" content ="telephone=no">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>{$title}</title>
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_CSS__}/base.css">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_CSS__}/mall.css?v=20191101">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_PLUGIN__}/storeinvite/css/invite.css?v=20200219">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_CSS__}/swiper.min.css">
+    <!-- 移动端适配 -->
+    <script>
+        var html = document.querySelector('html');
+        changeRem();
+        window.addEventListener('resize', changeRem);
+
+        function changeRem() {
+            var width = html.getBoundingClientRect().width;
+            html.style.fontSize = width / 10 + 'px';
+        }
+    </script>
+    <script src="{__MOBILE_STORE_JS__}/jquery-2.1.4.min.js"></script>
+    <script src="{__PLUGIN__}/layer/mobile/2.0/layer.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script>
+        // jssdk config 对象
+        jssdkconfig = {php echo json_encode($_W['account']['jssdkconfig']);} || {};
+        // 是否启用调试
+        jssdkconfig.debug = false;
+        jssdkconfig.jsApiList = [
+            'checkJsApi',
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'getLocation',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'hideMenuItems'
+        ];
+        wx.config(jssdkconfig);
+        wx.error(function (res) {
+            layer.open({ content: '对不起，微信JSSDK信息验证失败！', skin: 'msg', time: 2 });
+        });
+        wx.ready(function () {
+            var title = "{$_share['title']}";
+            var imgUrl = "{$_share['imgUrl']}";
+            var link = "{$_share['link']}";
+            var desc = "{$_share['desc']}";
+
+            if (wx.onMenuShareTimeline) {
+                //转发到朋友圈
+                wx.onMenuShareTimeline({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                //转发给朋友
+                wx.onMenuShareAppMessage({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    type: 'link',
+                    dataUrl: '',
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareQQ({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareWeibo({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+            }
+            else{
+                //新版发送朋友圈
+                wx.updateTimelineShareData({
+                    title: title, // 分享标题
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+                wx.updateAppMessageShareData({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+            }
+        });
+    </script>
+    <link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+    <script src="{__MOBILE_STORE_JS__}/swiper.jquery.min.js"></script>
+    <link rel="stylesheet" href="{__PLUGIN__}/clipboard/clipboard.min.js">
+    <style>
+        /*不滚动样式*/
+        .scroll {position: fixed; width: 100%; height:100%; }
+        body {position: static}
+        .layui-m-layercont {padding: 20px 20px;line-height: 22px;text-align: center;}
+
+        .obj_preview ul { text-align: center; margin-top:0.4rem}
+        .obj_preview li{ width:90%; display:inline-block; font-size:0.3733333333333333rem; text-align:center; margin-top:0.4rem;}
+        .obj_preview li .ewm{ width:60%; display:block; margin:0 auto 0.32rem;}
+        .obj_preview .copybtn{ background:#ebebeb; display:inline-block; margin-bottom:15px; padding: 0.2rem 0.4rem; border-radius:0.6rem;}
+        .obj_preview .copyimg{height:0.6rem;line-height:0.6rem; display:inline-block; vertical-align:middle; margin-right:0.1333rem}
+    </style>
+</head>
+<body>
+<!--中心区域-->
+<section class="source">
+    <span class="attation" style="z-index: 2;">关注公众号, 实时接收信息</span>
+    <section class="trace_info"><img src="{php echo tomedia($promoter['headurl'])}" alt="{$promoter['name']}">
+        <h2 class="fn font32 mt10 ">{$promoter['name']} <span class="exclusive_link">专属链接</span></h2>
+        <p class="font30 mt15"><span class=" power">{$store['name']}    <img src="{__MOBILE_USER_PLUGIN__}/storeinvite/images/phoneWhite.png" width="25"><a href="tel:{$store['mobile']}">{$store['mobile']}</a></span>
+        </p>
+    </section>
+    <section class="pd24">
+        <ul class="trace_statis clearfix">
+            <li>商家/返利<h2>{php echo (count($store1List) + count($store2List))}/{$promoter['invite_count']}</h2></li>
+            <li>佣金/结算<h2>{$promoter['invite_money']}/{$refundMoney}</h2></li>
+        </ul>
+    </section>
+</section>
+
+{if $or_open_rebate2==1}
+<section class="tabContainer">
+    <ul class="tabHd tabHd01 ">
+        <li class="active" style="width: 50%;" id="tabs-nav-code"><span>一级商家</span></li>
+        <li style="width: 50%;" id="tabs-nav-user" class=""><span>二级商家</span></li>
+    </ul>
+</section>
+{/if}
+
+<!--中心区域-->
+<section>
+    {if $or_open_rebate2==0}
+    <section class="pd24 bg_fff mt24 mb24">
+        <section class="sourceTitle"><span>我的下线商家</span></section>
+    </section>
+    {/if}
+
+    <section class="swiper-container swiper-container-horizontal swiper-container-autoheight" id="tabs-container" style="max-height:10.5rem; overflow-y:scroll">
+        <section class="swiper-wrapper">
+            <section class="swiper-slide"  >
+                <section class="tabCon">
+                    {if count($store1List)>0}
+                    <ul class="mystaff">
+                        {loop $store1List $index $store}
+                        <li>
+                            <section class="staff_info"> <img class="tx" src="{php echo empty($store['user']['headurl']) ? tomedia($config['store_head']) : tomedia($store['user']['headurl'])}" alt="{$store['name']}">
+                                <h2 class="fn clearfix"><span class="mr10">{$store['name']}</span>
+                                    <span class=" ml10"><img src="{__MOBILE_STORE_CSS__}/telIcon.png">{php echo substr_replace($store['mobile'], '****', 3, 4)}</span>
+                                </h2>
+                                <p>{$store['city']}</p>
+                            </section>
+                        </li>
+                        {/loop}
+                    </ul>
+                    {else}
+                    <a href="javascript:void(0);" class="pd24 bg_fff exclusive_link" style="display:block">
+                        <img class="tx" src="{__MOBILE_USER_PLUGIN__}/storeinvite/images/yaoqing.png" width="100%" >
+                    </a>
+                    {/if}
+                </section>
+            </section>
+            {if $or_open_rebate2==1}
+            <section class="swiper-slide">
+                <section class="tabCon">
+                    <section class="tabCon_item">
+                        {if count($store2List)>0}
+                        <ul class="mystaff">
+                            {loop $store2List $index $store}
+                            <li>
+                                <section class="staff_info"> <img class="tx" src="{php echo empty($store['user']['headurl']) ? tomedia($config['store_head']) : tomedia($store['user']['headurl'])}" alt="{$store['name']}">
+                                    <h2 class="fn clearfix"><span class="mr10">{$store['name']}</span>
+                                        <span class=" ml10"><img src="{__MOBILE_USER_PLUGIN__}/storeinvite/images/coin.png">{php echo substr_replace($store['mobile'], '****', 3, 4)}</span>
+                                    </h2>
+                                    <p>{$store['city']}</p>
+                                </section>
+                            </li>
+                            {/loop}
+                        </ul>
+                        {else}
+                        <a href="javascript:void(0);" class="pd24 bg_fff exclusive_link" style="display:block">
+                            <img class="tx" src="{__MOBILE_USER_PLUGIN__}/storeinvite/images/yaoqing.png" width="100%" >
+                        </a>
+                        {/if}
+                    </section>
+                </section>
+            </section>
+            {/if}
+        </section>
+    </section>
+
+    <section class="pd24 bg_fff mt24 mb24">
+        <section class="sourceTitle"><span>我的分佣记录</span></section>
+    </section>
+    <ul class=" recordRet" >
+
+    </ul>
+    <section id="ContentList">
+        <ul class=" recordRet" id="LoadLists">
+
+        </ul>
+    </section>
+</section>
+
+<section class="forceAttention" style="display: none;">
+    <section class="mask"></section>
+    <section class="attentionCon" style="margin-top: 105px;">
+        <section class="wechatInfo">
+            <h4>关注公众号</h4>
+            <section class="wechatCode"><img src="{php echo tomedia($config['wx_qrcode'])}"></section>
+            <p>长按识别图中二维码 </p>
+            <p>关注后平台消息及时推送给您！</p>
+            <section class="finger"><img src="{__MOBILE_TMP_IMG__}/finger.png"></section>
+        </section>
+        <img src="{__MOBILE_TMP_IMG__}/close.png" class="followClose"> </section>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li>
+        <section class=" pd24">
+            <h2 class="fn "><em class="fr"> <i class="cf69 font28"><%= rows[i].money %>元</i><img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/coin.png"></em> <%= rows[i].setmeal_name %> </h2>
+            <p class=" c9 font24">
+                {if $or_open_rebate2 == 1}
+                <%if(rows[i].or_rebate2 == 0){%>
+                <em class="font24" style="background: #39cccc;color: #fff;padding: 3px;border-radius: 5px;">一级返利</em>&nbsp;
+                <%}else{%>
+                <em class="font24" style="background: #dd4b39;color: #fff;padding: 3px;border-radius: 5px;">二级返利</em>&nbsp;
+                <%}%>
+                {/if}
+                <span class=" mr30">套餐金额：￥<%= rows[i].setmeal_money %></span><span class=" mr30">下线商家：<%= rows[i].invite_storename %></span>
+            </p>
+            <p class=" c9 font24">
+                <%if(rows[i].status == 0){%>
+                <span class=" mr30">已结算</span>
+                <%}else{%>
+                <span class=" mr30">未结算</span>
+                <%}%>
+                <span class=" mr30">返利时间：<%= rows[i].createtime %></span>
+            </p>
+        </section>
+    </li>
+    <% } %>
+</script>
+<script>
+    $(function () {
+        //一键关注
+        $(".attation").click(function(e) {
+            $(".forceAttention").show();
+            $(".attentionCon").css("margin-top",($(window).height()-$(".attentionCon").height())/2+"px");
+        });
+        $(".forceAttention .followClose").click(function(e) {
+            $(".forceAttention").hide();
+        });
+
+        //专属链接
+        $(".exclusive_link").click(function(e) {
+            /*{if $create_qr_types == 0}*/
+            var html ='<section class="obj_preview mb50"><em class="pcOWap">移动端分享链接</em><ul><li><p class="ewmRetail"><span class="billEwm" id="h5qrcode">二维码生成中，请耐心等待！</span></p><p id="copyh5txt" class="copytxt">{php echo replaceDieDomain($config, __MURL('store.register', array('act' => 'index', 'invite_sid' => $store['id'], 'invite_pid' => $promoter['id']), true, true), 0, 0, 0)}</p><a href="javascript:;" class="copybtn" onClick="copyH5TXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a> </li></ul></section><section class="obj_preview mb50"><em class="pcOWap">电脑端分享链接</em><ul><li><p class="ewmRetail"><span class="billEwm" id="pcqrcode">二维码生成中，请耐心等待！</span></p><p id="copypctxt" class="copytxt">{php echo replaceDieDomain($config, __PURL('register', array('act' => 'index', 'invite_sid' => $store['id'], 'invite_pid' => $promoter['id']), true, true), 0, 0, 0)}</p><a href="javascript:;" class="copybtn" onClick="copyPCTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a> </li></ul></section> <section style="height:1.27rem"></section><section class="buttonFloat"><a href="javascript:;" class="db font32" onclick="closeWindows()">关闭</a></section>';
+            /*{else}*/
+            var html ='<section class="obj_preview mb50"><em class="pcOWap">移动端分享链接</em><ul><li><p class="ewmRetail"><img class="ewm" src="{php echo $this->createMobileUrl('user.admins_storeinvite', array('act' => 'qrPreview','ispc' => false,'store_id' => $store_id ));}"></p><p id="copyh5txt" class="copytxt">{php echo replaceDieDomain($config, __MURL('store.register', array('act' => 'index', 'invite_sid' => $store['id'], 'invite_pid' => $promoter['id']), true, true), 0, 0, 0)}</p><a href="javascript:;" class="copybtn" onClick="copyH5TXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a> </li></ul></section><section class="obj_preview mb50"><em class="pcOWap">电脑端分享链接</em><ul><li><p class="ewmRetail"><img class="ewm" src="{php echo $this->createMobileUrl('user.admins_storeinvite', array('act' => 'qrPreview','ispc' => true,'store_id' => $store_id ));}"></p><p id="copypctxt" class="copytxt">{php echo replaceDieDomain($config, __PURL('register', array('act' => 'index', 'invite_sid' => $store['id'], 'invite_pid' => $promoter['id']), true, true), 0, 0, 0)}</p><a href="javascript:;" class="copybtn" onClick="copyPCTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a> </li></ul></section><section style="height:1.27rem"></section><section class="buttonFloat"><a href="javascript:;" class="db font32" onclick="closeWindows()">关闭</a></section>';
+            /*{/if}*/
+
+            //页面层
+            layer.open({
+                type: 1,
+                title: ""
+                ,content: html
+                ,anim: 'up'
+                ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+            });
+            scroll.afterOpen();
+
+            //清空浏览器历史记录
+            window.history.pushState({title: "title",url:"#"}, "title", "#");
+
+            //监听浏览器后退事件
+            window.addEventListener("popstate",
+                    function(e) {
+                        //后退关闭弹窗
+                        closeWindows();
+                    }, false);
+
+            /*{if $create_qr_types == 0}*/
+            $.ajax({
+                type: "post",
+                url: "{php echo $this->createMobileUrl('user.admins_storeinvite', array('act' => 'posterPreview','ispc' => false,'store_id' => $store_id));}",
+                data: {},
+                dataType:'json',
+                success: function (data) {
+                    if (data.status == 1) {
+                        $("#h5qrcode").html('<img src="'+ data.path +'">');
+                    }
+                    else {
+                        $("#h5qrcode").html(data.msg);
+                    }
+                }
+            });
+            $.ajax({
+                type: "post",
+                url: "{php echo $this->createMobileUrl('user.admins_storeinvite', array('act' => 'posterPreview','ispc' => true,'store_id' => $store_id));}",
+                data: {},
+                dataType:'json',
+                success: function (data) {
+                    if (data.status == 1) {
+                        $("#pcqrcode").html('<img src="'+ data.path +'">');
+                    }
+                    else {
+                        $("#pcqrcode").html(data.msg);
+                    }
+                }
+            });
+            /*{/if}*/
+        });
+
+        var page = 0;
+        var pageSize = 10;
+
+        $('#ContentList').dropload({
+            scrollArea : window,
+            domUp : {
+                domClass   : 'dropload-up',
+                domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+            },
+            domDown : {
+                domClass   : 'dropload-down',
+                domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+            },
+            loadUpFn : function(me){
+                $.ajax({
+                    type: 'GET',
+                    url: "{php echo $this->createMobileUrl('user.admins_storeinvite', array('act' => 'getJsonList','store_id' => $store_id));}",
+                    data:{
+                        "page":1,
+                        "pageSize":pageSize
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        var html = template("listtpl", data);
+                        $('#LoadLists').html(html);
+                        // 每次数据加载完，必须重置
+                        me.resetload();
+                        // 重置页数，重新获取loadDownFn的数据
+                        page = 1;
+                        // 解锁loadDownFn里锁定的情况
+                        me.unlock();
+                        me.noData(false)
+                    },
+                    error: function(xhr, type){
+                        layer.open({
+                            content: '系统错误，稍后重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            loadDownFn : function(me){
+                page++;
+                // 拼接HTML
+                var html = '';
+                $.ajax({
+                    type: 'GET',
+                    url: "{php echo $this->createMobileUrl('user.admins_storeinvite', array('act' => 'getJsonList','store_id' => $store_id));}",
+                    data:{
+                        "page":page,
+                        "pageSize":pageSize,
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        var arrLen = data.rows.length;
+                        if(arrLen > 0){
+                            var html = template("listtpl", data);
+                            // 如果没有数据
+                        }else{
+                            // 锁定
+                            me.lock();
+                            // 无数据
+                            me.noData();
+                        }
+
+                        // 插入数据到页面，放到最后面
+                        $('#LoadLists').append(html);
+                        // 每次数据插入，必须重置
+                        me.resetload()
+                    },
+                    error: function(xhr, type){
+                        layer.open({
+                            content: '系统错误，稍后重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            threshold : 50
+        });
+
+    });
+
+    /*{if $or_open_rebate2==1}*/
+    $(document).ready(function () {
+        var tabsSwiper = new Swiper('#tabs-container', {
+            autoHeight: true,//自适应高度
+            speed:500,
+            onSlideChangeStart: function(){
+                $(".tabHd .active").removeClass('active')
+                $(".tabHd li").eq(tabsSwiper.activeIndex).addClass('active')
+            },
+        });
+        $(".tabHd li").on('touchstart mousedown',function(e){
+            e.preventDefault()
+            $(".tabHd .active").removeClass('active')
+            $(this).addClass('active')
+            tabsSwiper.slideTo( $(this).index(),200)
+        })
+        $(".tabHd li").click(function(e){
+            e.preventDefault()
+        })
+    })
+    /*{/if}*/
+
+    //关闭弹窗
+    function closeWindows(){
+        layer.closeAll();
+        scroll.beforeClose();
+    }
+
+    //复制文本到剪切板
+    function copyH5TXT(){
+        var copyDOM = document.querySelector('#copyh5txt'); //指定的DOM元素
+        var range = document.createRange(); // 创建容器
+        range.selectNode(copyDOM); // 选中需要复制的节点
+        window.getSelection().addRange(range); // 执行选中元素
+        var successful = document.execCommand('copy');// 执行 copy 操作
+        try {
+            var msg = successful ? 'successful' : 'unsuccessful';
+            if(msg == 'successful'){
+                //提示
+                layer.open({
+                    content: '已复制到剪切板'
+                    ,skin: 'msg'
+                    ,time: 2 //2秒后自动关闭
+                });
+            }
+        } catch(err) {
+            console.log('unable to copy');
+        }
+        window.getSelection().removeAllRanges(); // 移除选中的元素
+    }
+    //复制文本到剪切板
+    function copyPCTXT(){
+        var copyDOM = document.querySelector('#copypctxt'); //指定的DOM元素
+        var range = document.createRange(); // 创建容器
+        range.selectNode(copyDOM); // 选中需要复制的节点
+        window.getSelection().addRange(range); // 执行选中元素
+        var successful = document.execCommand('copy');// 执行 copy 操作
+        try {
+            var msg = successful ? 'successful' : 'unsuccessful';
+            if(msg == 'successful'){
+                //提示
+                layer.open({
+                    content: '已复制到剪切板'
+                    ,skin: 'msg'
+                    ,time: 2 //2秒后自动关闭
+                });
+            }
+        } catch(err) {
+            console.log('unable to copy');
+        }
+        window.getSelection().removeAllRanges(); // 移除选中的元素
+    }
+
+    //解决滚动弹窗滚动穿透
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.w7.cc/" versionCode="0.8,1.0">
+	<application setting="false">
+		<name><![CDATA[微教育小程序版]]></name>
+		<identifie><![CDATA[fm_jiaoyuwxapp]]></identifie>
+		<version><![CDATA[2.42.16]]></version>
+		<type><![CDATA[biz]]></type>
+		<ability><![CDATA[微教育小程序版，适用幼、小、初、高、院校及培训机构的教育管理程序]]></ability>
+		<description><![CDATA[微教育小程序版，适用幼、小、初、高、院校及培训机构的教育管理程序]]></description>
+		<author><![CDATA[it猿工]]></author>
+		<url><![CDATA[http://www.w7.cc/]]></url>
+	</application>
+
+	<platform>
+		<subscribes>
+		</subscribes>
+
+		<handles>
+		</handles>
+
+		<rule embed="false" /> 
+		<card embed="false" />
+		
+		<supports>
+			<item type="wxapp" />
+		</supports>
+	</platform>
+
+	<bindings>
+		<menu>
+			<entry title="基础设置" do="basics" state="" direct="false"/>
+			<entry title="启动页" do="startpage" state="" direct="false"/>
+		</menu>
+		<page>
+			<entry title="开始页面" do="/fm_jiaoyu/pages/index/index" state="" direct="false"/>
+		</page>
+	</bindings>
+
+	<permissions>
+	</permissions>
+
+	<install><![CDATA[CREATE TABLE `ims_wx_school_wxappset` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `weid` int(10) unsigned NOT NULL,
+  `schoolid` int(10) unsigned NOT NULL COMMENT '学校ID',
+  `fromweid` int(10) unsigned NOT NULL COMMENT '所属公众号',
+  `headtitle` varchar(50) NOT NULL COMMENT '顶部标题',
+  `headcolor` varchar(10) NOT NULL COMMENT '顶部背景颜色',
+  `headfont` varchar(10) NOT NULL COMMENT '顶部字体颜色',
+  `imgname` varchar(50) NOT NULL COMMENT '图标名',
+  `loginimg` varchar(1000) NOT NULL COMMENT '图标地址',
+  `imgfontcolor` varchar(10) NOT NULL COMMENT '图标名颜色',
+  `btnname` varchar(50) NOT NULL COMMENT '按钮名',
+  `btncolor` varchar(1000) NOT NULL COMMENT '按钮框颜色',
+  `btnfontcolor` varchar(10) NOT NULL COMMENT '按钮名字体颜色',
+  `copyright` varchar(1000) NOT NULL COMMENT '版权',
+  `copyrightfontcolor` varchar(10) NOT NULL COMMENT '版权字体颜色',
+  `loginbgcolor` varchar(10) NOT NULL COMMENT '背景颜色',
+  `loginbgimg` varchar(1000) NOT NULL COMMENT '背景图片',
+  `bgtype` int(1) NOT NULL COMMENT '背景模式',
+  `show_list` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+]]></install>
+	<uninstall><![CDATA[DROP TABLE IF EXISTS `ims_wx_school_wxappset`;
+]]></uninstall>
+	<upgrade><![CDATA[m_upgrade.php]]></upgrade>
+</manifest>

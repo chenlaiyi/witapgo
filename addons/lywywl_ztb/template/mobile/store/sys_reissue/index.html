@@ -1,0 +1,386 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<style>
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {position: static}
+</style>
+<body>
+<!--中心区域-->
+<section class="rel" style="height: 1.08rem;">
+    <h2 class="screen fn font28 bgfff" style=" position: fixed;z-index: 10;width: 100%;">
+        <dl class="retrie">
+            <dt class="bor_b pd0_24">
+                <a id="filter" href="javascript:;" style="width:auto!important">筛选<i class="sortIconI"></i> </a>
+            </dt>
+            <dd class="default">
+                <form>
+                    <!--筛选弹出层-->
+                    <section class="interal_filter downlist">
+                        <ul class="form">
+                            <li><span>用户信息：</span><section><input type="text" placeholder="OPENID" id="searchKey"></section></li>
+                            <li><span>支付类型：</span><section >
+                                <p class="select_box rel">
+                                    <select id="searchTypes">
+                                        <option value="">请选择</option>
+                                        {loop $prizetype $index $value}
+                                        <option value="{$index}">{$value}</option>
+                                        {/loop}
+                                    </select>
+                                </p>
+                            </section></li>
+                        </ul>
+                        <section class="retrieval mt24 clearfix">
+                            <button type="reset" class="recharge_but font32"> 重置</button>
+                            <button type="button" class="submit_but font32" id="btnSearch"> 搜索</button>
+                        </section>
+                    </section>
+                </form>
+            </dd>
+        </dl>
+    </h2>
+</section>
+
+<section class=" bgfff clearfix">
+    <ul class="leiji">
+        <li class="bor_r"><h4 class="fn font26">累计微信红包(元)</h4><p class="font34 mt20">{$recordDraw1Total}元</p><button id="btn_wxchange" class="reissue_button">补发全部</button></li>
+        <li><h4 class="fn font26">累计账户余额(元)</h4><p class="font34 mt20">{$recordDraw2Total}元</p><button id="btn_syschange" class="reissue_button">补发全部</button></li>
+        {if $plug_storeinvite}
+        <li class="bor_r"><h4 class="fn font26">累计业务返利(元)</h4><p class="font34 mt20">{$recordDraw3Total}元</p><button id="btn_invite" class="reissue_button">补发全部</button></li>
+        {/if}
+    </ul>
+</section>
+<section class=" bgfff pd24 bor_t mb24">
+    <h4 class="fn font30 main_red">为什么要补发奖品？</h4>
+    <p class="font24 mt10 c9">当您的账户余额不足时，微信红包和账户余额将无法发送，您可以在充值后将未发送给用户的红包补发给用户。</p>
+</section>
+<section id="ContentList">
+    <section id="LoadLists">
+
+    </section>
+</section>
+<section class="h24"></section>
+<section class="buttonBox">
+    <section class="buttonFloat">
+        <a href="{php echo $this->createMobileUrl('store.store_member',array('act'=>'index'))}" class="db font32 yellowBtn" style="background: #FFD112;">商家中心</a>
+    </section>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <section class="order_item writeoff_item">
+        <section class="hexiao_centre">
+            <figure>
+                <figcaption class="font32">
+                    <%if(rows[i].activity_id > 0){%>
+                    <%= rows[i].activity_name %>
+                    <%}else{%>
+                    <%= rows[i].desc %>
+                    <%}%>
+                </figcaption>
+                <p class="font26 main_red"><%= rows[i].types==1?"微信零钱":rows[i].types==2?"系统余额":"业务返利" %>：<%= rows[i].money %>元 <button data-id="<%= rows[i].id %>"  class="reissue_button ml15 fr" style=" margin-top: 0;">补发</button></p>
+                <p class="font26 c9">发送时间：<%= rows[i].createtime %></p>
+            </figure>
+            <section class="user_info"><img src="<%= rows[i].headurl %>" alt="<%= rows[i].nickname %>"/>
+                <p class="font24 c6"><%= rows[i].nickname %></p>
+                <p class="font24 c9">OPENID：<%= rows[i].openid %></p>
+            </section>
+        </section>
+    </section>
+    <% } %>
+</script>
+<script>
+    $(function () {
+        //点击筛选
+        $('#filter').click(function(){
+            var $filter = $(this);
+            if($filter.hasClass('up')){
+                $filter.removeClass('up');
+                $('.downlist').hide();
+            }else{
+                $filter.addClass('up');
+                $('.downlist').show();
+            }
+        });
+
+        $("#btn_wxchange").click(function () {
+            supplyAgain(1);
+        });
+        $("#btn_syschange").click(function () {
+            supplyAgain(2);
+        });
+
+        /*{if $plug_storeinvite}*/
+        $("#btn_invite").click(function () {
+            supplyAgain(3);
+        });
+        /*{/if}*/
+
+        function supplyAgain(types){
+            layer.open({
+                content: '您确定要补发吗？'
+                , btn: ['确定', '取消']
+                , yes: function (index) {
+                    $.ajax({
+                        type: "post",
+                        dataType:'json',
+                        url: "{php echo $this->createMobileUrl('store.sys_reissue', array('act' => 'supplyAgainAll'));}",
+                        data: {types:types,aid:{$aid},key:window.searchKey},
+                        beforeSend:function(XMLHttpRequest){
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '补发中，请勿关闭界面'
+                                , time: 9999 //999秒后自动关闭
+                                , shadeClose: false //开启遮罩关闭
+                            });
+                        },
+                        success: function (data, status) {
+                            layer.closeAll();
+                            layer.open({
+                                content: data.msg
+                                ,skin: 'msg'
+                                ,time: 2 //2秒后自动关闭
+                            });
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        },
+                        error: function(data){
+                            layer.closeAll();
+                            layer.open({
+                                content: '请求出现错误，请重试！'
+                                ,skin: 'msg'
+                                ,time: 2 //2秒后自动关闭
+                            });
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    });
+                    layer.close(index);
+                }
+            });
+        }
+
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //点击搜索
+        $('#btnSearch').click(function() {
+            //隐藏筛选弹框
+            $('#filter').removeClass('up');
+            $('.downlist').hide();
+
+            //筛选参数
+            window.searchKey = $('#searchKey').val();
+            window.SearchTypes = $('#searchTypes').val();
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.sys_reissue', array('act' => 'getJsonList','aid' => $aid));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "types":window.SearchTypes,
+                                "key":window.searchKey
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                window.delCount = 0;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false);
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var result = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.sys_reissue', array('act' => 'getJsonList','aid' => $aid));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "types":window.SearchTypes,
+                                "key":window.searchKey
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    threshold : 50
+                });
+            }
+
+        }).trigger("click");
+
+    });
+
+    //补发奖品
+    $('#LoadLists').on('click','.reissue_button',function(){
+        var drawobj = $(this);
+        var Rowid = drawobj.data("id");
+        //询问框
+        layer.open({
+            content: '您确定要补发吗？'
+            , btn: ['确定', '取消']
+            , yes: function (index) {
+                $.ajax({
+                    type: "post",
+                    dataType:'json',
+                    url: "{php echo $this->createMobileUrl('store.sys_reissue', array('act' => 'supplyAgain'));}",
+                    data: {
+                        id: Rowid
+                    },
+                    beforeSend:function(XMLHttpRequest){
+                        //loading带文字
+                        layer.open({
+                            type: 2
+                            , content: '补发中，请勿关闭界面'
+                            , time: 9999 //999秒后自动关闭
+                            , shadeClose: false //开启遮罩关闭
+                        });
+                    },
+                    success: function (data, status) {
+                        layer.closeAll();
+                        if (data.status == 1) {
+                            layer.open({
+                                content: data.msg
+                                ,skin: 'msg'
+                                ,time: 2 //2秒后自动关闭
+                            });
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                        else {
+                            layer.open({
+                                content: data.msg
+                                ,skin: 'msg'
+                                ,time: 2 //2秒后自动关闭
+                            });
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    },
+                    error: function(data){
+                        layer.closeAll();
+                        layer.open({
+                            content: '请求出现错误，请重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 2000);
+                    }
+                });
+                layer.close(index);
+            }
+        });
+    });
+
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+</script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title} - {$actModel['title']}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">活动</li>
+                <li class="active">{$title}</li>
+                <li class="active">选手管理</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebUrl('obj_vote', array('act' => 'index'));}">返回活动</a></li>
+                            <li>
+                                <a href="{php echo $this->createWebUrl('obj_vote_player', array('act' => 'index','aid' => $aid));}">选手列表</a>
+                            </li>
+                            <li class="active"><a href="#">{if !empty($model['id'])}编辑{else}创建{/if}选手</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content" id="form_content" method="post">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> {if !empty($model['id'])}编辑{else}创建{/if}选手信息</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="name" class="col-sm-2 control-label"><span class="text-red">(*)</span>活动选手名称</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="name" maxlength="100"
+                                                       name="model[name]" nullmsg="请输入活动选手名称！" placeholder="请输入活动选手名称"
+                                                       type="text" value="{$model['name']}"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="number" class="col-sm-2 control-label"><span class="text-red">(*)</span>活动选手编号</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="n" id="number" name="model[number]"
+                                                       nullmsg="请输入活动选手编号！"
+                                                       onkeyup="if(isNaN(this.value)) this.value='0';"
+                                                       placeholder="请输入活动选手编号" type="text" value="{$model['number']}">
+                                                <p class="help-block">请输入数字 例如：1|2|3|4等数字，注意：此字段只能为数字 用户可根据选手编号进行排序</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>选手封面图片</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('model[pic_url]',$model['pic_url']);}
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 单图模式 建议上传678*420 双图模式 建议上传344*258 三图模式 建议上传208*282 图文模式 建议上传208*282</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="group_id" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>选手隶属分组</label>
+                                            <div class="col-sm-10">
+                                                <select id="group_id" name="model[group_id]" class="form-control select2" style="width: 100%;">
+                                                    {loop $groupList $index $group}
+                                                    <option value="{$index}" {if $index == $model['group_id']}selected="selected"{/if}>{$group}</option>
+                                                    {/loop}
+                                                </select>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请选择选手隶属的分组，每个分组的排名单独核算。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="declaration" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>选手参赛宣言</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="declaration" maxlength="200"
+                                                       name="model[declaration]" nullmsg="请输入选手参赛宣言！" placeholder="请输入选手参赛宣言"
+                                                       type="text" value="{$model['declaration']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入选手参赛宣言 宣言将用于用户拉票时展示在分享内容中。</p>
+                                            </div>
+                                        </div>
+                                        {if $objModel['is_video'] == 0}
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>选手展示组图</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_multi_image('banner_url',$model['banner_url']);}
+                                            </div>
+                                        </div>
+                                        {else}
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>选手视频展示</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_video('video_url', $model['video_url'], $options = array());}
+                                            </div>
+                                        </div>
+                                        {/if}
+                                        {if !empty($attrFields)}
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>参赛选手属性</label>
+                                            <div class="col-sm-10">
+                                                <table class="table table-bordered">
+                                                    <tbody><tr>
+                                                        <th style="width: 10px">#</th>
+                                                        <th style="width: 120px">属性名称</th>
+                                                        <th>属性内容</th>
+                                                    </tr>
+                                                    {loop $attrFields $index $item}
+                                                    <tr>
+                                                        <td>{$index}.</td>
+                                                        <td>{$item['Explain']}：</td>
+                                                        <td>
+                                                            {if $item['Type'] == 'number'}
+                                                            <input class="form-control" datatype="n" id="attr_{$item['Name']}" name="attr_{$item['Name']}"
+                                                                   nullmsg="{$item['Tips']}！"
+                                                                   onkeyup="if(isNaN(this.value)) this.value='0';"
+                                                                   placeholder="{$item['Tips']}" type="text" value="{$model['attr_data'][$index]['Value']}">
+                                                            {/if}
+
+                                                            {if $item['Type'] == 'radio'}
+                                                            {loop $item['items'] $index2 $item2}
+                                                            {if empty($model['id'])}
+                                                            <label>
+                                                                <input name="attr_{$item['Name']}" value="{$item2['value']}" id="rd_join_{php echo $index.'_'.$index2.'_'.$item2['key']}" type="radio" class="flat-blue" {php echo $index2==0?'checked':''}>
+                                                                {$item2['value']}
+                                                            </label>&nbsp;&nbsp;
+                                                            {else}
+                                                            <label>
+                                                                <input name="attr_{$item['Name']}" value="{$item2['value']}" id="rd_join_{php echo $index.'_'.$index2.'_'.$item2['key']}" type="radio" class="flat-blue" {php echo $model['attr_data'][$index]['Value']==$item2['value'] ?'checked':''}>
+                                                                {$item2['value']}
+                                                            </label>&nbsp;&nbsp;
+                                                            {/if}
+                                                            {/loop}
+                                                            {/if}
+
+                                                            {if $item['Type'] == 'checkbox'}
+                                                            {loop $item['items'] $index2 $item2}
+                                                            <label>
+                                                                <input name="attr_{$item['Name']}[]" value="{$item2['value']}" id="ck_join_{php echo $index.'_'.$index2.'_'.$item2['key']}" type="checkbox" class="flat-blue" {php echo strpos(','.$model['attr_data'][$index]['Value'].',',','.$item2['value'].',') !==false ?'checked':''}>
+                                                                {$item2['value']}
+                                                            </label>
+                                                            {/loop}
+                                                            {/if}
+
+                                                            {if $item['Type'] == 'select'}
+                                                            <select id="attr_{$item['Name']}" name="attr_{$item['Name']}" class="form-control select2" style="width: 100%;">
+                                                                {loop $item['items'] $index2 $item2}
+                                                                <option value="{$item2['value']}" {php echo $model['attr_data'][$index]['Value']==$item2['value'] ?'selected':''}>{$item2['value']}</option>
+                                                                {/loop}
+                                                            </select>
+                                                            {/if}
+
+                                                            {if $item['Type'] == 'textarea'}
+                                                            <textarea rows="3" name="attr_{$item['Name']}" id="attr_{$item['Name']}" class="form-control" placeholder="{$item['Tips']}" datatype = "*"  nullmsg = "{$item['Tips']}">{$model['attr_data'][$index]['Value']}</textarea>
+                                                            {/if}
+
+                                                            {if $item['Type'] == 'text'}
+                                                            <input class="form-control"  type="text" name="attr_{$item['Name']}" maxlength="100" placeholder="{$item['Tips']}" value="{$model['attr_data'][$index]['Value']}" datatype = "*" nullmsg = "{$item['Tips']}">
+                                                            {/if}
+                                                        </td>
+                                                    </tr>
+                                                    {/loop}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        {/if}
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>参赛选手简介</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_ueditor('model[content]',$model['content']);}
+                                            </div>
+                                        </div>
+                                        {if $objModel['player_is_register']==1 }
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>选手登记信息</label>
+                                            <div class="col-sm-10">
+                                                <table class="table table-bordered">
+                                                    <tbody><tr>
+                                                        <th style="width: 10px">#</th>
+                                                        <th style="width: 120px">信息名称</th>
+                                                        <th>信息内容</th>
+                                                    </tr>
+                                                    {loop $registerFields $index $item}
+                                                    <tr>
+                                                        <td>{$index}.</td>
+                                                        <td>{$item['Explain']}：</td>
+                                                        <td>
+                                                            {if $item['Type'] == 'number'}
+                                                            <input class="form-control" datatype="n" id="reg_{$item['Name']}" name="reg_{$item['Name']}"
+                                                                   nullmsg="{$item['Tips']}！"
+                                                                   onkeyup="if(isNaN(this.value)) this.value='0';"
+                                                                   placeholder="{$item['Tips']}" type="text" value="{$model['register_data'][$index]['Value']}">
+                                                            {/if}
+
+                                                            {if $item['Type'] == 'radio'}
+                                                            {loop $item['items'] $index2 $item2}
+                                                            {if empty($model['id'])}
+                                                            <label>
+                                                                <input name="reg_{$item['Name']}" value="{$item2['value']}" id="rd_reg_{php echo $index.'_'.$index2.'_'.$item2['key']}" type="radio" class="flat-blue" {php echo $index2==0?'checked':''}>
+                                                                {$item2['value']}
+                                                            </label>&nbsp;&nbsp;
+                                                            {else}
+                                                            <label>
+                                                                <input name="reg_{$item['Name']}" value="{$item2['value']}" id="rd_reg_{php echo $index.'_'.$index2.'_'.$item2['key']}" type="radio" class="flat-blue" {php echo $model['register_data'][$index]['Value']==$item2['value'] ?'checked':''}>
+                                                                {$item2['value']}
+                                                            </label>&nbsp;&nbsp;
+                                                            {/if}
+                                                            {/loop}
+                                                            {/if}
+
+                                                            {if $item['Type'] == 'checkbox'}
+                                                            {loop $item['items'] $index2 $item2}
+                                                            <label>
+                                                                <input name="reg_{$item['Name']}[]" value="{$item2['value']}" id="ck_reg_{php echo $index.'_'.$index2.'_'.$item2['key']}" type="checkbox" class="flat-blue" {php echo strpos(','.$model['register_data'][$index]['Value'].',',','.$item2['value'].',') !==false ?'checked':''}>
+                                                                {$item2['value']}
+                                                            </label>
+                                                            {/loop}
+                                                            {/if}
+
+                                                            {if $item['Type'] == 'select'}
+                                                            <select id="reg_{$item['Name']}" name="reg_{$item['Name']}" class="form-control select2" style="width: 100%;">
+                                                                {loop $item['items'] $index2 $item2}
+                                                                <option value="{$item2['value']}" {php echo $model['register_data'][$index]['Value']==$item2['value'] ?'selected':''}>{$item2['value']}</option>
+                                                                {/loop}
+                                                            </select>
+                                                            {/if}
+
+                                                            {if $item['Type'] == 'textarea'}
+                                                            <textarea rows="3" name="reg_{$item['Name']}" id="reg_{$item['Name']}" class="form-control" placeholder="{$item['Tips']}" datatype = "*"  nullmsg = "{$item['Tips']}">{$model['register_data'][$index]['Value']}</textarea>
+                                                            {/if}
+
+                                                            {if $item['Type'] == 'text'}
+                                                            <input class="form-control"  type="text" name="reg_{$item['Name']}" maxlength="100" placeholder="{$item['Tips']}" value="{$model['register_data'][$index]['Value']}" datatype = "*" nullmsg = "{$item['Tips']}">
+                                                            {/if}
+                                                        </td>
+                                                    </tr>
+                                                    {/loop}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        {/if}
+                                        <div class="form-group">
+                                            <label for="openid" class="col-sm-2 control-label"><span class="text-red">(*)</span>选手隶属会员</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows="3" name="model[openid]" id="openid" class="form-control"
+                                                          placeholder="请输入选手隶属会员的OPENID...">{$model['openid']}</textarea>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>
+                                                    绑定会员可查看投票和打赏记录 多个人员请用","分割,
+                                                    例如："oIJyhjs1VVYa6enCPsvHebYa79aU,ogaIJ0y00qDCbILPw8Kiv-gDeDYk"。<a href="javascript:void(0);" onClick="showEwmDialog();" target="_blank"> >>获取OPENID</a>   <a href="javascript:void(0);" onClick="showAdminsEwmDialog();"> >>参赛选手管理入口</a></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="bogus_get_num" class="col-sm-2 control-label"><span class="text-red">(*)</span>选手获票数量</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon text-red">累计获得 <strong>{$model['get_num']}</strong> 票 调整票数</span>
+                                                    <input class="form-control" datatype="*" id="bogus_get_num" name="model[bogus_get_num]"
+                                                           nullmsg="请输入调整票数！"
+                                                           placeholder="请输入调整票数" type="number" value="{$model['bogus_get_num']}">
+                                                    <span class="input-group-addon">票</span>
+                                                </div>
+                                                <p class="help-block">请输入数字 例如：-10（减少10票）10（增加10票） 此字段只能为数字</p>
+                                            </div>
+                                        </div>
+                                        {if $objModel['gift_id']>0}
+                                        <div class="form-group">
+                                            <label for="bogus_buy_num" class="col-sm-2 control-label"><span class="text-red">(*)</span>礼物打赏获票</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon text-red">累计获得 <strong>{$model['buy_num']}</strong> 票 调整票数</span>
+                                                    <input class="form-control" datatype="*" id="bogus_buy_num" name="model[bogus_buy_num]"
+                                                           nullmsg="请输入调整票数！"
+                                                           placeholder="请输入调整票数" type="number" value="{$model['bogus_buy_num']}">
+                                                    <span class="input-group-addon">票</span>
+                                                </div>
+                                                <p class="help-block">请输入数字 例如：-10（减少10票）10（增加10票） 此字段只能为数字</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>选手统计信息</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon text-red">用户拉票 <strong>{$model['repost_num']}</strong> 次</span>
+                                                    <span class="input-group-addon text-red">选手曝光 <strong>{$model['click_num']}</strong> 次</span>
+                                                    <span class="input-group-addon text-red">礼物打赏 <strong>{$model['gift_money']}</strong> 元</span>
+                                                    <span class="input-group-addon text-red">礼物数量 <strong>{$model['gift_num']}</strong> 件</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/if}
+                                        <div class="form-group">
+                                            <label for="status2" class="col-sm-2 control-label">选手展示状态</label>
+                                            <div class="col-sm-10">
+                                                <input data-off-text="关闭" data-on-text="开启" data-size="mini" id="status"
+                                                       type="checkbox" value="true" {if $model['status']==1}checked{/if}/>
+                                                <input id="status2" name="model[status]" type="hidden"
+                                                       value="{$model['status']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>
+                                                    选择选手开启/关闭状态，关闭后选手将不会在前台展示</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sort" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>选手排序信息
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="n" id="sort" name="model[sort]"
+                                                       nullmsg="信息排序必须填写！"
+                                                       onkeyup="if(isNaN(this.value)) this.value='0';"
+                                                       placeholder="请输入信息排序字段" type="text" value="{$model['sort']}">
+                                                <p class="help-block">请输入数字 例如：1|6|10等数字，注意：此字段只能为数字 信息将按照排序字段正序排列</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+                                                <input type="hidden" name="token" value="{$_W['token']}"/>
+                                                <input type="hidden" name="submit" value="submit"/>
+                                                <button type="submit" class="btn btn-primary" id="SubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script>
+    $(function () {
+        SelectNav("全民投票");
+
+        myrequire(['select2', 'bootstrap-switch', 'validform', 'icheck', 'bootstrap-slider'], function () {
+
+            $(".select2").select2();
+
+            //初始化icheck控件radio
+            $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+                checkboxClass: 'icheckbox_flat-blue',
+                radioClass: 'iradio_flat-blue'
+            });
+
+            //绑定更改状态操作
+            $('#status').bootstrapSwitch({
+                onSwitchChange: function (event, state) {
+                    var status = state ? 1 : 0;
+                    $("#status2").val(status);
+                }
+            });
+
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createWebUrl('obj_vote_player', array('act' => 'index','aid' => $aid));}";
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+                    }
+                }
+            });
+
+        });
+
+    });
+
+    function showEwmDialog() {
+        require(["jquery", "util"], function(){
+            var footer = '<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+            var modalobj = util.dialog('扫码获取OPENID','<div class=link-modal><div style=width:300px;margin:auto;position:relative;text-align:center;><img src={php echo $this->createWebUrl('obj_vote_player', array('act' => 'openidQrPreview','aid' => $aid));}><p>请用参赛选手的微信浏览器打开！</p></div></div>',footer,{containerName:'emw-container'});
+            modalobj.modal({'keyboard': true});
+            modalobj.find('.modal-body').css({'overflow-y':'auto' });
+            modalobj.modal('show');
+        });
+    }
+
+    function showAdminsEwmDialog() {
+        require(["jquery", "util"], function(){
+            var footer = '<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+            var modalobj = util.dialog('参赛选手管理入口','<div class=link-modal><div style=width:300px;margin:auto;position:relative;text-align:center;><img src={php echo $this->createWebUrl('obj_vote_player', array('act' => 'adminsQrPreview','aid' => $aid));}><p>请用参赛选手的微信浏览器打开！</p></div><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="{php echo replaceDieDomain($config,__MURL('obj_vote', array('token' => $actModel['token'], 'act' => 'owner'), true, true),0,$actModel['id'],0);}"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div>',footer,{containerName:'emw-container'});
+            modalobj.modal({'keyboard': true});
+            modalobj.find('.modal-body').css({'overflow-y':'auto' });
+            modalobj.modal('show');
+        });
+        require(["clipboard"], function (Clipboard) {
+            //复制预览网址
+            new Clipboard('#btn_copy', {
+                text: function(trigger) {
+                    $("#copyTarget").text('{php echo replaceDieDomain($config,__MURL('obj_vote', array('token' => $actModel['token'], 'act' => 'owner'), true, true),0,$actModel['id'],0);}');  /*放入目标对象*/
+                    return trigger.getAttribute('aria-label');
+                }
+            });
+        });
+    }
+
+    $(window).scroll(function () {
+        $(".edui-editor-toolbarbox").each(function () {
+            var zIndex = parseInt($(this).css('z-index')) || -1;
+            if(zIndex > 0){
+                $(this).addClass('edui-editor-toolbarbox2');
+            }else{
+                $(this).removeClass('edui-editor-toolbarbox2');
+            }
+        })
+    });
+</script>
+</body>
+</html>

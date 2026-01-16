@@ -1,0 +1,1703 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.we7.cc" versionCode="0.8,1.0">
+	<application setting="false">
+		<name><![CDATA[娇肤云美容美发系统]]></name>
+		<identifie><![CDATA[xc_beauty]]></identifie>
+		<version><![CDATA[3.9.7]]></version>
+		<type><![CDATA[other]]></type>
+		<ability><![CDATA[美容美发营销版]]></ability>
+		<description><![CDATA[美容美发营销版]]></description>
+		<author><![CDATA[微擎]]></author>
+		<url><![CDATA[http://www.we7.cc/]]></url>
+	</application>
+
+	<platform>
+		<subscribes>
+		</subscribes>
+
+		<handles>
+			<message type="text" />
+		</handles>
+
+		<rule embed="false" /> 
+		<card embed="false" />
+		<oauth type="1" />
+		
+		<supports>
+			<item type="wxapp" />
+		</supports>
+		<plugins>
+			<item name="xc_beauty_plugin_take_number" />
+		</plugins>
+	</platform>
+
+	<bindings>
+		<menu>
+			<entry title="新版入口" do="webhome" state="" direct="false"/>
+			<entry title="网站配置" do="webconfig" state="" direct="false"/>
+			<entry title="轮播图" do="banner" state="" direct="false"/>
+			<entry title="用户列表" do="user" state="" direct="false"/>
+			<entry title="自定义导航" do="nav" state="" direct="false"/>
+			<entry title="服务项目" do="service" state="" direct="false"/>
+			<entry title="优惠券" do="coupon" state="" direct="false"/>
+			<entry title="订单" do="order" state="" direct="false"/>
+			<entry title="消费记录" do="record" state="" direct="false"/>
+			<entry title="评论" do="discuss" state="" direct="false"/>
+			<entry title="文章" do="article" state="" direct="false"/>
+			<entry title="退款申请" do="refund" state="" direct="false"/>
+			<entry title="门店管理" do="store" state="" direct="false"/>
+			<entry title="配货中心" do="pick" state="" direct="false"/>
+			<entry title="新人专区" do="area" state="" direct="false"/>
+		</menu>
+		<page>
+			<entry title="入口" do="xc_beauty/pages/base/base" state="" direct="false"/>
+			<entry title="主题一首页" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/index/index" state="" direct="false"/>
+			<entry title="主题二首页" do="xc_beauty/pages/base/base?share=/xc_beauty/ui2/index/index" state="" direct="false"/>
+			<entry title="主题一预约" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/store/porder" state="" direct="false"/>
+			<entry title="主题二预约" do="xc_beauty/pages/base/base?share=/xc_beauty/ui2/store/porder" state="" direct="false"/>
+			<entry title="主题一抽奖" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/rotate/rotate" state="" direct="false"/>
+			<entry title="主题二抽奖" do="xc_beauty/pages/base/base?share=/xc_beauty/ui2/rotate/rotate" state="" direct="false"/>
+			<entry title="分销中心" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/share/index" state="" direct="false"/>
+			<entry title="主题一产品列表" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/service/service" state="" direct="false"/>
+			<entry title="主题二产品列表" do="xc_beauty/pages/base/base?share=/xc_beauty/ui2/service/service" state="" direct="false"/>
+			<entry title="会员卡" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/card/card" state="" direct="false"/>
+			<entry title="优惠券" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/coupon/coupon" state="" direct="false"/>
+			<entry title="买单" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/order/buy" state="" direct="false"/>
+			<entry title="邀请好友" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/share/share" state="" direct="false"/>
+			<entry title="积分商城" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/mall_score/index" state="" direct="false"/>
+			<entry title="门店套餐" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/package/package" state="" direct="false"/>
+			<entry title="商城列表" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/mall/mall" state="" direct="false"/>
+			<entry title="充值卡" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/r_card/index" state="" direct="false"/>
+			<entry title="主题一个人中心" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/user/user" state="" direct="false"/>
+			<entry title="主题二个人中心" do="xc_beauty/pages/base/base?share=/xc_beauty/ui2/user/user" state="" direct="false"/>
+			<entry title="门店列表" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/store/index" state="" direct="false"/>
+			<entry title="技师列表" do="xc_beauty/pages/base/base?share=/xc_beauty/pages/jishi/index" state="" direct="false"/>
+		</page>
+	</bindings>
+
+	<permissions>
+	</permissions>
+
+	<install><![CDATA[
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_address` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `name` varchar(50) DEFAULT NULL COMMENT '姓名',
+  `mobile` varchar(50) DEFAULT NULL COMMENT '手机号',
+  `address` longtext COMMENT '地址',
+  `map` longtext COMMENT '地址',
+  `content` longtext COMMENT '地址',
+  `status` int(11) DEFAULT '-1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`openid`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=160 DEFAULT CHARSET=utf8 COMMENT='地址';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_apply` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `name` varchar(50) DEFAULT NULL COMMENT '姓名',
+  `mobile` varchar(50) DEFAULT NULL COMMENT '电话',
+  `address` varchar(255) DEFAULT NULL COMMENT '地址',
+  `map` longtext COMMENT '地址',
+  `content` varchar(255) DEFAULT NULL COMMENT '详细地址',
+  `status` int(11) DEFAULT '-1' COMMENT '状态（-1审核中1审核通过2失败3失败已阅）',
+  `createtime` datetime DEFAULT NULL COMMENT '申请时间',
+  `applytime` datetime DEFAULT NULL COMMENT '处理时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`status`,`createtime`,`applytime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='审核';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_area` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `title` varchar(255) DEFAULT NULL COMMENT '副标题',
+  `bimgt` varchar(255) DEFAULT NULL COMMENT '上背景图',
+  `bimgb` varchar(255) DEFAULT NULL COMMENT '下背景图',
+  `down_status` int(11) DEFAULT '-1' COMMENT '满立减',
+  `down_title` varchar(50) DEFAULT NULL COMMENT '小标题',
+  `order_status` int(11) DEFAULT '-1' COMMENT '下单送券',
+  `order_title` varchar(50) DEFAULT NULL COMMENT '小标题',
+  `pay_type` int(11) DEFAULT '-1' COMMENT '充值优惠',
+  `pay_title` varchar(255) DEFAULT NULL COMMENT '小标题',
+  `content` longtext,
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
+  `backcolor` varchar(50) DEFAULT NULL COMMENT '背景色',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='新人专区';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_area_item` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `cid` int(11) DEFAULT NULL,
+  `type` int(11) DEFAULT '1' COMMENT '类型（1满立减2送券3充值优惠）',
+  `simg` varchar(255) DEFAULT NULL COMMENT '图标',
+  `amount` varchar(50) DEFAULT NULL COMMENT '满足金额',
+  `price` varchar(50) DEFAULT NULL COMMENT '减去金额',
+  `start_time` datetime DEFAULT NULL COMMENT '开始时间',
+  `end_time` datetime DEFAULT NULL COMMENT '结束时间',
+  `order_num` int(11) DEFAULT NULL COMMENT '完成顺序',
+  `order_type` int(11) DEFAULT '1' COMMENT '完成奖励（1优惠券2兑换券）',
+  `coupon` int(11) DEFAULT NULL COMMENT '优惠券',
+  `service` int(11) DEFAULT NULL COMMENT '商品',
+  `service_end` datetime DEFAULT NULL,
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`cid`,`type`,`status`,`sort`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='礼包内容';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_area_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `cid` int(11) DEFAULT NULL,
+  `type` int(11) DEFAULT NULL COMMENT '类型（1满立减2送券3充值优惠）',
+  `simg` varchar(255) DEFAULT NULL COMMENT '图标',
+  `amount` decimal(10,2) DEFAULT NULL COMMENT '满足金额',
+  `price` decimal(10,2) DEFAULT NULL COMMENT '减去金额',
+  `start_time` datetime DEFAULT NULL COMMENT '开始时间',
+  `end_time` datetime DEFAULT NULL COMMENT '结束时间',
+  `order_num` int(11) DEFAULT NULL COMMENT '完成顺序',
+  `order_type` int(11) DEFAULT '1' COMMENT '完成奖励（1优惠券2兑换券）',
+  `coupon` int(11) DEFAULT NULL COMMENT '优惠券',
+  `service` int(11) DEFAULT NULL COMMENT '商品',
+  `service_end` datetime DEFAULT NULL,
+  `prize` int(11) DEFAULT '-1' COMMENT '领取状态（-1未领取1领取）',
+  `status` int(11) DEFAULT '-1' COMMENT '状态（-1未完成1已完成）',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`cid`,`type`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='礼包记录';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_article` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `content` longtext COMMENT '详情',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `type` int(11) DEFAULT NULL COMMENT '类型（1普通文章2优惠活动文章）',
+  `link` varchar(255) DEFAULT NULL COMMENT '链接',
+  `btn` varchar(255) DEFAULT NULL COMMENT '按钮文字',
+  `link_type` int(11) DEFAULT '1' COMMENT '模式',
+  `color` varchar(50) DEFAULT NULL COMMENT '按钮颜色',
+  `simg` varchar(255) DEFAULT NULL COMMENT '图标',
+  `sub_title` varchar(255) DEFAULT NULL COMMENT '副标题',
+  `cid` int(11) DEFAULT NULL COMMENT '分类',
+  `bimg` varchar(255) DEFAULT NULL COMMENT '封面',
+  `code` varchar(255) DEFAULT NULL COMMENT '二维码',
+  `lr_padding` varchar(50) DEFAULT NULL COMMENT '左右边距',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='文章';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_banner` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `type` int(11) DEFAULT '1' COMMENT '1首页2直播页',
+  `bimg` varchar(255) DEFAULT NULL COMMENT '图片',
+  `link` varchar(255) DEFAULT NULL COMMENT '链接',
+  `appid` varchar(255) DEFAULT NULL COMMENT '小程序id',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`sort`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='轮播图';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_birth` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `coupon_status` int(11) DEFAULT '-1' COMMENT '优惠券',
+  `coupon` longtext COMMENT '优惠券',
+  `score_status` int(11) DEFAULT '-1' COMMENT '积分',
+  `score` int(11) DEFAULT NULL COMMENT '积分',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`name`,`sort`,`status`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='生日';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_card` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `type` int(11) DEFAULT NULL COMMENT '类型（1购买2赠送）',
+  `price` decimal(10,2) DEFAULT '0.00' COMMENT '价格',
+  `amount` decimal(10,2) DEFAULT '0.00' COMMENT '充值金额',
+  `status` int(11) DEFAULT '-1' COMMENT '状态（-1未使用1已使用2已赠送）',
+  `send_openid` varchar(50) DEFAULT NULL COMMENT '赠送用户id',
+  `send_id` int(11) DEFAULT NULL,
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `type` (`type`,`status`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='充值卡';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_code` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `type` int(11) DEFAULT '1' COMMENT '1店员2门店',
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `pid` int(11) DEFAULT NULL,
+  `code` varchar(255) DEFAULT NULL COMMENT '二维码',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `pid` (`pid`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='二维码';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_config` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '姓名',
+  `xkey` varchar(50) DEFAULT NULL COMMENT '关键字',
+  `content` longtext COMMENT '内容',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`xkey`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COMMENT='配置';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_count` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `plan_date` varchar(50) DEFAULT NULL COMMENT '时间',
+  `order` int(11) DEFAULT '0' COMMENT '订单量',
+  `amount` varchar(50) DEFAULT NULL COMMENT '金额',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `store` int(11) DEFAULT '-1' COMMENT '门店',
+  `type` int(11) DEFAULT '1' COMMENT '类型（1月份2日期）',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8 COMMENT='统计';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_coupon` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `title` varchar(50) DEFAULT NULL COMMENT '标题',
+  `name` varchar(50) DEFAULT NULL COMMENT '优惠价格',
+  `condition` varchar(50) DEFAULT NULL COMMENT '满足条件',
+  `times` longtext COMMENT '有效期',
+  `total` int(11) DEFAULT '-1' COMMENT '总量',
+  `type` int(11) DEFAULT NULL,
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `score` int(11) DEFAULT NULL,
+  `store` int(11) DEFAULT '-1' COMMENT '限定门店使用',
+  `mall_status` int(11) DEFAULT '-1' COMMENT '限定商品使用',
+  `mall` int(11) DEFAULT NULL COMMENT '商品',
+  `limit_get` varchar(50) DEFAULT NULL COMMENT '每人限领',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`sort`,`status`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='优惠券';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_discuss` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `pid` int(11) DEFAULT NULL COMMENT '产品id',
+  `score` int(11) DEFAULT NULL COMMENT '评价（1满意2一般3不满意）',
+  `content` longtext COMMENT '详情',
+  `imgs` longtext COMMENT '图片集',
+  `tip` int(11) DEFAULT '-1' COMMENT '匿名',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `type` int(11) DEFAULT '1' COMMENT '类型（1服务项目2技师）',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='评论';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_discuss_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `pid` int(11) DEFAULT NULL COMMENT '产品id',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`pid`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='评论日志';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_exchange` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `service` int(11) DEFAULT NULL COMMENT '商品',
+  `status` int(11) DEFAULT '-1' COMMENT '状态',
+  `end_time` datetime DEFAULT NULL COMMENT '结束时间',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`status`,`end_time`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='兑换券';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_group` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '团长',
+  `pid` int(11) DEFAULT NULL COMMENT '产品id',
+  `team` longtext COMMENT '队伍',
+  `status` int(11) DEFAULT '-1' COMMENT '状态（-1拼团中1成功2失败）',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `failtime` varchar(50) DEFAULT NULL COMMENT '失败天数',
+  `total` int(11) DEFAULT '0' COMMENT '人数',
+  `team_total` int(11) DEFAULT '0' COMMENT '团队人数',
+  `group_public` int(11) DEFAULT '1' COMMENT '团购公开',
+  `kind` varchar(50) DEFAULT NULL COMMENT '参数',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`openid`,`pid`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='团购';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_live` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `anchor_avatar` varchar(255) DEFAULT NULL COMMENT '头像',
+  `anchor_name` varchar(50) DEFAULT NULL COMMENT '作者名',
+  `roomid` int(11) DEFAULT NULL COMMENT '房间',
+  `share_img` varchar(255) DEFAULT NULL COMMENT '封面',
+  `cover_img` varchar(255) DEFAULT NULL COMMENT '背景图',
+  `media_url` varchar(255) DEFAULT NULL COMMENT '直播地址',
+  `goods` longtext COMMENT '商品',
+  `service` longtext COMMENT '服务项目',
+  `mall` longtext COMMENT '商品',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`name`,`anchor_name`,`sort`,`status`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='直播回放';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `plan_date` varchar(50) DEFAULT NULL COMMENT '日期',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`plan_date`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='日志';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_login_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` varchar(255) DEFAULT NULL,
+  `openid` varchar(255) DEFAULT NULL COMMENT '用户id',
+  `plan_date` varchar(50) DEFAULT NULL COMMENT '日期',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`plan_date`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='登录日志';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_mall` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL COMMENT '名称',
+  `title` varchar(255) DEFAULT NULL COMMENT '副标题',
+  `cid` int(11) DEFAULT NULL COMMENT '分类',
+  `simg` varchar(255) DEFAULT NULL COMMENT '封面',
+  `bimg` longtext,
+  `price` decimal(10,2) DEFAULT NULL COMMENT '价格',
+  `format` longtext COMMENT '多规格',
+  `sold` int(11) DEFAULT '0',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `content` longtext COMMENT '详情',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `code` varchar(255) DEFAULT NULL COMMENT '二维码',
+  `type` int(11) DEFAULT NULL COMMENT '分销方法',
+  `level_one` varchar(50) DEFAULT NULL COMMENT '一级分销',
+  `level_two` varchar(50) DEFAULT NULL COMMENT '二级分销',
+  `level_three` varchar(50) DEFAULT NULL COMMENT '三级分销',
+  `kucun` int(11) DEFAULT '-1' COMMENT '库存',
+  `store_type` int(11) DEFAULT '1' COMMENT '类型（1商城2积分商城）',
+  `score` int(11) DEFAULT NULL COMMENT '积分数',
+  `live_status` int(11) DEFAULT '-1' COMMENT '直播热销',
+  `buy_limit` varchar(50) DEFAULT NULL COMMENT '每人限购',
+  `sale_status` int(11) DEFAULT '1' COMMENT '会员折扣',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`sort`,`status`,`createtime`,`cid`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='商城';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_moban_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL,
+  `nickname` varchar(500) DEFAULT NULL COMMENT '呢称',
+  `status` int(11) DEFAULT '-1' COMMENT '-1未使用  1已使用',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `ident` varchar(50) DEFAULT NULL COMMENT '标识',
+  `headimgurl` varchar(500) DEFAULT NULL COMMENT '头像',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8 COMMENT='绑定模版消息用户';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_nav` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `simg` varchar(255) DEFAULT NULL COMMENT '图片',
+  `link` varchar(255) DEFAULT NULL COMMENT '链接',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `type` int(11) DEFAULT '1' COMMENT '位置（1首页2个人中心）',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`sort`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='自定义导航';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_online` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `store` int(11) DEFAULT NULL COMMENT '门店',
+  `plan_date` varchar(50) DEFAULT NULL COMMENT '日期',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`status`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='预约时间';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_online_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `pid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '发送者用户id',
+  `type` int(11) DEFAULT NULL COMMENT '类型1文本2图片',
+  `content` longtext COMMENT '内容',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `duty` int(11) DEFAULT '1' COMMENT '身份1客户2客服',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`type`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='客服记录';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_onlines` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `member` int(11) DEFAULT NULL COMMENT '未读条数',
+  `type` int(11) DEFAULT NULL COMMENT '类型',
+  `content` longtext COMMENT '内容',
+  `updatetime` varchar(50) DEFAULT NULL COMMENT '更新时间',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`createtime`,`member`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='客服';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_order` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `nick` varchar(255) DEFAULT NULL COMMENT '昵称',
+  `out_trade_no` varchar(50) DEFAULT NULL COMMENT '订单号',
+  `wx_out_trade_no` varchar(50) DEFAULT NULL COMMENT '微信订单号',
+  `pid` int(11) DEFAULT NULL COMMENT '产品id',
+  `kind` varchar(255) DEFAULT NULL COMMENT '种类',
+  `total` int(11) DEFAULT NULL COMMENT '数量',
+  `plan_date` varchar(50) DEFAULT NULL COMMENT '预约时间',
+  `userinfo` longtext COMMENT '用户信息',
+  `amount` varchar(50) DEFAULT NULL COMMENT '应付款',
+  `o_amount` varchar(50) DEFAULT NULL COMMENT '实付款',
+  `status` int(11) DEFAULT '-1' COMMENT '支付状态（-1待支付1已支付2退款',
+  `use` int(11) DEFAULT '-1' COMMENT '使用',
+  `discuss` int(11) DEFAULT '-1' COMMENT '评论',
+  `pay_type` int(11) DEFAULT NULL COMMENT '支付方式（1微信支付2余额支付）',
+  `content` longtext COMMENT '备注',
+  `coupon_id` int(11) DEFAULT NULL COMMENT '优惠券id',
+  `coupon_price` varchar(50) DEFAULT NULL COMMENT '优惠价格',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `canpay` varchar(50) DEFAULT NULL COMMENT '余额支付',
+  `wxpay` varchar(50) DEFAULT NULL COMMENT '微信支付',
+  `refund_content` longtext COMMENT '退款理由',
+  `refund_status` int(11) DEFAULT '-1' COMMENT '退款状态',
+  `order_type` int(11) DEFAULT '1' COMMENT '1购买2充值3团购',
+  `money` varchar(50) DEFAULT NULL COMMENT '钱包',
+  `score` int(11) DEFAULT NULL COMMENT '获得积分数',
+  `discount` varchar(50) DEFAULT NULL COMMENT '折扣',
+  `group` int(11) DEFAULT NULL COMMENT '团购id',
+  `one_openid` varchar(50) DEFAULT NULL COMMENT '一级推荐人',
+  `one_amount` varchar(50) DEFAULT NULL COMMENT '一级佣金',
+  `two_openid` varchar(50) DEFAULT NULL COMMENT '二级推荐人',
+  `two_amount` varchar(50) DEFAULT NULL COMMENT '二级佣金',
+  `three_openid` varchar(50) DEFAULT NULL COMMENT '三级推荐人',
+  `three_amount` varchar(50) DEFAULT NULL COMMENT '三级佣金',
+  `store` int(11) DEFAULT NULL COMMENT '门店',
+  `member` int(11) DEFAULT NULL COMMENT '店员',
+  `gift` varchar(50) DEFAULT NULL COMMENT '赠送金额',
+  `charge_id` varchar(255) DEFAULT NULL,
+  `service_type` int(11) DEFAULT NULL COMMENT '服务方式（1上门服务2到店服务）',
+  `can_use` int(11) DEFAULT '1' COMMENT '使用次数',
+  `is_use` int(11) DEFAULT '0' COMMENT '已使用',
+  `buy_type` int(11) DEFAULT '1' COMMENT '买单方式（1自助付款2商家待扣）',
+  `recharge_type` int(11) DEFAULT '1' COMMENT '充值方式（1会员充值2管理员充值）',
+  `recharge_openid` varchar(50) DEFAULT NULL COMMENT '待充的用户id',
+  `price` decimal(10,2) DEFAULT NULL COMMENT '单价',
+  `flash` int(11) DEFAULT '-1' COMMENT '限时抢购',
+  `flash_price` decimal(10,2) DEFAULT NULL COMMENT '抢购价格',
+  `failtime` datetime DEFAULT NULL COMMENT '失效时间',
+  `failstatus` int(11) DEFAULT '1' COMMENT '失效处理状态',
+  `wq_out_trade_no` varchar(50) DEFAULT NULL,
+  `he_log` longtext COMMENT '核销记录',
+  `can_member` int(11) DEFAULT '1' COMMENT '预约人数',
+  `member_discuss` int(11) DEFAULT '-1' COMMENT '人员评论',
+  `callback1` longtext COMMENT '短信回调',
+  `callback2` longtext COMMENT '打印回调',
+  `title` varchar(255) DEFAULT NULL COMMENT '标题',
+  `pei_type` int(11) DEFAULT '1' COMMENT '配送方式（1商家配送2自提）',
+  `admin` varchar(50) DEFAULT NULL COMMENT '下单openid',
+  `prize` int(11) DEFAULT NULL COMMENT '新人礼品',
+  `prize_fee` varchar(50) DEFAULT NULL COMMENT '减去金额',
+  `exchange` int(11) DEFAULT '-1' COMMENT '兑换券',
+  `start_time` varchar(50) DEFAULT NULL COMMENT '开始时间',
+  `end_time` varchar(50) DEFAULT NULL COMMENT '结束时间',
+  `package` int(11) DEFAULT NULL COMMENT '套餐',
+  `group_public` int(11) DEFAULT '1' COMMENT '团购是否公开（-1不公开1公开）',
+  `format_index` int(11) DEFAULT '-1',
+  `store_openid` varchar(50) DEFAULT NULL COMMENT '店长用户id',
+  `store_fee` varchar(50) DEFAULT NULL COMMENT '店长提成',
+  `store_fee_status` int(11) DEFAULT '-1' COMMENT '提成状态（-1未提1已提）',
+  `member_openid` varchar(50) DEFAULT NULL COMMENT '店员用户id',
+  `member_fee` varchar(50) DEFAULT NULL COMMENT '店员提成',
+  `member_fee_status` int(11) DEFAULT '-1' COMMENT '提成状态（-1未提1已提）',
+  `applytime` datetime DEFAULT NULL COMMENT '核销时间',
+  `refundtime` datetime DEFAULT NULL COMMENT '退款时间',
+  `admin_openid` varchar(50) DEFAULT NULL COMMENT '子管理员用户id',
+  `admin_fee` varchar(50) DEFAULT NULL COMMENT '子管理员提成',
+  `admin_fee_status` int(11) DEFAULT '-1' COMMENT '提成状态（-1未提1已提）',
+  `plan_start` datetime DEFAULT NULL COMMENT '预约开始时间',
+  `plan_end` datetime DEFAULT NULL COMMENT '预约结束时间',
+  `yu_check` int(11) DEFAULT '-1' COMMENT '预约审核（-1不审核1需要审核）',
+  `yu_check_result` int(11) DEFAULT '-1' COMMENT '预约结果（-1未处理1通过2拒绝）',
+  `yu_check_content` longtext COMMENT '备注信息',
+  `name` varchar(50) DEFAULT NULL COMMENT '姓名',
+  `mobile` varchar(50) DEFAULT NULL COMMENT '手机号',
+  `tmpl` longtext COMMENT '订阅消息',
+  `code` varchar(255) DEFAULT NULL COMMENT '核销二维码',
+  `refund_amount` decimal(10,2) DEFAULT NULL COMMENT '退款金额',
+  `date_type` int(11) DEFAULT '1' COMMENT '1默认时间2技师时间',
+  `schedule_date` varchar(50) DEFAULT NULL COMMENT '预约日期',
+  `schedule_start` varchar(50) DEFAULT NULL COMMENT '开始时间',
+  `schedule_end` varchar(50) DEFAULT NULL COMMENT '结束时间',
+  `service_fee` decimal(10,2) DEFAULT '0.00' COMMENT '技师服务费',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`out_trade_no`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=3189 DEFAULT CHARSET=utf8 COMMENT='订单';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_order_check` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `out_trade_no` varchar(50) DEFAULT NULL COMMENT '订单号',
+  `store` int(11) DEFAULT NULL COMMENT '门店',
+  `store_name` varchar(50) DEFAULT NULL COMMENT '门店名称',
+  `store_data` longtext COMMENT '门店数据',
+  `service` int(11) DEFAULT NULL COMMENT '项目',
+  `service_name` varchar(255) DEFAULT NULL COMMENT '项目名称',
+  `service_data` longtext COMMENT '项目数据',
+  `type` int(11) DEFAULT NULL COMMENT '类型（1服务项目2门店项目3商品）',
+  `admin` int(11) DEFAULT NULL COMMENT '1后台2管理员3子管理员4店长5店员',
+  `admin_name` varchar(255) DEFAULT NULL COMMENT '昵称',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`out_trade_no`,`store`,`service`,`type`,`admin`,`createtime`,`admin_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8 COMMENT='核销记录';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_order_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `out_trade_no` varchar(50) DEFAULT NULL COMMENT '订单号',
+  `pid` int(11) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL COMMENT '标题',
+  `service` int(11) DEFAULT NULL COMMENT '服务项目',
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `member` int(11) DEFAULT '0' COMMENT '总次数',
+  `is_member` int(11) DEFAULT '0' COMMENT '已使用次数',
+  `start_time` datetime DEFAULT NULL COMMENT '开始时间',
+  `end_time` datetime DEFAULT NULL COMMENT '结束时间',
+  `store_status` int(11) DEFAULT '1' COMMENT '门店状态',
+  `store` longtext COMMENT '门店',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `fee` decimal(10,2) DEFAULT NULL COMMENT '门店提成',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`out_trade_no`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='套餐详情';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_package` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `simg` varchar(255) DEFAULT NULL COMMENT '封面',
+  `bimg` longtext COMMENT '图片',
+  `price` decimal(10,2) DEFAULT '0.00' COMMENT '价格',
+  `service` longtext COMMENT '服务项目',
+  `start_time` datetime DEFAULT NULL COMMENT '开始时间',
+  `end_time` datetime DEFAULT NULL COMMENT '结束时间',
+  `content` longtext COMMENT '详情',
+  `store_status` int(11) DEFAULT '1' COMMENT '门店状态',
+  `store` longtext COMMENT '门店',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `code` varchar(255) DEFAULT NULL COMMENT '二维码',
+  `time_type` int(11) DEFAULT '1' COMMENT '时间方式（1固定时间2时间周期）',
+  `plan_date` int(11) DEFAULT '1' COMMENT '使用周期',
+  `type` int(11) DEFAULT NULL COMMENT '分销方法',
+  `level_one` varchar(50) DEFAULT NULL COMMENT '一级分销',
+  `level_two` varchar(50) DEFAULT NULL COMMENT '二级分销',
+  `level_three` varchar(50) DEFAULT NULL COMMENT '三级分销',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`sort`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8 COMMENT='套餐';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_package_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `out_trade_no` varchar(50) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `pid` int(11) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `service` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `store` int(11) DEFAULT NULL COMMENT '门店',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `user_name` varchar(50) DEFAULT NULL COMMENT '姓名',
+  `user_mobile` varchar(50) DEFAULT NULL COMMENT '电话',
+  `member` varchar(50) DEFAULT NULL COMMENT '核销人',
+  `content` varchar(255) DEFAULT NULL COMMENT '备注',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`pid`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='使用记录';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_pai` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `interval` varchar(50) DEFAULT NULL COMMENT '时间间隔',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `midflytime` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='排班';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_pai_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `pid` int(11) DEFAULT NULL,
+  `weeknum` int(11) DEFAULT NULL COMMENT '1-7，表示周一到周天',
+  `time1start` varchar(50) DEFAULT NULL COMMENT '开始时间',
+  `time1end` varchar(50) DEFAULT NULL,
+  `time2start` varchar(50) DEFAULT NULL,
+  `time2end` varchar(50) DEFAULT NULL,
+  `time3start` varchar(50) DEFAULT NULL,
+  `time3end` varchar(50) DEFAULT NULL,
+  `time4start` varchar(50) DEFAULT NULL,
+  `time4end` varchar(255) DEFAULT NULL,
+  `time5start` varchar(50) DEFAULT NULL,
+  `time5end` varchar(50) DEFAULT NULL,
+  `time6start` varchar(50) DEFAULT NULL,
+  `time6end` varchar(50) DEFAULT NULL,
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`pid`,`status`,`createtime`,`weeknum`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='排班详情';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_pick_class` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`sort`,`status`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='配货分类';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_pick_order` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `store` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `out_trade_no` varchar(50) DEFAULT NULL COMMENT '订单号',
+  `pid` longtext COMMENT '产品',
+  `total` int(11) DEFAULT '0' COMMENT '数量',
+  `amount` decimal(10,2) DEFAULT '0.00' COMMENT '总价',
+  `status` int(11) DEFAULT '-1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`status`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_pick_service` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `cid` int(11) DEFAULT NULL COMMENT '分类',
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `price` decimal(10,2) DEFAULT '0.00' COMMENT '价格',
+  `unit` varchar(50) DEFAULT NULL COMMENT '单位',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `cid` (`cid`,`uniacid`,`sort`,`status`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='配货';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_plugin` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `type` int(11) DEFAULT '1' COMMENT '1取号',
+  `status` int(11) DEFAULT '-1' COMMENT '状态',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='插件权限';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_prize` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `type` int(11) DEFAULT NULL COMMENT '类型',
+  `cid` int(11) DEFAULT NULL COMMENT '优惠券',
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `simg` varchar(255) DEFAULT NULL COMMENT '图片',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `times` int(11) DEFAULT '0' COMMENT '概率',
+  `member` int(11) DEFAULT '-1' COMMENT '数量',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`type`,`status`,`sort`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='奖品';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_rotate` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `times` int(11) DEFAULT '0' COMMENT '签到次数',
+  `plan_date` varchar(50) DEFAULT NULL COMMENT '签到日期',
+  `status` int(11) DEFAULT '-1' COMMENT '是否已抽奖',
+  `rotated` int(11) DEFAULT '0' COMMENT '抽奖次数',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`openid`,`status`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='抽奖';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_rotate_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `pid` int(11) DEFAULT NULL COMMENT '优惠券id',
+  `title` varchar(255) DEFAULT NULL COMMENT '标题',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `type` int(11) DEFAULT '1' COMMENT '类型',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `cid` int(11) DEFAULT NULL COMMENT '奖品id',
+  `code` varchar(255) DEFAULT NULL COMMENT '核销二维码',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`openid`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='抽奖记录';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_score` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `title` varchar(50) DEFAULT NULL COMMENT '标题',
+  `status` int(11) DEFAULT '1' COMMENT '1获得2消费',
+  `score` varchar(50) DEFAULT NULL COMMENT '积分',
+  `over` varchar(50) DEFAULT NULL COMMENT '剩余积分',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `get_openid` varchar(50) DEFAULT NULL COMMENT '(被)赠送用户id',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`openid`,`status`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='积分记录';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_score_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` varchar(50) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `service` int(11) DEFAULT NULL,
+  `service_name` varchar(255) DEFAULT NULL,
+  `score` int(11) DEFAULT NULL COMMENT '积分',
+  `member` int(11) DEFAULT NULL COMMENT '数量',
+  `address` longtext COMMENT '地址',
+  `pei_type` int(11) DEFAULT NULL COMMENT '配送方式（1商家配送2自提）',
+  `content` longtext COMMENT '备注',
+  `status` int(11) DEFAULT '-1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `simg` varchar(255) DEFAULT NULL COMMENT '封面',
+  `usetime` datetime DEFAULT NULL COMMENT '核销时间',
+  `code` varchar(255) DEFAULT NULL COMMENT '核销二维码',
+  `use_type` int(11) DEFAULT NULL COMMENT '核销方式（1后台2管理端）',
+  `store` int(11) DEFAULT NULL COMMENT '门店',
+  `store_name` varchar(255) DEFAULT NULL COMMENT '门店名称',
+  `store_data` longtext COMMENT '门店数据',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`status`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='兑换记录';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_service` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `cid` int(11) DEFAULT NULL COMMENT '分类',
+  `simg` varchar(255) DEFAULT NULL COMMENT '封面',
+  `bimg` longtext COMMENT '图片',
+  `price` varchar(50) DEFAULT NULL COMMENT '价格',
+  `o_price` varchar(50) DEFAULT NULL COMMENT '原价',
+  `kind` longtext COMMENT '种类',
+  `discuss` int(11) DEFAULT '0' COMMENT '评价总人数',
+  `discuss_total` int(11) DEFAULT '0' COMMENT '评价总数',
+  `good_total` int(11) DEFAULT '0' COMMENT '满意总数',
+  `middle_total` int(11) DEFAULT '0' COMMENT '一般总数',
+  `bad_total` int(11) DEFAULT '0' COMMENT '不满意总数',
+  `content` longtext COMMENT '详情',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `group_status` int(11) DEFAULT '-1' COMMENT '团购状态',
+  `group_price` varchar(50) DEFAULT NULL COMMENT '团购价格',
+  `group_total` int(11) DEFAULT '0' COMMENT '团购数',
+  `group_limit` int(11) DEFAULT NULL COMMENT '团购限制天数',
+  `group_index` int(11) DEFAULT '-1' COMMENT '团购首页显示',
+  `group_number` int(11) DEFAULT NULL COMMENT '团购人数',
+  `type` int(11) DEFAULT NULL COMMENT '分销方法',
+  `level_one` varchar(50) DEFAULT NULL COMMENT '一级分销',
+  `level_two` varchar(50) DEFAULT NULL COMMENT '二级分销',
+  `level_three` varchar(50) DEFAULT NULL COMMENT '三级分销',
+  `store_status` int(11) DEFAULT '1' COMMENT '门店状态',
+  `store` longtext COMMENT '适用门店',
+  `home` int(11) DEFAULT '1' COMMENT '家',
+  `shop` int(11) DEFAULT '1' COMMENT '店',
+  `service_time` varchar(50) DEFAULT NULL COMMENT '服务时间',
+  `can_use` int(11) DEFAULT '1' COMMENT '核销次数',
+  `sold` int(11) DEFAULT '0' COMMENT '已售数',
+  `content_type` int(11) DEFAULT '1' COMMENT '详情模式',
+  `content2` longtext COMMENT '详情2',
+  `parameter` longtext COMMENT '参数',
+  `flash_status` int(11) DEFAULT '-1' COMMENT '限时状态',
+  `flash_price` decimal(10,2) DEFAULT '0.00' COMMENT '抢购价格',
+  `flash_start` datetime DEFAULT NULL COMMENT '开始时间',
+  `flash_end` datetime DEFAULT NULL COMMENT '结束时间',
+  `flash_member` int(11) DEFAULT NULL COMMENT '库存',
+  `flash_index` int(11) DEFAULT '-1' COMMENT '首页显示',
+  `flash_order` int(11) DEFAULT '0' COMMENT '每人限买单数',
+  `flash_shu` int(11) DEFAULT '0' COMMENT '每单限购数',
+  `sale_status` int(11) DEFAULT '-1' COMMENT '折扣状态',
+  `group_stock` int(11) DEFAULT '-1' COMMENT '团购库存',
+  `group_head_status` int(11) DEFAULT '-1' COMMENT '团长优惠',
+  `group_head_price` varchar(50) DEFAULT NULL COMMENT '团长优惠价格',
+  `share_title` varchar(255) DEFAULT NULL COMMENT '分享标题',
+  `share_img` varchar(255) DEFAULT NULL COMMENT '分享图片',
+  `group_order` int(11) DEFAULT '-1' COMMENT '团购每单限量',
+  `group_orders` int(11) DEFAULT '-1' COMMENT '团购每人限量',
+  `group_public` int(11) DEFAULT '-1' COMMENT '团购公开功能',
+  `store_fee` varchar(50) DEFAULT NULL COMMENT '提成金额',
+  `code` varchar(255) DEFAULT NULL COMMENT '二维码',
+  `service_times` int(11) DEFAULT NULL COMMENT '服务时长',
+  `date_type` int(11) DEFAULT '1' COMMENT '预约时间（1默认2技师）',
+  `group_index_price` varchar(50) DEFAULT NULL COMMENT '团购首页原价显示名称',
+  `date_interval` int(11) DEFAULT '1' COMMENT '时间间隔（1有2无）',
+  `reserve` int(11) DEFAULT NULL COMMENT '门店项目关联',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`cid`,`status`,`sort`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COMMENT='列表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_service_class` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `bimg` varchar(255) DEFAULT NULL COMMENT '图片',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `index` int(11) DEFAULT '-1' COMMENT '首页显示',
+  `type` int(11) DEFAULT '1' COMMENT '类型（1服务项目2商城）',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`sort`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COMMENT='分类';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_share` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `title` varchar(255) DEFAULT NULL COMMENT '标题',
+  `out_trade_no` varchar(50) DEFAULT NULL COMMENT '订单号',
+  `amount` varchar(50) DEFAULT NULL COMMENT '金额',
+  `level` int(11) DEFAULT NULL COMMENT '等级',
+  `status` int(11) DEFAULT '1' COMMENT '状态（-1等待1成功2失败）',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`openid`,`createtime`,`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='分销订单';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_shop` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `pid` int(11) DEFAULT NULL COMMENT '产品id',
+  `total` int(11) DEFAULT '0' COMMENT '数量',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`pid`,`status`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='购物车';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_sms` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `type` int(11) DEFAULT NULL COMMENT '类型（1阿里云2聚合数据3模板消息）',
+  `accesskeyid` varchar(50) DEFAULT NULL COMMENT 'AccessKeyId',
+  `accesskeysecret` varchar(50) DEFAULT NULL COMMENT 'AccessKeySecret',
+  `sign` varchar(50) DEFAULT NULL COMMENT '短信签名',
+  `code` varchar(50) DEFAULT NULL COMMENT '模版CODE',
+  `appkey` varchar(50) DEFAULT NULL COMMENT 'APPKEY',
+  `tpl_id` varchar(50) DEFAULT NULL COMMENT '短信模板ID',
+  `mobile` varchar(255) DEFAULT NULL COMMENT '手机号',
+  `topcolor` varchar(50) DEFAULT NULL COMMENT '模板内容字体',
+  `template_example` longtext,
+  `template_name` varchar(50) DEFAULT NULL,
+  `template_id` varchar(50) DEFAULT '',
+  `template_data` longtext,
+  `userlist` longtext,
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`type`,`status`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='短信配置';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_sms_birth` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `plan_date` varchar(50) DEFAULT NULL COMMENT '生日',
+  `smsback` longtext COMMENT '结果',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`openid`,`plan_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='生日提醒发送记录';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_store` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL COMMENT '名称',
+  `simg` varchar(255) DEFAULT NULL COMMENT '图标',
+  `mobile` varchar(50) DEFAULT NULL COMMENT '手机号',
+  `address` longtext COMMENT '地址',
+  `map` longtext COMMENT '地址',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `plan_date` varchar(50) DEFAULT NULL COMMENT '营业时间',
+  `content` longtext COMMENT '详情',
+  `code` varchar(255) DEFAULT NULL COMMENT '买单二维码',
+  `sms` varchar(50) DEFAULT NULL COMMENT '短信接收手机号',
+  `machine_code` varchar(255) DEFAULT NULL COMMENT '打印机终端号',
+  `msign` varchar(255) DEFAULT NULL COMMENT '打印机终端密钥',
+  `sn` varchar(255) DEFAULT NULL COMMENT '打印机编号',
+  `print_status` int(11) DEFAULT '-1' COMMENT '打印状态',
+  `bimg` varchar(255) DEFAULT NULL COMMENT '封面',
+  `code2` varchar(255) DEFAULT NULL COMMENT '二维码',
+  `store_manager` varchar(50) DEFAULT NULL COMMENT '提成店长',
+  `store_fee` varchar(50) DEFAULT NULL COMMENT '提成金额',
+  `userlist` longtext COMMENT '绑定用户',
+  `store_admin` varchar(50) DEFAULT NULL COMMENT '提成子管理员',
+  `store_admin_fee` varchar(50) DEFAULT NULL COMMENT '提成金额',
+  `distance_status` int(11) DEFAULT '-1' COMMENT '上门服务限制距离',
+  `distance` varchar(50) DEFAULT NULL COMMENT '距离',
+  `sms_refund` int(11) DEFAULT NULL COMMENT '申请退款通知',
+  `sms_birth` int(11) DEFAULT NULL COMMENT '生日提醒',
+  `sms_birth_user` longtext COMMENT '生日提醒接收用户',
+  `content_type` int(11) DEFAULT '1' COMMENT '详情类型（1图文2编辑器）',
+  `content2` longtext COMMENT '详情',
+  `cell_status` int(11) DEFAULT '-1' COMMENT '联系我',
+  `cell_id` varchar(255) DEFAULT NULL,
+  `take_status` int(11) DEFAULT '-1' COMMENT '挂号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COMMENT='门店管理';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_store_fee` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `type` int(11) DEFAULT NULL COMMENT '类型（1收入2支出）',
+  `title` varchar(255) DEFAULT NULL COMMENT '标题',
+  `amount` decimal(10,2) DEFAULT '0.00' COMMENT '金额',
+  `pid` varchar(50) DEFAULT NULL COMMENT '关联id',
+  `username` varchar(50) DEFAULT NULL COMMENT '微信账号',
+  `mobile` varchar(50) DEFAULT NULL COMMENT '手机号码',
+  `wx_out_trade_no` varchar(50) DEFAULT NULL,
+  `fee` decimal(10,2) DEFAULT '0.00' COMMENT '手续费',
+  `status` int(11) DEFAULT '-1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`type`,`pid`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='提成记录';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_store_member` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '姓名',
+  `simg` varchar(255) DEFAULT NULL COMMENT '头像',
+  `cid` int(11) DEFAULT '0' COMMENT '店面',
+  `task` varchar(255) DEFAULT NULL COMMENT '职称',
+  `service` longtext COMMENT '服务项目',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `tag` varchar(255) DEFAULT NULL COMMENT '标签',
+  `content` longtext COMMENT '个人简介',
+  `zan` int(11) DEFAULT '0' COMMENT '点赞人数',
+  `discuss` int(11) DEFAULT '0' COMMENT '评论数',
+  `pai_status` int(11) DEFAULT '-1' COMMENT '单双周状态',
+  `pai1` int(11) DEFAULT NULL COMMENT '排版',
+  `pai2` int(11) DEFAULT NULL COMMENT '排版2',
+  `title` varchar(50) DEFAULT NULL COMMENT '标题',
+  `bimg` longtext COMMENT '作品',
+  `code` varchar(255) DEFAULT NULL COMMENT '二维码',
+  `shop` int(11) DEFAULT '1',
+  `home` int(11) DEFAULT '1',
+  `zuo_pin` longtext COMMENT '作品',
+  `store_manager` varchar(50) DEFAULT NULL COMMENT '提成店员',
+  `buy_fee` varchar(50) DEFAULT NULL COMMENT '买单提成',
+  `buy_code` varchar(255) DEFAULT NULL COMMENT '买单二维码',
+  `mobile` varchar(50) DEFAULT NULL COMMENT '手机号',
+  `store` longtext,
+  `userlist` longtext COMMENT '绑定用户',
+  `service_fee` decimal(10,2) DEFAULT '0.00' COMMENT '服务费',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COMMENT='店员管理';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_store_service` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
+  `price` varchar(50) DEFAULT NULL COMMENT '价格',
+  `sort` int(11) DEFAULT '0' COMMENT '排序',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `home` int(11) DEFAULT '1' COMMENT '上门服务',
+  `shop` int(11) DEFAULT '1' COMMENT '到店服务',
+  `can_use` int(11) DEFAULT '1' COMMENT '核销次数',
+  `member` varchar(50) DEFAULT NULL COMMENT '抵扣预约人数',
+  `sale_status` int(11) DEFAULT '-1' COMMENT '折扣功能',
+  `service_times` int(11) DEFAULT NULL COMMENT '服务时间',
+  `date_type` int(11) DEFAULT '1' COMMENT '预约时间（1默认2技师）',
+  `date_interval` int(11) DEFAULT '1' COMMENT '时间间隔（1有2无）',
+  `simg` varchar(255) DEFAULT NULL COMMENT '封面',
+  `bimg` longtext COMMENT '轮播图',
+  `content` longtext COMMENT '详情',
+  `take_status` int(11) DEFAULT '-1' COMMENT '取号',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`sort`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8 COMMENT='门店服务';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_take_code` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `store` int(11) DEFAULT NULL COMMENT '门店',
+  `plan_date` varchar(50) DEFAULT NULL COMMENT '日期',
+  `code` int(11) DEFAULT NULL COMMENT '号码',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`store`,`plan_date`,`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='取号号码';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_take_number` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(255) DEFAULT NULL COMMENT '用户id',
+  `store` varchar(50) DEFAULT NULL COMMENT '门店',
+  `store_name` varchar(255) DEFAULT NULL COMMENT '门店名称',
+  `store_data` longtext COMMENT '门店数据',
+  `service` int(11) DEFAULT NULL COMMENT '项目',
+  `service_name` varchar(255) DEFAULT NULL COMMENT '项目名称',
+  `service_data` longtext COMMENT '项目数据',
+  `code` int(11) DEFAULT NULL COMMENT '号码',
+  `service_times` int(11) DEFAULT NULL COMMENT '服务时间',
+  `mobile` varchar(50) DEFAULT NULL COMMENT '手机号',
+  `status` int(11) DEFAULT '1' COMMENT '状态（-1取消1排队中2呼叫中3服务中4过号5完成）',
+  `cancel_result` varchar(255) DEFAULT NULL COMMENT '取消原因',
+  `cancel_content` varchar(255) DEFAULT NULL COMMENT '详细原因',
+  `cancel_time` datetime DEFAULT NULL COMMENT '取消时间',
+  `start_time` datetime DEFAULT NULL COMMENT '服务开始时间',
+  `end_time` datetime DEFAULT NULL COMMENT '服务结束时间',
+  `member` int(11) DEFAULT NULL COMMENT '服务技师',
+  `member_name` varchar(50) DEFAULT NULL COMMENT '技师名称',
+  `member_data` longtext COMMENT '技师数据',
+  `content` varchar(255) DEFAULT NULL COMMENT '备注',
+  `tmpl` longtext COMMENT '模板消息',
+  `call_times` int(11) DEFAULT '0' COMMENT '呼叫次数',
+  `call_status` int(11) DEFAULT '-1' COMMENT '叫号状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`openid`,`store`,`service`,`code`,`status`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='取号';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_times` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `week` int(11) DEFAULT NULL COMMENT '星期',
+  `content` longtext COMMENT '详情',
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='预约时间';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_times_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `member` int(11) DEFAULT NULL COMMENT '人员',
+  `plan_date` varchar(50) DEFAULT NULL COMMENT '日期',
+  `total` int(11) DEFAULT '0' COMMENT '已预约数量',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `date_type` int(11) DEFAULT '1' COMMENT '1默认时间2技师时间',
+  `schedule_date` varchar(50) DEFAULT NULL COMMENT '预约日期',
+  `schedule_start` varchar(50) DEFAULT NULL COMMENT '开始时间',
+  `schedule_end` varchar(50) DEFAULT NULL COMMENT '结束时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=131 DEFAULT CHARSET=utf8 COMMENT='预约时间记录';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_user_birth` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `pid` int(11) DEFAULT NULL COMMENT '生日礼包id',
+  `birth_data` longtext COMMENT '数据',
+  `plan_date` varchar(50) DEFAULT NULL COMMENT '生日',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`openid`,`pid`,`plan_date`,`createtime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户生日礼包领取记录';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_user_coupon` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `cid` int(11) DEFAULT NULL COMMENT '优惠券id',
+  `status` int(11) DEFAULT '-1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=113 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='用户优惠券';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_userinfo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `avatar` varchar(255) DEFAULT NULL COMMENT '头像',
+  `nick` varchar(255) DEFAULT NULL,
+  `status` int(11) DEFAULT '1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `money` varchar(50) DEFAULT '0' COMMENT '余额',
+  `card` int(11) DEFAULT '-1' COMMENT '会员卡状态（-1未激活1激活）',
+  `mobile` varchar(50) DEFAULT NULL COMMENT '手机号',
+  `password` varchar(50) DEFAULT NULL COMMENT '支付密码',
+  `name` varchar(50) DEFAULT NULL COMMENT '姓名',
+  `score` int(11) DEFAULT '0' COMMENT '积分',
+  `share` varchar(50) DEFAULT NULL COMMENT '推荐人openid',
+  `level_one` int(11) DEFAULT '0' COMMENT '一级数量',
+  `level_two` int(11) DEFAULT '0' COMMENT '二级数量',
+  `level_three` int(11) DEFAULT '0' COMMENT '三级数量',
+  `share_amount` varchar(50) DEFAULT '0' COMMENT '累计佣金',
+  `share_o_amount` varchar(50) DEFAULT '0' COMMENT '可提现佣金',
+  `share_t_amount` varchar(50) DEFAULT '0' COMMENT '已提现佣金',
+  `share_empty` varchar(50) DEFAULT '0' COMMENT '无效佣金',
+  `shop` int(11) DEFAULT '-1' COMMENT '店铺管理',
+  `store` int(11) DEFAULT NULL COMMENT '绑定门店',
+  `shop_id` int(11) DEFAULT NULL COMMENT '子管理员门店id',
+  `card_name` varchar(50) DEFAULT NULL COMMENT '会员等级',
+  `card_price` varchar(50) DEFAULT NULL COMMENT '会员折扣',
+  `card_amount` decimal(10,2) DEFAULT '0.00' COMMENT '消费金额',
+  `code` varchar(255) DEFAULT NULL COMMENT '二维码',
+  `prize` int(11) DEFAULT '-1' COMMENT '新人礼包',
+  `store_fee` decimal(10,2) DEFAULT '0.00' COMMENT '门店提成',
+  `sub_type` int(11) DEFAULT NULL,
+  `sub_store` longtext,
+  `line` int(11) DEFAULT '-1' COMMENT '客服',
+  `opentime` datetime DEFAULT NULL COMMENT '激活时间',
+  `admin_fee` decimal(10,2) DEFAULT '0.00' COMMENT '子管理员提成',
+  `order_fee` decimal(10,2) DEFAULT '0.00' COMMENT '虚拟消费金额',
+  `birth` varchar(50) DEFAULT NULL COMMENT '生日',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=3172 DEFAULT CHARSET=utf8 COMMENT='用户信息';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_withdraw` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `pay_type` int(11) DEFAULT '1' COMMENT '提现方式（1微信2支付宝）',
+  `username` varchar(50) DEFAULT NULL COMMENT '账号',
+  `mobile` varchar(50) DEFAULT NULL COMMENT '手机号',
+  `name` varchar(50) DEFAULT NULL COMMENT '姓名',
+  `amount` varchar(50) DEFAULT NULL COMMENT '金额',
+  `money` varchar(50) DEFAULT NULL COMMENT '余额',
+  `status` int(11) DEFAULT '-1' COMMENT '状态（-1待处理1成功2失败）',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  `order_type` int(11) DEFAULT '1' COMMENT '提现类型(1余额提现2佣金提现)',
+  `out_trade_no` varchar(50) DEFAULT NULL COMMENT '订单号',
+  `wx_out_trade_no` varchar(50) DEFAULT NULL COMMENT '微信订单号',
+  `content` longtext COMMENT '错误详情',
+  `fee` decimal(10,2) DEFAULT '0.00' COMMENT '手续费',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`openid`,`createtime`,`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='提现申请';
+
+
+CREATE TABLE IF NOT EXISTS `ims_xc_beauty_zan` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `openid` varchar(50) DEFAULT NULL COMMENT '用户id',
+  `pid` int(11) DEFAULT NULL COMMENT '技师id',
+  `status` int(11) DEFAULT '-1' COMMENT '状态',
+  `createtime` datetime DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`id`),
+  KEY `uniacid` (`uniacid`,`pid`,`status`,`createtime`)
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8 COMMENT='点赞记录';
+
+INSERT INTO ims_xc_beauty_address VALUES 
+('1','5','oKafk5NE-K1mwOH60pwXDFO3Izm8','邓晓','15986786047','','','','1','2020-07-20 16:09:55');
+INSERT INTO ims_xc_beauty_address VALUES 
+('2','5','oKafk5P967MDdGPv9FxF2Te5US90','阿狸','13736543866','','','','1','2020-07-23 15:33:27');
+INSERT INTO ims_xc_beauty_address VALUES 
+('3','5','oKafk5AazNZDhEibKr2NXNuVdXhI','邓晓','15986786047','','','','1','2020-07-23 16:22:36');
+INSERT INTO ims_xc_beauty_address VALUES 
+('4','5','oKafk5HfsoBbCQlLyc0fJh2gRgvI','谢肖','18028776027','','','','1','2020-07-28 20:57:17');
+INSERT INTO ims_xc_beauty_address VALUES 
+('5','5','oKafk5Gq9J22L6SYouEIfpg2Cqgs','赫瑞','18676713334','','','','1','2020-08-03 11:22:59');
+INSERT INTO ims_xc_beauty_address VALUES 
+('6','5','oKafk5IIyY5PAd_HzUs6Wv6usA9Q','在','12525869852','','','','1','2020-08-03 11:23:06');
+INSERT INTO ims_xc_beauty_address VALUES 
+('7','5','oKafk5DnTD6gGBqLc2ILilI9AaxY','刘慧缘','15999538683','','','','1','2020-08-05 16:37:45');
+INSERT INTO ims_xc_beauty_address VALUES 
+('8','5','oKafk5AWSZqMcZD1LASMW7HD6ZLQ','菲','18218809525','','','','1','2020-08-13 15:56:26');
+INSERT INTO ims_xc_beauty_address VALUES 
+('9','5','oKafk5La3q2PU7Gjql67ouxdZaHM','彭露','13242920211','','','','1','2020-08-14 12:22:41');
+INSERT INTO ims_xc_beauty_address VALUES 
+('10','5','oKafk5IU1iRghJt7SY1jCNn5lwH4','黄颖','18873618603','','','','1','2020-08-14 12:52:37');
+INSERT INTO ims_xc_beauty_address VALUES 
+('11','5','oKafk5HlTydbhrkc4dPyx1dArT1k','胡燕利','15820750809','','','','1','2020-08-22 10:54:32');
+INSERT INTO ims_xc_beauty_address VALUES 
+('12','5','oKafk5HWMSc6xB00pDrA6TETKKNQ','阿紫','13713683559','','','','1','2020-08-24 10:35:41');
+INSERT INTO ims_xc_beauty_address VALUES 
+('13','5','oKafk5Ji4PHdxROo-koP_Mg9YphU','小梅','13728823465','','','','1','2020-08-24 14:10:27');
+INSERT INTO ims_xc_beauty_address VALUES 
+('14','5','oKafk5DyA_8bbvPKsjHgvOAoiA9k','曾婷','13755116125','','','','1','2020-08-24 14:10:27');
+INSERT INTO ims_xc_beauty_address VALUES 
+('15','5','oKafk5L_E65rB4oqm86oviiKy3Y0','熊','13316851625','','','','1','2020-08-24 14:10:47');
+INSERT INTO ims_xc_beauty_address VALUES 
+('16','5','oKafk5Hlhy8urAoseTVh1747OeGo','陈燕婷','13423766568','','','','1','2020-08-24 14:12:13');
+INSERT INTO ims_xc_beauty_address VALUES 
+('17','5','oKafk5D6Plz92ZBT4kzHBfAKwxK0','娇肤佐邻虹湾','18929305370','','','','1','2020-08-24 14:42:29');
+INSERT INTO ims_xc_beauty_address VALUES 
+('18','5','oKafk5Oab1SbEuIKVSZK0EhZvzt4','常青','16675598699','','','','1','2020-08-24 15:23:14');
+INSERT INTO ims_xc_beauty_address VALUES 
+('19','5','oKafk5D52M_b2ee8CK_Bv8Xc2KQA','袁梓月','15944245833','','','','1','2020-08-24 16:28:02');
+INSERT INTO ims_xc_beauty_address VALUES 
+('20','5','oKafk5EiuvqxSd9oJdCGohooO_Ss','林春霞','18200774360','','','','1','2020-08-26 13:17:55');
+INSERT INTO ims_xc_beauty_address VALUES 
+('21','5','oKafk5JXcWXd4SwoEIdgoq6rCuPY','董','18665885988','','','','1','2020-09-01 15:03:17');
+INSERT INTO ims_xc_beauty_address VALUES 
+('22','5','oKafk5AAGG3LgVaFUkaHvtcNsM5c','维尼','15920044113','','','','1','2020-09-04 20:56:30');
+INSERT INTO ims_xc_beauty_address VALUES 
+('23','5','oKafk5E43y9LjW1kOSTraURhVJIs','李华丽','13430698294','','','','1','2020-09-06 13:38:56');
+INSERT INTO ims_xc_beauty_address VALUES 
+('24','5','oKafk5H8grMohCscZ0LmrfKmJG7g','陈意银','13714239682','','','','1','2020-09-06 14:14:15');
+INSERT INTO ims_xc_beauty_address VALUES 
+('25','5','oKafk5OV6_11ma2IhJmYJdH4YCLU','林','15999572708','','','','1','2020-09-10 17:03:49');
+INSERT INTO ims_xc_beauty_address VALUES 
+('26','5','oKafk5FdgL6lDa2Z55gl1SJory0s','吴雅婷','18038125454','','','','1','2020-09-12 15:26:19');
+INSERT INTO ims_xc_beauty_address VALUES 
+('27','5','oKafk5NLvAS0FHBrsIQgi2ZVu5vg','刘梦娇','17310027376','','','','1','2020-09-12 15:28:45');
+INSERT INTO ims_xc_beauty_address VALUES 
+('28','5','oKafk5GIpl2c6xOpY_q6aGNIPH5o','管小姐','13632885160','','','','1','2020-09-13 13:23:31');
+INSERT INTO ims_xc_beauty_address VALUES 
+('29','5','oKafk5JdEn6QV_qoNjKsiN-g2p34','白丽婷','13160993657','','','','1','2020-09-13 14:15:24');
+INSERT INTO ims_xc_beauty_address VALUES 
+('30','5','oKafk5NnHrO-SwdHocf-Uall58WU','1mo','13500061529','','','','1','2020-09-18 10:54:53');
+INSERT INTO ims_xc_beauty_address VALUES 
+('31','5','oKafk5BEfQmJkfSC85y4cslNXrXg','大菲','15112271329','','','','1','2020-09-23 11:30:58');
+INSERT INTO ims_xc_beauty_address VALUES 
+('32','5','oKafk5EJLFET_h6XFuvba0sJo4S8','白','18385643609','','','','1','2020-09-23 14:00:47');
+INSERT INTO ims_xc_beauty_address VALUES 
+('33','5','oKafk5AwlUQoxenTAHdYPO5S8ezE','俏怡','17388734006','','','','1','2020-09-24 09:28:04');
+INSERT INTO ims_xc_beauty_address VALUES 
+('34','5','oKafk5JMSDFol6Rg2Xf2mDMCuukU','圆子','18320887355','','','','1','2020-09-28 09:39:50');
+INSERT INTO ims_xc_beauty_address VALUES 
+('35','5','oKafk5PcLC9dOB3zinkdZ7W1V1-8','陈小姐','13828816309','','','','1','2020-10-06 16:03:28');
+INSERT INTO ims_xc_beauty_address VALUES 
+('36','5','oKafk5P5k13-9LanPFl-QHq0h-D4','蔡洁清','13632784650','','','','1','2020-10-07 14:54:50');
+INSERT INTO ims_xc_beauty_address VALUES 
+('37','5','oKafk5A8xhBkeinwJV4CjWTSxUss','赵宏博','18664576977','','','','1','2020-10-14 23:30:07');
+INSERT INTO ims_xc_beauty_address VALUES 
+('38','5','oKafk5GNBSGTNxk2xBcYoh9MBLyE','多多','13058010506','','','','1','2020-10-15 16:21:37');
+INSERT INTO ims_xc_beauty_address VALUES 
+('39','5','oKafk5PrLXU12VKZVGULEyY4COHw','张爱丽','13510193110','','','','1','2020-10-16 12:12:37');
+INSERT INTO ims_xc_beauty_address VALUES 
+('40','5','oKafk5H3AMZLZF04_gvBqJhqU5YU','陈治明','13530511868','','','','1','2020-10-16 17:39:56');
+INSERT INTO ims_xc_beauty_address VALUES 
+('41','5','oKafk5Gv5fajYWZ-4qbvMYshF__s','香香','13823343472','','','','1','2020-10-16 18:39:04');
+INSERT INTO ims_xc_beauty_address VALUES 
+('42','5','oKafk5P74KhM1YAo7-ak7LK5cefw','曹子琳','15869909925','','','','1','2020-10-17 11:19:12');
+INSERT INTO ims_xc_beauty_address VALUES 
+('43','5','oKafk5M9wKza9kjH69ftgSsUXbAs','连妙玲','15813877045','','','','1','2020-10-17 13:15:57');
+INSERT INTO ims_xc_beauty_address VALUES 
+('44','5','oKafk5IMulDAVz7UYmO-wvzvV0BM','肖露','13544094574','','','','1','2020-10-17 16:15:30');
+INSERT INTO ims_xc_beauty_address VALUES 
+('45','5','oKafk5FoTujZCUSkGU3Bjw3ZLm5k','刘蕊','13424311064','','','','-1','2020-10-18 15:59:11');
+INSERT INTO ims_xc_beauty_address VALUES 
+('46','5','oKafk5FoTujZCUSkGU3Bjw3ZLm5k','刘蕊','13424311064','','','','1','2020-10-18 15:59:37');
+INSERT INTO ims_xc_beauty_address VALUES 
+('47','5','oKafk5Hl60zEf9jGWUHwcq1C6QCM','郭玉芳','18929301728','','','','1','2020-10-19 14:12:31');
+INSERT INTO ims_xc_beauty_address VALUES 
+('48','5','oKafk5HNygTIcva7invtVEs4yKVw','叶瑞丽','13479783434','','','','1','2020-10-19 14:12:38');
+INSERT INTO ims_xc_beauty_address VALUES 
+('49','5','oKafk5E1HPgi5uNkdywt20YP3-YE','南小姐','18129913912','','','','1','2020-10-20 23:39:44');
+INSERT INTO ims_xc_beauty_address VALUES 
+('50','5','oKafk5L_Ny0Vx1O9Zxi9EKrUC2dE','胡小姐','13828787399','','','','1','2020-10-22 13:49:52');
+INSERT INTO ims_xc_beauty_address VALUES 
+('51','5','oKafk5GChTL1Mq_qqwOsmqAbxiVw','孙海燕','18664305180','','','','1','2020-10-22 14:09:00');
+INSERT INTO ims_xc_beauty_address VALUES 
+('52','5','oKafk5LwtRU12ZTDHBVsxeS1YTyk','陈嘉瑶','17688760617','','','','1','2020-10-23 18:04:29');
+INSERT INTO ims_xc_beauty_address VALUES 
+('53','5','oKafk5CXueCT_K7SjUdCw0MYtQnw','吴','18665396403','','','','1','2020-10-26 14:17:51');
+INSERT INTO ims_xc_beauty_address VALUES 
+('54','5','oKafk5HVy00DY7jq_hSBIUXiEg50','范珊钡','13418689579','','','','1','2020-10-29 22:29:26');
+INSERT INTO ims_xc_beauty_address VALUES 
+('55','8','otN2r5ZqoZWxXs5XuN6oOQFO5Eo0','邓晓','15986786047','','','','1','2020-10-30 16:32:57');
+INSERT INTO ims_xc_beauty_address VALUES 
+('56','5','oKafk5Ocop-AyfvdnzUdUISEs-HI','赵晨','15217953266','','','','1','2020-11-01 13:22:27');
+INSERT INTO ims_xc_beauty_address VALUES 
+('57','5','oKafk5NHrWLeNSU9Xa4R_R2QHek8','彭诗颖','13342948227','','','','1','2020-11-01 18:22:01');
+INSERT INTO ims_xc_beauty_address VALUES 
+('58','5','oKafk5LpPvxBwpYR5htfmjOETSoo','莫丹易','13144832599','','','','1','2020-11-04 14:09:02');
+INSERT INTO ims_xc_beauty_address VALUES 
+('59','5','oKafk5BwXA5BXWRk_W5yCbBUfy68','张心雅','18665360068','','','','1','2020-11-04 14:09:03');
+INSERT INTO ims_xc_beauty_address VALUES 
+('60','5','oKafk5N-7qkZVOef15XOZaYFvNW4','梁韵芝','13828842834','','','','1','2020-11-04 19:05:22');
+INSERT INTO ims_xc_beauty_address VALUES 
+('61','5','oKafk5BJhjjlGydHQcz13m_KFbtI','李可欣','18742599057','','','','1','2020-11-05 19:31:36');
+INSERT INTO ims_xc_beauty_address VALUES 
+('62','5','oKafk5OypItOllW_pXW5U2Lcsmhw','于','13809881605','','','','1','2020-11-06 07:21:06');
+INSERT INTO ims_xc_beauty_address VALUES 
+('63','5','oKafk5KNN13KJMhnkOPYG2hoKe2I','宗','13651205277','','','','1','2020-11-06 13:01:38');
+INSERT INTO ims_xc_beauty_address VALUES 
+('64','5','oKafk5EyXdkHtYchUQL7C11vYw18','si','15099901922','','','','1','2020-11-06 22:41:56');
+INSERT INTO ims_xc_beauty_address VALUES 
+('65','5','oKafk5CnqnVqUONHcbAiInUfl8Bc','赵茉钧','13928417456','','','','1','2020-11-07 13:15:18');
+INSERT INTO ims_xc_beauty_address VALUES 
+('66','5','oKafk5I8yFNX56SJoLXZEtWBRhrg','林婵娟','13686861505','','','','1','2020-11-07 16:01:49');
+INSERT INTO ims_xc_beauty_address VALUES 
+('67','5','oKafk5JmktFjcL3ecWCm_l9T66hM','贾','13760295633','','','','1','2020-11-07 22:31:36');
+INSERT INTO ims_xc_beauty_address VALUES 
+('68','5','oKafk5GBE3puLVDun7cXYCflPwbM','杨敏英','13128957981','','','','1','2020-11-08 18:27:49');
+INSERT INTO ims_xc_beauty_address VALUES 
+('69','5','oKafk5GepcTPJW_x0lCXdMxxXyXc','杨兰','18620326518','','','','1','2020-11-08 18:53:01');
+INSERT INTO ims_xc_beauty_address VALUES 
+('70','5','oKafk5BIF8JsRXRHeGXqIZqj4nHU','蔡小姐','13670210848','','','','1','2020-11-08 18:53:35');
+INSERT INTO ims_xc_beauty_address VALUES 
+('71','5','oKafk5Frj7n6k_GOFQSnuzFDe0Ss','张','18328703696','','','','-1','2020-11-09 13:17:17');
+INSERT INTO ims_xc_beauty_address VALUES 
+('72','5','oKafk5Frj7n6k_GOFQSnuzFDe0Ss','张利','18328703696','','','','1','2020-11-09 13:17:36');
+INSERT INTO ims_xc_beauty_address VALUES 
+('73','5','oKafk5BqBt8CXRp7VNt3QsA2D26c','丁','18124526089','','','','1','2020-11-09 14:46:44');
+INSERT INTO ims_xc_beauty_address VALUES 
+('74','5','oKafk5J14KShyGkcC7lzTvGFNNJk','周女士','13632788906','','','','1','2020-11-09 15:05:38');
+INSERT INTO ims_xc_beauty_address VALUES 
+('75','5','oKafk5PSqmfOQQ4jCcouM6UCLMEU','刘薇','13823747028','','','','1','2020-11-09 16:00:35');
+INSERT INTO ims_xc_beauty_address VALUES 
+('76','5','oKafk5OtRO1x8LcVy0mbnmdr8klQ','范小姐','13590353176','','','','1','2020-11-09 18:00:14');
+INSERT INTO ims_xc_beauty_address VALUES 
+('77','5','oKafk5J1wHW0-Cbb3NipceiyedxQ','雷颖','18688386466','','','','1','2020-11-10 15:03:42');
+INSERT INTO ims_xc_beauty_address VALUES 
+('78','5','oKafk5GCUV-4mwJH5uXI6p-fL3qI','天','17636562140','','','','1','2020-11-11 19:20:53');
+INSERT INTO ims_xc_beauty_address VALUES 
+('79','5','oKafk5JexSVmI-06620sRmYeMuEM','曾雅琦','13662661388','','','','1','2020-11-11 21:05:28');
+INSERT INTO ims_xc_beauty_address VALUES 
+('80','5','oKafk5EgxYQdlXicSqlre6B0wTVY','吴欣欣','15013822104','','','','1','2020-11-12 15:28:11');
+INSERT INTO ims_xc_beauty_address VALUES 
+('81','5','oKafk5BL4cjnxnWWdzNXuEMDcSRw','万','13480816707','','','','1','2020-11-13 13:08:22');
+INSERT INTO ims_xc_beauty_address VALUES 
+('82','5','oKafk5PFUIeP2SHPJCT3mogTnxcQ','任','18126179707','','','','1','2020-11-13 17:10:33');
+INSERT INTO ims_xc_beauty_address VALUES 
+('83','5','oKafk5LXonB7mOWec06R6WvwF4ak','齐绍姣','15717568181','','','','1','2020-11-13 19:18:52');
+INSERT INTO ims_xc_beauty_address VALUES 
+('84','5','oKafk5BKV6KpS1vd4D75kxt99UsQ','李佳','13250777585','','','','1','2020-11-14 13:09:19');
+INSERT INTO ims_xc_beauty_address VALUES 
+('85','5','oKafk5GlH5OLz0lsZ2-UZbFdCec8','何女士','18126257825','','','','1','2020-11-14 15:49:55');
+INSERT INTO ims_xc_beauty_address VALUES 
+('86','5','oKafk5GQqs50Jq3oA1ErgKvoffSI','陈','15919133674','','','','1','2020-11-14 16:37:44');
+INSERT INTO ims_xc_beauty_address VALUES 
+('87','5','oKafk5JZ9EOI73hpgfAiM5O6hDLo','李有钱','18335480189','','','','1','2020-11-14 17:02:20');
+INSERT INTO ims_xc_beauty_address VALUES 
+('88','5','oKafk5LSYX0-SBQ1OR8q0J14s7Z4','1','13479362539','','','','1','2020-11-15 13:07:29');
+INSERT INTO ims_xc_beauty_address VALUES 
+('89','5','oKafk5Axsd1Gh7NRa2lrehSTlsx8','张小娟','17727526989','','','','1','2020-11-15 15:05:11');
+INSERT INTO ims_xc_beauty_address VALUES 
+('90','5','oKafk5Niuy3TXiz4Z5a6tgTC1Ydk','黄妙君','18682317170','','','','1','2020-11-15 15:38:44');
+INSERT INTO ims_xc_beauty_address VALUES 
+('91','5','oKafk5H-BMY1e-od13FY0jIa8ndU','李海英','18612596622','','','','1','2020-11-15 16:20:39');
+INSERT INTO ims_xc_beauty_address VALUES 
+('92','5','oKafk5GH8dRY9BLm_9gWugyLg20k','陶','13155725230','','','','1','2020-11-15 21:24:41');
+INSERT INTO ims_xc_beauty_address VALUES 
+('93','5','oKafk5JbE7uLlXMjlXFTPgxmaMIE','张媛媛','18509994773','','','','1','2020-11-16 10:24:13');
+INSERT INTO ims_xc_beauty_address VALUES 
+('94','5','oKafk5FlFa2saZGeuJ7P7YqM8Vm8','范林利','13059403552','','','','1','2020-11-16 10:24:15');
+INSERT INTO ims_xc_beauty_address VALUES 
+('95','5','oKafk5MtaqXJ-pb7_3y2VVwMX6-E','佘婷','18825839192','','','','1','2020-11-16 10:24:15');
+INSERT INTO ims_xc_beauty_address VALUES 
+('96','5','oKafk5F5edFyGJY49ZnZAOvaP618','庄苏芳','13714901733','','','','1','2020-11-16 10:24:21');
+INSERT INTO ims_xc_beauty_address VALUES 
+('97','5','oKafk5H6s-n621s4N_tEbpCCIfsU','邵岚','13923819270','','','','1','2020-11-16 10:24:28');
+INSERT INTO ims_xc_beauty_address VALUES 
+('98','5','oKafk5PElEkTuMtvGKew7mQBvUEU','陈聪','18825626046','','','','1','2020-11-16 14:17:56');
+INSERT INTO ims_xc_beauty_address VALUES 
+('99','5','oKafk5CdYnBk1zj1-fj9L11U9XdQ','谢女士','15118826442','','','','1','2020-11-16 15:21:37');
+INSERT INTO ims_xc_beauty_address VALUES 
+('100','5','oKafk5FSOaD87nzxQX5uCNAZ8VwI','吴','18933790607','','','','1','2020-11-16 19:02:00');
+INSERT INTO ims_xc_beauty_address VALUES 
+('101','5','oKafk5MaLaBNnk0LoNrg9_9vlnDM','管羚宇','13798271628','','','','1','2020-11-17 19:09:58');
+INSERT INTO ims_xc_beauty_address VALUES 
+('102','5','oKafk5AQ_jieq6lOAvbMii35rScQ','官伟玲','13632722823','','','','1','2020-11-18 15:14:31');
+INSERT INTO ims_xc_beauty_address VALUES 
+('103','5','oKafk5LvkXADKtl0MKIjUzme-8og','叶','18575693699','','','','1','2020-11-19 11:28:57');
+INSERT INTO ims_xc_beauty_address VALUES 
+('104','5','oKafk5AbXy-1iodPlTpYdH2Odvxg','董','13632966035','','','','1','2020-11-19 11:29:05');
+INSERT INTO ims_xc_beauty_address VALUES 
+('105','5','oKafk5PWET-LIc6ZgS8q8dOn_xgA','杨艳芳','13713727849','','','','1','2020-11-19 11:30:18');
+INSERT INTO ims_xc_beauty_address VALUES 
+('106','5','oKafk5NVCwJlC6NkTvpAgoq6btQI','馨予','16620812051','','','','1','2020-11-19 11:32:03');
+INSERT INTO ims_xc_beauty_address VALUES 
+('107','5','oKafk5ElvSIaELkdTLf50oDfvV7A','胡','13922883805','','','','1','2020-11-19 12:18:32');
+INSERT INTO ims_xc_beauty_address VALUES 
+('108','5','oKafk5KgEqGmXip5KB_8nE6Ov1Is','金丽娜','15323818382','','','','1','2020-11-19 14:59:24');
+INSERT INTO ims_xc_beauty_address VALUES 
+('109','5','oKafk5HCOEfiOCbRBYyRy41dEEO8','张小姐','18988781555','','','','1','2020-11-19 17:10:08');
+INSERT INTO ims_xc_beauty_address VALUES 
+('110','5','oKafk5KVm2TIP7G5sAtvy5MYOVj0','南怡伶','15816866170','','','','1','2020-11-19 20:12:38');
+INSERT INTO ims_xc_beauty_address VALUES 
+('111','5','oKafk5GBrX56zYlZhZXt2AfRYey0','韩梅梅','18870379016','','','','1','2020-11-21 11:34:26');
+INSERT INTO ims_xc_beauty_address VALUES 
+('112','5','oKafk5M4bQwwdFsobJ2ptLPlZfcM','王芝芳','15521007229','','','','1','2020-11-21 15:13:58');
+INSERT INTO ims_xc_beauty_address VALUES 
+('113','5','oKafk5LYOtaea21aXghoYWQ0FWVs','刘婷','13602548003','','','','1','2020-11-21 16:14:50');
+INSERT INTO ims_xc_beauty_address VALUES 
+('114','5','oKafk5FTh4hBF8HcSnd1mCy-W6zA','潘川玉','13724336282','','','','1','2020-11-21 17:53:23');
+INSERT INTO ims_xc_beauty_address VALUES 
+('115','5','oKafk5PT2HKRKu6H7_n5s4xlyEaY','张小君','13510447773','','','','1','2020-11-23 12:53:49');
+INSERT INTO ims_xc_beauty_address VALUES 
+('116','5','oKafk5DCv8FL_3YhX-nsGoOOYGfk','娜娜','13510892989','','','','1','2020-11-25 13:01:04');
+INSERT INTO ims_xc_beauty_address VALUES 
+('117','5','oKafk5B2N3DFYvmrWuurj6yC55NI','李','13823165090','','','','1','2020-11-25 15:19:19');
+INSERT INTO ims_xc_beauty_address VALUES 
+('118','5','oKafk5L2JdUBRiBPq_AHmkjrkiG0','张','13516674491','','','','1','2020-11-25 18:29:18');
+INSERT INTO ims_xc_beauty_address VALUES 
+('119','5','oKafk5E_9E09vYO1LxlJpa2UCPlw','曾','13826568873','','','','1','2020-11-27 13:21:54');
+INSERT INTO ims_xc_beauty_address VALUES 
+('120','5','oKafk5Pp4rSSW7Gm57kLY8E0StUQ','许豆子','15999524791','','','','1','2020-11-27 14:12:27');
+INSERT INTO ims_xc_beauty_address VALUES 
+('121','5','oKafk5K2SbgXwmzZsK3r24FKXSCw','龚梦娴','15115371326','','','','1','2020-11-28 19:33:39');
+INSERT INTO ims_xc_beauty_address VALUES 
+('122','5','oKafk5PGyrasl6LA_IhRGxfD7vj4','姚艳','15820461090','','','','1','2020-11-29 15:22:24');
+INSERT INTO ims_xc_beauty_address VALUES 
+('123','5','oKafk5IQ1g_FYvwdvJCyAukWv9X8','孔令晓','13823541011','','','','1','2020-11-29 16:06:01');
+INSERT INTO ims_xc_beauty_address VALUES 
+('124','5','oKafk5Lzkv4X12_-jF5pRRwVX8To','彭家郁','13538066685','','','','1','2020-11-29 20:48:23');
+INSERT INTO ims_xc_beauty_address VALUES 
+('125','5','oKafk5Cqw-KC2fIf9IsgRS9VMKM8','陈','15919133674','','','','1','2020-11-30 14:48:32');
+INSERT INTO ims_xc_beauty_address VALUES 
+('126','5','oKafk5M0lzuZqiheDFLPm9_x2W-M','陈楚莹','15994927777','','','','1','2020-11-30 15:22:43');
+INSERT INTO ims_xc_beauty_address VALUES 
+('127','5','oKafk5IOFSe32Co3qpXxUOmko5pw','詹少莹','18688992050','','','','1','2020-11-30 16:32:23');
+INSERT INTO ims_xc_beauty_address VALUES 
+('128','5','oKafk5AdYyHbRivrjLMTYsJia87s','郭潇沛','15889457169','','','','1','2020-11-30 19:58:49');
+INSERT INTO ims_xc_beauty_address VALUES 
+('129','5','oKafk5F7YVaF2duivaSQOixm0af4','张涵','13823585577','','','','1','2020-12-01 15:03:32');
+INSERT INTO ims_xc_beauty_address VALUES 
+('130','5','oKafk5Ibpz_aq3mHRnhW4qnkSIC4','蓓蓓','13602588072','','','','1','2020-12-01 16:03:09');
+INSERT INTO ims_xc_beauty_address VALUES 
+('131','5','oKafk5B2f5ER-wrMHtrlGZ4AclAU','陈晓悦','13192215705','','','','1','2020-12-02 22:29:30');
+INSERT INTO ims_xc_beauty_address VALUES 
+('132','5','oKafk5Kr6H13B1Z4_fZ7e0oqsAN8','刘佳儿','13088887799','','','','1','2020-12-03 11:02:17');
+INSERT INTO ims_xc_beauty_address VALUES 
+('133','5','oKafk5PeFHqVwOFMIV4zZTooqvLA','宁小姐','18926463980','','','','-1','2020-12-04 17:47:17');
+INSERT INTO ims_xc_beauty_address VALUES 
+('134','5','oKafk5PeFHqVwOFMIV4zZTooqvLA','宁小姐','18926463980','','','','1','2020-12-04 17:47:51');
+INSERT INTO ims_xc_beauty_address VALUES 
+('135','5','oKafk5EkCdosLMV614H7yZcgnX70','罗文悦','13802254204','','','','1','2020-12-04 17:56:10');
+INSERT INTO ims_xc_beauty_address VALUES 
+('136','5','oKafk5CJxReaqt9UqBkavfymRF9Q','素格','15900111097','','','','1','2020-12-06 10:35:17');
+INSERT INTO ims_xc_beauty_address VALUES 
+('137','5','oKafk5KSJ6CbC2FtGKXhtJRwyOHw','吴希希','18124676788','','','','1','2020-12-06 17:11:23');
+INSERT INTO ims_xc_beauty_address VALUES 
+('138','5','oKafk5HJLuQlmwFchqfOe3bPYMJU','饶心蕊','13613041497','','','','1','2020-12-07 15:44:45');
+INSERT INTO ims_xc_beauty_address VALUES 
+('139','5','oKafk5JybKnOR12-vf4ryWrRdOPg','万琪','13425129226','','','','1','2020-12-08 19:55:05');
+INSERT INTO ims_xc_beauty_address VALUES 
+('140','5','oKafk5N7arAA74P1Y_49fRrdpNwY','龚雪茜','13560735858','','','','1','2020-12-09 14:41:52');
+INSERT INTO ims_xc_beauty_address VALUES 
+('141','5','oKafk5DqYVsfDsgccYK4TPgjL7mk','刘其芳','13534253536','','','','1','2020-12-09 17:18:59');
+INSERT INTO ims_xc_beauty_address VALUES 
+('142','5','oKafk5CsTByVTinXvDU6XVQcsx-k','张惠屏','13823769488','','','','1','2020-12-10 15:06:11');
+INSERT INTO ims_xc_beauty_address VALUES 
+('143','5','oKafk5EIJKeNNPlqjHlyoB4mq-_o','芩熙','18124526896','','','','1','2020-12-11 13:35:00');
+INSERT INTO ims_xc_beauty_address VALUES 
+('144','5','oKafk5N36TaRnWo0Kz2ECUe2WJVw','叶金萍','18688734224','','','','1','2020-12-11 21:30:30');
+INSERT INTO ims_xc_beauty_address VALUES 
+('145','5','oKafk5OiiWMNnJkJwbXDEFOgXWzI','孙嘉','13602308095','','','','1','2020-12-12 15:23:41');
+INSERT INTO ims_xc_beauty_address VALUES 
+('146','5','oKafk5F8hHI4nfmBTrk8O_mg8R2o','小文','15919133674','','','','1','2020-12-13 15:47:51');
+INSERT INTO ims_xc_beauty_address VALUES 
+('147','5','oKafk5DRcwUB7nDEdptiJmDUWosc','叶小姐','13510002223','','','','1','2020-12-14 14:29:49');
+INSERT INTO ims_xc_beauty_address VALUES 
+('148','5','oKafk5DtDUEaEDWVvsEleLxHoWjg','李鑫','13528869334','','','','1','2020-12-16 14:26:44');
+INSERT INTO ims_xc_beauty_address VALUES 
+('149','5','oKafk5CCwkGFGs5IPN1M983bAVIE','陆瑶','13530070733','','','','1','2020-12-16 18:37:14');
+INSERT INTO ims_xc_beauty_address VALUES 
+('150','5','oKafk5GZXJmAPMAPQMbpvXn53aM8','群儿','15914060781','','','','1','2020-12-16 19:39:01');
+INSERT INTO ims_xc_beauty_address VALUES 
+('151','5','oKafk5AsLWFvvuq94ul9pCyTfwBQ','曾佩珊','18823847300','','','','1','2020-12-16 19:43:12');
+INSERT INTO ims_xc_beauty_address VALUES 
+('152','5','oKafk5CXw1GaaqBX0Kd8RHRcOPbM','雯希','18688999577','','','','1','2020-12-17 10:57:07');
+INSERT INTO ims_xc_beauty_address VALUES 
+('153','5','oKafk5MyOV48wzQSdJwbp1elFFDw','徐女士','18814478522','','','','1','2020-12-17 12:04:12');
+INSERT INTO ims_xc_beauty_address VALUES 
+('154','5','oKafk5JfibHZvHIU_66kiZzktfzc','黄小姐','13510718255','','','','1','2020-12-17 13:40:24');
+INSERT INTO ims_xc_beauty_address VALUES 
+('155','5','oKafk5ACeIPmfnwbV8AlVcsXxFyc','张迪','18620388123','','','','1','2020-12-20 11:57:31');
+INSERT INTO ims_xc_beauty_address VALUES 
+('156','5','oKafk5DZzISeVv0ago0TJ0GVFXb0','刘燕','13510539810','','','','1','2020-12-23 14:17:12');
+INSERT INTO ims_xc_beauty_address VALUES 
+('157','5','oKafk5NV9kjY9HTvOg4TGNJtlInE','韩洁','18665285853','','','','1','2020-12-23 21:14:40');
+INSERT INTO ims_xc_beauty_address VALUES 
+('158','5','oKafk5Kb3vKN1StzN8H5ZPLghJ0g','唐晓琳','18998995003','','','','1','2020-12-24 17:28:14');
+INSERT INTO ims_xc_beauty_address VALUES 
+('159','5','oKafk5K83Kihweggd0UZp_O9LmhA','亚亚','15882938943','','','','1','2020-12-26 11:40:16');
+]]></install>
+	<uninstall><![CDATA[DROP TABLE IF EXISTS `ims_xc_beauty_address`;
+DROP TABLE IF EXISTS `ims_xc_beauty_apply`;
+DROP TABLE IF EXISTS `ims_xc_beauty_area`;
+DROP TABLE IF EXISTS `ims_xc_beauty_area_item`;
+DROP TABLE IF EXISTS `ims_xc_beauty_area_log`;
+DROP TABLE IF EXISTS `ims_xc_beauty_article`;
+DROP TABLE IF EXISTS `ims_xc_beauty_banner`;
+DROP TABLE IF EXISTS `ims_xc_beauty_birth`;
+DROP TABLE IF EXISTS `ims_xc_beauty_card`;
+DROP TABLE IF EXISTS `ims_xc_beauty_code`;
+DROP TABLE IF EXISTS `ims_xc_beauty_config`;
+DROP TABLE IF EXISTS `ims_xc_beauty_count`;
+DROP TABLE IF EXISTS `ims_xc_beauty_coupon`;
+DROP TABLE IF EXISTS `ims_xc_beauty_discuss`;
+DROP TABLE IF EXISTS `ims_xc_beauty_discuss_log`;
+DROP TABLE IF EXISTS `ims_xc_beauty_exchange`;
+DROP TABLE IF EXISTS `ims_xc_beauty_group`;
+DROP TABLE IF EXISTS `ims_xc_beauty_live`;
+DROP TABLE IF EXISTS `ims_xc_beauty_log`;
+DROP TABLE IF EXISTS `ims_xc_beauty_login_log`;
+DROP TABLE IF EXISTS `ims_xc_beauty_mall`;
+DROP TABLE IF EXISTS `ims_xc_beauty_moban_user`;
+DROP TABLE IF EXISTS `ims_xc_beauty_nav`;
+DROP TABLE IF EXISTS `ims_xc_beauty_online`;
+DROP TABLE IF EXISTS `ims_xc_beauty_online_log`;
+DROP TABLE IF EXISTS `ims_xc_beauty_onlines`;
+DROP TABLE IF EXISTS `ims_xc_beauty_order`;
+DROP TABLE IF EXISTS `ims_xc_beauty_order_check`;
+DROP TABLE IF EXISTS `ims_xc_beauty_order_detail`;
+DROP TABLE IF EXISTS `ims_xc_beauty_package`;
+DROP TABLE IF EXISTS `ims_xc_beauty_package_log`;
+DROP TABLE IF EXISTS `ims_xc_beauty_pai`;
+DROP TABLE IF EXISTS `ims_xc_beauty_pai_detail`;
+DROP TABLE IF EXISTS `ims_xc_beauty_pick_class`;
+DROP TABLE IF EXISTS `ims_xc_beauty_pick_order`;
+DROP TABLE IF EXISTS `ims_xc_beauty_pick_service`;
+DROP TABLE IF EXISTS `ims_xc_beauty_plugin`;
+DROP TABLE IF EXISTS `ims_xc_beauty_prize`;
+DROP TABLE IF EXISTS `ims_xc_beauty_rotate`;
+DROP TABLE IF EXISTS `ims_xc_beauty_rotate_log`;
+DROP TABLE IF EXISTS `ims_xc_beauty_score`;
+DROP TABLE IF EXISTS `ims_xc_beauty_score_log`;
+DROP TABLE IF EXISTS `ims_xc_beauty_service`;
+DROP TABLE IF EXISTS `ims_xc_beauty_service_class`;
+DROP TABLE IF EXISTS `ims_xc_beauty_share`;
+DROP TABLE IF EXISTS `ims_xc_beauty_shop`;
+DROP TABLE IF EXISTS `ims_xc_beauty_sms`;
+DROP TABLE IF EXISTS `ims_xc_beauty_sms_birth`;
+DROP TABLE IF EXISTS `ims_xc_beauty_store`;
+DROP TABLE IF EXISTS `ims_xc_beauty_store_fee`;
+DROP TABLE IF EXISTS `ims_xc_beauty_store_member`;
+DROP TABLE IF EXISTS `ims_xc_beauty_store_service`;
+DROP TABLE IF EXISTS `ims_xc_beauty_take_code`;
+DROP TABLE IF EXISTS `ims_xc_beauty_take_number`;
+DROP TABLE IF EXISTS `ims_xc_beauty_times`;
+DROP TABLE IF EXISTS `ims_xc_beauty_times_log`;
+DROP TABLE IF EXISTS `ims_xc_beauty_user_birth`;
+DROP TABLE IF EXISTS `ims_xc_beauty_user_coupon`;
+DROP TABLE IF EXISTS `ims_xc_beauty_userinfo`;
+DROP TABLE IF EXISTS `ims_xc_beauty_withdraw`;
+DROP TABLE IF EXISTS `ims_xc_beauty_zan`;
+]]></uninstall>
+	<upgrade><![CDATA[ru_rpgrade.php]]></upgrade>
+
+</manifest>

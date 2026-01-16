@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{$school['title']}</title>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=0" />
+        <link type="text/css" rel="stylesheet" href="{OSSURL}public/web/font-awesome5pro/css/all.min.css" />
+        <script type="text/javascript" src="{MODULE_URL}public/mobile/js/autofitui.js?v=0.7"></script>
+        <style>
+            html::-webkit-scrollbar,html *::-webkit-scrollbar {display:none}
+            html body{width: 100%;height: 100%;background-color: #efefef;padding:0;margin: 0;  }
+            html body *{box-sizing: border-box;}
+            .default-boxshadow{ box-shadow: 0.125rem 0.125rem 0.5rem 0rem rgba(218, 218, 218, 075)}
+            .item-button { position: absolute; right: 0rem; border-radius: 0.3125rem; border: 0.0625rem solid #14c682; bottom: 0rem; }
+            .item-button a { margin: 0.125rem; font-size: 0.8125rem; color: #6f6969; }
+            .top-info-box{width:calc(100% - 1.25rem);background-color: #509ff1;margin: 0.625rem;border-radius: 0.3125rem;padding: 0.625rem;}
+            .kcinfo-box{display: flex;align-items: center;}
+            .kcthumb{ width: 3.75rem;height: 3.75rem;background-color: #fff;border-radius: 50%}
+            .kcname-time{margin-left: 0.625rem;display: flex;flex-direction: column;flex:1;overflow: auto;}
+            .kcname{line-height: 1.875rem;font-size: 1.125rem;color:white;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100%;}
+            .kc-extra-info{line-height: 1.25rem;color:#efefef;font-size: 0.875rem;display: flex;}
+            .kc-type{background-color: #ff5f5f;padding: 0rem 0.3125rem;font-size: 0.75rem;border-radius: 0.3125rem;margin-right: 0.3125rem;}
+
+            .promote-root{display: flex;width: 100%;justify-content: space-between;padding: 0 0.625rem;margin: 0.9375rem 0 0.625rem 0;}
+            .promote-info-box{color:gray;text-align: center;}
+            .promote-info-box .promote-info-title{position: relative;margin-bottom: 0.3125rem;}
+            .promote-info-box .promote-info-number{width: 100%;text-align: center;}
+            .middle-btn-box{display: flex;justify-content: space-between;padding:0.3125rem 0.625rem}
+            .middle-btn-item{width: calc(50% - 0.1875rem);background-color: #fff;display: flex;flex-direction: row;align-items: center;padding:0.625rem 0.3125rem;border-radius: 0.1875rem;}
+            .btn-img{width: 3.125rem;height: 3.125rem;background-color: red;border-radius: 0.1875rem;}
+            .middle-btn-box .btn-desc{margin-left: 0.3125rem;line-height: 1.75rem;flex:1}
+            .middle-btn-box .btn-title{font-size: 1rem;}
+            .middle-btn-box .btn-tips{font-size: 0.75rem;color: gray;line-height: 1rem;}
+            .btn-group-tri{display: flex;justify-content: space-between;padding: 0 0.625rem;}
+            .btn-tri-item{background-color: #fff;display: flex;flex-direction: column;align-items: center;padding: 0.625rem;padding-bottom: 0.3125rem;border-radius: 0.3125rem;width: calc(33% - 0.375rem);}
+            .btn-tri-item .item-img{width: 3.125rem;height: 3.125rem;background-color: red;}
+            .btn-tri-item .item-name{line-height: 1.875rem;margin-top: 0.3125rem;}
+            .promote-log-box{display: flex;align-items: center;margin-bottom: 0.625rem;margin-top: 1.875rem; }
+            .more-log{font-size: 0.875rem;color:gray}
+            .promote-log{background-color: white;width: 100%;border-radius: 0.3125rem;display: flex;padding: 0.625rem;align-items: center;color:#2b2b2b;margin-bottom: 0.625rem;}
+            .log-thumb{width: 2.5rem;height: 2.5rem;background-color: red;}
+            .log-text-box{flex:1;padding-left:0.625rem;}
+            .log-name-time{display: flex;align-items: center;}
+            .log-name-time .name{font-size: 1rem;flex:1}
+            .log-name-time .time{font-size: 0.75rem;color:gray}
+
+            .load-mask{position: fixed;width: 100%;height: 100%;background-color: white;top: 0;left: 0;z-index: 3;}
+            .condition-box{min-height: 1.25rem;flex: 1;position: relative;height: 1.875rem;}
+            .mask-select-box{position: relative;width: 100%;}
+            .mask-title{position: absolute;top: 0;left: 0;line-height: 1.875rem;z-index: 2;pointer-events: none;width: 6.25rem;height: 1.875rem;}
+            .mask-select{position: absolute;top: 0;left: 0;opacity: 0;width: 6.25rem;height: 1.875rem;}
+            .time-select-box{width: 100%;background-color: white;display: flex;padding: 0.125rem 0.625rem;flex-direction: row;}
+            .log-box{padding: 0.625rem;height: calc(100% - 13.0625rem);position: relative;}
+            .log-box-abs{position: absolute;width: calc(100% - 1.25rem);height: calc(100% - 1.25rem);top:0.625rem;left: 0.625rem;}
+            .log-box-abs.mask{z-index: 2;text-align: center;padding-top: 6.25rem;background-color: rgba(255,255,255,.4);}
+            .log-box-abs.content{overflow: auto;}
+
+        </style>
+    </head>
+    <body>
+        <div id="vmpromote-div" style="position: absolute;height: 100%;width: 100%;">
+            <div v-if="!loadDone" class="load-mask"> </div>
+            <div style="position: relative;height: 100%;padding-top: 0.0625rem;">
+                <!-- 顶部信息 -->
+                <div class="top-info-box default-boxshadow">
+                    <div class="kcinfo-box">
+                        <div>
+                            <img :src="thumb" style="width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 1px solid #ccc;">
+                        </div>
+                        <div class="kcname-time">
+                            <div class="kcname">{{courseName}}</div>
+                            <div class="kc-extra-info">
+                                <span class="kc-type" >{{courseType}}</span>
+                                <span>{{courseTime}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="time-select-box">
+                    <div class="condition-box">
+                        <div class="mask-select-box">
+                            <div class="mask-title">
+                                {{selectList[timeRange]}} <i class="fas fa-angle-down"></i>
+                            </div>
+                            <div class="mask-select" >
+                                <select v-model="timeRange" @change="ChangeTime($event)">
+                                    <option v-for="(item,index) in selectList" :value="index">
+                                        {{item}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="height: 1.875rem;line-height: 1.875rem;font-size: 0.875rem;color:gray">
+                        选择时间范围
+                    </div>
+                </div>
+
+                <div class="log-box">
+                    <div v-if="!getDataDone" class="log-box-abs mask">
+                        <div><i class="fas fa-spinner fa-spin" style="font-size: 1.875rem;"></i></div>
+                        <div style="font-size: 1rem;margin-top: 1.25rem;">获取数据中</div>
+                    </div>
+                    <div @scroll="ScrollLoad($event)" class="log-box-abs content">
+                        <div>
+                            <div class="promote-log" v-for="(logitem,logindex) in logList" :key="logindex">
+                                <div>
+                                    <img :src="logitem.icon" style="width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 1px solid #ccc;">
+                                </div>
+                                <div class="log-text-box">
+                                    <div class="log-name-time">
+                                        <div class="name">{{logitem.nickname}}</div>
+                                        <div class="time">{{logitem.time}}</div>
+                                    </div>
+                                    <div style="font-size: 0.875rem;color:gray">
+                                        <span>{{logitem.status}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+            </div>
+        </div> 
+        <script type="text/javascript" src="{MODULE_URL}public/mobile/js/jquery-1.11.3.min.js?v=4.6"></script>
+        <script type="text/javascript" src="{MODULE_URL}public/mobile/js/vue.min.js?v=1.0.0"></script>
+        <script type="text/javascript" src="{MODULE_URL}public/mobile/js/axios.min.js?v=1.0.0"></script>
+        <script type="text/javascript" src="{MODULE_URL}public/mobile/js/scroll2.0.remaster.js?v=1.0.0"></script>
+        <script>
+            const vmpromote = new Vue({
+                el:"#vmpromote-div",
+                data(){
+                    return {
+                        getDataDone:false,
+                        ScrollAjaxLock:false,
+                        scrollLoadObj:null,
+                        loadDone:false,
+                        courseName:`{$kcinfo['name']}`,
+                        courseTime:`{$kcinfo['start']} - {$kcinfo['end']}`,
+                        courseType:`{$kcinfo['kc_type']}`,
+                        thumb:`{$kcinfo['thumb']}`,
+                        selectList:[
+                            "不限时间",
+                            "当天",
+                            "一周之内",
+                            "一个月之内",
+                            "三个月之内",
+                            "半年之内",
+                            "半年以前"
+                        ],
+                        timeRange:0,
+                        logList:[]
+                    }
+                },
+                methods: {
+                    ScrollLoad: function(e){
+                        const target = e.target,_self = this;
+                        _self.scrollLoadObj.VueScrollLoadFunc(target,_self.getData,{maxid:_self.logList[_self.logList.length -1 ].id,type:_self.type,ScrollAjaxLock:true});
+                    },
+                    getData:function(params){
+                        const _self = this
+                        return new Promise(async function(resolve,reject){
+                                const res = await axios.post("{php echo $this->createMobileUrl('myfans', array('op'=>'getData','schoolid'=>$schoolid,'pu_id'=>$_GPC['pu_id'],'kc_id'=>$_GPC['kc_id']))}",
+                                params);
+                                _self.getDataDone = true
+                                let hasData = false;
+                                if(res.data.data !== undefined && res.data.data.length > 0){
+                                    hasData = true;
+                                }
+                                resolve({
+                                    finish:true,
+                                    hasData:hasData,
+                                    data:res.data
+                                });
+                                if(res.data.ScrollAjaxLock === true){
+                                    _self.logList = _self.logList.concat(res.data.data)
+                                }else{
+                                    _self.logList = res.data.data
+                                }
+                            })
+                    },
+                    ChangeTime: function(event){
+                        let _self = this;
+                        _self.getDataDone = false
+                        _self.type = event.target.value;
+                        this.getData({type:_self.type})
+                    }
+                },
+                mounted() {
+                    const _self = this
+                    _self.loadDone = !_self.loadDone
+                    _self.getDataDone = !_self.getDataDone
+                    _self.scrollLoadObj = new vue_scroll_load()
+                },
+                created() {
+                    this.getData()
+                },
+            })
+        </script>
+    </body>
+</html>
+
+

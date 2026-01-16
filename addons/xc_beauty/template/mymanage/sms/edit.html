@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {template 'common/edithead'}
+    <!--微擎 -->
+    <!--这个放在最后一切平白安全-->
+    <script src="../web/resource/js/lib/jquery.qrcode.min.js"></script>
+    <script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+    <script type="text/javascript">
+        //编辑器里使用
+        var urobj=[];
+    </script>
+    <style>
+        #pcontents {line-height: 30px;}
+        #psortlist li {width: 420px;display: inline-block;margin-left: 1%;  }
+        .photos .control-label {height: 25px;line-height: 25px;  }
+        #templist a {margin-bottom: 5px;}
+        #templist a.btn + a.btn, #sysvar a.btn + a.btn {margin-left: 0px;  }
+        #userlist li{  width: 130px;  overflow: hidden;  }
+        #userlist li img{  width: 130px;}
+        .messagestep{  width: 33%;  float: left;  padding: 5px;  }
+        #opstep  canvas, #opstep  img{  max-width: 100%;  }
+        #userlist li{  float: left;  margin-right: 5px;  }
+        #userlist li  .input-group-addon{  font-size: 12px;  }
+        .type1,.type2,.type3{display: none;}
+    </style>
+</head>
+<body class="nav-md" style="min-width: 800px">
+<div>
+    <div class="container xc_edit_from" >
+        <div class="main_container" style="overflow-x: hidden;min-height: calc(100vh - 20px);background-color: white;width: 100%;">
+            <div class="col-md-12 col-xs-12">
+                <div class="x_panel">
+                    <ul class="we7-page-tab">
+                        <li >
+                            <a  href="{php echo $this->createWebUrl($do, array('op'=>'list','xtitleb'=>urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}">
+                                {$xtitleb}- {$xtitlea}列表  </a></li>
+                        <li><a href="{php echo $this->createWebUrl($do, array('op'=>'edit','xtitleb'=>urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}">{$xtitleb}- {$xtitlea}增加</a></li>
+                    </ul>
+                    <div class="x_content">
+                        <br/>
+                        <form class="form-horizontal form-label-left input_mask" method="post" action="{php echo $this->createWebUrl($do, array('op'=>'save'));}" id="xc_form">
+                            <input type="hidden" name="id" value="{$xc['id']}">
+                            <input type="hidden" name="xc[userlist]">
+                            <div class="form-group">
+                                <label class="control-label col-md-2 col-sm-3 col-xs-12">名称</label>
+                                <div class="col-md-10 col-sm-9 col-xs-12">
+                                    <input type="text" class="form-control" placeholder="名称" name="xc[name]" value="{$xc[name]}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2 col-sm-3 col-xs-12">短信接口</label>
+                                <div class="col-md-10 col-sm-9 col-xs-12 xradio" data-value="{$xc['type']}">
+                                    <label class="radio inline">
+                                        <input type="radio" class="ui-radio" name="xc[type]" value="1" {if $xc['type']==1}checked{/if}>阿里云
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="radio" class="ui-radio" name="xc[type]" value="2" {if $xc['type']==2}checked{/if}>聚合数据
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="radio" class="ui-radio" name="xc[type]" value="3" {if $xc['type']==3}checked{/if}>模板消息
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="radiocontents">
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-3 col-xs-12">AccessKeyId</label>
+                                    <div class="col-md-10 col-sm-9 col-xs-12">
+                                        <input type="text" class="form-control" name="xc[accesskeyid]" id="accesskeyid"
+                                               value="{$xc['accesskeyid']}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-3 col-xs-12">AccessKeySecret</label>
+                                    <div class="col-md-10 col-sm-9 col-xs-12">
+                                        <input type="text" class="form-control" name="xc[accesskeysecret]"
+                                               id="accesskeysecret" value="{$xc['accesskeysecret']}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-3 col-xs-12">短信签名</label>
+                                    <div class="col-md-10 col-sm-9 col-xs-12">
+                                        <input type="text" class="form-control" name="xc[sign]" id="sign"
+                                               value="{$xc['sign']}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-3 col-xs-12">模版CODE </label>
+                                    <div class="col-md-10 col-sm-9 col-xs-12">
+                                        <input type="text" class="form-control" name="xc[code]" id="code"
+                                               value="{$xc['code']}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="radiocontents">
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-3 col-xs-12">APPKEY </label>
+                                    <div class="col-md-10 col-sm-9 col-xs-12">
+                                        <input type="text" class="form-control" name="xc[appkey]" id="appkey"
+                                               value="{$xc['appkey']}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-3 col-xs-12">短信模板ID </label>
+                                    <div class="col-md-10 col-sm-9 col-xs-12">
+                                        <input type="text" class="form-control" name="xc[tpl_id]" id="tpl_id"
+                                               value="{$xc['tpl_id']}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group testphone">
+                                <label class="col-xs-12 col-sm-3 col-md-2 col-lg-2 control-label">手机号</label>
+                                <div class="col-xs-12 col-sm-8" style="position: relative;">
+                                    <input type="text" placeholder="接收消息" class="form-control" name="xc[mobile]"
+                                           id="mobile" value="{$xc['mobile']}">
+                                    <span class="help-block type1"><a target="_blank"
+                                                                      href="https://help.aliyun.com/document_detail/59210.html?spm=5176.sms-account.109.13.3d6e12dbByb91i">请在阿里云（https://help.aliyun.com）开通短信业务<br/></a>
+
+
+                        模板变量       {loop  $param $messagekey $messageval}
+                                            ${{$messagekey}} 替换成{$messageval}，
+                                              {/loop}
+
+
+
+                    </span>
+                                    <span class="help-block type2">请在聚合数据平台（https://www.juhe.cn）开通短信业务<br/>
+                                        模板变量       {loop  $param $messagekey $messageval}
+                                            #{$messagekey}# 替换成{$messageval}，
+                                              {/loop}
+
+
+                    </span>
+                                    <br/>
+                                    如果接收手机号有多个，请用/隔开
+                                </div>
+                            </div>
+                            <div class="radiocontents">
+                                <div class="form-group" id="radmessage">
+                                    <label class="control-label col-md-2 col-sm-3 col-xs-12">通知模板</label>
+                                    <div class="col-md-10 col-sm-9 col-xs-12">
+                                        <div class="btn-group" id="templist">
+                                        </div>
+                                        <div class="row" id="ieaples">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-3 col-xs-12">系统变量</label>
+                                    <div class="col-md-10 col-sm-9 col-xs-12">
+                                        <div class="btn-group" id="sysvar" style="background-color: white;">
+                                            {loop $param $xkey $xval}
+                                            <a class="btn btn-default" data-value="{$xkey}">{$xval}</a>
+                                            {/loop}
+                                            <br>
+                                            <br>
+                                            备注：如果要插入到某个属性下面，就选择光标定位到指定属性
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-3 col-xs-12">系统变量说明</label>
+                                    <div class="col-md-10 col-sm-9 col-xs-12" id="sysreadme">
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-3 col-xs-12">模板内容字体</label>
+                                    <div class="col-md-10 col-sm-9 col-xs-12">
+                                        {php echo tpl_form_field_color('xc[topcolor]',$xc['topcolor']);}
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: none">
+                                    <label class="control-label col-md-2 col-sm-3 col-xs-12">模板</label>
+                                    <div class="col-md-10 col-sm-9 col-xs-12">
+                                        <input type="hidden" name="xc[template_example]" class="form-control"
+                                               value="{$xc['template_example']}"/>
+                                        <input type="hidden" name="xc[template_name]" class="form-control"
+                                               value="{$xc['template_name']}"/>
+                                        <input type="text" name="xc[template_id]" class="form-control"
+                                               value="{$xc['template_id']}"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-3 col-xs-12">属性</label>
+                                    <div class="col-md-10 col-sm-9 col-xs-12" id="pttt">
+
+                                        {loop $xc['template_data'] $xkey $xval}
+                                        <div class="row row-fix">
+                                            <div class="col-xs-7 col-sm-7" style="padding-right:0;">
+                                <textarea class="form-control parafrom" type="text" name="data[{$xkey}][value]"
+                                          placeholder="{$xkey}可以使用參數里的变量[可以为空]例如{{phone}}">{$xval['value']}</textarea>
+                                            </div>
+                                            <div class="col-xs-5 col-sm-5" style="padding-right:0;">
+                                                <div class="input-group">
+                                                    <input class="form-control" type="text" name="data[{$xkey}][color]"
+                                                           placeholder="请选择颜色" value="{$xval['color']}">
+                                                    <span class="input-group-addon"
+                                                          style="width:35px;border-left:none;background-color:{$xval['color']}"></span>
+                                                    <span class="input-group-btn">
+                <button class="btn btn-default colorpicker" type="button">选择颜色 <i class="fa fa-caret-down"></i></button>
+                <button class="btn btn-default colorclean" type="button"><span><i
+                        class="fa fa-remove"></i></span></button>
+                 </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/loop}
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display: none" id="stepcontents">
+                                    <label class="control-label col-md-2 col-sm-3 col-xs-12">操作步骤</label>
+                                    <div class="col-md-10 col-sm-9 col-xs-12">
+                                        <div id="opstep">
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2 col-sm-3 col-xs-12">信息接受人</label>
+                                    <div class="col-md-10 col-sm-9 col-xs-12">
+                                        <ul id="userlist">
+
+                                            {loop  $xc["userlist"] $uxkey $uxval}
+                                            <li data-openid="{$uxval['openid']}" data-nickname="{$uxval['nickname']}" data-headimgurl="{$uxval['headimgurl']}" ><img src="{$uxval['headimgurl']}">
+                                                <div class="input-group">
+                                                    <span class="input-group-btn"> <button  class=" btn btn-default" type="button"><span><i class="fa fa-remove"></i></span></button></span>
+                                                    <span class="input-group-addon" style="width:100px;border-left:none;overflow: hidden;">{$uxval['nickname']}</span>
+                                                </div>
+                                            </li>
+                                            {/loop}
+                                        </ul>
+                                        <div style="clear: both;"></div>
+                                        <button type="button" class="btn btn-default" id="btnop">增加接受人员</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2 col-sm-3 col-xs-12">状态</label>
+                                <div class="col-md-10 col-sm-9 col-xs-12">
+                                    <input type="checkbox" class="js-switch" value="1" name="xc[status]"
+                                           data-value="{$xc['status']}" data-field="status">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2 col-sm-3 col-xs-12">测试</label>
+                                <div class="col-md-10 col-sm-9 col-xs-12">
+                                    <button class="btn btn-default" id="btnmessagetest" type="button">短信测试</button>
+                                </div>
+                            </div>
+                            <div class="form-group xc_btn_row"  >
+                                <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-5 col-sm-offset-5  col-md-xs-5 ">
+                                    <button type="button" class="btn btn-primary" id="btsave">确认</button>
+                                    <a type="button" class="btn btn-default"  href="{php echo $this->createWebUrl($do, array('op'=>'list','xtitleb'=> urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea)));}" >返回</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{template 'common/editfoot'}
+<script>
+    $(function () {
+
+        $(".ajax-select,.js-select2").change(function () {
+            //$("#xc_form").valid();
+        })
+    });
+    //现在只在状态这里使用
+    var xvalidator =null;
+    $.validator.setDefaults({
+        highlight: function (e) {
+            $(e).closest(".col-xs-12").removeClass("has-success").addClass("has-error")
+        }, success: function (e) {
+            e.closest(".col-xs-12").removeClass("has-error").addClass("has-success")
+        }, errorClass: "help-block m-b-none", validClass: "help-block m-b-none"
+    }), $().ready(function () {
+        var e = "<i class='fa fa-times-circle'></i> ";
+        var vlidp = {
+            rules: {
+                "xc[name]": {required: !0},
+                "xc[bimg]":{url:false}
+            },
+            messages: {
+                "xc[name]": {required: e + "请输入名称"}
+            },
+            submitHandler: function (form) {
+                //手动验证所以这里不需要执行
+                xajaxfrom(form);
+                return false;
+            }
+        };
+        xvalidator= $("#xc_form").validate(vlidp);
+    });
+    $("#btsave").click(function () {
+        $brvalue=true;
+        //$brvalue= $("#xc_form").valid();
+        if($brvalue){
+            xajaxfrom("#xc_form");
+        }
+        return false;
+    });
+    function xajaxfrom(form) {
+        $actfrom = $(form);
+        $userlist=[];
+        $("#userlist").find("li").each(function () {
+            var tmodel={};
+            tmodel["openid"]=$(this).attr("data-openid");
+            tmodel["headimgurl"]=$(this).attr("data-headimgurl");
+            tmodel["nickname"]=$(this).attr("data-nickname");
+            $userlist.push(tmodel);
+        });
+        if($userlist.length>0){
+            $("input[name='xc[userlist]']").val(JSON.stringify($userlist));
+        }
+        var  $postdate=$actfrom.serialize();
+        xpagecss.xload();
+        $.ajax({
+            type: $(form).attr("method"),
+            url: $(form).attr("action"),
+            dataType: "json",
+            data: $postdate,
+            success: function (msg) {
+                message(msg)
+            }
+        });
+    }
+    function message(data) {
+        $mesoption = {};
+        if (data["status"] === 1) {
+            if ($('[name="id"]').val() == ""||$('[name="id"]').val() == "0") {
+                xc_form.reset();
+                //
+                $(".container").find(".img-thumbnail").attr("src", "./resource/images/nopic.jpg");
+                if( urobj.length>0){
+                    for(var i=0;i<urobj.length;i++){
+                        urobj[i].setContent("");
+                    }
+                }
+
+                if(  $(".js-select2").length>0){
+                    $('.js-select2').val(null).trigger("change");
+                }
+                if(  $(".ajax-select").length>0){
+                    $('.ajax-select').val(null).trigger("change");
+                }
+
+            }
+            $mesoption["timer"] = 1000;
+            $mesoption["type"] = replyrdata[data["status"]];
+        }
+        $mesoption["title"] = data["message"];
+        $mesoption["text"] = data["message"];
+        swal($mesoption);
+    }
+</script>
+<script>
+    function print(){
+        var type=$("input[name='xc[type]']:checked").val();
+        $(".radiocontents").hide();
+        $(".radiocontents").eq(type-1).show();
+        if(type==1){
+            $(".testphone").show();
+            $(".type1").show();
+            $(".type2").hide();
+        }else if(type==2){
+            $(".testphone").show();
+            $(".type1").hide();
+            $(".type2").show();
+        }else if(type==3){
+            $(".testphone").hide();
+        }
+    }
+    print();
+
+    actobjx = null;
+    var teljson = {$idata["content"]};
+    console.log(teljson);
+    var guzhuer = '{$idata["erurl"]}';
+    var $mesaurl= {$mesaurl};
+    $(function(){
+        $("input[name='xc[type]']").change(function(){
+            print();
+        });
+        $("#btnmessagetest").click(function () {
+            $actfrom = $("#xc_form");
+            $userlist=[];
+            $("#userlist").find("li").each(function () {
+                var tmodel={};
+                tmodel["openid"]=$(this).attr("data-openid");
+                tmodel["headimgurl"]=$(this).attr("data-headimgurl");
+                tmodel["nickname"]=$(this).attr("data-nickname");
+                $userlist.push(tmodel);
+            });
+            if($userlist.length>0){
+                $("input[name='xc[userlist]']").val(JSON.stringify($userlist));
+            }
+            var $serdata = $actfrom.serializeArray();
+            xpagecss.xload();
+            $.ajax({
+                type: $actfrom.attr("method"),
+                url: "{php echo $this->createWebUrl($do, array('op'=>'sms_test'));}",
+                dataType: "json",
+                data: $serdata,
+                success: function (msg) {
+                    message(msg);
+                }
+            });
+        });
+
+        opstepfun();
+        $("body").on("focus", ".parafrom", function () {
+            actobjx = $(this).get(0);
+        });
+        $("#userlist").on("click","button",function () {
+            $(this).closest("li").remove();
+        });
+        var autouser=-1;
+        $("#btnop").click(function () {
+            $("#stepcontents").show();
+            userlistupdate();
+            if(autouser==-1)
+            {
+                autouser=1;
+                setInterval(function () {
+                    userlistupdate()
+                },1000)
+            }
+        });
+        $("#sysvar a").click(function () {
+            if ($("#templist").find(".btn-primary").length < 1) {
+                swal({
+                    text: "请选择通知模版",
+                    type: "error",
+                    timer: 3000,
+                    confirmButtonText: '关闭'
+                });
+                return;
+            }
+            if (actobjx == null) {
+                actobjx = $(".parafrom").eq(0).get(0);
+            }
+            insertAtCursor(actobjx, "{{" + $(this).attr("data-value") + "}}")
+        });
+        var itop = $("#sysvar").offset().top - $("#radmessage").offset().top;
+
+        function autopos() {
+            var topScroll = document.documentElement.scrollTop || document.body.scrollTop;
+            // var topScroll =document.body.scrollTop;//滚动的距离,距离顶部的距离
+            var bignav = document.getElementById("sysvar");//获取到导航栏id
+            if (topScroll > itop) {  //当滚动距离大于250px时执行下面的东西
+                bignav.style.position = 'fixed';
+                bignav.style.top = '0';
+                bignav.style.zIndex = '9999';
+            } else {//当滚动距离小于250的时候执行下面的内容，也就是让导航栏恢复原状
+                bignav.style.position = 'static';
+            }
+        }
+        window.onscroll = function (e) {
+            autopos();
+        };
+        if (teljson != null && teljson["template_list"].length > 0) {
+            for (var i = 0; i < teljson["template_list"].length; i++) {
+                var $model = $('<a   class="btn btn-default" data-value="' + teljson["template_list"][i]['template_id'] + '">' + teljson["template_list"][i]['title'] + '</a>');
+                $model.data("template",teljson["template_list"][i]);
+                $("#templist").append($model)
+            }
+        }
+        $("#templist a").click(function () {
+            $(this).addClass("btn-primary");
+            $(this).siblings().removeClass("btn-primary");
+            $pdata = teljson["template_list"][$(this).index()];
+            $('[name="xc[template_id]"]').val($pdata["template_id"]);
+            $('[name="xc[template_name]"]').val($pdata["title"]);
+            $temobj = $pdata;
+            $("#ieaples").empty();
+            var template_exampledata = $temobj["content"].replace(/\n/g, "<br/>")
+            $("#ieaples").html(template_exampledata)
+            $('[name="xc[template_example]"]').val(template_exampledata);
+
+            var str = $temobj["content"];
+            var r = /\{{(.+?)\}}/g;
+            var mydadta = str.match(r);
+            $("#pttt").empty();
+            if (mydadta != null) {
+                for (var i = 0; i < mydadta.length; i++) {
+                    $kvalue = mydadta[i];
+                    $kvalue = $kvalue.replace("{{", "");
+                    $kvalue = $kvalue.replace("}}", "");
+                    $mydat = initselsct($kvalue);
+                    $("#pttt").append($mydat);
+                }
+                $(".colorpicker").each(function(){
+                    var elm = this;
+                    util.colorpicker(elm, function(color){
+                        $(elm).parent().prev().prev().val(color.toHexString());
+                        $(elm).parent().prev().css("background-color", color.toHexString());
+                    });
+                });
+                $(".colorclean").click(function(){
+                    $(this).parent().prev().prev().val("");
+                    $(this).parent().prev().css("background-color", "#FFF");
+                });
+            }
+        });
+        $xtemplate_id = $("[name='xc[template_id]']").val();
+        if ($xtemplate_id != "") {
+            var $actojb = $("#templist").find('[data-value="' + $xtemplate_id + '"]');
+            $actojb.addClass("btn-primary");
+            //   $("#templist").find('[data-value="'+$xtemplate_id+'"]').addClass("btn-primary");
+            $temobj = $actojb.data("template");
+            $("#ieaples").empty();
+            if($temobj)
+            {
+                $("#ieaples").html($temobj["content"].replace(/\n/g, "<br/>"))
+            }
+        }
+        function initselsct($col) {
+            var $colname = $col.replace(".DATA", "");
+            var myconts = '<div class="row row-fix">' +
+                    '<div class="col-xs-7 col-sm-7" style="padding-right:0;">' +
+                    '<textarea class="form-control parafrom" type="text" name="data[' + $colname + '][value]" placeholder="' + $col + ',对应POST或GET里的参数  xx{{phone}}"  ></textarea>' +
+                    '</div>' +
+                    ' <div class="col-xs-5 col-sm-5" style="padding-right:0;">' +
+                    ' <div class="input-group">' +
+                    ' <input class="form-control" type="text" name="data[' + $colname + '][color]" placeholder="请选择颜色" value="">' +
+                    ' <span class="input-group-addon" style="width:35px;border-left:none;"></span>' +
+                    ' <span class="input-group-btn">' +
+                    '<button class="btn btn-default colorpicker" type="button">选择颜色 <i class="fa fa-caret-down"></i></button>' +
+                    '<button class="btn btn-default colorclean" type="button"><span><i class="fa fa-remove"></i></span></button>' +
+                    ' </span>' +
+                    '</div>' +
+                    ' </div>' +
+                    ' </div>';
+            return myconts;
+        }
+
+
+        $strreadmecontents = [];
+        paras = [];
+        $("#sysvar").find("a").each(function () {
+            //   console.log($(this).html());
+            paras.push($(this).attr("data-value"));
+            $strreadmecontents.push("{{" + $(this).attr("data-value") + "}} -" + $(this).html());
+            //  console.log("{{"+ $(this).attr("data-value")+"}}-" +$(this).html());
+        });
+
+        if ($("[name='xc[para]']").val() == "") {
+            $("[name='xc[para]']").val(paras.join(","));
+        }
+        $("#sysreadme").append($strreadmecontents.join(","));
+    });
+    function  opstepfun() {
+
+        var  $htmlcontents=[];
+
+        $htmlcontents.push("<div  class='messagestep'>");
+        if(guzhuer=="")
+        {
+            $htmlcontents.push("<h2>暂未设定关注的公众号,如果你已经关注公众号请进行下一步,如果没有关注公众号请先关注公众号</h2>")
+        }
+        else
+        {
+            $htmlcontents.push('第一步：如果未关注公众号请先扫码关注公众号【下面二维码】<br/><img src="'+guzhuer+'" width="230">');
+        }
+        $htmlcontents.push("</div>");
+        $htmlcontents.push("<div  class='messagestep'>");
+        if($mesaurl["url"]!="")
+        {
+            $htmlcontents.push('第二步扫描下面二维码 <div id="er2" url="'+$mesaurl["url"]+'" width="230"></div> ');
+
+        }
+        $htmlcontents.push("</div>");
+
+        $htmlcontents.push("<div  class='messagestep'>确认保存</div>");
+        $("#opstep").append($htmlcontents.join(""));
+
+        $("#er2").html('').qrcode({
+            render: 'canvas',
+            width: 230,
+            height: 230,
+            text: $mesaurl["url"]
+        });
+    }
+    function insertAtCursor(myField, myValue) {
+        //IE 浏览器
+        if (document.selection) {
+            myField.focus();
+            sel = document.selection.createRange();
+            sel.text = myValue;
+            sel.select();
+        }
+        //FireFox、Chrome等
+        else if (myField.selectionStart || myField.selectionStart == '0') {
+            var startPos = myField.selectionStart;
+            var endPos = myField.selectionEnd;
+
+            // 保存滚动条
+            var restoreTop = myField.scrollTop;
+            myField.value = myField.value.substring(0, startPos) + myValue + myField.value.substring(endPos, myField.value.length);
+
+            if (restoreTop > 0) {
+                myField.scrollTop = restoreTop;
+            }
+
+            myField.focus();
+            myField.selectionStart = startPos + myValue.length;
+            myField.selectionEnd = startPos + myValue.length;
+        } else {
+            myField.value += myValue;
+            myField.focus();
+        }
+    }
+
+    function userlistupdate() {
+        if($mesaurl["ident"]!="")
+        {
+            var $postmodel= {};
+            $postmodel["ident"]=  $mesaurl["ident"];
+            $.ajax({
+                type: "post",
+                url: "{php echo $this->createWebUrl($do, array('op'=>'getnewuserlist'));}",
+                dataType: "json",
+                data: $postmodel,
+                success: function (msg) {
+
+
+                    if(msg["obj"].length>0){
+                        var phtml=[];
+                        for(var i=0;i<msg["obj"].length;i++)
+                        {
+
+                            phtml.push("<li  data-openid='"+msg["obj"][i]["openid"]+"' data-headimgurl='"+msg["obj"][i]["headimgurl"]+"' data-nickname='"+msg["obj"][i]["nickname"]+"'>")
+                            phtml.push("<img src='"+msg["obj"][i]["headimgurl"]+"'>");
+
+                            phtml.push('<div class="input-group">');
+                            phtml.push(' <span class="input-group-btn">    <button  class=" btn btn-default" type="button"><span><i class="fa fa-remove"></i></span></button></span>');
+                            phtml.push('<span class="input-group-addon" style="width:100px;border-left:none;overflow: hidden;">'+msg["obj"][i]["nickname"]+'</span>');
+                            phtml.push(' </div>');
+
+                            phtml.push("</li>")
+
+
+                        }
+
+                        $("#userlist").append(phtml.join(""));
+                    }
+
+
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'user/common/header'}
+<body>
+<!--订单详情-->
+<section class="order_state">
+    <span class="unpaid font30">{php echo $orderObjAppStatus[$model['status']]}</span>
+</section>
+{if $model['status']>1}
+{if $model['fedex_id']==0}
+<section class="bg_fff f-yahei">
+    <span class="item_addr clearfix">
+        <div class="addr van fl">
+            <p class="green font28">商品由商家提供上门服务，请保证电话畅通耐心等待服务人员上门服务，服务完毕后请点击收货。</p>
+        </div>
+        <span></span>
+    </span>
+</section>
+{else}
+<section class="bg_fff f-yahei">
+    <a href="{php echo $this->createMobileUrl('user.order_logistics',array('act'=>'index','store_id'=>$store_id,'ordernumber'=>$model['ordernumber'],'types'=>0))}" class="item_addr clearfix">
+        <div class="addr van fl" id="content">
+            <p class="green">查询中，请稍等……</p>
+        </div>
+        <span></span>
+    </a>
+</section>
+<script type="text/javascript">
+    $(function () {
+        getOrderTraces();
+    })
+</script>
+{/if}
+{else}
+<section class="bg_fff f-yahei">
+    <span class="item_addr clearfix">
+        <div class="addr van fl">
+            <p class="green font28">商家未发货，请耐心等待或拨打电话：<a href="tel:{$store['mobile']}">{$store['mobile']}</a>咨询！</p>
+        </div>
+        <span></span>
+    </span>
+</section>
+{/if}
+<section class="mb24">
+    <section class="order_item order_detail_item">
+        <section class="order_goods"> <img src="{php echo tomedia($model['product_thumb'])}"/>
+            <h3 style="height: auto;">{$model['product_title']}</h3>
+            {if $model['types']==2}
+            <p class="font26 c9">{$activity_name}</p>
+            {/if}
+        </section>
+    </section>
+    <div class="order_detail_price bgfff">
+        <ul class="font30">
+            <li><span class="fr">{php echo getNicknameByOpenid($model['openid'])}</span><span class="c9 font28">{php echo $model['types']==1?"购买用户":"中奖用户"}</span></li>
+            <li><span class="fr">{$model['openid']}</span><span class="c9 font28">OPENID</span></li>
+            <li><span class="fr main_red">{php echo $model['types']==1?"拓客商品":"中奖商品"}</span><span class="c9 font28">订单类型</span></li>
+        </ul>
+    </div>
+</section>
+<section class="bgfff">
+    <section class="item_addr item_addr_1 clearfix">
+        <section class="addr fl">
+            <p><span>{$model['username']}</span><span class="pl15">{$model['mobile']}</span></p>
+            <p>{$model['province']}{$model['city']}{$model['county']}{$model['address']} （{$model['postcode']}）</p>
+        </section>
+    </section>
+</section>
+<!--订单备注-->
+<section class="order_detail_info font28">
+    <ul>
+        <li><span>订单备注：</span>{$model['note']}</li>
+    </ul>
+</section>
+<!--订单编号-->
+<section class="order_detail_info font28" style="margin-bottom:0">
+    <ul>
+        <li><span>订单编号：</span>{$model['ordernumber']}</li>
+        {loop $logList $index $item}
+        <li>
+            {if $item['status'] == 1}
+            <span>下单时间：</span>
+            {elseif $item['status'] == 2}
+            <span>发货时间：</span>
+            {else}
+            <span>收货时间：</span>
+            {/if}
+            {php echo date('Y-m-d H:i:s', $item['createtime'])}</li>
+        {/loop}
+    </ul>
+</section>
+
+<script type="text/javascript">
+    function getOrderTraces() {
+        $.ajax({
+            type: "post",
+            url: "{php echo $this->createMobileUrl('user.order_logistics', array('act' => 'getOrderTraces','store_id'=>$store_id));}",
+            data: {
+                "code": '{$model['fedex_code']}',
+                "number": '{$model['fedex_number']}',
+                "mobile": '{$model['mobile']}'
+            },
+            dataType:'json',
+            success: function (result) {
+                if (result.status === 1) {
+                    var jsonData = JSON.parse(result.tracesData);
+                    var expressHtml = "";
+                    if(jsonData['Success']){
+                        var item = jsonData['Traces'][jsonData['Traces'].length-1];
+                        expressHtml="<p class='green'>"+(item['AcceptStation'])+"</p><time class='cb4 font28' style='margin-left: 0.8rem;'>"+(item['AcceptTime'])+"</time>";
+                    }else{
+                        expressHtml="<p class='green'>获取物流信息失败，请稍后重试！</p>";
+                    }
+                    $("#content").html(expressHtml);
+                } else {
+                    layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

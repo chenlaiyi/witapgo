@@ -1,0 +1,14 @@
+<footer class="main-footer">
+    <div class="pull-right hidden-xs">
+        <b>V1.2.9 正式版</b>
+    </div>
+    {if empty($_W['setting']['copyright']['footerleft'])} Powered by <a href="http://www.we7.cc" target="_blank"><b>微擎</b></a> v{IMS_VERSION} © 2014-{php echo date('Y')} <a href="http://www.we7.cc" target="_blank">www.we7.cc</a>{else}{$_W['setting']['copyright']['footerleft']}{/if} {if !empty($_W['setting']['copyright']['icp'])}备案号：<a href="http://www.miitbeian.gov.cn" target="_blank">{$_W['setting']['copyright']['icp']}</a>{/if}
+</footer>
+{if isMobile()}
+<style>
+    /*手机浏览器弹窗 不在限制最小宽度*/
+    .we7-modal-dialog, .modal-dialog {
+        min-width:auto !important;
+    }
+</style>
+{/if}

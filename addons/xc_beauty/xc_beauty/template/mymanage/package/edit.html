@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {template 'common/edithead'}
+    <!--微擎 -->
+    <!--这个放在最后一切平白安全-->
+    <style>
+        .store_status2{display: none}
+        .type1,.type2{display: none;}
+    </style>
+    <script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+    <script type="text/javascript">
+        //编辑器里使用
+        var urobj=[];
+    </script>
+</head>
+<body class="nav-md" style="min-width: 800px">
+<div>
+    <div class="container xc_edit_from" >
+        <div class="main_container" style="overflow-x: hidden;min-height: calc(100vh - 20px);background-color: white;width: 100%;">
+            <div class="col-md-12 col-xs-12">
+                <div class="x_panel">
+                    <ul class="we7-page-tab">
+                        <li >
+                            <a  href="{php echo $this->createWebUrl($do, array('op'=>'list','xtitleb'=>urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}">
+                                {$xtitleb}- {$xtitlea}列表  </a></li>
+                        <li><a a href="{php echo $this->createWebUrl($do, array('op'=>'edit','xtitleb'=>urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}">{$xtitleb}- {$xtitlea}增加</a></li>
+                    </ul>
+                    <div class="x_content">
+                        <br/>
+                        <form id="sign-form" class="form-horizontal" role="form" method="post" action="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'savemodel','version_id'=>$_GPC['version_id'])}" name="submit" style="padding: 20px 0;">
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">名称</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="name" id="name" value="{$list['name']}">
+                                    <input type="hidden" name="id" value="{$list['id']}">
+                                    <input type="hidden" name="service">
+                                    <input type="hidden" name="store">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">封面（240*270）</label>
+                                <div class="col-sm-8">
+                                    {php echo tpl_form_field_image('simg',$list['simg']);}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">图片</label>
+                                <div class="col-sm-8">
+                                    {php echo tpl_form_field_multi_image('bimg',$list['bimg']);}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">价格</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="price" id="price" value="{$list['price']}">
+                                </div>
+                            </div>
+                            <div class="form-group teacher">
+                                <label  class="col-sm-2 control-label">服务项目</label>
+                                <div class="col-sm-8">
+                                    {if $list['service']}
+                                    {loop $list['service'] $index $item}
+                                    <div class="input-group" style="margin-bottom: 10px;">
+                                        <input type="text" class="form-control" name="service_name" value="{$item['name']}" data-id="{$item['id']}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default link" type="button" data-toggle="modal" data-target="#sort_link">选择项目</button>
+                        </span>
+                                        <input type="text" class="form-control" name="service_times" value="{$item['times']}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default">使用次数</button>
+                        </span>
+                        <span class="input-group-btn" onclick="parameter.parameter_add(this)">
+                            <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>
+                        </span>
+                        <span class="input-group-btn" onclick="parameter.parameter_del(this)">
+                            <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>
+                        </span>
+                                    </div>
+                                    {/loop}
+                                    {else}
+                                    <div class="input-group" style="margin-bottom: 10px;">
+                                        <input type="text" class="form-control" name="service_name" value="">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default link" type="button" data-toggle="modal" data-target="#sort_link">选择项目</button>
+                        </span>
+                                        <input type="text" class="form-control" name="service_times" value="">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">使用次数</button>
+                        </span>
+                        <span class="input-group-btn" onclick="parameter.parameter_add(this)">
+                            <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>
+                        </span>
+                        <span class="input-group-btn" onclick="parameter.parameter_del(this)">
+                            <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>
+                        </span>
+                                    </div>
+                                    {/if}
+                                </div>
+                            </div>
+                            <script>
+                                var parameter={
+                                    parameter_add:function(objc){
+                                        $(objc).parent().after('<div class="input-group" style="margin-bottom: 10px;"> ' +
+                                                '<input type="text" class="form-control" name="service_name" value=""> '+
+                                                '<span class="input-group-btn">' +
+                                                '<button class="btn btn-default link" type="button" data-toggle="modal" data-target="#sort_link">选择项目</button>' +
+                                                '</span>' +
+                                                '<input type="text" class="form-control" name="service_times" value="">' +
+                                                '<span class="input-group-btn">' +
+                                                '<button class="btn btn-default">使用次数</button>' +
+                                                '</span>'+
+                                                '<span class="input-group-btn" onclick="parameter.parameter_add(this)"> ' +
+                                                '<button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button> ' +
+                                                '</span> ' +
+                                                '<span class="input-group-btn" onclick="parameter.parameter_del(this)"> ' +
+                                                '<button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button> ' +
+                                                '</span> ' +
+                                                '</div>')
+                                    },
+                                    parameter_del:function(objc){
+                                        if($(objc).parent().siblings().length>0){
+                                            $(objc).parent().remove();
+                                        }
+                                    }
+                                }
+                            </script>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">有效时间</label>
+                                <div class="col-sm-8">
+                                    <label class="radio inline" style="width: 60px;">
+                                        <input type="radio" class="ui-radio" name="time_type" id="time_type1" value="1" {if $list['time_type']==1}checked{/if}>固定时间
+                                    </label>
+                                    <label class="radio inline" style="width: 60px;">
+                                        <input type="radio" class="ui-radio" name="time_type" id="time_type2" value="2" {if $list['time_type']==2}checked{/if}>时间周期
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group type1">
+                                <label class="col-sm-2 control-label">使用时间</label>
+                                <div class="col-sm-8">
+                                    {php echo tpl_form_field_daterange('times',$list['times'],true);}
+                                </div>
+                            </div>
+                            <div class="form-group type2">
+                                <label class="col-sm-2 control-label">使用周期</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="plan_date" id="plan_date" value="{$list['plan_date']}">
+                                    <span class="help-block">单位：天</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="col-sm-2 control-label">适用门店</label>
+                                <div class="col-sm-8">
+                                    <label class="radio inline" style="width:100px;">
+                                        <input type="radio" class="ui-radio" name="store_status" id="store_status1" value="1" {if $list['store_status']==1}checked{/if}>所有门店适用
+                                    </label>
+                                    <label class="radio inline" style="width:60px;">
+                                        <input type="radio" class="ui-radio" name="store_status" id="store_status2" value="-1" {if $list['store_status']==-1}checked{/if}>指定门店
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group store store_status2">
+                                <label  class="col-sm-2 control-label">指定门店</label>
+                                <div class="col-sm-8">
+                                    {if $list['store']}
+                                    {loop $list['store'] $index $item}
+                                    <div class="input-group" style="margin-bottom: 10px;">
+                                        <input type="text" class="form-control" name="list" value="{$item['name']}" data-id="{$item['id']}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default link" type="button" data-toggle="modal" data-target="#store_link">选择门店</button>
+                        </span>
+                        <span class="input-group-btn" onclick="store.store_add(this)">
+                            <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>
+                        </span>
+                        <span class="input-group-btn" onclick="store.store_del(this)">
+                            <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>
+                        </span>
+                                    </div>
+                                    {/loop}
+                                    {else}
+                                    <div class="input-group" style="margin-bottom: 10px;">
+                                        <input type="text" class="form-control" name="list" value="">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default link" type="button" data-toggle="modal" data-target="#store_link">选择门店</button>
+                        </span>
+                        <span class="input-group-btn" onclick="store.store_add(this)">
+                            <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>
+                        </span>
+                        <span class="input-group-btn" onclick="store.store_del(this)">
+                            <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>
+                        </span>
+                                    </div>
+                                    {/if}
+                                </div>
+                            </div>
+                            <script>
+                                var store={
+                                    store_add:function(objc){
+                                        $(objc).parent().after('<div class="input-group" style="margin-bottom: 10px;"> ' +
+                                                '<input type="text" class="form-control" name="list" value=""> '+
+                                                '<span class="input-group-btn">' +
+                                                '<button class="btn btn-default link" type="button" data-toggle="modal" data-target="#store_link">选择门店</button>' +
+                                                '</span>'+
+                                                '<span class="input-group-btn" onclick="parameter.parameter_add(this)"> ' +
+                                                '<button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button> ' +
+                                                '</span> ' +
+                                                '<span class="input-group-btn" onclick="parameter.parameter_del(this)"> ' +
+                                                '<button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button> ' +
+                                                '</span> ' +
+                                                '</div>')
+                                    },
+                                    store_del:function(objc){
+                                        if($(objc).parent().siblings().length>0){
+                                            $(objc).parent().remove();
+                                        }
+                                    }
+                                }
+                            </script>
+                            <div class="form-group">
+                                <label  class="col-sm-2 control-label">分销方法</label>
+                                <div class="col-sm-8">
+                                    <label class="radio inline" style="width: 140px;">
+                                        <input type="radio" class="ui-radio" name="type" id="type1" value="1" {if $list['type']==1}checked{/if}>按订单金额的百分比
+                                    </label>
+                                    <label class="radio inline" style="width: 100px;">
+                                        <input type="radio" class="ui-radio" name="type" id="type2" value="2" {if $list['type']==2}checked{/if}>每单固定金额
+                                    </label>
+                                    <label class="radio inline" style="width: 140px;">
+                                        <input type="radio" class="ui-radio" name="type" id="type3" value="0" {if $list['type']==0}checked{/if}>关闭局部配置
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="col-sm-2 control-label">一级分销</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="level_one" id="level_one" value="{$list['level_one']}" placeholder="选择 按订单金额的百分比 单位（%） 选择 每单固定金额 单位（元）">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="col-sm-2 control-label">二级分销</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="level_two" id="level_two" value="{$list['level_two']}" placeholder="选择 按订单金额的百分比 单位（%） 选择 每单固定金额 单位（元）">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="col-sm-2 control-label">三级分销</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="level_three" id="level_three" value="{$list['level_three']}" placeholder="选择 按订单金额的百分比 单位（%） 选择 每单固定金额 单位（元）">
+                                    <span class="help-block">全局配置和局部配置都存在时，优先局部配置</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">状态</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" class="js-switch" value="1" name="status"
+                                           data-value="{$list['status']}" data-field="status">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">排序</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="sort" value="{$list['sort']}">
+                                </div>
+                            </div>
+                            <div class="form-group item_content">
+                                <label class="col-sm-2 control-label">详情</label>
+                                <div class="col-sm-10">
+                                    {php echo tpl_ueditor('content',$list['content']);}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <input type="button" name="submit" class="btn btn-default" value="提交">
+                                    <a type="button" class="btn btn-default"  href="{php echo $this->createWebUrl($do, array('op'=>'list','xtitleb'=> urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}" >返回</a>
+                                    <input id="res" name="res" type="reset" style="display:none;" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="sort_link"><div class="modal-dialog">
+    <style>
+        #sort_link .modal-body {padding: 10px 15px;}
+        #sort_link .tab-pane {margin-top: 5px; min-height: 400px; max-height: 400px; overflow-y: auto;}
+        #sort_tab{margin-bottom: 10px;}
+    </style>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">服务项目</h4>
+        </div>
+        <div class="modal-body">
+            <iframe width="100%" height="395" frameborder="no" border="0" scrolling="no" allowtransparency="yes" src="{php echo $this->createWebUrl('store_member', array('op'=>'service'));}"></iframe>
+        </div>
+        <div class="modal-footer">
+            <button data-dismiss="modal" class="btn btn-default" id="sort_close" type="button">关闭</button>
+        </div>
+        <script>
+            var sort_objc='';
+            $(function(){
+                $(".sort_customize").on('click','.sort_link',function(){
+                    var id=$(this).attr("data-id");
+                    if(id==2){
+                        $("#sort_link").find("#sort_tab li").eq(1).hide();
+                    }else{
+                        $("#sort_link").find("#sort_tab li").eq(1).show();
+                    }
+                    sort_objc=this;
+                });
+                $("#sort_link").find('#sort_tab a').click(function(e) {
+                    $('#tab').val($(this).attr('href'));
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
+            });
+        </script>
+    </div>
+</div></div>
+<div class="modal fade" id="store_link"><div class="modal-dialog">
+    <style>
+        #sort_link .modal-body {padding: 10px 15px;}
+        #sort_link .tab-pane {margin-top: 5px; min-height: 400px; max-height: 400px; overflow-y: auto;}
+        #sort_tab{margin-bottom: 10px;}
+    </style>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">适用门店</h4>
+        </div>
+        <div class="modal-body">
+            <iframe width="100%" height="395" frameborder="no" border="0" scrolling="no" allowtransparency="yes" src="{php echo $this->createWebUrl('service', array('op'=>'service'));}"></iframe>
+        </div>
+        <div class="modal-footer">
+            <button data-dismiss="modal" class="btn btn-default" id="store_close" type="button">关闭</button>
+        </div>
+        <script>
+            var sort_objc='';
+            $(function(){
+                $(".sort_customize").on('click','.sort_link',function(){
+                    var id=$(this).attr("data-id");
+                    if(id==2){
+                        $("#sort_link").find("#sort_tab li").eq(1).hide();
+                    }else{
+                        $("#sort_link").find("#sort_tab li").eq(1).show();
+                    }
+                    sort_objc=this;
+                });
+                $("#sort_link").find('#sort_tab a').click(function(e) {
+                    $('#tab').val($(this).attr('href'));
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
+            });
+        </script>
+    </div>
+</div></div>
+{template 'common/editfoot'}
+<script>
+    function vip(){
+        if($("#store_status1").is(":checked")){
+            $(".store_status2").hide();
+        }
+        if($("#store_status2").is(":checked")){
+            $(".store_status2").show();
+        }
+    }
+    function  time_change(){
+        if($("#time_type1").is(":checked")){
+            $(".type2").hide();
+            $(".type1").show();
+        }
+        if($("#time_type2").is(":checked")){
+            $(".type1").hide();
+            $(".type2").show();
+        }
+    }
+    var objc="";
+    $(function(){
+        vip();
+        time_change();
+        $("input[name='store_status']").change(function(){
+            vip();
+        });
+        $("input[name='time_type']").change(function(){
+            time_change();
+        });
+        $("body").on("click",'.link',function(){
+            objc=this;
+        });
+        $("input[name='submit']").click(function(){
+            getjson();
+            getjson2();
+            var data=$(".form-horizontal").serialize();
+            $.ajax({
+                type:"post",
+                url:"{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'savemodel','version_id'=>$_GPC['version_id'])}",
+                data:data,
+                dataType:'json',
+                success:function(res){
+                    if(res.status==1){
+                        if($("input[name='id']").val()==""){
+                            $("input[name='res']").click();
+                            $("body").find(".img-responsive.img-thumbnail").attr("src","");
+                        }
+                        swal('操作成功!', '操作成功!', 'success');
+                    }else{
+                        swal('操作失败!', '操作失败!', 'error');
+                    }
+                }
+            })
+        });
+    });
+    function getjson(){
+        var teacher=[];
+        $(".teacher").find(".input-group").each(function(){
+            var id=$(this).find("input[name='service_name']").attr("data-id");
+            var name=$(this).find("input[name='service_name']").val();
+            var times=$(this).find("input[name='service_times']").val();
+            if(id!="" && name!="" && times!=""){
+                var data={id:id,name:name,times:times};
+                teacher.push(data);
+            }
+        });
+        if(teacher.length>0){
+            $("input[name='service']").val(JSON.stringify(teacher));
+        }
+    }
+    function getjson2(){
+        var teacher=[];
+        $(".store").find("input[name='list']").each(function(){
+            var id=$(this).attr("data-id");
+            var name=$(this).val();
+            if(id!="" && name!=""){
+                var data={id:id,name:name};
+                teacher.push(data);
+            }
+        });
+        if(teacher.length>0){
+            $("input[name='store']").val(JSON.stringify(teacher));
+        }
+    }
+</script>
+</body>
+</html>

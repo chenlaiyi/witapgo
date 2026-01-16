@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li {if !$action} class="layui-this" {/if}>
+						<a href="{php echo webUrl('courseList')}">课程表</a>
+					</li>
+					<li {if $action == 'course'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('courseList', ['action'=>'course'])}">课程列表</a>
+					</li>
+					<li {if $action == 'system'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('courseList', ['action'=>'system'])}">课程体系</a>
+					</li>
+					<li {if $action == 'video'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('courseList', ['action'=>'video'])}">视频课程</a>
+					</li>
+					<li {if $action == 'category'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('courseList', ['action'=>'category'])}">视频课程分类</a>
+					</li>
+				</ul>
+			</div>
+
+		{if !$action}
+			<div>
+				<a href="{php echo webUrl('addCoursePlan')}" class="layui-btn">添加课程计划</a>
+				<a href="javascript:;" class="layui-btn btn-copt-plan-next">复制本周课程计划到下周</a>
+			</div>
+			<div class="layui-form">
+				<table class="layui-table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>门店</th>
+							<th>教练</th>
+							<th>课程</th>
+							<th>时间</th>
+							<th>总人数</th>
+							<th>已预约人数</th>
+							<th>允许排队</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						{php $this_queue = array('0'=>'否','1'=>'是'); }
+						{loop $list $index $item}
+						<tr>
+							<td class="wmin20">{$item['id']}</td>
+							<td class="wmin30">{$item['store']}</td>
+							<td>{$item['coach']}</td>
+							<td>{$item['course']}</td>
+							<td>{$item['timeInterval']}</td>
+							<td>{$item['number']}</td>
+							<td>{$item['booked_number']}</td>
+							<td>{$this_queue[$item['can_queue']]}</td>
+							<td class="td-button">
+								<a href="{php echo webUrl('editCoursePlan', array('id' => $item['id']))}"
+									class="layui-btn layui-btn-sm">编辑</a>
+								<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger btn-del"
+									data-id="{$item['id']}">删除</a>
+							</td>
+						</tr>
+						{/loop}
+					</tbody>
+				</table>
+				<div class="pager">
+					{$pager}
+				</div>
+			</div>
+			<script>
+				layui.use(['laypage', 'layer'], function(){
+					var laypage = layui.laypage;
+					var layer = layui.layer;
+
+					// 分页
+					laypage.render({
+						elem: $('.pager')
+						,limit: '{php echo $pageSize; }'
+						,count: '{php echo $total; }'
+						,theme: '#1E9FFF'
+						,curr:  '{php echo $pageIndex; }'
+						,hash: '{php echo $pageIndex; }'
+						,jump: function (obj, first) {
+							if (first != true) {
+								var currentPage = obj.curr; //获取点击的页码
+								window.location.href = "{php echo webUrl('courseList')}&page=" + currentPage;
+							}
+						}
+					});
+					$('.pager').show();
+
+					// 复制本周课程计划到下周
+					$(document).on('click', '.btn-copt-plan-next', function () {
+						$obj = $(this);
+						$del_id = $obj.data('id');
+						layer.confirm("确定要复制吗", {
+							offset: '20%',
+							btn: ["再想想", "复制"],
+							scrollbar: false,
+							closeBtn: 0,
+						}, function (i) {
+						   layer.close(i);
+						}, function (i) {
+							let $url = "{php echo webUrl('copyCoursePlanToNext')}";
+
+							$.ajax({
+								type: "POST",
+								url: $url,
+								dataType: 'json',
+								data: {
+									id: $del_id
+								},
+								success: function (rs) {
+									if (rs && rs.code.toString() === '0') {
+										layer.msg("成功", {
+											time: 500
+										},
+										function () {
+											window.location.href = "{php echo webUrl('courseList')}";
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+											shift: 6,
+										});
+										$obj.removeClass('lock');
+									}
+								},
+								error: function () {
+									layer.msg("保存过程发生错误，请与管理员联系" , {
+										offset: '20%',
+										shift: 6,
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						});
+					});
+
+					// 删除
+					$(document).on('click', '.btn-del', function () {
+						$obj = $(this);
+						$del_id = $obj.data('id');
+						layer.confirm("确定要删除吗", {
+							offset: '20%',
+							btn: ["再想想", "删除"],
+							scrollbar: false,
+							closeBtn: 0,
+							success: function (layero, index) {
+								this.enterEsc = function (event) {
+									if (event.keyCode === 13) {
+										fun_del();
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+									if (event.keyCode === 27) {
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+								};
+								$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+							}
+							, end: function(){
+								$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+							}
+						}, function (i) {
+						   layer.close(i);
+						}, function (i) {
+							fun_del();
+						});
+
+						// 删除事件
+						function fun_del()
+						{
+							let $url = "{php echo webUrl('delCoursePlan')}";
+
+							$.ajax({
+								type: "POST",
+								url: $url,
+								dataType: 'json',
+								data: {
+									id: $del_id
+								},
+								success: function (rs) {
+
+									if (rs && rs.code.toString() === '0') {
+										$obj.closest('tr').fadeOut(200, function () {
+											$obj.remove();
+											layer.msg("成功", {time: 500});
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+											shift: 6,
+										});
+										$obj.removeClass('lock');
+									}
+								},
+								error: function () {
+									layer.msg("保存过程发生错误，请与管理员联系" , {
+										offset: '20%',
+										shift: 6,
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						}
+					});
+				});
+			</script>
+		{/if}
+
+		{if $action == 'course'}
+			<div>
+				<a href="{php echo webUrl('addCourse')}" class="layui-btn">添加课程</a>
+			</div>
+			<div class="layui-form">
+				<table class="layui-table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>推荐排序</th>
+							<th style="width: 15%;">课程名</th>
+							<th style="width: 45%;">简短描述</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						{loop $list $index $item}
+						<tr>
+							<td class="wmin20">{$item['id']}</td>
+							<td class="wmin30">{$item['recommend']}</td>
+							<td>{$item['name']}</td>
+							<td class="td-content">{$item['simple']}</td>
+							<td class="td-button">
+								<a href="{php echo webUrl('coursePaymentWayList', array('cid' => $item['id']))}"
+									class="layui-btn layui-btn-sm">支付方式管理</a>
+								<a href="{php echo webUrl('courseMemberLevelList', array('cid' => $item['id']))}"
+									class="layui-btn layui-btn-sm">会员等级限定</a>
+								<div style="height: 8px;"></div>
+								<a href="{php echo webUrl('editCourse', array('id' => $item['id']))}"
+									class="layui-btn layui-btn-sm">编辑</a>
+								<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger btn-del"
+									data-id="{$item['id']}">删除</a>
+							</td>
+						</tr>
+						{/loop}
+					</tbody>
+				</table>
+				<div class="pager">
+					{$pager}
+				</div>
+			</div>
+			<script>
+				layui.use(['laypage', 'layer'], function(){
+					var laypage = layui.laypage;
+					var layer = layui.layer;
+
+					// 分页
+					laypage.render({
+						elem: $('.pager')
+						,limit: '{php echo $pageSize; }'
+						,count: '{php echo $total; }'
+						,theme: '#1E9FFF'
+						,curr:  '{php echo $pageIndex; }'
+						,hash: '{php echo $pageIndex; }'
+						,jump: function (obj, first) {
+							if (first != true) {
+								var currentPage = obj.curr; //获取点击的页码
+								window.location.href = "{php echo webUrl('courseList', ['action'=>'course'])}&page=" + currentPage;
+							}
+						}
+					});
+					$('.pager').show();
+
+					// 删除
+					$(document).on('click', '.btn-del', function () {
+						$obj = $(this);
+						$del_id = $obj.data('id');
+						layer.confirm("确定要删除吗", {
+							offset: '20%',
+							btn: ["再想想", "删除"],
+							scrollbar: false,
+							closeBtn: 0,
+							success: function (layero, index) {
+								this.enterEsc = function (event) {
+									if (event.keyCode === 13) {
+										fun_del();
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+									if (event.keyCode === 27) {
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+								};
+								$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+							}
+							, end: function(){
+								$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+							}
+						}, function (i) {
+						   layer.close(i);
+						}, function (i) {
+							fun_del();
+						});
+
+						// 删除事件
+						function fun_del()
+						{
+							let $url = "{php echo webUrl('delCourse')}";
+
+							$.ajax({
+								type: "POST",
+								url: $url,
+								dataType: 'json',
+								data: {
+									id: $del_id
+								},
+								success: function (rs) {
+									if (rs && rs.code.toString() === '0') {
+										$obj.closest('tr').fadeOut(200, function () {
+											$obj.remove();
+											layer.msg("成功", {time: 500});
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+											shift: 6,
+										});
+									}
+								},
+								error: function () {
+									layer.msg("保存过程发生错误，请与管理员联系" , {
+										offset: '20%',
+										shift: 6,
+									});
+								}
+							});
+						}
+					});
+				});
+			</script>
+		{/if}
+
+		{if $action == 'system'}
+			<div>
+				<a href="{php echo webUrl('addCourseSystem')}" class="layui-btn">添加课程体系</a>
+			</div>
+			<div class="layui-form">
+				<table class="layui-table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th style="width: 15%;">名称</th>
+							<th>图片</th>
+							<th>图标</th>
+							<th>描述</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						{loop $list $index $item}
+						<tr>
+							<td class="wmin20">{$item['id']}</td>
+							<td>{$item['name']}</td>
+							<td>
+								<div class="box-table-img">
+									<img src="{php echo tomedia($item['image'])}" data-url="{php echo tomedia($item['image'])}" >
+								</div>
+							</td>
+							<td>
+								<div class="box-table-img">
+									<img src="{php echo tomedia($item['icon'])}" data-url="{php echo tomedia($item['icon'])}" >
+								</div>
+							</td>
+							<td>{$item['description']}</td>
+							<td class="td-button">
+								<a href="{php echo webUrl('editCourseSystem', array('id' => $item['id']))}"
+									class="layui-btn layui-btn-sm">编辑</a>
+								<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger btn-del"
+									data-id="{$item['id']}">删除</a>
+							</td>
+						</tr>
+						{/loop}
+					</tbody>
+				</table>
+				<div class="pager">
+					{$pager}
+				</div>
+			</div>
+			<script>
+				layui.use(['laypage', 'layer'], function(){
+					var laypage = layui.laypage;
+					var layer = layui.layer;
+
+					// 分页
+					laypage.render({
+						elem: $('.pager')
+						,limit: '{php echo $pageSize; }'
+						,count: '{php echo $total; }'
+						,theme: '#1E9FFF'
+						,curr:  '{php echo $pageIndex; }'
+						,hash: '{php echo $pageIndex; }'
+						,jump: function (obj, first) {
+							if (first != true) {
+								var currentPage = obj.curr; //获取点击的页码
+								window.location.href = "{php echo webUrl('courseList', ['action'=>'system'])}&page=" + currentPage;
+							}
+						}
+					});
+					$('.pager').show();
+
+					// 删除
+					$(document).on('click', '.btn-del', function () {
+						$obj = $(this);
+						$del_id = $obj.data('id');
+						layer.confirm("确定要删除吗", {
+							offset: '20%',
+							btn: ["再想想", "删除"],
+							scrollbar: false,
+							closeBtn: 0,
+							success: function (layero, index) {
+								this.enterEsc = function (event) {
+									if (event.keyCode === 13) {
+										fun_del();
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+									if (event.keyCode === 27) {
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+								};
+								$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+							}
+							, end: function(){
+								$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+							}
+						}, function (i) {
+						   layer.close(i);
+						}, function (i) {
+							fun_del();
+						});
+
+						// 删除事件
+						function fun_del()
+						{
+							let $url = "{php echo webUrl('delCourseSystem')}";
+
+							$.ajax({
+								type: "POST",
+								url: $url,
+								dataType: 'json',
+								data: {
+									id: $del_id
+								},
+								success: function (rs) {
+
+									if (rs && rs.code.toString() === '0') {
+										$obj.closest('tr').fadeOut(200, function () {
+											$obj.remove();
+											layer.msg("成功", {time: 500});
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+											shift: 6,
+										});
+										$obj.removeClass('lock');
+									}
+								},
+								error: function () {
+									layer.msg("保存过程发生错误，请与管理员联系" , {
+										offset: '20%',
+										shift: 6,
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						}
+					});
+				});
+			</script>
+		{/if}
+
+		{if $action == 'video'}
+			{template 'video_course/videoCourseList'}
+		{/if}
+
+		{if $action == 'category'}
+			{template 'category/categoryList'}
+		{/if}
+
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

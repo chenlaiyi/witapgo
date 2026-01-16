@@ -1,0 +1,339 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<style>
+    .renew_core ul li {
+        margin-bottom: 0.267rem;
+    }
+    .renew_core ul li:nth-child(3n+3) {
+        margin-right: inherit;
+    }
+
+    .renew_core ul li i {
+        background: #fee002;
+        color: #000;
+        font-size: 0.293rem;
+        font-style: normal;
+        width: 0.933rem;
+        height: 0.4rem;
+        line-height: 0.4rem;
+        display: inline-block;
+        border-radius: 0.133rem 0rem 0.133rem 0;
+        position: absolute;
+        left: -1px;
+        top: -1px;
+    }
+
+    .service_details {
+        display: inline-block;
+        border-radius: 1.3333333333333333rem;
+        width: 1.733333333333333rem;
+        text-align: center;
+        height: 0.6666666666666667rem;
+        line-height: 0.6666666666666667rem;
+        font-size: 0.32rem;
+        box-sizing: border-box;
+    }
+
+    .renew_core ul li.on .service_details {
+        border: 1px solid #fee002;
+        color: #000 !important;
+        background: #fff;
+    }
+    .renew_core ul li .service_details {
+        border: 1px solid #3b3b3b;
+        color: #3b3b3b !important;
+    }
+
+</style>
+<body class="bgf2">
+<!--续费-->
+<section class="renew_bg rel"> <a href="{php echo $this->createMobileUrl('store.store_renew',array('act'=>'list'));}" class="exchange_record" style="z-index:999">续费记录</a>
+    <section class="renew_toux"> <img src="{if !empty($_W['store_user']['headurl'])}{php echo tomedia($_W['store_user']['headurl'])}{else}{php echo tomedia($config['store_head'])}{/if}"  alt=""/>
+        <h2 class="fn">{$store['name']}</h2>
+        {if $store['is_vip'] == 1}
+        <p class="font28">VIP</p>
+        {/if}
+    </section>
+</section>
+<section class="bgfff renew_core">
+    <p class="font28 txt">可创建活动数量：<span class="main_red">{php echo $store['create_num']==-1?'不限':$store['create_num']}</span>&nbsp;&nbsp;服务到期时间：<span class="main_red">{php echo date('Y-m-d H:i',$store['endtime'])}</span>，购买后有效期将顺延。</p>
+    <ul class="clearfix">
+        {loop $setmealList $value}
+        <li data-id="{$value['id']}" data-name="{$value['name']}" data-money="{$value['money']}">
+            {if $value['is_hot'] == 1}
+            <i>推荐</i>
+            {/if}
+            <h2 class="fn font28">{$value['name']}</h2>
+            <h2 class="fn font24">活动数量:{php echo $value['create_num']==-1?'不限':$value['create_num']}</h2>
+            <h2 class="fn font24">续费天数:{$value['day']}</h2>
+            <p><span class="font28">￥</span><strong style="font-size:0.5rem;">{$value['money']}</strong></p>
+            <a href="javascript:;" class="service_details">查看详情</a>
+        </li>
+        {/loop}
+    </ul>
+    <section class="cash_bg renew_pay">
+        <p class="font30 c9">使用余额&nbsp;（账户余额：<small id="store_money">{$store['money']}</small>元）</p>
+        <section class="weix_pay">
+            <img src="{__MOBILE_STORE_IMG__}/yue.png" width="65" height="65"  alt=""/>
+            <p class="font30">余额可抵扣<small class="main_red" id="use_money">0</small>元</p>
+            <input type="checkbox" id="is_use_money" name="is_use_money">
+            <label for="is_use_money"></label>
+        </section>
+        <p class="font30 c9" style="margin-top: 0.267rem;">支付方式</p>
+        <section class="weix_pay"> <img src="{__MOBILE_STORE_IMG__}/wx.png" width="65" height="65"  alt=""/>
+            <p class="font30">微信支付<small class="main_red" id="wx_money">0</small>元</p>
+        </section>
+    </section>
+</section>
+<section class="h120"></section>
+<section class="renew_bottom clearfix">
+    <section class="renew_price">
+        <p class="font28">总计:<strong>￥<span class="font50" id="total_money">0</span></strong> </p>
+        <p class="font28 c6 mt5">您已选择 "<span id="selectSetmeal"></span>"</p>
+    </section>
+    <input type="hidden" id="setmeal_id" value="0" />
+    <a href="javascript:;" class="payment" id="btnPay">确认付款</a> </section>
+{if !empty($config['renewpushtmp_sub'])}
+<div style="position: fixed;top: 120px;left: 15px;z-index:9999;">
+    <wx-open-subscribe template="{$config['renewpushtmp_sub']}" id="subscribe-btn">
+        <template slot="style">
+            <style>
+                .subscribe-btn {width: 50px;height: 50px;padding: 8px;border-radius: 25px;border: 0;font-size: 12px;color: #fff;background-color: #07c160;}
+            </style>
+        </template>
+        <template>
+            <button class="subscribe-btn">续费通知</button>
+        </template>
+    </wx-open-subscribe>
+</div>
+<script>
+    document.getElementById('subscribe-btn').addEventListener('success', function (e) {
+        var status = JSON.parse(JSON.parse(e.detail.subscribeDetails)["{$config['renewpushtmp_sub']}"])["status"];
+        if(status == 'accept'){
+            layer.open({content: '订阅成功，获得一次模版消息提醒！', skin: 'msg', time: 2});
+        }
+    });
+</script>
+{/if}
+<script src="{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js"></script>
+<script>
+    var is_submit = true;
+    //页面加载完默认选中套餐列表中第一个
+    window.onload = function(){
+        $(".renew_core li:first").addClass('on').trigger('click');
+    };
+    $(function(){
+        //点击选中套餐
+        $('.renew_core li').on('click',function(){
+            $('.renew_core li').removeClass('on');
+            $(this).addClass('on');
+
+            //设置当前选中套餐
+            var selectSetmeal = $(this).data();
+            $("#setmeal_id").val(selectSetmeal.id);
+            $("#selectSetmeal").html(selectSetmeal.name);
+            $("#wx_money").html(selectSetmeal.money);
+            $("#total_money").html(selectSetmeal.money);
+
+            var store_money = parseFloat($('#store_money').html());
+            var setmeal_money = parseFloat(selectSetmeal.money);
+            var use_money = store_money > setmeal_money ? setmeal_money : store_money;
+            $("#use_money").html(use_money);
+
+            $('#is_use_money').change();
+        });
+
+        //点击打开套餐详情
+        $('.service_details').on('click',function(event){
+            event.stopPropagation();
+            var id = $(this).parent().data('id');
+            $.ajax({
+                type: "get",
+                url: "{php echo $this->createMobileUrl('store.store_renew',array('act'=>'details'))}",
+                data:{id:id},
+                success: function (data) {
+                    var html = data;
+                    layer.open({
+                        type: 1,
+                        title: ""
+                        ,content: html
+                        ,anim: 'up'
+                        ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+                    });
+                },
+                beforeSend: function () {
+                    //loading
+                    layer.open({
+                        type: 2
+                        , time: 0.2 //999秒后自动关闭
+                    });
+                }
+            });
+        });
+
+        //选中使用余额操作
+        $('#is_use_money').change(function(){
+            if($(this).is(':checked')){
+                var setmeal_money = $('#total_money').html();
+                var use_money = $('#use_money').html();
+                var pay_money =  (parseFloat(setmeal_money) - parseFloat(use_money)).toFixed(2);
+                $('#wx_money').html(pay_money);
+            }
+            else{
+                var setmeal_money = $('#total_money').html();
+                $('#wx_money').html(setmeal_money);
+            }
+        });
+
+        //点击支付
+        $('#btnPay').click(function(){
+            if($("#setmeal_id").val() == 0){
+                layer.open({
+                    content: '请选择续费套餐'
+                    ,skin: 'msg'
+                    ,time: 2
+                });
+                return;
+            }
+            var setmeal_id = $('#setmeal_id').val();
+            var is_use_money = $('#is_use_money').is(':checked')? 1 : 0;
+            if(is_submit){
+                is_submit = false;
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createMobileUrl('store.store_renew',array('act'=>'addOrder'))}",
+                    data:{
+                        setmeal_id:setmeal_id,
+                        is_use_money:is_use_money
+                    },
+                    success: function (data) {
+                        var data = JSON.parse(data)
+                        layer.closeAll();
+                        if (data.status == 1) {
+                            if(data.paytype == 0){ //余额支付
+                                window.location.href = "{php echo $this->createMobileUrl('store.store_renew',array('act'=>'success'));}&paynumber=" + data.paynumber;
+                            }
+                            else if (data.paytype == 1) { //微信支付
+                                /* {if empty($config['pay_domain']) } */
+                                if (typeof WeixinJSBridge == "undefined"){
+                                    if( document.addEventListener ){
+                                        document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+                                    }else if (document.attachEvent){
+                                        document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+                                        document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+                                    }
+                                }else{
+                                    jsApiCall(data);
+                                }
+                                /*{else}*/
+                                window.location.href="{php echo $config['pay_domain'] . 'app' . substr(__MURL('store.store_renew', array('act' => 'wxPay')), 1)}&paynumber="+data.paynumber;
+                                /*{/if}*/
+                            }
+                        }
+                        else{
+                            is_submit = true;
+                            layer.open({
+                                content: data.msg
+                                ,skin: 'msg'
+                                ,time: 2
+                            });
+                        }
+                    },
+                    beforeSend: function () {
+                        //loading
+                        layer.open({
+                            type: 2
+                            , time: 999 //999秒后自动关闭
+                        });
+                    },
+                });
+            }
+        });
+    });
+
+    $(function(){
+        //清空浏览器历史记录
+        pushHistory();
+        //监听浏览器后退事件
+        window.addEventListener("popstate",
+            function(e) {
+                //转向指定的URL
+                location.href='{php echo $this->createMobileUrl('store.store_member', array('act' => 'index'));}';
+            }, false);
+        //清空浏览器历史记录
+        function pushHistory() {
+            var url = "#";
+            var state = {
+                title: "title",
+                url: "#"
+            };
+            window.history.pushState(state, "title", "#");
+        }
+    });
+
+    //套餐客服
+    function kefu(id){
+        $.ajax({
+            type: "get",
+            url: "{php echo $this->createMobileUrl('store.store_renew',array('act'=>'kefu'))}",
+            data:{id:id},
+            success: function (data) {
+                if(data.status == 1)
+                {
+                    var html = '<section class="kefu_list">\n' +
+                        '  <ul>\n' +
+                        '    <li><img class="ewm" src="'+data.model.qrcode+'"><p class="nickname"><img class="weixin_tx" src="'+data.model.headurl+'" alt="">'+data.model.name+'</p><p><a class="tel" href="tel:'+data.model.mobile+'">'+data.model.mobile+'</a></p></li>\n' +
+                        '  </ul>\n' +
+                        '</section>';
+                    //询问框
+                    layer.open({
+                        content: html
+                        ,btn: ['关闭']
+                    });
+                }
+                else{
+                    layer.open({content: data.msg, skin: 'msg', time: 2});
+                }
+
+            },
+            beforeSend: function () {
+                //loading
+                layer.open({
+                    type: 2
+                    , time: 0.2 //999秒后自动关闭
+                });
+            }
+        });
+    }
+
+    //关闭layer弹窗
+    function closeWindows(){
+        layer.closeAll();
+    }
+
+    //调用微信JS api 支付
+    function jsApiCall(data)
+    {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            JSON.parse(data.jsApiData),
+            function(res){
+                WeixinJSBridge.log(res.err_msg);
+                if (res.err_msg == 'get_brand_wcpay_request:ok') {
+                    //成功后跳转
+                    location.href = "{php echo $this->createMobileUrl('store.store_renew',array('act'=>'success'));}&paynumber="+data.paynumber;
+                }else if(res.err_msg=='get_brand_wcpay_request:cancel'){
+                    is_submit = true;
+                    layer.open({content: '取消支付', skin: 'msg', time: 2});
+                }else{
+                    is_submit = true;
+                    layer.open({content: res.err_desc + res.err_msg, skin: 'msg', time: 2});
+                }
+
+            }
+        );
+    }
+</script>
+</body>
+</html>

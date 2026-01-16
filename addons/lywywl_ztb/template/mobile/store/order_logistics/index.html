@@ -1,0 +1,20 @@
+<section class="bgfff">
+    <figure class="logis">
+        <section class="losis_info"><img src="{php echo tomedia($model['product_thumb'])}" /><i>1件商品</i></section>
+        <figcaption class="font28">物流状态：<span class="main_green" id="statusName">未知</span></figcaption>
+        <p class="c9 font28">物流公司：{$model['fedex_name']}</p>
+        <p class="c9 font28">订单编号：{$model['fedex_number']}</p>
+    </figure>
+</section>
+<section class=" mt24 rel f-yahei bgfff">
+    <ul class="order-state" id="alllogistics">
+        <li class="on">
+            <div class="lc"><i></i><em></em></div>
+            <div class="jd">
+                <P  class="f14 lh22">物流订单查询中，请稍后…</P>
+            </div>
+        </li>
+    </ul>
+</section>
+<section style="height: 1.31rem;"></section>
+<section class="buttonFloat"><a href="javascript:;" class="db font32 yellowBtn" style="background: #FFD112;" onclick="closeWindows();">返回</a></section>

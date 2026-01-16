@@ -1,0 +1,30 @@
+.material-content .material-nav {
+    border-bottom: 1px solid #e7e7eb;
+    padding: 0 20px;
+    display: none !important;
+}
+
+#newUploaderImg.image .category, .uploader-modal.image .category{
+    width: 0px;
+    height: 460px;
+    overflow-y: auto;
+    border-right: 1px solid #e7e7eb;
+    background: #f4f5f9;
+    float: left;
+}
+#newUploaderImg.image .material-body .selected-all, .uploader-modal.image .material-body .selected-all{
+    width: 100%;
+    padding: 10px 30px;
+    background: #fff;
+    position: absolute;
+    left: 0px;
+    bottom: -1px;
+    z-index: 20;
+}
+#newUploaderImg.image .img-container, .uploader-modal.image .img-container{
+    padding: 10px 10px 41px;
+    flex-wrap: wrap;
+    margin-left: 0px;
+    max-height: 460px;
+    overflow-y: auto;
+}

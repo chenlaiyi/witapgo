@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title} - {$actModel['title']}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">活动管理</li>
+                <li class="active">{$title}</li>
+                <li class="active">商家管理</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebAppUrl('obj_activity', array('act' => 'index'));}">返回活动</a></li>
+                            <li>
+                                <a href="{php echo $this->createWebAppUrl('obj_fish_store', array('act' => 'index','aid' => $aid));}">商家列表</a>
+                            </li>
+                            <li class="active"><a href="#">{if !empty($model['id'])}编辑{else}创建{/if}商家</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content" id="form_content" method="post">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> {if !empty($model['id'])}编辑{else}创建{/if}商家信息</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="name" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>活动商家名称</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="name" maxlength="100"
+                                                       name="model[name]" nullmsg="请输入活动商家名称！" placeholder="请输入活动商家名称"
+                                                       type="text" value="{$model['name']}"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">商家LOGO图片</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('model[logo_url]',$model['logo_url']);}
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>
+                                                    图标建议尺寸200x200像素，将展示在活动首页和商家宣传页顶部</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tel" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>商家联系电话</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="tel" maxlength="100"
+                                                       name="model[tel]" nullmsg="请输入商家联系电话！" placeholder="请输入商家联系电话"
+                                                       type="text" value="{$model['tel']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入商家联系电话
+                                                    以便中奖用户或参与用户和商家取得联系</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="industry_id" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>商家隶属行业</label>
+                                            <div class="col-sm-10">
+                                                <select id="industry_id" name="model[industry_id]" class="form-control select2" style="width: 100%;" datatype="*" nullmsg="请选择商家隶属行业！">
+                                                    {loop $industryList $industry}
+                                                    <option value="{$industry['id']}" {if $industry['id'] == $model['industry_id']}selected="selected"{/if}>{$industry['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请选择商家隶属行业 方便去商家进行筛选。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="money" class="col-sm-2 control-label"><span class="text-red">(*)</span>提供奖品价值</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="money" maxlength="10" name="model[money]"
+                                                           placeholder="请输入奖品价值"
+                                                           onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                           onblur = "this.value=FloatMoney(this.value)"
+                                                           step="0.01" min="0.01"
+                                                           type="number" value="{$model['money']}"/>
+                                                    <span class="input-group-addon">元</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="prize" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>提供奖品内容</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="prize" maxlength="100"
+                                                       name="model[prize]" nullmsg="请输入提供奖品内容！" placeholder="请输入提供奖品内容"
+                                                       type="text" value="{$model['prize']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入提供奖品内容 例如：必胜客300元以下美食任意点 两人免单。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>商家简介/使用规则</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_ueditor('model[content]',$model['content']);}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>商家顶部轮播</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_multi_image('banner_url',$model['banner_url']);}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动门店列表</label>
+                                            <div class="col-sm-10">
+                                                <div class="box">
+                                                    <div class="box-header">
+                                                        <h3 class="box-title">创建门店所有信息都为必填信息，请按照要求认真填写。</h3>
+                                                        <div class="box-tools pull-right">
+                                                            <input type="button" id="addmapbtn"
+                                                                   class="btn btn-sm btn-info" value="添加门店" style="margin-bottom: 10px;" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=F51571495f717ff1194de02366bb8da9&s=1"></script><script type="text/javascript">
+                                                        function showCoordinate(elm) {
+                                                            require(["util"], function(util){
+                                                                require(["map"], function(){
+
+                                                                    //百度地图API提供Geocoder类进行地址解析，您可以通过Geocoder.getPoint()方法来将一段地址描述转换为一个坐标。
+                                                                    function addressToPoint(address) {
+                                                                        var LocalSearch = new BMap.LocalSearch(map, {
+                                                                            renderOptions: { map: map }
+                                                                        });
+                                                                        LocalSearch.search(address);
+                                                                        LocalSearch.setSearchCompleteCallback(function () {
+                                                                            var point = LocalSearch.getResults().getPoi(0).point;
+                                                                            LocalSearch.clearResults();
+                                                                            map.panTo(point); // 将地图的中心点更改为给定的点
+                                                                            marker.setPosition(point); // 设置标注的地理坐标
+                                                                            marker.setAnimation(BMAP_ANIMATION_BOUNCE); // 设置标注动画效果
+                                                                            setTimeout(function () {
+                                                                                marker.setAnimation(null);
+                                                                            }, 3600); // 动画持续时间
+                                                                        });
+                                                                    }
+
+                                                                    var defaultValue = {};
+                                                                    defaultValue.lng = parseFloat($(elm).parent().prev().prev().find(":text").val());
+                                                                    defaultValue.lat = parseFloat($(elm).parent().prev().find(":text").val());
+
+                                                                    defaultValue || (defaultValue = {});
+                                                                    defaultValue.lng || (defaultValue.lng = 116.403851);
+                                                                    defaultValue.lat || (defaultValue.lat = 39.915177);
+                                                                    var point = new BMap.Point(defaultValue.lng, defaultValue.lat) /*2、创建点坐标*/
+                                                                    var geocoder = new BMap.Geocoder /*创建地址解析器实例*/
+                                                                    var $mapDialog = $("#map-dialog");
+
+                                                                    if (0 == $mapDialog.length) {
+                                                                        ($mapDialog = util.dialog("请选择地点", '<div class="form-group"><div class="input-group"><input type="text" class="form-control" placeholder="请输入地址来直接查找相关位置"><div class="input-group-btn"><button class="btn btn-default"><i class="icon-search"></i> 搜索</button></div></div></div><div id="map-container" style="height:400px;"></div>', '<button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-primary">确认</button>', {
+                                                                            containerName: "map-dialog"
+                                                                        })).find(".modal-dialog").css("width", "80%");
+                                                                        $mapDialog.modal({
+                                                                            keyboard: false
+                                                                        });
+                                                                        map = util.map.instance = new BMap.Map("map-container"); // 1、创建地图实例
+                                                                        map.centerAndZoom(point, 12); // 3、地图初始化，设置中心坐标点及地图级别
+                                                                        map.enableScrollWheelZoom(); // 4、其它，鼠标滚轮控制缩放
+                                                                        map.enableDragging(); // 启用地图拖拽，默认启用
+                                                                        map.enableContinuousZoom(); // 启用连续缩放效果，默认禁用
+                                                                        map.addControl(new BMap.NavigationControl); // 添加导航控件
+                                                                        map.addControl(new BMap.OverviewMapControl); // 添加缩略图控件
+                                                                        marker = util.map.marker = new BMap.Marker(point); // 创建一个图像标注实例。point参数指定了图像标注所在的地理位置
+                                                                        marker.setLabel(new BMap.Label("请您移动此标记，选择您的坐标！", {
+                                                                            offset: new BMap.Size(10, -20)
+                                                                        })); // //把label设置到maker上
+                                                                        map.addOverlay(marker); // 添加自定义覆盖物
+                                                                        marker.enableDragging(); //开启标注拖拽功能
+                                                                        // 添加拖拽事件监听函数
+                                                                        marker.addEventListener("dragend", function (e) {
+                                                                            var point = marker.getPosition(); // 返回标注的地理坐标
+                                                                            // 拖拽标签由坐标地址转换为文本地址
+                                                                            geocoder.getLocation(point, function (geocoderResult) {
+                                                                                $mapDialog.find(".input-group :text").val(geocoderResult.address)
+                                                                            })
+                                                                        });
+                                                                        // 回车由文本地址解析坐标
+                                                                        $mapDialog.find(".input-group :text").keydown(function (e) {
+                                                                            13 == e.keyCode && addressToPoint($(this).val())
+                                                                        });
+                                                                        // 点击按钮由文本地址解析坐标
+                                                                        $mapDialog.find(".input-group button").click(function () {
+                                                                            addressToPoint($(this).parent().prev().val())
+                                                                        });
+                                                                    }
+
+                                                                    // 在模态框完全展示出来做一些动作
+                                                                    // http://www.runoob.com/bootstrap/bootstrap-modal-plugin.html
+                                                                    $mapDialog.off("shown.bs.modal");
+                                                                    $mapDialog.on("shown.bs.modal", function () {
+                                                                        marker.setPosition(point); // 设置标注的地理坐标
+                                                                        map.panTo(marker.getPosition()); // 将地图的中心点更改为给定的点
+                                                                    });
+
+                                                                    $mapDialog.find("button.btn-primary").off("click");
+                                                                    $mapDialog.find("button.btn-primary").on("click", function () {
+                                                                        var e = util.map.marker.getPosition();
+                                                                        geocoder.getLocation(e, function (i) {
+                                                                            var result = {
+                                                                                lng: e.lng,
+                                                                                lat: e.lat,
+                                                                                label: i.address
+                                                                            };
+                                                                            $(elm).parent().prev().prev().find(":text").val(result.lng);
+                                                                            $(elm).parent().prev().find(":text").val(result.lat);
+                                                                        })
+                                                                        $mapDialog.modal("hide");
+                                                                    });
+                                                                    $mapDialog.modal("show");
+                                                                });
+                                                            });
+                                                        }
+                                                    </script>
+                                                        <table class="table table-striped" id="addmaptable">
+                                                            <tr>
+                                                                <th>门店名称</th>
+                                                                <th>经纬度</th>
+                                                                <th>详细地址</th>
+                                                                <th>联系电话</th>
+                                                                <th>操作</th>
+                                                            </tr>
+                                                            {if !empty($model['id'])}
+                                                            {loop $model['store_map_list'] $index $item}
+                                                            <tr class="addmap">
+                                                                <td>
+                                                                    <input class="form-control" name="model[store_map_list][{$index}][name]"  placeholder="请输入门店名称" value="{$item['name']}"  type="text" />
+                                                                </td>
+                                                                <td>
+                                                                    <div class="row row-fix">
+                                                                        <div class="col-xs-4 col-sm-4">
+                                                                            <input type="text" name="model[store_map_list][{$index}][lng]" value="{$item['lng']}" placeholder="地理经度"  class="form-control" />
+                                                                        </div>
+                                                                        <div class="col-xs-4 col-sm-4">
+                                                                            <input type="text" name="model[store_map_list][{$index}][lat]" value="{$item['lat']}" placeholder="地理纬度"  class="form-control" />
+                                                                        </div>
+                                                                        <div class="col-xs-4 col-sm-4">
+                                                                            <button onClick="showCoordinate(this);" class="btn btn-default" type="button">选择坐标</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" name="model[store_map_list][{$index}][address]" value="{$item['address']}" placeholder="请输入门店位置" type="text" />
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" name="model[store_map_list][{$index}][tel]" value="{$item['tel']}" placeholder="请输入联系电话" type="text" />
+                                                                </td>
+                                                                <td>
+                                                                    <input type="button" class="btn btn-sm btn-danger pull-right delmapitem" value="删除门店" style="margin-right:10px" />
+                                                                </td>
+                                                            </tr>
+                                                            {/loop}
+
+                                                            {/if}
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="openid" class="col-sm-2 control-label"><span class="text-red">(*)</span>商家奖品核销员</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows="3" name="model[openid]" id="openid" class="form-control"
+                                                          placeholder="请输入核销人员的OPENID...">{$model['openid']}</textarea>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>
+                                                    多个人员请用","分割,
+                                                    例如："oIJyhjs1VVYa6enCPsvHebYa79aU,ogaIJ0y00qDCbILPw8Kiv-gDeDYk"。<a href="javascript:void(0);" onClick="showEwmDialog();" target="_blank"> >>获取OPENID</a>   <a href="javascript:void(0);" onClick="showAdminsEwmDialog();"> >>核销员管理入口</a></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="status2" class="col-sm-2 control-label">商家展示状态</label>
+                                            <div class="col-sm-10">
+                                                <input data-off-text="关闭" data-on-text="开启" data-size="mini" id="status"
+                                                       type="checkbox" value="true" {if $model['status']==1}checked{/if}/>
+                                                <input id="status2" name="model[status]" type="hidden"
+                                                       value="{$model['status']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>
+                                                    选择商家开启/关闭状态，关闭后商家将不会在前台展示</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sort" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>商家排序信息
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="n" id="sort" name="model[sort]"
+                                                       nullmsg="信息排序必须填写！"
+                                                       onkeyup="if(isNaN(this.value)) this.value='0';"
+                                                       placeholder="请输入信息排序字段" type="text" value="{$model['sort']}">
+                                                <p class="help-block">请输入数字 例如：1|6|10等数字，注意：此字段只能为数字 信息将按照排序字段正序排列</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+                                                <input type="hidden" name="token" value="{$_W['token']}"/>
+                                                <input type="hidden" name="submit" value="submit"/>
+                                                <button type="submit" class="btn btn-primary" id="SubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script id="maptpl" type="text/html">
+    <tr class="addmap">
+        <td>
+            <input class="form-control" name="model[store_map_list][<%= count %>][name]"  placeholder="请输入门店名称" type="text" />
+        </td>
+        <td>
+            <div class="row row-fix">
+                <div class="col-xs-4 col-sm-4">
+                    <input type="text" name="model[store_map_list][<%= count %>][lng]" value="" placeholder="地理经度"  class="form-control" />
+                </div>
+                <div class="col-xs-4 col-sm-4">
+                    <input type="text" name="model[store_map_list][<%= count %>][lat]" value="" placeholder="地理纬度"  class="form-control" />
+                </div>
+                <div class="col-xs-4 col-sm-4">
+                    <button onclick="showCoordinate(this);" class="btn btn-default" type="button">选择坐标</button>
+                </div>
+            </div>
+        </td>
+        <td>
+            <input class="form-control" name="model[store_map_list][<%= count %>][address]"  placeholder="请输入门店位置" type="text" />
+        </td>
+        <td>
+            <input class="form-control" name="model[store_map_list][<%= count %>][tel]"  placeholder="请输入联系电话" type="text" />
+        </td>
+        <td>
+            <input type="button" class="btn btn-sm btn-danger pull-right delmapitem" value="删除门店" style="margin-right:10px" />
+        </td>
+    </tr>
+</script>
+<script>
+    $(function () {
+        SelectNav("联盟拓客");
+
+        myrequire(['select2', 'bootstrap-switch', 'validform', 'icheck', 'bootstrap-slider'], function () {
+            myrequire([ 'arttemplate'], function (template) {
+                //开启多门店添加门店信息
+                $("#addmapbtn").click(function () {
+                    var mapcount	= $(".addmap").length;
+                    var obj = {};
+                    obj.count = mapcount;
+                    var html = template("maptpl",obj);
+                    $("#addmaptable").append(html);
+                });
+            });
+
+            $(".select2").select2();
+
+            //初始化icheck控件radio
+            $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+                checkboxClass: 'icheckbox_flat-blue',
+                radioClass: 'iradio_flat-blue'
+            });
+
+            //绑定更改状态操作
+            $('#status').bootstrapSwitch({
+                onSwitchChange: function (event, state) {
+                    var status = state ? 1 : 0;
+                    $("#status2").val(status);
+                }
+            });
+
+            //删除多门店信息
+            $(document).delegate(".delmapitem", "click", function() {
+                var list = $(this).parent().parent().parent();
+                $(this).parent().parent().remove();
+                list.children(".addmap").each(function (index) {
+                    $(this).find(".form-control").each(function () {
+                        var inputName = $(this).attr("name");
+                        $(this).attr("name", inputName.replace(/\[([\d]+)\]/g, "[" + index + "]"));
+                    });
+                });
+            });
+
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createWebAppUrl('obj_fish_store', array('act' => 'index','aid' => $aid));}";
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+                    }
+                }
+            });
+
+        });
+
+    });
+
+    function showEwmDialog() {
+        require(["jquery", "util"], function(){
+            var footer = '<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+            var modalobj = util.dialog('扫码获取OPENID','<div class=link-modal><div style=width:300px;margin:auto;position:relative;text-align:center;><img src={php echo $this->createWebAppUrl('obj_fish_store', array('act' => 'openidQrPreview','aid' => $aid));}><p>请用核销人员的微信浏览器打开！</p></div></div>',footer,{containerName:'emw-container'});
+            modalobj.modal({'keyboard': true});
+            modalobj.find('.modal-body').css({'overflow-y':'auto' });
+            modalobj.modal('show');
+        });
+    }
+
+    function showAdminsEwmDialog() {
+        require(["jquery", "util"], function(){
+            var footer = '<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+            var modalobj = util.dialog('核销员管理入口','<div class=link-modal><div style=width:300px;margin:auto;position:relative;text-align:center;><img src={php echo $this->createWebAppUrl('obj_fish_store', array('act' => 'adminsQrPreview','aid' => $aid));}><p>请用管理员的微信浏览器打开！</p></div><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="{php echo replaceDieDomain($config,__MURL('obj_fish', array('token' => $actModel['token'], 'act' => 'winner'), true, true),0,$actModel['id'],0);}"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div>',footer,{containerName:'emw-container'});
+            modalobj.modal({'keyboard': true});
+            modalobj.find('.modal-body').css({'overflow-y':'auto' });
+            modalobj.modal('show');
+        });
+        require(["clipboard"], function (Clipboard) {
+            //复制预览网址
+            new Clipboard('#btn_copy', {
+                text: function(trigger) {
+                    $("#copyTarget").text('{php echo replaceDieDomain($config,__MURL('obj_fish', array('token' => $actModel['token'], 'act' => 'winner'), true, true),0,$actModel['id'],0);}');  /*放入目标对象*/
+                    return trigger.getAttribute('aria-label');
+                }
+            });
+        });
+    }
+
+    $(window).scroll(function () {
+        $(".edui-editor-toolbarbox").each(function () {
+            var zIndex = parseInt($(this).css('z-index')) || -1;
+            if(zIndex > 0){
+                $(this).addClass('edui-editor-toolbarbox2');
+            }else{
+                $(this).removeClass('edui-editor-toolbarbox2');
+            }
+        })
+    });
+</script>
+</body>
+</html>

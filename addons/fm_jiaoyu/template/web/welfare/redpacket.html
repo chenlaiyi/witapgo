@@ -1,0 +1,391 @@
+{template 'public/header'}
+{template 'public/comhead'}
+<div class="panel panel-info">
+	<div class="panel-body">
+		<ul class="nav nav-tabs">
+			<li {if $_GPC['op']=='display'}class="active"{/if}><a href="{php echo $this->createWebUrl('redpacket', array('op' => 'display', 'schoolid' => $schoolid))}">红包列表</a></li>
+			{if (IsHasQx($tid_global,1003211,1,$schoolid))}
+			<li {if $_GPC['op']=='record'}class="active"{/if}><a href="{php echo $this->createWebUrl('redpacket', array('op' => 'record', 'schoolid' => $schoolid))}">红包记录</a></li>
+			{/if}
+		</ul>	
+	</div>
+</div>
+{if $operation == 'display'}
+<script>
+    require(['bootstrap'],function($){
+        $('.btn,.tips').hover(function(){
+            $(this).tooltip('show');
+        },function(){
+            $(this).tooltip('hide');
+        });
+    });
+</script>
+<div class="main">
+    <div class="panel panel-info">
+        <div class="panel-heading">红包列表</div>
+        <div class="panel-body">
+            <form action="./index.php" method="get" class="form-horizontal" role="form">
+                <input type="hidden" name="c" value="site">
+                <input type="hidden" name="a" value="entry">
+                <input type="hidden" name="m" value="fm_jiaoyu">
+                <input type="hidden" name="do" value="redpacket"/>
+                <input type="hidden" name="op" value="display"/>
+                <input type="hidden" name="schoolid" value="{$schoolid}" />
+                <div class="form-group">
+                    <label class="col-xs-12 col-sm-2 col-md-1 control-label">名称</label>
+                    <div class="col-sm-2 col-lg-2">
+                        <input class="form-control" name="stitle" type="text" value="{$_GPC['stitle']}">
+                    </div>
+                    <div class="col-sm-2 col-lg-2" style="margin-left:50px">
+                        <button class="btn btn-default"><i class="fa fa-search"></i> 搜索</button>
+                    </div>
+                    <div class="span8 control-group">
+						<a class="btn qx_edit btn-primary" href="javascript:AddNewSp()"><i class="fa fa-plus"></i> 添加红包</a>
+					</div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <form method="post" class="form-horizontal" id="formfans">
+            <input type="hidden" name="op" value="del" />
+            <div style="position:relative">
+                <div class="panel-body table-responsive">
+                    <table class="table table-hover" style="position:relative">
+                        <thead class="navbar-inner">
+                            <tr>
+                                <th style="width: 5%;"><input type="checkbox" class="check_all" /></th>
+                                <th style="width: 10%;">ID</th>
+                                <th style="width: 10%;">标题</th>
+                                <th style="width: 10%;">红包金额</th>
+                                <th style="width: 10%;">消费金额</th>
+                                <th style="width: 25%;">图片</th>
+                                <th style="width: 10%;">到期天数</th>
+                                <th style="width: 10%;">创建时间</th>
+                                <th style="width: 10%;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loop $list $item}
+                            <tr>
+                                <td class="with-checkbox"><input type="checkbox" name="check" value="{$item['id']}"></td>
+                                <td>{$item['id']}</td>
+                                <td>{$item['title']}</td>
+                                <td>{$item['cose']}次</td>
+                                <td>{$item['maxrange']}次</td>
+                                <td><img src="{php echo tomedia($item['thumb'])}" width="50"></td>
+                                <td>{$item['day']}</td>
+                                <td>{php echo date("Y-m-d H:i",$item['createtime'])}</td>
+                                <td class="qx_e_d" style="text-align:left;">
+                                    <a href="javascript:editSp('{$item['id']}')" title="编辑" >编辑</a>
+                                        <a href="{php echo $this->createWebUrl('redpacket', array('op' => 'delete', 'id' => $item['id'],'schoolid' => $schoolid))}"  title="删除"  onclick="return confirm('确认删除此记录吗？');return false;">删除</a>
+                                </td>
+                            </tr>
+                            {/loop}
+                        </tbody>
+                        {if $list}
+                        <tr>
+                            <td colspan="10">
+                                <input name="token" type="hidden" value="{$_W['token']}" />
+                                <input type="button" class="btn btn-primary qx_3402" name="btndeleteall" value="批量删除" />
+                            </td>
+                        </tr>
+                        {/if}
+                    </table>
+                </div>
+            </div>
+        </form>
+        {$pager}
+    </div>
+</div>
+<div class="uploader-modal modal right fade" style="z-index:1050 !important;"  id="SpEditBox" tabindex="-1" role="dialog" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog myModalleft">
+        <div class="modal-content" id="ed_stubox" style="max-height:unset !important;">
+            <div class="modal-header" style="text-align: center;color: black;">
+                <h4 class="modal-title" id="myModalLabel">编辑红包</h4>
+            </div>
+            <div class="modal-body" style="height:100%;overflow-y: scroll; max-height: 87%;">
+                <form action="" method="post" class="form-horizontal form" id="SpForm"	enctype="multipart/form-data">
+                    <input type="hidden" name="spid" value=0>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-xs-12 col-md-3 control-label"><span style="color:red">*</span>标题</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="title" class="form-control" value=" " />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12 col-md-3 control-label">红包金额</label>
+                                <div class="col-sm-9">
+                                    <input type="number" name="cose" class="form-control" value="" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12 col-md-3 control-label">消费金额</label>
+                                <div class="col-sm-9">
+                                    <input type="number" name="maxrange" class="form-control" placeholder="" />
+                                </div>
+                                <label class="col-sm-10 control-label" style="margin-left:15px;">当用户使用金额达到此设置时才可以使用</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12 col-md-3 control-label">到期天数</label>
+                                <div class="col-sm-9">
+                                    <input type="number" name="day" class="form-control" value="" placeholder="3"/>
+                                </div>
+                                <label class="col-sm-7 control-label">当用户领取后开始计时</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12 col-md-3 control-label">红包图片</label>
+                                <div class="col-sm-9">
+                                    {php echo tpl_form_field_image('thumb')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-foot">
+                <a class="btn btn-primary" style="color: #fff;" onclick="Save();">提交</a>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function editSp(id){
+        let url = "{php echo $this->createWebUrl('redpacket', array('op' => 'editSp','schoolid' => $schoolid))}";
+        $.ajax({
+            url: url,
+            type: "post",
+            dataType: "json",
+            data:{
+                id:id
+            },
+            success: function (res) {
+                $("input[name=spid]").val(id)
+                $("#myModalLabel").text("编辑红包")
+                $("input[name=title]").val(res.data.title)
+                $("input[name=cose]").val(res.data.cose)
+                $("input[name=maxrange]").val(res.data.maxrange)
+                $("input[name=day]").val(res.data.day)
+                $("input[name=thumb]").val(res.data.thumb)
+                $("input[name=thumb]").parent().next().find('img').attr('src',res.data.thumburl)
+                $("#SpEditBox").modal('toggle')
+            },
+            error: function (jqXHR, textStatus, errorThrown){
+                console.log(jqXHR)
+                console.log(textStatus)
+                console.log(errorThrown)
+            }
+        });
+    }
+
+    function AddNewSp(){
+        $("#myModalLabel").text("新增红包")
+        $("input[name=title]").val('')
+        $("input[name=cose]").val('')
+        $("input[name=maxrange]").val('')
+        $("input[name=day]").val('')
+        $("input[name=thumb]").parent().next().find('img').attr('src','')
+        $("#SpEditBox").modal('toggle')
+    }
+
+    function Save(){
+        if(!$("input[name=title]").val()){
+            alert('请输入标题')
+            return
+        }
+        if(!$("input[name=cose]").val()){
+            alert('请填写红包金额')
+            return
+        }
+        if(!$("input[name=maxrange]").val()){
+            alert('请填写使用金额范围')
+            return
+        }
+        if(!$("input[name=day]").val()){
+            alert('请填写领取后的到期天数')
+            return
+        }
+        if(!$("input[name=thumb]").val()){
+            alert('请上传图片')
+            return
+        }
+        let url = "{php echo $this->createWebUrl('redpacket', array('op' => 'save','schoolid' => $schoolid))}";
+        $.ajax({
+            url: url,
+            type: "post",
+            dataType: "json",
+            data:$("#SpForm").serialize(),
+            success: function (res) {
+               alert(res.msg)
+               window.location.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown){
+                console.log(jqXHR)
+                console.log(textStatus)
+                console.log(errorThrown)
+            }
+        });
+    }
+
+    $(".check_all").click(function(){
+        var checked = $(this).get(0).checked;
+        $("input[type=checkbox]").attr("checked",checked);
+    });
+
+    $("input[name=btndeleteall]").click(function(){
+        var check = $("input[type=checkbox][class!=check_all]:checked");
+        if(check.length < 1){
+            alert('请选择要删除的记录!');
+            return false;
+        }
+        if(confirm("确认要删除选择的记录?")){
+            var id = new Array();
+            check.each(function(i){
+                id[i] = $(this).val();
+            });
+            var url = "{php echo $this->createWebUrl('redpacket', array('op' => 'deleteall','schoolid' => $schoolid))}";
+            $.post(
+                url,
+                {idArr:id},
+                function(data){
+                    if(data.result){
+					    alert(data.msg);
+                        location.reload();
+                    }else{
+                        alert(data.msg);
+                    }
+                },'json'
+            );
+        }
+    });
+
+</script>
+{else if $operation == 'record'}
+<div class="main">
+    <div class="panel panel-info">
+        <div class="panel-heading">记录列表</div>
+        <div class="panel-body">
+            <div class="control-group">
+                <a class="btn qx_edit btn-primary" href="javascript:AddNewSp()"><i class="fa fa-plus"></i> 添加红包</a>
+            </div>
+        </div>
+    </div>
+    <style>
+        .navbar-inner tr th{
+            text-align: center;
+        }
+    </style>
+    <div class="panel panel-default">
+        <form method="post" class="form-horizontal" id="formfans">
+            <input type="hidden" name="op" value="del" />
+            <div style="position:relative">
+                <div class="panel-body table-responsive">
+                    <table class="table table-hover" style="position:relative">
+                        <thead class="navbar-inner">
+                            <tr>
+                                <th style="width: 5%;"><input type="checkbox" class="check_all" /></th>
+                                <th style="width: 10%;">ID</th>
+                                <th style="width: 10%;">用户信息</th>
+                                <th style="width: 25%;">红包标题</th>
+                                <th style="width: 20%;">营销宝标题</th>
+                                <th style="width: 10%;">领取时间</th>
+                                <th style="width: 10%;">使用时间</th>
+                                <th style="width: 10%;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody style="text-align: center;">
+                            {loop $list $item}
+                            <tr>
+                                <td class="with-checkbox"><input type="checkbox" name="check" value="{$item['id']}"></td>
+                                <td>{$item['id']}</td>
+                                <td><img src="{$item['icon']}" style="border-radius: 50%;width:50px" ><br><span>{$item['s_name']}</span></td>
+                                <td>{$item['welfaretitle']}</td>
+                                <td>{$item['sptitle']}</td>
+                                <td>{$item['time']}</td>
+                                <td>{$item['usetime']}
+                                    {if $item['usename']}
+                                    使用者({$item['usename']})
+                                    {/if}
+                                </td>
+                                <td>
+                                    <a href="{php echo $this->createWebUrl('redpacket', array('op' => 'deleteLog', 'id' => $item['id'],'schoolid' => $schoolid))}"  title="删除"  onclick="return confirm('确认删除此记录吗？');return false;">删除</a>
+                                </td>
+                            </tr>
+                            {/loop}
+                        </tbody>
+                        <!-- {if $list}
+                        <tr>
+                            <td colspan="10">
+                                <input name="token" type="hidden" value="{$_W['token']}" />
+                                <input type="button" class="btn btn-primary qx_3402" name="btndeleteall" value="批量删除" />
+                            </td>
+                        </tr>
+                        {/if} -->
+                    </table>
+                </div>
+            </div>
+        </form>
+        {$pager}
+    </div>
+</div>
+<div class="uploader-modal modal right fade" style="z-index:1050 !important;"  id="SpEditBox" tabindex="-1" role="dialog" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog myModalleft">
+        <div class="modal-content" id="ed_stubox" style="max-height:unset !important;">
+            <div class="modal-header" style="text-align: center;color: black;">
+                <h4 class="modal-title" id="myModalLabel">编辑红包</h4>
+            </div>
+            <div class="modal-body" style="height:100%;overflow-y: scroll; max-height: 87%;">
+                <form action="" method="post" class="form-horizontal form" id="SpForm"	enctype="multipart/form-data">
+                    <input type="hidden" name="spid" value=0>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-xs-12 col-md-3 control-label"><span style="color:red">*</span>标题</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="title" class="form-control" value=" " />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12 col-md-3 control-label">红包金额</label>
+                                <div class="col-sm-9">
+                                    <input type="number" name="cose" class="form-control" value="" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12 col-md-3 control-label">消费金额</label>
+                                <div class="col-sm-9">
+                                    <input type="number" name="maxrange" class="form-control" placeholder="" />
+                                </div>
+                                <label class="col-sm-10 control-label" style="margin-left:15px;">当用户使用金额达到此设置时才可以使用</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12 col-md-3 control-label">到期天数</label>
+                                <div class="col-sm-9">
+                                    <input type="number" name="day" class="form-control" value="" placeholder="3"/>
+                                </div>
+                                <label class="col-sm-7 control-label">当用户领取后开始计时</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12 col-md-3 control-label">红包图片</label>
+                                <div class="col-sm-9">
+                                    {php echo tpl_form_field_image('thumb')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-foot">
+                <a class="btn btn-primary" style="color: #fff;" onclick="Save();">提交</a>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+{/if}
+
+{template 'public/footer'}

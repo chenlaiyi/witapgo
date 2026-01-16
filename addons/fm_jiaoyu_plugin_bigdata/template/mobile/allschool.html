@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keywords" http-equiv="{$school['title']}">
+    <link rel="shortcut icon" href="https://manger.daren007.com/attachment/images/global/wechat.jpg">
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/sp_public.css">
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/index.css">
+    <link href="{$_W['siteroot']}web/resource/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{MODULE_URL}public/web/js/faceMap.js?v=5.61" type="text/javascript"></script>
+    <script type="text/javascript" src="//api.map.baidu.com/api?v=3.0&ak={$item['baidumapapi']}"></script>
+    <script src="{MODULE_URL}public/web/js/infobox.min.js?v=5.61" type="text/javascript"></script>
+    <title>{$item['bdall_title']}</title>
+    <style>
+         .c-left_mix{width:50%;padding-left:0.15rem}
+         .textC {position:relative;float:left;min-width:1rem;margin-top: 0.01rem;overflow:hidden;line-height:0.3rem;height:0.3rem;margin-right: 0.1rem;}
+        .textC span {color: #f1b939;font-size: 0.3rem;position: absolute;}
+        .BMap_cpyCtrl { display: none; }
+        .anchorBL{ bottom: 0px !important; }   
+        .l-content { height: 88.45%; }
+        .c-content { margin-top: 0.1rem; }
+        .c-header{ height: 1.0rem; }
+        .c-center_box1{ height:  86.62% }
+        .c-center_box2{ height:  10.31% }
+        #MAA{ background-color:transparent !important }
+        .DIY_infobox{height: auto;min-width:320px;}
+        .NumT { font-size: 18px; color:white; }
+        .NumNum{font-size: 22px;color:#72abff;margin:0 5px}
+        .NumD{font-size: 20px; color:white;}
+        .NumBox{padding:15px 10px;flex: 1; text-align: center;}
+        .infob_text{width: calc(100% - 60px);float: left;height: 100%;color:#9b9fb9;padding-right: 10px;}
+        .Sch_Name{font-size: 18px;padding:2px 10px}
+        .Sch_Name a{color:#99a4ea;}
+        .Sch_Name a:hover{color:#d0d0d4;}
+        .DIY_infobox>img{width: 13px;}
+        .d3{ margin-left: calc(50% - 11px); margin-bottom: -10px;float: left; width: 0; height: 0; border-width: 10px; border-style: solid; border-color:#5a608b transparent transparent transparent; }
+        .IB{background-color: #1a235f;border-radius: 5px;padding:5px 5px;border:1px solid #3e446f;height: auto;height: calc(100% - 10px); width: 100%;display: flex;}
+        .LTA{display: flex;padding-right:12px}
+        .LTA>div{flex: 1;}
+        .LTA-Title{width: 100%;height: 40px;color:white;font-size: 20px;padding:5px;text-align: center;}
+        .LTA-content{height: calc(100% - 40px);width: 100%;display: flex;flex-direction: column;text-align: center;}
+        .LTA-content>div{flex:1;color:white;font-size: 16px;}
+        .teacher_sex {position: relative;width: 50%;height: 100%;margin-bottom: 1%;float:left;}
+        .student_sex {position: relative;width: 50%;height: 100%;margin-bottom: 1%;float:right;}
+        .activity-img{padding: 0.05rem;float:left}
+        .activity-desc{float:left;width:calc(100% - 0.6rem)}
+        .activity-desc h5{ height: 0.2rem;line-height: 0.2rem;padding-top: 0.05rem}
+        .activity-time{font-weight: lighter;background-color: rgba(255, 255, 255, 0.12);border-radius: 0.14rem;padding: 0 0.06rem;}
+        .activity-bj{font-weight: lighter;background-color: rgba(58, 102, 239, 0.5);border-radius: 0.14rem;padding: 0 0.06rem;}
+        .pull-right{float:right !important;}
+        .activity-bjtz{font-weight: lighter;background-color: rgba(129, 117, 199, 0.5);border-radius: 0.14rem;padding: 0 0.06rem;}
+        .activity-xyqf{font-weight: lighter;background-color: rgba(255, 108, 96, 0.5);border-radius: 0.14rem;padding: 0 0.06rem;}
+        .activity-zytz{font-weight: lighter;background-color: rgba(89, 172, 226, 0.5);border-radius: 0.14rem;padding: 0 0.06rem;}
+        .topnav_box::-webkit-scrollbar{ width: 5px; height:10px; background-color:transparent; }  
+        .topnav_box::-webkit-scrollbar-track { -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); border-radius: 10px; background-color:transparent; }
+        .topnav_box::-webkit-scrollbar-thumb { border-radius: 10px; -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3); background-color:#4f70c5; }
+        .school_table{width: 100%;}
+        .school_thead{width: 100%;display: flex;height: 40px;line-height: 40px;background-color: rgba(49, 107, 255, 0.28);}
+        .school_table .title{width: 20%;text-align: center;font-size: 16px;}
+        .school_table .title:nth-child(1){flex:1}
+        .school_tbody{width: 100%;}
+        .school_tbody .body_tr{width: 100%;display: flex;margin-bottom: 3px;height: 35px;line-height: 35px;background-color: rgba(47, 74, 144, 0.28);}
+        .school_tbody .body_tr .td{width: 20%;text-align: center;font-size: 14px;}
+        .school_tbody  .body_tr .td:nth-child(1){flex:1}
+        .td .botton{font-size: 12px !important;border: 1px solid #5b92e4;border-radius: 10px;padding:2px 5px;width: 80px;color:#5b92e4;cursor: pointer; }
+        .CheckStatus_title{width: 100%;height: 35px;font-size: 16px;color: white;line-height: 35px;}
+        .CS_cell_Box{width: 100%;height: calc(100% - 35px);display: flex;justify-content: space-around;padding:25px 40px 25px 30px}
+        .CS_cell{position: relative;}
+        .CS_cell .word{position: absolute;font-size: 20px;color:white;top:18px;left:10px}
+        .CS_cell .m{font-size: 14px;color:#10bfa8;line-height: 20px;height: 20px;width: 100%;text-align: center;margin-top:5px}
+        .CS_cell .b{font-size: 18px;color:#548dd6;line-height: 30px;height: 30px;width: 100%;text-align: center;margin-top:5px;font-weight: bold;}
+    </style>
+</head>
+<body class="background">
+<div class="expand">
+    <div class="expand_left"></div>
+    <div class="expand_right"></div>
+    <div class="expand_circle"></div>
+</div>
+<div class="open-page">
+    <div class="circle-red">
+        <div class="circle-blue">
+            <div class="circle-yellow"></div>
+        </div>
+    </div>
+</div>
+<!-- 头部标题 -->
+<header class="c-header l-header">
+    <nav class="c-header_box"></nav>
+    <div class="c-header_title">{$item['bdall_title']}</a></div>
+    <nav class="c-header_box"></nav>
+</header>
+<section class="c-content l-content l-justify-top-flex ">
+    <div class="c-content_item l-content_item">
+        <!-- 左侧第一块 学生/老师出勤人数与比例-->
+        <div class="o-box c-left_box1">
+            <div class="o-mix c-left_mix">
+                <img src="{MODULE_URL}public/web/images/teacher_icon.png"
+                        class="o-mix_icon c-left_mix_icon" alt="教师">
+                <div class="o-mix_txt">
+                    <h2 class="o-mix_key">教师实到</h2>
+                    <div class="o-mix_val" ><div class="textC" id="tea_check_today"></div><div style="float:left;position: relative;color: #29baf3; font-weight: bold;">人</div></div>
+                </div>
+                </p>
+            </div>
+            <div class="o-mix c-left_mix">
+                <img src="{MODULE_URL}public/web/images/student_icon.png"
+                        class="o-mix_icon c-left_mix_icon" alt="学生">
+                <div class="o-mix_txt">
+                    <h2 class="o-mix_key">学生实到</h2>
+                    <div class="o-mix_val" ><div class="textC" id="stu_check_today"></div><div style="float:left;position: relative;color: #29baf3; font-weight: bold;">人</div></div>
+                </div>
+            </div>
+        </div>
+        <!-- 左侧第二块 性别比例 -->
+        <div class="o-box c-left_box2" style="padding:10px">
+            <div class="CheckStatus_title">
+               {if $keep_MC}晨检状况{else}体温状况{/if}
+            </div>
+            <div class="CS_cell_Box">
+                <div class="CS_cell">
+                    <div class="word">正常</div>
+                    <img src="{MODULE_URL}public/web/images/sixblue.png" style="width: 60px;" >
+                    <div class="b" id="zc">888</div>
+                </div>
+                {if $keep_MC}
+                <div class="CS_cell">
+                    <div class="word">异常</div>
+
+                    <img src="{MODULE_URL}public/web/images/sixblue.png" style="width: 60px;" >
+                    <div class="b" id="yc">888</div>
+                </div>
+                {/if}
+                <div class="CS_cell">
+                    <div class="word">发热</div>
+
+                    <img src="{MODULE_URL}public/web/images/sixred.png" style="width: 60px;" >
+                    <div class="b" id="fr">888</div>
+                </div>
+            </div>
+            <!-- <div class="teacher_sex "></div>
+            <div class="student_sex"></div> -->
+        </div>
+        <!-- 左侧第三块 交互功能使用率 -->
+        <div class="o-box c-left_box3"></div>
+        <!-- 左侧第四块 园所文章数量分布 -->
+        <div class="o-box c-left_box4"></div>
+    </div>
+    <div class="c-content_item l-content_item-c" style="margin-right: 10px;">
+        <!-- 中间第一块 各种数量 -->
+        <div class="o-box c-center_box2" style="background-image: none;padding:0;border: 1px solid #3c3f6f;">
+            <div style="background-color: rgba(0, 0, 255, 0.12);width: 100%;height: 100%;display: flex;flex-direction: row;justify-content: space-between;" >
+                <div class="NumBox" style="flex:0.5">
+                    <div class="NumT">学校</div>
+                    <div><span class="NumNum">{php echo count($AllPoint)}</span><span class="NumD">所</span></div>
+                </div>
+
+                <div class="NumBox" style="flex:1.2">
+                    <div class="NumT" >总收入</div>
+                    <div><span class="NumNum" id="AllMoney">{$allmoney}</span><span class="NumD">元</span></div>
+                </div>
+
+                <div class="NumBox">
+                    <div class="NumT">在册学生</div>
+                    <div><span class="NumNum">{$allstu}</span><span class="NumD">人</span></div>
+                </div>
+                <div class="NumBox" >
+                    <div class="NumT">绑定学生/家长</div>
+                    <div><span class="NumNum">{$ybstu}</span><span class="NumD">人</span></div>
+                </div>
+                <div class="NumBox">
+                    <div class="NumT">在职职工</div>
+                    <div><span class="NumNum">{$jszj}</span><span class="NumD">人</span></div>
+                </div>
+                <div class="NumBox">
+                    <div class="NumT">绑定职工</div>
+                    <div><span class="NumNum">{$ybjs}</span><span class="NumD">人</span></div>
+                </div>
+                
+                
+            </div>
+ 
+        </div>
+        <!-- 中间第二块，地图 -->
+        <div class="o-box c-center_box1" id="MAA" style="border: 1px solid #3c3f6f;background-image: none;background-color:unset !important;"></div>
+
+    </div>
+    <div class="c-content_item l-content_item">
+        <!-- 校园动态列表 -->
+        <div class="o-box c-right_box1" style="height:48%;">
+            <div class="o-list">
+                <div class="o-list_title">校园动态</div>
+                <div class="data-list_wrap">
+                    <ul class="o-list_wrap xytz_ul">
+                        {loop $lasttz $row}
+                        <li class="o-list_item inddexs" style="height: 0.8rem;">
+                            <div class="activity-row1">
+                                <div class="col-xs-3 activity-img" style="width:0.6rem;"><img style="width:0.4rem;height:0.4rem;border-radius:50%;" src="{php echo tomedia($row['thumb'])}" class="img-responsive" alt="">
+                                </div>
+                                <div class="col-xs-8 activity-desc">
+                                    <h5>
+                                        <span >{$row['tname']}</span>
+                                        <span class="activity-time " >{php echo date("Y-m-d H:i",$row['createtime'])}</span>
+                                        {if $row['type'] == 2}<span class="activity-xyqf pull-right">校园通知</span>{/if}
+                                        {if $row['type'] == 1}<span class="activity-bjtz pull-right">班级通知</span>{/if}
+                                        {if $row['type'] == 3}<span class="activity-zytz pull-right">作业通知</span>{/if}
+                                    </h5>
+                                    <h5><span class="activity-bj">{$row['bjname']}</span>
+                                        <span class="activity-time"  style="background-color: {$row['scolor']};" >{$row['school']}</span>
+                                        
+                                       </h5>
+                                    <h5>{$row['title']}</h5>
+                                   
+                                    
+                                </div>
+
+                            </div>
+                        </li>
+                        {/loop}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="o-box c-right_box4" style="height:48%;    position: relative; margin-bottom: 2%; background-color: rgba(0, 0, 255, 0.12);">
+            <div class="o-list">
+                <div class="data-list_wrap"  style="height: 100%;">
+                    <div class="school_table" style="height: 100%;">
+                        <div class="school_thead" >
+                            <div class="title">学校</div>
+                            <div class="title">教师出勤率</div>
+                            <div class="title">学生出勤率</div>
+                            <div class="title"> </div>
+                        </div>
+
+                        <div class="school_tbody topnav_box" style="height: calc(100% - 30px); margin: 3px 0; overflow-y: auto;" >
+                            
+                        </div>
+                    </div>
+                  
+                
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+<script type="text/javascript" src="{MODULE_URL}public/web/js/jquery.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/echarts.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/index.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/sp_bg.js"></script>
+
+ 
+<script type="text/javascript">
+var AnimateLockArr = [];
+var map = new BMap.Map("MAA",{minZoom:11,maxZoom:17,enableMapClick: false}); //定义map 以及最大与最小缩放等级
+var poi = new BMap.Point({$cpoint['lng']},{$cpoint['lat']}); //初始中心点坐标
+var MarkerList = {}
+
+    //数字滚动
+    function NumbersAnimate(Target = null, Numbers = 0, Duration = 100,ClassTag) {
+        this.Duration = Duration;
+        this.Target = Target;
+        this.Numbers = Numbers;
+        this.ClassTag = ClassTag;
+        AnimateLockArr[`${ClassTag}`] = false;
+        this.Animate= function(){
+            var array=this.Numbers.split("");
+            //遍历数组
+            for(var i=0;i<array.length;i++){
+                var currentN=array[i];
+                //数字append进容器
+                var t=$("<span></span>");
+                $(t).append("<span class=\"childNumber "+this.ClassTag+"\">"+array[i]+"</span>");
+                $(t).css("margin-left",0.2*i+"rem");
+                $(this.Target).append(t);
+                //生成滚动数字,根据当前数字大小来定
+                for(var j=0;j<=currentN;j++){
+                    var tt;
+                    if(j==currentN){
+                        tt=$("<span class=\"main "+this.ClassTag+"\"><span>"+j+"</span></span>");
+                    }else{
+                        tt=$("<span class=\"childNumber\">"+j+"</span>");
+                    }
+                    $(t).append(tt);
+                    $(tt).css("margin-top",(j+1)*0.25+"rem");
+                }
+                $(t).animate({marginTop:-((parseInt(currentN)+1)*0.25)+"rem"},this.Duration,function(){
+                    $(this).find(".childNumber").remove();
+                });
+            }
+        };
+        this.ChangeNumber=function(numbers){
+            if( AnimateLockArr[`${ClassTag}`] == false){
+                if(this.Numbers != numbers){
+                    AnimateLockArr[`${ClassTag}`] = true;
+                    var oldArray=this.Numbers.split("");
+                    var newArray=numbers.split("");
+                    for(var i=0;i<oldArray.length;i++){
+                        var o=oldArray[i];
+                        var n=newArray[i];
+                        if(o!=n){
+                            var c=$($(".main."+this.ClassTag)[i]);
+                            var top=parseInt($($(c).find("span")[0]).css("marginTop").replace('px', ''));
+                            for(var j=0;j<=n;j++){
+                                var nn=$("<span>"+j+"</span>");
+                                if(j==n){
+                                    nn=$("<span>"+j+"</span>");
+                                }else{
+                                    nn=$("<span class=\"yy \">"+j+"</span>");
+                                }
+                                $(c).append(nn);
+                                $(nn).css("margin-top",(j+1)*25+top+"px");
+                            }
+                            var margintop=parseInt($(c).css("marginTop").replace('px', ''));
+                            $(c).animate({marginTop:-((parseInt(n)+1)*25)+margintop+"px"},this.Duration,function(){
+                                $($(this).find("span")[0]).remove();
+                                $(".yy").remove();
+                            });
+                        }
+                    }
+                    this.Numbers=numbers;
+                    setTimeout(function () {
+                        AnimateLockArr[`${ClassTag}`] = false ;
+                    }, this.Duration);
+                }
+            }
+        }
+
+    }
+    var  NumbersAnimate_tea =new NumbersAnimate("#tea_check_today",'00000',1500,'tea');
+    var  NumbersAnimate_stu =new NumbersAnimate("#stu_check_today",'00000',1500,'stu');
+
+    NumbersAnimate_tea.Animate();
+    NumbersAnimate_stu.Animate();
+    setTimeout(function () {
+        checknewinfo({$lastxxtzid});
+        move('AllMoney',{$allmoney})
+    }, 1000);
+    $.ajax({
+        url: "{php echo $this->createMobileUrl('allschool',array('op'=>'firstdata'))}",
+        type: "POST",
+        dataType: "json",
+        success: function (res) {
+            drawCharts($(".c-left_box3")[0], res.jhgn);
+            drawCharts($(".c-left_box4")[0], res.new_news_data);
+
+            // //教师与学生性别比例
+            // drawCharts($(".student_sex")[0], res.stusex);
+            // drawCharts($(".teacher_sex")[0], res.teasex);
+            
+            var url = "{MODULE_URL}public/web/js/bdmapcolor.json" 
+            var request = new XMLHttpRequest();
+            request.open("get", url);/*设置请求方法与路径*/
+            request.send(null);/*不发送数据到服务器*/
+            request.onload = function () {/*XHR对象获取到返回信息后执行*/
+                if (request.status == 200) {/*返回状态为200，即为数据获取成功*/
+                    var json = JSON.parse(request.responseText); //解格式
+                   
+                    map.centerAndZoom(poi, 11);    // 初始化地图,设置中心点坐标和地图级别	
+                    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+                    var opts = {
+                        boxClass: 'DIY_infobox',
+                        enableAutoPan: true, 
+                        align: INFOBOX_AT_TOP,
+                        closeIconMargin: '5px 5px',
+                        closeIconZIndex: 1,
+                        closeIconWidth: '5px',
+                        closeIconUrl:'{MODULE_URL}public/web/images/mask_close.png'
+                    }
+                    //infoBox html内容
+                    var html = `<div style="width: 60px;padding:10px;float: left;height: 100%;" >
+                        </div>`;
+                    infoBox =  new BMapLib.InfoBox(map,html,opts); //构造infobox
+                    var mapPoints = res.AllPoint
+                    console.log(mapPoints)
+                    var i = 0;
+                    // 函数 创建多个标注
+                    function markerFun (points, infoWindows,schoolid) {
+                        var markers = new BMap.Marker(points);
+                        map.addOverlay(markers);
+                        markers.addEventListener("click",function (event) {
+                            $.ajax({
+                                url: "{php echo $this->createMobileUrl('allschool',array('op'=>'GetSchoolInfo'))}",
+                                type: "post",
+                                dataType: "json",
+                                data:{
+                                    schoolid : schoolid
+                                },
+                                success: function (res) {
+                                    let sybc = (res.SchInfo.Tcheck / res.SchInfo.Scheck) || 0
+                                    sybc = sybc.toFixed(2)
+                                    let syb = Number(Number(res.teac) / Number(res.stuc))
+                                    syb = syb.toFixed(2)
+
+                                    let htmlA = `
+                                        <div class="IB">
+                                            <div  style="width: 60px;padding:5px;float: left;height: 100%;" >
+                                                <img src="${res.SchInfo.logo}" style="width: 50px;height: 50px;border-radius:50%">
+                                            </div>
+                                            <div class="infob_text"  >
+                                                <div class="Sch_Name"  > <a href="{php echo $this->createMobileUrl('bdindex')}&schoolid=${schoolid}" target="_blank" >${res.SchInfo.title} </a> </div>
+                                                <div style="font-size: 12px;padding:1px 10px"> <i class="fa fa-navicon" style="width:10px"></i>  ${res.SchInfo.schooltype} </div>
+                                                <div style="font-size: 12px;padding:1px 10px"> <i class="fa fa-phone" style="width:10px"></i>  ${res.SchInfo.tel} </div>
+                                                <div style="font-size: 12px;padding:1px 10px"> <i class="fa fa-map-marker" style="width:10px"></i>  ${res.SchInfo.address}</div>
+                                                <div style="font-size: 12px;padding:1px 10px"> <i class="fa fa-user" style="width:10px"></i> 教师：${res.teac}人&nbsp;&nbsp;&nbsp;&nbsp;已出勤：${res.SchInfo.Tcheck}人</div>
+                                                <div style="font-size: 12px;padding:1px 10px"> <i class="fa fa-child" style="width:10px"></i> 学生：${res.stuc}人&nbsp;&nbsp;&nbsp;&nbsp;已出勤：${res.SchInfo.Scheck}人</div>
+                                                <div style="font-size: 12px;padding:1px 10px"> <i class="fa fa-rocket" style="width:10px"></i> 师幼配比：${syb}%&nbsp;&nbsp;&nbsp;&nbsp;出勤比：${sybc}%</div>
+                                            </div>
+                                        </div>
+                                        <div class="d3"></div>`;
+                                        $(`.body_tr[data-id=${schoolid}]`).find('.t').text(res.SchInfo.tpre)
+                                        $(`.body_tr[data-id=${schoolid}]`).find('.s').text(res.SchInfo.spre)
+                                    infoBox.open(markers);
+                                    infoBox.setContent(htmlA)
+                                }
+                            });
+                            
+                        });
+                        console.log(markers)
+                        return markers;
+                    }
+                    for (;i<mapPoints.length;i++) {
+                        var points = new BMap.Point(mapPoints[i].y,mapPoints[i].x);//创建坐标点
+                        var opts = {
+                            width:250,
+                            height: 100,
+                        };
+                        var infoWindows = new BMap.InfoWindow(mapPoints[i].con,opts);
+                        let schoolid = mapPoints[i].schoolid
+                        MarkerList[schoolid] = {
+                            'marker':markerFun(points,infoWindows,schoolid)
+                        }  
+                    }
+                    map.setMapStyleV2({styleJson:json});
+                    console.log(MarkerList)
+                }
+            }
+        }
+    });
+
+    setTimeout(function () {
+        $(".expand_circle").css({"display": "none"});
+        $(".expand_left").css({"transform": "translateX(100%)"});
+        $(".expand_right").css({"transform": "translateX(-100%)"});
+        setTimeout(function () {
+            $(".expand").css({"z-index": -1});
+        }, 500)
+    }, 1000);
+
+
+
+    // function MarkerClick(inner_schoolid,infobox,markers) {
+    //     console.log(inner_schoolid)
+    //     $.ajax({
+    //         url: "{php echo $this->createMobileUrl('allschool',array('op'=>'GetSchoolInfo'))}",
+    //         type: "post",
+    //         dataType: "json",
+    //         data:{
+    //             schoolid : inner_schoolid
+    //         },
+    //         success: function (res) {
+    //             let htmlA = `
+    //                 <div class="IB">
+    //                     <div  style="width: 60px;padding:5px;float: left;height: 100%;" >
+    //                         <img src="${res.SchInfo.logo}" style="width: 50px;height: 50px;border-radius:50%">
+    //                     </div>
+    //                     <div class="infob_text"  >
+    //                         <div class="Sch_Name"  > <a href="{php echo $this->createMobileUrl('bdindex')}&schoolid=${inner_schoolid}" target="_blank" >${res.SchInfo.title} </a> </div>
+    //                         <div style="font-size: 12px;padding:1px 10px"> <i class="fa fa-navicon" style="width:10px"></i>  ${res.SchInfo.schooltype} </div>
+    //                         <div style="font-size: 12px;padding:1px 10px"> <i class="fa fa-phone" style="width:10px"></i>  ${res.SchInfo.tel} </div>
+    //                         <div style="font-size: 12px;padding:1px 10px"> <i class="fa fa-map-marker" style="width:10px"></i>  ${res.SchInfo.address}</div>
+    //                         <div style="font-size: 12px;padding:1px 10px"> <i class="fa fa-user" style="width:10px"></i> 教师：${res.teac}人&nbsp;&nbsp;&nbsp;&nbsp;已出勤：${res.SchInfo.Tcheck}人</div>
+    //                         <div style="font-size: 12px;padding:1px 10px"> <i class="fa fa-child" style="width:10px"></i> 学生：${res.stuc}人&nbsp;&nbsp;&nbsp;&nbsp;已出勤：${res.SchInfo.Scheck}人</div>
+    //                         <div style="font-size: 12px;padding:1px 10px"> <i class="fa fa-rocket" style="width:10px"></i> 师幼配比：${syb}%&nbsp;&nbsp;&nbsp;&nbsp;出勤比：${sybc}%</div>
+
+    //                     </div>
+    //                 </div>
+    //                 <div class="d3"></div>`;
+    //             infoBox.open(markers);
+    //             infoBox.setContent(htmlA)
+    //         }
+    //     });
+    // }
+
+
+    //实时ajax
+    function checknewinfo(lastxxtzid){
+        console.log("SSSS")
+        $.ajax({
+            url: "{php echo $this->createMobileUrl('allschool',array('op'=>'ajaxdata'))}",
+            data: {weid: "{$weid}",xxtzid:lastxxtzid},
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                //校园动态
+
+                if(data.lasttz.check == true){
+
+                    let xydt_html = `<li class="o-list_item inddexs" style="height: 0rem;">
+                        <div class="activity-row1">
+                            <div class="col-xs-3 activity-img" style="width:0.6rem;"><img style="width:0.4rem;height:0.4rem;border-radius:50%;" src="${data.lasttz.data.thumb}" class="img-responsive" alt="">
+                            </div>
+                            <div class="col-xs-8 activity-desc">
+                                <h5>
+                                    <span >${data.lasttz.data.tname}</span>
+                                    <span class="activity-time " >${data.lasttz.data.createtime}</span>`;
+
+
+
+                    if(data.lasttz.data.type == 2){
+                        xydt_html +='<span class="activity-xyqf pull-right">校园通知</span>';
+                    }
+                    if(data.lasttz.data.type == 1){
+                        xydt_html +='<span class="activity-bjtz pull-right">班级通知</span>';
+                    }
+                    if(data.lasttz.data.type == 3){
+                        xydt_html +='<span class="activity-zytz pull-right">作业通知</span>';
+                    }
+                    xydt_html +=`</h5> 
+                                <h5> 
+                                    <span class="activity-bj">${data.lasttz.data.bjname}</span>
+                                    <span class="activity-time" style="background-color: ${data.lasttz.data.scolor};" >${data.lasttz.data.school}</span>`;
+                 
+                    xydt_html +=`</h5>
+                                 <h5>${data.lasttz.data.title}</h5>
+                            </div>
+                        </div>
+                        </li>`;
+                    $(xydt_html).prependTo('.xytz_ul').fadeIn('slow');
+                    let _first=$('.xytz_ul li:first');
+                    _first.animate({height: '+0.8rem'}, "normal");
+                    let _last=$('.xytz_ul li:last');
+                    setTimeout(function () {
+                        _last.remove();
+                    }, 1000);
+                }
+                NumbersAnimate_tea.ChangeNumber(data.tea_check_today);
+                NumbersAnimate_stu.ChangeNumber(data.stu_check_today);
+                let oldmoney = $("#AllMoney").text()
+                
+                if(parseFloat(oldmoney).toFixed(2) != data.allmoney){
+                    move('AllMoney',data.allmoney)
+                }
+                setTimeout(function(){checknewinfo(data.lasttz.data.id)}, 5000);
+            },
+            error: function () {
+                setTimeout(function(){checknewinfo(lastxxtzid)}, 5000);
+            },
+        });
+
+    };
+
+
+
+function move(div,nub){
+	let oSpan=document.getElementById(div);
+	if(oSpan.innerHTML != undefined ){
+		let d= nub === 'null' ? 0 : nub ;//跳动到最后的数字
+		let s= parseInt(oSpan.innerHTML);//起始起始值 一般是 0 或其他
+		let time=1000;  //所用时间 1000毫秒（ 在1秒内 数值增加到d）;
+		let outTime=0;  //所消耗的时间
+		let interTime=30;
+		let timer = setInterval(function(){
+			outTime+=interTime;
+			if(outTime < time){
+				oSpan.innerHTML= parseInt(d/time*outTime);
+			}else{
+				oSpan.innerHTML=d;
+				clearInterval(timer)
+			}
+		},interTime);
+	}
+	return	
+}
+GetSchoolCheckData()
+
+function GetSchoolCheckData(){
+    console.log(1)
+    $.ajax({
+        url:  "{php echo $this->createMobileUrl('allschool',array('op'=>'getschoolcheck'))}",
+        type: "post",
+        dataType: "json",
+        success: function (res) {
+            $(".school_tbody.topnav_box").html('')
+            for(let item of res){
+                let html = `<div class="body_tr" onclick="ShowOnMap(${item.id})" data-id="${item.id}">
+                    <div class="td" >${item.title}</div>
+                    <div class="td t" >${item.tpre}</div>
+                    <div class="td s" >${item.spre}</div>
+                    <div class="td " >
+                        <span class="botton" >地图上查看</span> 
+                    </div>
+                </div>`;
+                $(".school_tbody.topnav_box").append(html)
+            }
+            setTimeout(function(){GetSchoolCheckData()}, 1000 * 60);
+        },
+        error: function () {
+            setTimeout(function(){GetSchoolCheckData()}, 1000 * 60);
+            },
+    });
+}
+
+
+function ShowOnMap(id){
+    MarkerList[id].marker.ba.click()
+}
+
+/************晨检--获取体温及口腔数据**************/ 
+GetMcData()
+function GetMcData(){
+    $.ajax({
+        url:  "{php echo $this->createMobileUrl('allschool',array('op'=>'GetMcData'))}",
+        type: "post",
+        dataType: "json",
+        success: function (res) {
+            for(let i in res){
+                $(`#${i}`).text(`${res[i]}`)
+            }
+            setTimeout(function(){GetMcData()}, 1000 * 60);
+        },
+        error: function () {
+            setTimeout(function(){GetMcData()}, 1000 * 60);
+        },
+    });
+}
+/************晨检--获取体温及口腔数据**************/ 
+</script>
+</body>
+
+</html>

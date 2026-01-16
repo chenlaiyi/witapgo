@@ -1,0 +1,12 @@
+<section class="pd24">
+    <section class="kefu_list">
+        <ul>
+            {loop $kefuList $value}
+            <li><img class="ewm" src="{php echo tomedia($value['qrcode'])}"><p class="nickname"><img class="weixin_tx" src="{if !empty($value['headurl'])}{php echo tomedia($value['headurl'])}{else}{__MOBILE_STORE_IMG__}/kefu.png{/if}" alt=""/>{$value['name']}</p><p><a class="tel" href="tel:{$value['mobile']}">{$value['mobile']}</a></p></li>
+            {/loop}
+        </ul>
+    </section>
+    <br>
+    <br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</section>

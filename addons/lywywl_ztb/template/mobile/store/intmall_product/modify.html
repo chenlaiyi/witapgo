@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+<link href="{MODULE_URL}resource/mobile/plugin/css/common.min.css?v=20170802" rel="stylesheet">
+<style type="text/css">
+    /**定义编辑器冲突样式**/
+    .Eleditor-area{min-height: 200px;}
+    .Eleditor-controller{z-index:12;}
+    .Eleditor-controller .webuploader-pick{color:#000;}
+    .Eleditor-controller ul li{padding:0 0 0 10%;border-bottom: 1px solid #ddd !important;}
+    .Eleditor-textEditor{z-index:13;}
+    .buttonFloat{z-index: 10;}
+    #contentEditor_miaoshu img,#contentEditor_shop img,#contentEditor_rule img,#contentEditor_goods img,#contentEditor5 img{  width: 100%;  }
+    .Eleditor-controller{  z-index: 30;  }
+    .Eleditor-textStyle .Eleditor-textStyle-item-upImg{  display: none;  }
+</style>
+<script src="{__MOBILE_STORE_JS__}/Eleditor.min.js"></script>
+<script src="{__MOBILE_STORE_JS__}/webuploader.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/util.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/require.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/lib/mui.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/common.js"></script>
+<body class="bgf2">
+<form action="{php echo $this->createMobileUrl('store.intmall_product',array('act'=>'modify'));}" id="form_content" method="post">
+    <section class="bgfff">
+        <ul class="publish">
+            <li class="float">
+                <p>商品名称</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" datatype="*" id="title" maxlength="100"
+                           name="model[title]" nullmsg="请输入商品名称！" placeholder="请输入商品名称"
+                           type="text" value="{$model['title']}"/>
+                </section>
+            </li>
+            <li class="float">
+                <p>商品分类</p>
+                <section class="form_con selectBox">
+                    <select id="class_id" name="model[class_id]" class="font28" datatype = "*" nullmsg = "请选择商品所属的分类！">
+                        {loop $classList $value}
+                        <option value="{$value['id']}" {if $value['id'] == $model['class_id']} selected="selected"{/if}>{$value['name']}</option>
+                        {/loop}
+                    </select>
+                    <span class="arrow"></span>
+                </section>
+            </li>
+            <li class="float">
+                <p>首页推荐</p>
+                <section class="form_con clearfix">
+                    <section class="input_item">
+                        <input type="radio" value="0" name="model[is_index]" id="is_index0" {if $model['is_index']==0} checked {/if}>
+                        <label for="is_index0"></label>
+                        <span>栏目列表</span>
+                    </section>
+                    <section class="input_item">
+                        <input type="radio" value="1" name="model[is_index]" id="is_index1" {if $model['is_index']==1} checked {/if}>
+                        <label for="is_index1"></label>
+                        <span>首页推荐</span>
+                    </section>
+                </section>
+            </li>
+            <li class="float">
+                <p>物流发货</p>
+                <section class="form_con clearfix">
+                    <section class="input_item">
+                        <input type="radio" value="0" name="model[is_fedex]" id="is_fedex0" {if $model['is_fedex']==0} checked {/if}>
+                        <label for="is_fedex0"></label>
+                        <span>到店自提</span>
+                    </section>
+                    <section class="input_item">
+                        <input type="radio" value="1" name="model[is_fedex]" id="is_fedex1" {if $model['is_fedex']==1} checked {/if}>
+                        <label for="is_fedex1"></label>
+                        <span>物流发货</span>
+                    </section>
+                </section>
+            </li>
+            <li class="float">
+                <p>市场价格</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" id="money"
+                           maxlength="10" datatype="*" nullmsg="请输入积分商品的市场价格！"
+                           name="model[money]" placeholder="请输入积分商品的市场价格"
+                           min="0.01" step="0.01"
+                           type="number"
+                           value="{$model['money']}"/>
+                </section>
+            </li>
+            <li class="float">
+                <p>所需积分</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" id="score"
+                           maxlength="10" datatype="n" nullmsg="请输入兑换商品所需积分！"
+                           name="model[score]" placeholder="请输入兑换商品所需积分"
+                           type="number"
+                           value="{$model['score']}"/>
+                </section>
+            </li>
+            <li class="float">
+                <p>支付金额</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" id="paymoney"
+                           maxlength="10" datatype="*" nullmsg="请输入兑换商品所需支付金额！"
+                           name="model[paymoney]" placeholder="请输入兑换商品所需支付金额"
+                           min="0.00" step="0.01"
+                           type="number"
+                           value="{$model['paymoney']}"/>
+                </section>
+            </li>
+            <li>
+                <p>商品封面<span>(必填)</span></p>
+                <section class="form_con clearfix">
+                    <div class="mui-input-cell">
+                        <input type="hidden" id="model[thumb_url]" name="model[thumb_url]" value=""/>
+                        {php echo tpl_app_form_field_image('thumb_url',$model['thumb_url'],false);}
+                    </div>
+                </section>
+            </li>
+            <li>
+                <p>商品组图<span>(必填)</span></p>
+                <section class="form_con clearfix">
+                    <div class="mui-input-cell">
+                        <input type="hidden" id="model[photos_url]" name="model[photos_url]" value=""/>
+                        {php echo tpl_app_form_field_image('photos_url',$model['photos_url'],true);}
+                    </div>
+                </section>
+            </li>
+            <li>
+                <p>商品描述<span>(必填)</span></p>
+                <section class="form_con clearfix">
+                    <section class="txt_item">
+                        <textarea rows = "3" name="model[description]" id="description" class="form_area" placeholder = "请输入商品描述..." >{$model['description']}</textarea>
+                    </section>
+                </section>
+            </li>
+            <li>
+                <p>商品详情<span>(必填)</span></p>
+                <section class="form_con clearfix">
+                    <section class="txt_item">
+                        <textarea rows = "3" name="model[content]" id="content" class="form_area" style="display: none;" placeholder = "请输入商品详情..." >{$model['content']}</textarea>
+                        <div id="contentEditor"></div>
+                    </section>
+                </section>
+            </li>
+            <li class="float">
+                <p>兑换次数</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" id="max_num" datatype="n" maxlength="10"
+                           name="model[max_num]" nullmsg="请输入最大兑换次数！" placeholder="请输入最大兑换次数"
+                           type="number" value="{$model['max_num']}"/>
+                </section>
+            </li>
+            <li class="float">
+                <p>提供数量</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" id="product_num" datatype="n" maxlength="10"
+                           name="model[product_num]" nullmsg="请输入提供商品数量！" placeholder="请输入提供商品数量"
+                           type="number" value="{$model['product_num']}"/>
+                </section>
+            </li>
+            <li>
+                <p>分类状态</p>
+                <section class="form_con rel">
+                    <section class="font26 c9 form_tips">选择信息开启/关闭状态，关闭后该信息将被禁用</section>
+                    <span class="switch {if $model['status']==1}switch_on{else}switch_off{/if}">
+                    <i class="slider"></i>
+                    <input type="hidden" name="model[status]" value="{$model['status']}"/>
+                    </span>
+                </section>
+            </li>
+            <li class="float">
+                <p>分类排序</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt"  datatype="n" id="sort" name="model[sort]" nullmsg="信息排序必须填写！" onkeyup="if(isNaN(this.value)) this.value='0';" placeholder="请输入信息排序字段" type="number" value="{$model['sort']}">
+                </section>
+            </li>
+        </ul>
+    </section>
+    <section class="h24"></section>
+    <section class="buttonBox">
+        <section class="buttonFloat clickBtn">
+            <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+            <input name="token" value="{$_W['token']}" type="hidden" />
+            <input type="hidden" name="submit" value="submit"/>
+            <a href="{php echo $this->createMobileUrl('store.intmall_product',array('act'=>'index'))}" class="db font32" style="width: 50%;    float: left;   color: #fff;   border-radius: 0.6rem 0 0 0.6rem;    background: #f92f4a;">返回列表</a>
+            <button type="submit" id="SubmitBtn" style="width: 50%;   float: left;    background: #FFD112;    color: #0e0e0e;border-radius: 0 0.6rem 0.6rem 0;">确认提交</button>
+        </section>
+    </section>
+</form>
+<script>
+    // 实例化 编辑器
+    var artEditor = new Eleditor({
+        el: "#contentEditor",
+        upload:{
+            server: "{php echo $this->createMobileUrl('file',array('act'=>'upload','type'=>'image','thumb'=>0));}",
+            formData: {
+                'module':"umiacp_bargain",
+            },
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png,webp',
+                mimeTypes: 'image/*'
+            },
+            compress: false,
+            fileSizeLimit: 2
+        },
+    });
+    // 初始化编辑器内容
+    artEditor.append($("#content").val());
+</script>
+<script>
+    $(function(){
+        require(['{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js'], function () {
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                                , style: 'bottom:0;'
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    //赋值封面
+                    $("input[name='model[thumb_url]']").val($("#thumb_url").val());
+                    //赋值相册
+                    var photos_url = "";
+                    $("input[name='photos_url[]']").each(function () {
+                        photos_url += $(this).val()+",";
+                    });
+                    $("input[name='model[photos_url]']").val(photos_url.substring(0,photos_url.length-1));
+                    //赋值编辑器内容
+                    $("#content").val(artEditor.getContent());
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if(data.status == 1){
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+
+                        setTimeout(function () {
+                            window.location.href = "{php echo $this->createMobileUrl('store.intmall_product',array('act'=>'index'));}";
+                        }, 2000);
+
+                    }else{
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+        });
+
+        $(".switch").click(function(e) {
+            if($(this).hasClass("switch_on")){
+                $(this).removeClass("switch_on");
+                $(this).addClass("switch_off");
+                $(this).find("input").val(0);
+            }
+            else{
+                $(this).removeClass("switch_off");
+                $(this).addClass("switch_on");
+                $(this).find("input").val(1);
+            }
+        });
+    });
+</script>
+</body>
+</html>

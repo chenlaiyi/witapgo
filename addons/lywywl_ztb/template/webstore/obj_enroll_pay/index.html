@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title} - {$actModel['title']}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">活动管理</li>
+                <li class="active">{$title}</li>
+                <li class="active">报名日志</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebAppUrl('obj_activity', array('act' => 'index'));}">返回活动</a></li>
+                            <li class="active"><a href="">数据列表</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchKey" class="col-sm-1 control-label">用户信息</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="SearchKey"
+                                                       placeholder="OPENID">
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchStatus">核销状态</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchStatus">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="0">未核销</option>
+                                                    <option value="1">已核销</option>
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchTime">报名时间</label>
+                                            <div class="col-sm-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control pull-right timer" id="SearchTime"
+                                                           placeholder="开始时间 - 结束时间" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索
+                                            </button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置检索</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="box">
+                                <table class="table table-hover">
+                                    <tr>
+                                        <th class="text-center">报名项目</th>
+                                        <th class="text-center">报名数量</th>
+                                        <th class="text-center">微信支付</th>
+                                        <th class="text-center">余额支付</th>
+                                        <th class="text-center">支付金额</th>
+                                        <th class="text-center">结算金额</th>
+                                        {if $config['store_settlement_types'] == 1}
+                                        <th class="text-center">已结金额</th>
+                                        <th class="text-center">待结金额</th>
+                                        {/if}
+                                    </tr>
+                                    {loop $projectList $item}
+                                    <tr>
+                                        <td class="text-center">{$item['title']}</td>
+                                        <td class="text-center">{$item['total']}</td>
+                                        <td class="text-center">{$item['wxpaytotal']}元</td>
+                                        <td class="text-center">{$item['syspaytotal']}元</td>
+                                        <td class="text-center">{php echo ($item['wxpaytotal']+$item['syspaytotal'])}元</td>
+                                        <td class="text-center">{php echo $item['endmoneytotal']}元</td>
+                                        {if $config['store_settlement_types'] == 1}
+                                        <td class="text-center">{php echo $item['settlementtotal']}元</td>
+                                        <td class="text-center">{php echo ($item['endmoneytotal'] - $item['settlementtotal'])}元</td>
+                                        {/if}
+                                    </tr>
+                                    {/loop}
+                                    <tr>
+                                        <td class="text-center">总计</td>
+                                        <td class="text-center">{$total}</td>
+                                        <td class="text-center">{$wxpaytotal}元</td>
+                                        <td class="text-center">{$syspaytotal}元</td>
+                                        <td class="text-center">{php echo ($wxpaytotal+$syspaytotal)}元</td>
+                                        <td class="text-center">{php echo $endmoneytotal}元</td>
+                                        {if $config['store_settlement_types'] == 1}
+                                        <td class="text-center">{php echo $settlementtotal}元</td>
+                                        <td class="text-center">{php echo ($endmoneytotal - $settlementtotal)}元 &nbsp;<a href="javascript:void(0);" id="btn_settlement"><i class="fa fa-sign-in"></i></a></td>
+                                        {/if}
+                                    </tr>
+                                </table>
+                            </div>
+                            <div id="box" class="table-responsive">
+                                <div id="toolbar" class="btn-group">
+                                    <button id="btn_exportdata" type="button" class="btn btn-success">
+                                        <span class="fa fa-download" aria-hidden="true"></span>&nbsp;导出数据
+                                    </button>
+                                    {if $objModel['is_fedex']==0}
+                                    <button type="button" class="btn btn-warning btn_writeoff">
+                                        <span class="fa fa-legal" aria-hidden="true"></span>&nbsp;核销订单
+                                    </button>
+                                    {/if}
+                                </div>
+                                <table id="tb_bandlist" class="table text-nowrap" data-reorderable-columns="true" ></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script>
+    $(function () {
+        SelectNav("我创建的活动");
+
+        require(["daterangepicker"], function () {
+            //时间搜索
+            $('.timer').daterangepicker({
+                format: "YYYY/MM/DD"
+            });
+        });
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            myrequire(['bootstrap-table-zh-cn', 'bootstrap-table-editable','bootstrap-table-fixed-columns'], function () {
+                $(".select2").select2();
+                //1.初始化Table
+                var oTable = new TableInit();
+                oTable.Init();
+                //2.初始化Button的点击事件
+                var oButtonInit = new ButtonInit();
+                oButtonInit.Init();
+            });
+        });
+
+    });
+
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#tb_bandlist').bootstrapTable({
+                url: "{php echo $this->createWebAppUrl('obj_enroll_pay', array('act' => 'getJsonList','aid' => $aid,'share_openid'=>$share_openid));}",         //请求后台的URL（*）
+                method: 'get',                      //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: true,                    //是否启用排序
+                sortName: "id",                   //排序字段
+                sortOrder: "desc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: false,                //是否启用点击选中行
+                height: 575,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                fixedColumns: true,                    //冻结列开启关闭
+                fixedNumber: 1,                        //冻结列数量
+                onLoadError: function () {  //加载失败时执行
+                    Command: toastr["error"]("对不起，网络繁忙，请稍后再试！", "错误提示");
+                },
+                rowStyle: function (row, index) {
+                    var style={css:{'line-height':'30px'}};
+                    return style;
+                },
+                columns: [ {
+                    field: 'id',
+                    title: '编号',
+                    titleTooltip: '当前信息的唯一编号，数据主键',
+                    sortable: true
+                }, {
+                    field: 'nickname',
+                    title: '微信昵称',
+                    titleTooltip: '注册用户的微信昵称',
+                    sortable: true,
+                }, {
+                    field: 'headurl',
+                    title: '微信头像',
+                    titleTooltip: '注册用户的微信昵称',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return " <img height='30' width='30' src='"+ value +"' alt='"+ row.nickname +"'>"
+                    }
+                }, {
+                    field: 'openid',
+                    title: 'OPENID',
+                    titleTooltip: '注册用户对于微信公众号的唯一身份标识',
+                    sortable: true,
+                }, {
+                    field: 'pay_number',
+                    title: '支付编号',
+                    titleTooltip: '支付编号',
+                    sortable: true,
+                }, {
+                    field: 'project_title',
+                    title: '报名项目',
+                    titleTooltip: '活动报名项目',
+                    sortable: true,
+                }, {
+                    field: 'paymoney',
+                    title: '微信支付',
+                    titleTooltip: '支付金额',
+                    sortable: true,
+                }, {
+                    field: 'mymoney',
+                    title: '余额抵扣',
+                    titleTooltip: '使用账余额',
+                    sortable: true,
+                },{
+                    field: 'endmoney',
+                    title: '结算金额',
+                    titleTooltip: '支付实际账户结算金额',
+                    sortable: true,
+                },{
+                    field: 'is_settlement',
+                    title: '结算状态',
+                    titleTooltip: '资金是否结算到商家账户',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value == 0) {
+                            return "<span class='label bg-red'>未结算</span>";
+                        } else {
+                            return "<span class='label bg-green'>已结算</span>";
+                        }
+                    }
+                }, {
+                    field: 'register_data',
+                    title: '登记信息',
+                    titleTooltip: '用户参与活动填写的登记信息',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        var retrunString = "";
+                        for(var i=0,l=value.length;i<l;i++){
+                            retrunString = retrunString +  value[i]['Explain'] +"：" +  value[i]['Value'] +"  ";
+                        }
+                        return retrunString;
+                    }
+                },{
+                    field: 'pay_openid',
+                    title: '邀请人信息',
+                    titleTooltip: '邀请报名的用户信息',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return " <img height='30' width='30' src='"+ row.pay_headurl +"' alt='"+ row.pay_nickname +"'> " + row.pay_nickname + " ("+ value +")";
+                    }
+                }, {
+                    field: 'status',
+                    title: '核销状态',
+                    titleTooltip: '奖品核销发放状态',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value == 0) {
+                            return "<span class='label bg-red'>未核销</span>";
+                        } else {
+                            return "<span class='label bg-green'>已核销</span>";
+                        }
+                    }
+                }, {
+                    field: 'admins',
+                    title: '核销人',
+                    titleTooltip: '奖品核销人员的OPENID',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return " <img height='30' width='30' src='"+ row.admins_headurl +"' alt='"+ row.admins_nickname +"'> " + row.admins_nickname + " ("+ value +")";
+                    }
+                },{
+                    field: 'updatetime',
+                    title: '核销时间',
+                    titleTooltip: '核销的时间',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (row.status == 1) {
+                            return value;
+                        } else {
+                            return "-";
+                        }
+                    }
+                },{
+                    field: 'originname',
+                    title: '溯源姓名',
+                    titleTooltip: '溯源姓名',
+                    sortable: true
+                },{
+                    field: 'originphone',
+                    title: '溯源电话',
+                    titleTooltip: '溯源电话',
+                    sortable: true
+                },
+                    {if $objModel['is_fedex']==1}
+                    {
+                        field: 'ordernumber',
+                        title: '订单编号',
+                        titleTooltip: '线上发货的订单编号',
+                        sortable: true,
+                    },
+                    {/if}
+            {
+                field: 'createtime',
+                        title: '报名时间',
+                    titleTooltip: '创建信息的时间',
+                    sortable: true,
+            },{
+                    field: 'action',
+                    title: '操作',
+                    titleTooltip: '点击下方按钮对信息进行操作',
+                    width: 60,
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                //search: params.search,
+                pageSize: params.limit,  //每页大小
+                page: params.offset / params.limit + 1,//页码
+                sortOrder: params.order,//排序
+                sortName: params.sort,//排序字段
+                openid: $("#SearchKey").val(), //关键词
+                status: $("#SearchStatus").val(),
+                timer: $("#SearchTime").val()
+            };
+            return temp;
+        };
+        return oTableInit;
+    };
+
+    function operateFormatter(value, row, index) {
+        var  btn_refund = "";
+		
+         /*{if $plug_IsRefund }*/
+         if(row.pay_number!=''){
+            if(row.is_refund == 0){
+                btn_refund ='<button target="_blank" class="refund btn btn-info btn-xs" title="退款"><i class="fa fa-money"></i>退款</button>';
+            }else if(row.is_refund == 1){
+                btn_refund ='<button target="_blank" class="disabled btn btn-danger  btn-xs " title="退款中"><i class="fa fa-money"></i>退款中</button>';
+            }else if(row.is_refund == 2){
+                btn_refund ='<button target="_blank" class="disabled btn btn-success  btn-xs" title="已经退款"><i class="fa fa-money"></i> 已经退款</button>';
+            }else if(row.is_refund == 3){
+                btn_refund ='<button target="_blank" class="disabled btn btn-primary  btn-xs" title="驳回"><i class="fa fa-money"></i> 被驳回</button>';
+            }
+        }
+        /*{/if}*/
+        return [btn_refund ].join('');
+    }
+    window.operateEvents = {
+        
+        /*{if $plug_IsRefund}*/
+        'click .refund': function (e, value, row, index) {
+            if(row.pay_number!=""){
+                //询问框
+                layer.open({
+                    content: '您确定要给此订单退款？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        layer.close(index);
+                        $.ajax({
+                            type: "post",
+                            url: "{php echo $this->createWebAppUrl('obj_enroll_pay', array('act' => 'refund','aid' => $aid));}",
+                            data: {
+                                id: row.id,
+                                pay_number: row.pay_number
+                            },
+                            dataType:'json',
+                            success: function (data, status) {
+                                if (data.status == 1) {
+                                    Command: toastr["success"](data.msg, "成功提示");
+                                    $("#tb_bandlist").bootstrapTable('refresh');
+                                }
+                                else {
+                                    Command: toastr["error"](data.msg, "错误提示");
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        },
+    
+        /*{/if}*/
+    };
+    //加载成功时执行
+    $('#tb_bandlist').on('load-success.bs.table column-switch.bs.table', function (data) {
+        $('#tb_bandlist').bootstrapTable('resetView');
+    });
+
+    var ButtonInit = function () {
+        var oInit = new Object();
+        var postdata = {};
+
+        oInit.Init = function () {
+            //查询操作
+            $("#btn_query").click(function () {
+                $("#tb_bandlist").bootstrapTable('refresh');
+            });
+            //弹出奖品核销框
+            $(".btn_writeoff").click(function () {
+                var delHtml='<div class=link-modal><div class="form-group"><label for="delete_id" class="col-sm-2 control-label">报名核销码</label><div class="col-sm-10"><input class="form-control" id="writeoffcode" maxlength="20" placeholder="请输入用户提供的核销码" type="text"/></div></div></div>';
+                myrequire([ 'arttemplate'], function (template) {
+                    require(["jquery", "util"], function(){
+                        var footer = '<button type="button" class="btn btn-default" data-dismiss="modal" id="writeoffBtn">核销</button> <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                        var modalobj = util.dialog('核销报名信息',delHtml ,footer,{containerName:'fedex-container'});
+                        modalobj.modal({'keyboard': true});
+                        modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                        modalobj.modal('show');
+                    });
+                });
+            });
+
+            //确定核销奖品
+            $(document).delegate("#writeoffBtn", "click", function() {
+                var writeoffcode=$("#writeoffcode").val();
+                if(typeof writeoffcode == "undefined" || writeoffcode == null || writeoffcode == ""){
+                    Command: toastr["warning"]('请输入有效的核销码！', "验证提示");
+                    return false;
+                }
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createWebAppUrl('obj_enroll_pay', array('act' => 'writeOff','aid' => $aid));}",
+                    data: {code: writeoffcode},
+                    dataType:'json',
+                    beforeSend: function (XHR) {
+                        //loading带文字
+                        layer.open({
+                            type: 2
+                            , content: '数据验证中，请耐心等待！'
+                            ,shadeClose:false
+                        });
+                    },
+                    success: function (data, status) {
+                        if (data.status == 1) {
+                            layer.closeAll();
+                            var html = "<h4>"+ data.name +"</h4>";
+                            if (data.is_expires == 1) {
+                                html = html + "<p class='text-red'>该订单已超过有效核销时间："+ data.expires_time +"，请谨慎操作！</p>";
+                            }
+                            html = html + "<img src='"+data.pic_url+"' style='max-width: 150px;max-height: 150px;' >";
+                            layer.open({
+                                content: html,
+                                btn: ['核销','取消'],
+                                yes:function (index) {
+                                    $.ajax({
+                                        url: "{php echo $this->createWebAppUrl('obj_enroll_pay', array('act' => 'confirmWriteOff','aid' => $aid));}",
+                                        type: "post",
+                                        dataType: "json",
+                                        data: {code: writeoffcode},
+                                        success: function (data) {
+                                            if (data.status === 1) {
+                                                layer.closeAll();
+                                                Command: toastr["success"](data.msg, "成功提示");
+                                                $("#tb_bandlist").bootstrapTable('refresh');
+                                            } else {
+                                                layer.closeAll();
+                                                Command: toastr["error"](data.msg, "错误提示");
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            layer.closeAll();
+                            Command: toastr["error"](data.msg, "错误提示");
+                        }
+                    }
+                });
+            });
+
+            //导出数据
+            $("#btn_exportdata").click(function(){
+                var openid=$("#SearchKey").val();
+                var status= $("#SearchStatus").val();
+                var timer= $("#SearchTime").val();
+
+                //询问框
+                layer.open({
+                    content: '您确定要导出记录到Excel吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        layer.close(index);
+                        window.location.href = "{php echo $this->createWebAppUrl('obj_enroll_pay', array('act' => 'exportData','aid' => $aid,'share_openid'=>$share_openid));}&openid="+ openid +"&status="+ status +"&timer="+ timer +"";
+                    }
+                });
+            });
+        };
+        return oInit;
+    };
+
+</script>
+</body>
+</html>

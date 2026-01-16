@@ -1,0 +1,1 @@
+<?php/** * 微商城公告模块插件定义 * * @author 微擎团队 * @url */defined('IN_IA') or exit('Access Denied');class Wjyk_zqds_plugin_cpsModuleHook extends WeModuleHook {    	public function hookMobileCps() {		global $_W;		message("插件调用成功");	}}

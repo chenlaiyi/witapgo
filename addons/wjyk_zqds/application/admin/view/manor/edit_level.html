@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>编辑门店</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+<link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+<style>
+form {
+	padding-right: 15px;
+}
+
+.layui-form-label {
+	width: 115px;
+}
+
+.layui-input-block {
+	margin-left: 145px;
+}
+</style>
+</head>
+<body>
+	<form class="layui-form" style="margin-top: 21px;">
+		<input type="hidden" name="id" value="{$srdb['id']}">
+		<div class="layui-form-item">
+			<label class="layui-form-label">等级名称</label>
+			<div class="layui-input-block">
+				<input type="text" name="name" required lay-verify="required" placeholder="请输入等级名称" autocomplete="off" class="layui-input" value="{$srdb['name']}">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">所需能量</label>
+			<div class="layui-input-inline">
+				<input type="number" name="need" required lay-verify="required" placeholder="请输入所需能量" autocomplete="off" class="layui-input" value="{$srdb['need']}">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+			<label class="layui-form-label">等级图标</label>
+			<div class="layui-upload col-sm-9">
+				<button type="button" class="layui-btn" id="test1">选择图片</button>
+				<div class="layui-form-mid layui-word-aux">建议上传45px * 45px尺寸</div>
+				<div class="layui-input-block">
+					<img class="layui-upload-img" id="demo1" style="margin-top: 10px; height: 150px; width: 150px" {if $srdb['pic_url']== ''}{else}src="{$srdb['pic_url']}"{/if}">
+					<input type="hidden" name="pic_url" id="pic_url" value="{$srdb['pic_url']}">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">是否可生成{$name}</label>
+			<div class="layui-input-block">
+				<input type="radio" name="is_open" value="1" title="开启" {if $srdb['is_open'] == '1' }checked{/if}>
+				<input type="radio" name="is_open" value="2" title="关闭" {if $srdb['is_open'] =='2'|| $srdb['is_open'] ==''}checked{/if}>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">每日最多可生成</label>
+			<div class="layui-input-inline">
+				<input type="number" name="count" required lay-verify="required" placeholder="每日最多可生成{$name}球数量" autocomplete="off" class="layui-input" value="{$srdb['count']}">
+			</div>
+			<div class="layui-form-mid ">每日生成{$name}球上限数量，未收取则不再生成</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">可得{$name}</label>
+				<div class="layui-input-inline" style="width: 100px;">
+					<input type="text" name="min_integral" autocomplete="off" class="layui-input" value="{$srdb['min_integral']}">
+				</div>
+				<div class="layui-form-mid">-</div>
+				<div class="layui-input-inline" style="width: 100px;">
+					<input type="text" name="max_integral" autocomplete="off" class="layui-input" value="{$srdb['max_integral']}">
+				</div>
+				<div class="layui-form-mid">可得{$name}范围（最小值-最大值）</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="demo1">立即提交</button>
+				<input type="button" class="layui-btn layui-btn-primary" onclick="history.go(-1)" value="返回列表">
+			</div>
+		</div>
+	</form>
+	<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+	<script>	
+	layui.config({	    base: '__PUBLIC__/static/layuiadmin/'	}).extend({
+		index: 'lib/index' 	}).use(['jquery','layer', 'index', 'table','upload','layedit'],
+				function(){		
+			var $ = layui.$		
+			, layer = layui.layer		
+			, layedit = layui.layedit	    
+			, table = layui.table	    
+			, form = layui.form	    
+			, upload = layui.upload;    	
+			upload.render({            
+				elem: '#test1'            
+				,url: "{:siteUrl('admin/index/upload','','web')}"             
+				,done: function(res){
+					if(res.code < 0){
+						return layer.msg('上传失败');
+						}else{
+							$('#demo1').attr('src', res.msg);
+							$('#pic_url').val(res.msg);                
+							}            
+					}        
+				});        
+			form.on('submit(demo1)', function(data){
+				var admin = layui.admin            
+				$.ajax({                
+					url:"{:siteUrl('admin/manor/edit_level','','web')}",                
+					data:data.field,                
+					type:"POST",                
+					success: function(data){
+						console.log(data);                	
+						var res = JSON.parse(data);                	
+						if(res.code == 0 ){
+							layer.msg(res.msg,{icon: 1,time:3000},function(){
+								window.location.href="{:siteUrl('admin/manor/index','','web')}";
+								});                	
+							}else{                		
+								layer.msg(res.msg,{icon: 2,time:3000},function(){ 
+									window.location.href="{:siteUrl('admin/manor/index','','web')}";
+									});
+								}                
+						}            
+					})            
+					return false        
+					});                
+			$("#return").click(function(){
+				window.location.href="{:siteUrl('admin/manor/index','','web')}";
+				});
+			layui.$('#LAY-component-form-getval').on('click', function(){
+				var data = form.val('example');
+				alert(JSON.stringify(data));
+				});
+			});
+	</script>
+</body>
+</html>

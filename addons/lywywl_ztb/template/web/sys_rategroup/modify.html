@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">系统</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebUrl('sys_rategroup', array('act' => 'index'));}">费率组列表</a>
+                            </li>
+                            <li class="active"><a href="#">{if !empty($model['id'])}编辑{else}创建{/if}费率组</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content" id="form_content" method="post">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> {if !empty($model['id'])}编辑{else}创建{/if}费率组信息</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="name" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>费率组名称</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="name" maxlength="20" name="model[name]" nullmsg="请输入费率组名称！" placeholder="请输入费率组名称！" type="text" value="{$model['name']}"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="pay_rate" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>微信支付费率百分比</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="pay_rate" maxlength="10" name="model[pay_rate]"  placeholder="由于充值平台限制，活动支付将收取一定支付费率，例如0.6%费率,表示千分之六费率，也就是支付1000元，实际到账994元"
+                                                      onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}" onblur = "this.value=FloatMoney(this.value)"  step="0.01" type="number" value="{$model['pay_rate']}"/>
+                                                    <span class="input-group-addon">%</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 由于充值平台限制，活动支付将收取一定支付费率，例如0.6%费率,表示千分之六费率，也就是支付1000元，实际到账994元</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="recharge_rate" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>每笔充值费率百分比</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="recharge_rate" maxlength="10" name="model[recharge_rate]"  placeholder="由于充值平台限制，在线充值将收取一定充值费率，例如0.6%费率,表示千分之六费率，也就是充值100元，需多支付0.6元"
+                                                      onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}" onblur = "this.value=FloatMoney(this.value)"  step="0.01" type="number" value="{$model['recharge_rate']}"/>
+                                                    <span class="input-group-addon">%</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 由于充值平台限制，在线充值将收取一定充值费率，例如0.6%费率,表示千分之六费率，也就是充值100元，需多支付0.6元</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="status2" class="col-sm-2 control-label">是否启用</label>
+                                            <div class="col-sm-10">
+                                                <input data-off-text="关闭" data-on-text="开启" data-size="mini" id="status"
+                                                       type="checkbox" value="true" {if $model['status']==1}checked{/if}/>
+                                                <input id="status2" name="model[status]" type="hidden"
+                                                       value="{$model['status']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 选择费率组开启/关闭状态，<code>关闭费率组后该费率组的商户将会执行默认费率</code></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="bak" class="col-sm-2 control-label"><span
+                                                    class="text-red"></span>备注</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control"  id="bak"  name="model[bak]" placeholder="请输入备注信息" type="text" value="{$model['bak']}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+                                                <input type="hidden" name="token" value="{$_W['token']}"/>
+                                                <input type="hidden" name="submit" value="submit"/>
+                                                <button type="submit" class="btn btn-primary" id="SubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script>
+    $(function () {
+        SelectNav("费率分组");
+
+        myrequire(['select2','bootstrap-switch','icheck', 'validform'], function () {
+
+            //初始化icheck控件radio
+            $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+                checkboxClass: 'icheckbox_flat-blue',
+                radioClass: 'iradio_flat-blue'
+            });
+
+            //绑定更改状态操作
+            $('#status').bootstrapSwitch({
+                onSwitchChange: function (event, state) {
+                    var status = state ? 1 : 0;
+                    $("#status2").val(status);
+                }
+            });
+
+            //初始化select2控件
+            $(".select2").select2();
+
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createWebUrl('sys_rategroup', array('act' => 'index'));}";
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+                    }
+                }
+            });
+
+        });
+
+    });
+</script>
+</body>
+</html>

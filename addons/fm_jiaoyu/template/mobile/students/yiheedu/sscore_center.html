@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="UTF-8">
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+	<meta content="yes" name="apple-mobile-web-app-capable">
+	<meta content="black" name="apple-mobile-web-app-status-bar-style">
+	<meta content="telephone=no,email=no" name="format-detection">
+	<meta name="App-Config" content="fullscreen=yes,useHistoryState=yes,transition=yes">
+	<script src="{OSSURL}public/mobile/js/hb.js"></script>
+	<script src="{MODULE_URL}public/mobile/js/jquery-1.11.3.min.js?v=4.8"></script>
+	<script type="text/javascript" src="{MODULE_URL}public/mobile/js/vue.min.js"></script>
+	<script type="text/javascript" src="{MODULE_URL}public/mobile/js/axios.min.js"></script>
+	<link href="{OSSURL}public/mobile/css/new_yab1.css?v=112420161108" rel="stylesheet" />
+	{php echo register_jssdks();}
+
+	<style>
+		.main {
+			margin: 10px 10px;
+			box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+			background: #FFF;
+			padding: 0;
+			border-radius: 10px;
+			padding-bottom: 10px;
+		}
+
+		body {
+			background-color: #f0f0f2 !important;
+			box-sizing: border-box !important;
+			font-size: 14px;
+		}
+
+		.ActInfo {
+			font-size: 15px;
+			color: #000000;
+			margin-left: 5px;
+		}
+
+		.notifyTopLeft {
+			border-radius: 50%;
+			margin-left: 10px;
+			width: 70px;
+			height: 50px;
+			position: absolute;
+			right: 10px;
+			text-align: center;
+		}
+
+		.notifyTopLeft1 {
+			border-radius: 50%;
+			margin-left: 10px;
+			width: 50px;
+			height: 50px;
+			position: absolute;
+			right: 80px;
+			text-align: right;
+		}
+
+		.notifyText {
+			text-align: left;
+			font-size: 18px;
+			position: relative;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+
+		.notifyText1 {
+			text-align: right;
+			font-size: 18px;
+			position: relative;
+			top: 50%;
+			transform: translateY(-50%);
+			padding-right: 10px;
+		}
+
+		.notifyTime {
+			font-size: 14px;
+			color: gray;
+			margin-left: 5px;
+		}
+
+		.notifyTimeM {
+			font-size: 14px;
+			color: red;
+			margin-left: 5px;
+		}
+
+		.notifyTimeF {
+			font-size: 14px;
+			color: blue;
+			margin-left: 5px;
+		}
+
+		/*.main {  box-shadow:none; background:none; padding-bottom: 1px; display: block; margin: 1px 1px 1px 1px; }*/
+		reset.css:11 d .change a:before {
+			content: "";
+			width: 20px;
+			height: 20px;
+			margin-right: 8px;
+			display: inline-block;
+			background:url({OSSURL}public/mobile/img/score_02_spirit.png);
+			background-size: 141px;
+			vertical-align: middle;
+		}
+
+		.name {
+			position: absolute;
+			font-size: 18px;
+			display: inline-block;
+			max-width: 150px;
+			height: 18px;
+			line-height: 18px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			word-break: keep-all;
+			margin-top: 7px;
+		}
+
+		.type {
+			position: absolute;
+			color: #7b7676;
+			font-size: 13px;
+			display: inline-block;
+			max-width: 150px;
+			height: 18px;
+			line-height: 21px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			word-break: keep-all;
+			margin-top: 28px;
+		}
+
+		.head_student {
+			width: 100%;
+			height: auto;
+			padding-bottom: 10px;
+			position: absolute;
+			padding-top: 9px;
+			background-color: #fff;
+		}
+
+		.stuimg {
+			width: 16%;
+			margin-left: 15px;
+			float: left;
+		}
+
+		.stuimg img {
+			width: 50px;
+			border-radius: 50%;
+		}
+
+		.pull-center {
+			float: left;
+			width: 40%;
+		}
+
+		.pull-left {
+			float: right;
+			width: 29%;
+		}
+
+		.zzc {
+			width: 70px;
+			height: 15px;
+			float: right;
+			right: 0;
+			background-color: rgba(76, 222, 153, 0.39);
+			border-radius: 50px 0 0 50px;
+		}
+
+		.useredits {
+			line-height: 15px;
+			font-size: 11px;
+			float: right;
+			margin-right: 4px;
+			color: #11b161;
+		}
+
+		.font_icon {
+			width: 13px;
+			margin-left: 7px;
+			margin-right: 2px;
+		}
+
+		.cash_box {
+			position: absolute;
+			width: 100%;
+			height: auto;
+			padding-bottom: 14px;
+			padding-top: 7px;
+			margin-top: 78px;
+			background-color: #fff;
+		}
+
+		.box-head {
+			width: 100%;
+			height: 42px;
+			padding-bottom: 14px;
+			border-bottom: 1px solid #f5f0f0;
+		}
+
+		.box-head-left {
+			width: 50%;
+			float: left;
+			padding-top: 4px;
+		}
+
+		.allyue_left {
+			color: #827f7f;
+			position: absolute;
+			margin-left: 13px;
+		}
+
+		.nub {
+			position: absolute;
+			margin-top: 18px;
+			color: #444;
+			font-size: 21px;
+			margin-left: 10px;
+		}
+
+		.box-head-right {
+			padding-top: 5px;
+			width: 50%;
+			float: right;
+		}
+
+		.allyue {
+			color: #827f7f;
+			float: right;
+			right: 13px;
+			position: absolute;
+		}
+
+		.nub_right {
+			float: right;
+			position: absolute;
+			margin-top: 18px;
+			right: 14px;
+			font-size: 21px;
+			color: #7d7c7c;
+		}
+
+		.center-box {
+			list-style: none;
+		}
+
+		.cash_box_details {
+			width: 49%;
+			float: left;
+			height: auto;
+			padding-top: 12px;
+			margin-top: -1px;
+		}
+
+		.cash_title {
+			margin-left: 11px;
+			font-size: 15px;
+			margin-top: 3px;
+		}
+
+		.cash_number {
+			color: #827f7f;
+			margin-left: 9px;
+			margin-top: 9px;
+			margin-bottom: 6px;
+		}
+
+		.sm_tips {
+			font-size: 10px;
+		}
+
+		.inchage {
+			left: calc(37% - 8px);
+			top: 106px;
+			width: 30px;
+			text-align: center;
+			padding-left: 5px;
+			padding-right: 5px;
+			padding-bottom: 2px;
+			padding-top: 2px;
+			border-radius: 10px;
+			border: 1px solid #438da2;
+			margin-left: 10px;
+			margin-top: 10px;
+			background-color: #a9e1f1;
+		}
+
+		.reveal-modal-bg {
+			position: fixed;
+			height: 100%;
+			width: 100%;
+			background: #000;
+			background: rgba(0, 0, 0, .8);
+			z-index: 100;
+			display: none;
+			top: 0;
+			left: 0;
+		}
+
+		.reveal-modal {
+			visibility: hidden;
+			top: 50%;
+			background: #fff;
+			position: absolute;
+			z-index: 101;
+			padding: 25px 18px 38px;
+			-moz-border-radius: 5px;
+			-webkit-border-radius: 5px;
+			order-radius: 5px;
+			-moz-box-shadow: 0 0 10px rgba(0, 0, 0, .4);
+			-webkit-box-shadow: 0 0 10px rgba(0, 0, 0, .4);
+			-box-shadow: 0 0 10px rgba(0, 0, 0, .4);
+		}
+
+		.component-panel {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 12;
+			background: rgba(0, 0, 0, .7);
+		}
+
+		.component-dialog {
+			position: absolute;
+			top: 30%;
+			left: 50%;
+			-webkit-transform: translateX(-50%) translateY(-50%);
+			transform: translateX(-50%) translateY(-50%);
+			background: #fff;
+			padding: 10px;
+			width: 80%;
+			border-radius: 10px;
+		}
+
+		.dialog-order>.component-dialog-title {
+			text-align: center;
+		}
+
+		.component-dialog-body {
+			padding: 10px 0 12px;
+		}
+
+		.component-dialog-title {
+			font-size: 16px;
+			font-weight: 200;
+		}
+
+		.arrange-detail>ol {
+			box-sizing: border-box;
+		}
+
+		.form-order>.form-line {
+			margin-bottom: 5px;
+		}
+
+		.form-order>.form-line {
+			margin-bottom: 12px;
+			margin-top: 12px;
+		}
+
+		.gw_num {
+			padding-right: .8px;
+			margin-right: 15%;
+			float: right;
+			border: 1px solid #dbdbdb;
+			width: 50%;
+			line-height: 23px;
+			overflow: hidden;
+			display: inline
+		}
+
+		.gw_num em {
+			display: block;
+			height: 23px;
+			width: 26px;
+			line-height: 23px;
+			float: left;
+			color: #7A7979;
+			border-right: 1px solid #dbdbdb;
+			text-align: center;
+			cursor: pointer;
+		}
+
+		.gw_num .num1 {
+			display: block;
+			float: left;
+			text-align: center;
+			width: 52px;
+			height: 23px;
+			font-style: normal;
+			font-size: 14px;
+			line-height: 23px;
+			border: 0;
+		}
+
+		.gw_num em.jia {
+			float: right;
+			border-right: 0;
+			border-left: 1px solid #dbdbdb;
+		}
+
+		.btnthis {
+			height: 30px;
+			background-color: #7bb52d;
+			font: 16px "黑体";
+			text-align: center;
+			color: #fff;
+			cursor: pointer;
+			border-radius: 10px
+		}
+
+		.div_closd {
+			margin-left: 13%;
+			width: 30%;
+			color: #fff;
+			background-color: #f1ad31;
+			border-color: #f1ad31;
+			float: left;
+			line-height: 30px
+		}
+
+		.div_sure {
+			margin-right: 13%;
+			width: 30%;
+			float: right;
+			line-height: 30px
+		}
+
+		.ovfHiden {
+			overflow: hidden
+		}
+	</style>
+	<title>{$school['title']}</title>
+</head>
+<div class="head_student">
+	<div class="stuimg"><img src="{php echo tomedia($student['icon'])}"></div>
+	<div class="pull-center">
+		<span class="name">{$student['s_name']}</span>
+		<span class="type">(学员)</span>
+	</div>
+</div>
+<div class="cash_box">
+	<div class="box-head">
+		<div class="box-head-left">
+			<span class="allyue_left">剩余{$setName}</span>
+			<span class="nub">{$student['score']}</span>
+		</div>
+		<div class="box-head-right">
+			<span class="allyue">已提现</span>
+			<span class="nub_right">{$student['money']}元</span>
+		</div>
+	</div>
+	<div class="inchage" onclick="withdraw();">提现</div>
+</div>
+<div class="blank" style="height:200px"></div>
+<div class="head_box">
+	<ul class="head_title">
+		<li class="act comClass" id="lqjl"><a>领取记录</a></li>
+		<li class="comClass" id="txjl"><a>提现记录</a></li>
+	</ul>
+	<div class="blank"></div>
+</div>
+<div class="All" id="All">
+	<div class="listContent">
+		<li class="main" style="display: block;margin: 1px 10px 1px 10px;" v-for="(item,index) of list">
+			<div class="cutting"></div>
+			<div class="notifyTopBox">
+				<div class="notifyTopLeft1">
+
+					<p class="notifyText1" style="color:red; transform: translateY(-100%);" v-if="item.type == 2">-</p>
+					<p class="notifyText1" style="color:green; transform: translateY(-100%);" v-if="item.type == 2">+</p>
+					<p class="notifyText1" style="color:green" v-if="item.type != 2">+</p>
+				</div>
+				<div class="notifyTopLeft">
+					<p class="notifyText" style="color:red; transform: translateY(-100%);" v-if="item.type == 2">{{item.score}}分</p>
+					<p class="notifyText" style="color:green; transform: translateY(-100%);" v-if="item.type == 2">{{item.money}}元</p>
+					<p class="notifyText" style="color:green" v-if="item.type != 2">{{item.score}}分</p>
+				</div>
+				<div class="notifyTopRight">
+					<div class="notifyTopRightTopBox">
+						<span class="ActInfo">
+							{{item.score_name}}
+						</span>
+					</div>
+					<p class="notifyTime">{{item.createtime}}</p>
+				</div>
+			</div>
+		</li>
+	</div>
+</div>
+<script>
+	/********记录按钮切换样式*********/
+	$("#lqjl").click(function(){
+		All.type = 0
+		$('.comClass').removeClass('act')
+		$(this).addClass('act')
+		All.getFirstData()
+	})
+	$("#txjl").click(function(){
+		All.type = 2
+		$('.comClass').removeClass('act')
+		$(this).addClass('act')
+		All.getFirstData()
+	})
+	/********记录按钮切换样式*********/
+	/********跳转提现界面*********/
+	function withdraw(){
+		location.href = "{php echo $this->createMobileUrl('yiheedu_withdraw', array('schoolid' => $schoolid,'myuserid'=>$myuserid,'kc_id'=>$_GCP['kc_id']), true)}";
+	}
+</script>
+<script>
+	var All = new Vue({
+		el: '#All',
+		data(){
+			return{
+				type : 0,
+				list : [],
+			}
+		},
+		created: async function() {
+			let _self = this
+			_self.getFirstData()
+		},
+		methods: {
+			getFirstData: async function(){
+				let _self = this
+				let getFirstData = await axios.post("{php echo $this->createMobileUrl('sscore_center', array('schoolid' => $_GPC['schoolid'],'weid' => $weid,'op'=>'getFirstData','myuserid'=>$myuserid,'kc_id'=>$_GPC['kc_id']))}",{type:_self.type})
+				_self.list = getFirstData.data.list
+			}
+		},
+	})
+</script>

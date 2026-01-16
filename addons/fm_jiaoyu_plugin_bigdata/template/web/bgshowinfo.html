@@ -1,0 +1,25 @@
+<div class="form-group">
+    <label class="col-xs-12 col-sm-3 col-md-2 control-label">展示内容</label>
+    <div class="col-sm-8">
+        <label class="checkbox-inline" style="width:80px;margin-left: 10px"><input {if $bgShowInfo['jsandxs']}checked{/if} type="checkbox" value="jsandxs" name="jsandxs" />教师与学生</label>
+
+        <label class="checkbox-inline" style="width:80px;margin-left: 10px"><input {if $bgShowInfo['kq']}checked{/if} type="checkbox" value="kq" name="kq" />考勤</label>
+
+        <label class="checkbox-inline" style="width:80px;margin-left: 10px"><input {if $bgShowInfo['jhgn']}checked{/if} type="checkbox" value="jhgn" name="jhgn" />交互功能</label>
+
+        <label class="checkbox-inline" style="width:80px;margin-left: 10px"><input {if $bgShowInfo['cw']}checked{/if} type="checkbox" value="cw" name="cw" />财务</label>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-xs-12 col-sm-3 col-md-2 control-label">是否显示体温</label>
+    <div class="col-sm-8">
+        <label class="radio-inline">
+            <input type="radio" name="isshow" value="show" {if $bgShowInfo['isshow'] == 'show' || empty($bgShowInfo['show'])}checked{/if}>显示
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="isshow" value="hide" {if $bgShowInfo['isshow'] == 'hide'}checked{/if}>隐藏
+        </label>
+    </div>
+</div>
+<input type="hidden" name="schoolid" value="{$schoolid}">

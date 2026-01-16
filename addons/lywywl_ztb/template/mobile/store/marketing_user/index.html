@@ -1,0 +1,843 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<script src="{__MOBILE_STORE_JS__}/swiper.jquery.min.js"></script>
+<link rel="stylesheet" href="{__PLUGIN__}/clipboard/clipboard.min.js">
+<style>
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {position: static}
+    .layui-m-layercont {padding: 20px 20px;line-height: 22px;text-align: center;}
+
+    .obj_preview ul { text-align: center; margin-top:0.4rem}
+    .obj_preview li{ width:90%; display:inline-block; font-size:0.3733333333333333rem; text-align:center; margin-top:0.4rem;}
+    .obj_preview li .ewm{ width:60%; display:block; margin:0 auto 0.32rem;}
+    .obj_preview .copybtn{ background:#ebebeb; display:inline-block; margin-bottom:15px; padding: 0.2rem 0.4rem; border-radius:0.6rem;}
+    .obj_preview .copyimg{height:0.6rem;line-height:0.6rem; display:inline-block; vertical-align:middle; margin-right:0.1333rem}
+
+</style>
+<body>
+<section class="rel" style="height: 1.08rem;">
+    <h2 class="screen fn font28 bgfff" style=" position: fixed;z-index: 10;width: 100%;">
+        <dl class="retrie">
+            <dt class="bor_b pd0_24">
+                <a id="filter" href="javascript:;" style="width:auto!important">筛选<i class="sortIconI"></i> </a>
+            </dt>
+            <dd class="default">
+                <form>
+                    <!--筛选弹出层-->
+                    <section class="interal_filter downlist">
+                        <ul class="form">
+                            <li><span>成员信息：</span><section><input type="text" placeholder="成员名称/OPENID" id="searchKey"></section></li>
+                            <li><span>成员状态：</span><section >
+                                <p class="select_box rel">
+                                    <select id="searchStatus">
+                                        <option value="">请选择</option>
+                                        <option value="1">启用</option>
+                                        <option value="0">禁用</option>
+                                    </select>
+                                </p>
+                            </section></li>
+                            <li><span>团队管理：</span><section >
+                                <p class="select_box rel">
+                                    <select id="searchManager">
+                                        <option value="">请选择</option>
+                                        <option value="1">管理</option>
+                                        <option value="0">成员</option>
+                                    </select>
+                                </p>
+                            </section></li>
+                        </ul>
+                        <section class="retrieval mt24 clearfix">
+                            <button type="reset" class="recharge_but font32"> 重置</button>
+                            <button type="button" class="submit_but font32" id="btnSearch"> 搜索</button>
+                        </section>
+                    </section>
+                </form>
+            </dd>
+        </dl>
+    </h2>
+</section>
+<!--中心区域-->
+<section class="pdBtm98">
+    <section  id="ContentList">
+        <ul class="mystaff" id="LoadLists">
+        </ul>
+    </section>
+    <section class="buttonFloat clickBtn">
+        <a href="{php echo $this->createMobileUrl('store.marketing_team',array('act'=>'index','aid'=>$aid))}" class="db font32" style="width: 50%;    float: left;   color: #fff;   border-radius: 0.6rem 0 0 0.6rem;    background: #f92f4a;">团队列表</a>
+        <a href="{php echo $this->createMobileUrl('store.marketing_user', array('act' => 'create','aid' => $aid,'tid' => $tid));}" class="db font32" style="width: 50%;   float: left;    background: #FFD112;    color: #0e0e0e;border-radius: 0 0.6rem 0.6rem 0;">添加成员</a>
+    </section>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script src="{__MOBILE_STORE_JS__}/index.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li data-id="<%= rows[i].id %>" data-activity_types="<%= rows[i].activity_types %>" data-links="<%= rows[i].links %>" data-activity_id="<%= rows[i].activity_id %>" data-token="<%= rows[i].token %>">
+        <section class="staff_info"> <img class="tx" src="<%= rows[i].headurl %>" alt="<%= rows[i].name %>"/>
+            <h2 class="fn clearfix"><span class="mr10"><%= rows[i].name %></span>
+                <%if(rows[i].mobile!=''){%>
+                <a class=" ml10"><a href="tel:<%= rows[i].mobile %>"><img src="{__MOBILE_STORE_IMG__}/telIcon.png"  /><%= rows[i].mobile %></a></span>
+                <%}%>
+            </h2>
+            <p>OPENID：<%= rows[i].openid %></p>
+            {if $activity_types_name=='分享红包' || $activity_types_name=='红包拓客' || $activity_types_name=='联盟拓客' || $activity_types_name=='集赞拓客' || $activity_types_name=='锦鲤抽奖' || $activity_types_name=='助力砍价' || $activity_types_name=='经典拼团' || $activity_types_name=='阶梯拼团' || $activity_types_name=='全民投票' || $activity_types_name=='问卷调查' || $activity_types_name=='报名拓客' || $activity_types_name=='全民拼团' || $activity_types_name=='挑战10秒'|| $activity_types_name=='进阶团'|| $activity_types_name=='语音红包'|| $activity_types_name=='团中团'}
+            {if $activity_types_name=='分享红包'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总奖品</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_share_view_num %>/<%= rows[i].share_view_num %></h4>
+                    <p class="c6">今日/总浏览</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='红包拓客'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总返利</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_buy_num %>/<%= rows[i].buy_num %></h4>
+                    <p class="c6">今日/总直销</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_marketing_num %>/<%= rows[i].marketing_num %></h4>
+                    <p class="c6">今日/总销售</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='联盟拓客'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总返利</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_buy_num %>/<%= rows[i].buy_num %></h4>
+                    <p class="c6">今日/总直销</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_marketing_num %>/<%= rows[i].marketing_num %></h4>
+                    <p class="c6">今日/总销售</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='集赞拓客'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总返利</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_praise_click_num %>/<%= rows[i].praise_click_num %></h4>
+                    <p class="c6">今日/总获赞</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='锦鲤抽奖'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_fish_code_num %>/<%= rows[i].fish_code_num %></h4>
+                    <p class="c6">今日/总抽奖码</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='助力砍价'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总返利</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_buy_num %>/<%= rows[i].buy_num %></h4>
+                    <p class="c6">今日/总直销</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_marketing_num %>/<%= rows[i].marketing_num %></h4>
+                    <p class="c6">今日/总销售</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='经典拼团'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总返利</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_buy_num %>/<%= rows[i].buy_num %></h4>
+                    <p class="c6">今日/总直销</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_marketing_num %>/<%= rows[i].marketing_num %></h4>
+                    <p class="c6">今日/总销售</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='阶梯拼团'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总返利</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_buy_num %>/<%= rows[i].buy_num %></h4>
+                    <p class="c6">今日/总直销</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_marketing_num %>/<%= rows[i].marketing_num %></h4>
+                    <p class="c6">今日/总销售</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='全民投票'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总报名</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_buy_num %>/<%= rows[i].buy_num %></h4>
+                    <p class="c6">今日/总礼物</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='问卷调查'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总奖品</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='报名拓客'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总返利</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_buy_num %>/<%= rows[i].buy_num %></h4>
+                    <p class="c6">今日/总直销</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_marketing_num %>/<%= rows[i].marketing_num %></h4>
+                    <p class="c6">今日/总销售</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='全民拼团'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_group_num %>/<%= rows[i].group_num %></h4>
+                    <p class="c6">今日/总参团</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总返利</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_buy_num %>/<%= rows[i].buy_num %></h4>
+                    <p class="c6">今日/总直销</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_marketing_num %>/<%= rows[i].marketing_num %></h4>
+                    <p class="c6">今日/总销售</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='挑战10秒'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总奖品</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='进阶团'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总返利</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_buy_num %>/<%= rows[i].buy_num %></h4>
+                    <p class="c6">今日/总直销</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_marketing_num %>/<%= rows[i].marketing_num %></h4>
+                    <p class="c6">今日/总销售</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='语音红包'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总返利</p>
+                </section>
+            </section>
+            {/if}
+            {if $activity_types_name=='团中团'}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_join_num %>/<%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_get_num %>/<%= rows[i].get_num %></h4>
+                    <p class="c6">今日/总返利</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_buy_num %>/<%= rows[i].buy_num %></h4>
+                    <p class="c6">今日/总直销</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_marketing_num %>/<%= rows[i].marketing_num %></h4>
+                    <p class="c6">今日/总销售</p>
+                </section>
+            </section>
+            {/if}
+            {else}
+            <section class="number_list clearfix">
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].click_num %></h4>
+                    <p class="c6">曝光总量</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].today_repost_num %>/<%= rows[i].repost_num %></h4>
+                    <p class="c6">今日/总转发</p>
+                </section>
+                <section class="statis_number">
+                    <h4 class="font30 fn"><%= rows[i].join_num %></h4>
+                    <p class="c6">今日/总参与</p>
+                </section>
+            </section>
+            {/if}
+            <%if(rows[i].status==1){%>
+            <span class="switch switch_on"><i class="slider"></i></span>
+            <%}else{%>
+            <span class="switch switch_off"><i class="slider"></i></span>
+            <%}%>
+        </section>
+        <section class="operation staff_operate w33">
+            <a href="javascript:;" class="edit bor_r font28"><span>编辑</span></a>
+            <a href="javascript:;" class="exclusive bor_r font28"><span>专属链接</span></a>
+            <a href="javascript:;" class="delete  font28"><span>删除</span></a>
+        </section>
+    </li>
+    <% } %>
+</script>
+<script>
+    $(function () {
+        //点击筛选
+        $('#filter').click(function(){
+            var $filter = $(this);
+            if($filter.hasClass('up')){
+                $filter.removeClass('up');
+                $('.downlist').hide();
+            }else{
+                $filter.addClass('up');
+                $('.downlist').show();
+            }
+        });
+
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //点击搜索
+        $('#btnSearch').click(function() {
+            //隐藏筛选弹框
+            $('#filter').removeClass('up');
+            $('.downlist').hide();
+
+            //筛选参数
+            window.searchStatus = $('#searchStatus').val();
+            window.searchManager = $('#searchManager').val();
+            window.searchKey = $('#searchKey').val();
+            window.delCount = 0;
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.marketing_user', array('act' => 'getJsonList','aid' => $aid,'tid' => $tid));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "delCount":window.delCount,
+                                "status":window.searchStatus,
+                                "is_manager":window.searchManager,
+                                "key":window.searchKey,
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                window.delCount = 0;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false);
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var result = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.marketing_user', array('act' => 'getJsonList','aid' => $aid,'tid' => $tid));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "delCount":window.delCount,
+                                "status":window.searchStatus,
+                                "is_manager":window.searchManager,
+                                "key":window.searchKey,
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    threshold : 50
+                });
+            }
+
+        }).trigger("click");
+    });
+
+    //状态开关
+    $('#LoadLists').on('click','.switch',function(){
+        var switchobj = $(this);
+        var status = switchobj.hasClass("switch_on") ? 0 : 1;
+        var Rowid = switchobj.parents('li').data("id");
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            url: "{php echo $this->createMobileUrl('store.marketing_user', array('act' => 'setStatus','aid' => $aid,'tid' => $tid));}",
+            data: {
+                "id": Rowid,
+                "status": status
+            },
+            success: function (jsonData, status) {
+                if (jsonData.status == 1) {
+                    if(switchobj.hasClass("switch_on")){
+                        switchobj.removeClass("switch_on");
+                        switchobj.addClass("switch_off");
+                    }
+                    else{
+                        switchobj.removeClass("switch_off");
+                        switchobj.addClass("switch_on");
+                    }
+                }
+                else {
+                    layer.open({
+                        content: jsonData.msg
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                }
+            }
+        });
+    });
+
+    //编辑信息
+    $('#LoadLists').on('click','.edit',function(){
+        var userobj = $(this);
+        var Rowid = userobj.parents('li').data("id");
+        window.location.href = "{php echo $this->createMobileUrl('store.marketing_user', array('act' => 'modify','aid' => $aid,'tid' => $tid));}&id="+Rowid;
+    });
+
+    //专属链接
+    $('#LoadLists').on('click','.exclusive',function(){
+        var data = $(this).parents('li').data();
+        if(data.activity_types=='红包拓客' || data.activity_types=='联盟拓客'|| data.activity_types=='集赞拓客'|| data.activity_types=='锦鲤抽奖'|| data.activity_types=='助力砍价'|| data.activity_types=='经典拼团'|| data.activity_types=='阶梯拼团' || data.activity_types=='报名拓客' || data.activity_types=='全民拼团' || data.activity_types=='语音红包')
+        {
+            var html ='<section class="obj_preview"><ul><li><p id="objqrcode">二维码生成中，请耐心等待！</p><p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;">'+ data.links +'</p><a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a></li></ul></section><br><br><section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>';
+        }
+        else
+        {
+            var html ='<section class="obj_preview"><ul><li><p><img class="ewm" src="{php echo $this->createMobileUrl('store.'.$activityTables[$actModel['activity_types']], array('act' => 'objQrPreview' ));}&token='+ data.token +'&id='+ data.activity_id +'&origin_id='+ data.id +'"></p><p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;">'+ data.links +'</p><a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a></li></ul></section><br><br><section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>';
+        }
+        //页面层
+        layer.open({
+            type: 1,
+            title: ""
+            ,content: html
+            ,anim: 'up'
+            ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+        });
+        scroll.afterOpen();
+        if(data.activity_types=='红包拓客' || data.activity_types=='联盟拓客'|| data.activity_types=='集赞拓客'|| data.activity_types=='锦鲤抽奖'|| data.activity_types=='助力砍价'|| data.activity_types=='经典拼团'|| data.activity_types=='阶梯拼团' || data.activity_types=='报名拓客' || data.activity_types=='全民拼团' || data.activity_types=='语音红包')
+        {
+            $.ajax({
+                type: "post",
+                url: "{php echo $this->createMobileUrl('store.'.$activityTables[$actModel['activity_types']], array('act' => 'objQrPreview'));}&id="+data.activity_id +"&origin_id="+data.id,
+                data: {},
+                dataType:'json',
+                success: function (data) {
+                    if (data.status == 1) {
+                        $("#objqrcode").html('<img class="ewm" src="'+ data.path +'">');
+                    }
+                    else {
+                        $("#objqrcode").html(data.msg);
+                    }
+                }
+            });
+        }
+    });
+
+    //删除信息
+    $('#LoadLists').on('click','.delete',function(){
+        var delobj = $(this);
+        var Rowid = delobj.parents('li').data("id");
+        //询问框
+        layer.open({
+            content: '你确定要删除吗？'
+            , btn: ['确定', '取消']
+            , yes: function (index) {
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "{php echo $this->createMobileUrl('store.marketing_user', array('act' => 'del','aid' => $aid,'tid' => $tid));}",
+                    data: {
+                        id: Rowid
+                    },
+                    success: function (data, status) {
+                        if (data.status == 1) {
+                            window.delCount = window.delCount + 1;
+                            delobj.parents('li').remove();
+                            layer.open({
+                                content: data.msg
+                                ,skin: 'msg'
+                                ,time: 2 //2秒后自动关闭
+                            });
+                        }
+                        else {
+                            layer.open({
+                                content: data.msg
+                                ,skin: 'msg'
+                                ,time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                });
+                layer.close(index);
+            }
+        });
+    });
+
+    //关闭弹窗
+    function closeWindows(){
+        layer.closeAll();
+        scroll.beforeClose();
+    }
+
+    //复制文本到剪切板
+    function copyTXT(){
+        var copyDOM = document.querySelector('#copytxt'); //指定的DOM元素
+        var range = document.createRange(); // 创建容器
+        range.selectNode(copyDOM); // 选中需要复制的节点
+        window.getSelection().addRange(range); // 执行选中元素
+        var successful = document.execCommand('copy');// 执行 copy 操作
+        try {
+            var msg = successful ? 'successful' : 'unsuccessful';
+            if(msg == 'successful'){
+                //提示
+                layer.open({
+                    content: '已复制到剪切板'
+                    ,skin: 'msg'
+                    ,time: 2 //2秒后自动关闭
+                });
+            }
+        } catch(err) {
+            console.log('unable to copy');
+        }
+        window.getSelection().removeAllRanges(); // 移除选中的元素
+    }
+
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+
+</script>
+</body>
+</html>

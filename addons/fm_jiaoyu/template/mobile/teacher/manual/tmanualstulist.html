@@ -1,0 +1,369 @@
+<!--
+ * @Discription: 教师端成长手册列表
+ * @Author: Hannibal·Lee
+ * @Date: 2020-04-20 10:30:31
+ * @LastEditTime: 2020-12-17 10:49:00
+ -->
+<!DOCTYPE html>
+<title>{$school['title']}</title>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes" />
+    <script type="text/javascript" src="{MODULE_URL}public/mobile/js/jquery-1.11.3.min.js?v=4.8"></script>
+    <link rel="stylesheet" type="text/css" href="{OSSURL}public/mobile/css/new_yab.css?v=1?v=1111" />
+    <link type="text/css" rel="stylesheet" href="{OSSURL}public/mobile/css/greenStyle.css?v=4.90120" />
+    <link href="{MODULE_URL}public/web/font-awesome5/css/all.min.css" rel="stylesheet">
+    <script type="text/javascript" src="{MODULE_URL}public/mobile/js/filterword.js"></script>
+    <script type="text/javascript" src="{MODULE_URL}public/mobile/js/remaster.main.js"></script>
+
+
+    <style>
+        * { box-sizing: border-box; }
+        body { font-size: 16px; margin: 0; background-color: #f3f3f3; }
+        ul, li { list-style: none; }
+        .TopHeader { width: 100%; height: 50px; display: flex; color: white; background-color: #06c1ae; }
+
+        .TopHeader .tm { flex: 1; line-height: 50px;padding-left: 10px; }
+        .TopHeader .tr { width: 50px; font-size: 24px; line-height: 50px; text-align: center; }
+
+        .FileContentBox { height: calc(100vh - 100px); width: 100vw; padding-top: 10px; }
+        .remodal_right { position: fixed; width: 100vw; height: 100vh; top: 0; z-index: 100; }
+        .remodal_right.onhide { transition-delay: 0.2s; transform: scale(0); }
+        .remodal_right.onshow { transform: scale(1); }
+        .remodal_backgroud { width: 100%; height: 100%; background-color: rgba(121, 121, 121, 0.45); }
+        .remodal_rightslide { height: 100%; width: 50%; background-color: white; position: absolute; top: 0; }
+        .remodal_right.onshow .remodal_rightslide { right: 0; transition: right 0.2s; }
+        .remodal_right.onhide .remodal_rightslide { right: -50%; transition: right 0.2s; }
+        .remodal_rightslide .remodal_slide_top { width: 100%; height: 40px; line-height: 40px; text-align: center; border-bottom: 1px solid #c1c1c1; }
+        .content_ul { width: 100%; height: calc(100% - 40px); overflow: scroll }
+        .content_ul li { height: 35px; line-height: 35px; width: 100%; padding: 0 10px; position: relative; border-bottom: 1px solid #c1c1c1; }
+        .content_ul li i { position: absolute; top: 0; right: 5px; line-height: 35px; color: #06c1ae; font-size: 20px; text-shadow: 0px 0px 3px #18675f; display: none; }
+        li.active i { display: block; }
+        .file_itembox { width: 100%; height: 120px; display: flex; background-color: white; padding: 10px; margin-bottom: 10px; }
+        .file_itembox .status { position: absolute; top: -10px; right: -10px; background-color: #35cec7; padding: 1px 10px; border-radius: 0 0 0 10px; color: white; font-size: 14px; }
+
+        .personal_Search{padding:2px 10px;width: 100%;height: 30px;}
+.personal_Search>input{width: 100%;height: 100%;border-radius: 3px;padding:0 5px;border: 1px solid #d2d2d2;}
+    </style>
+</head>
+
+<body>
+
+    <div class="FileContentBox">
+<style>
+  .BoxTopSlide {
+    height: 2px;
+    width: calc(50% - 5px);
+    position: absolute;
+    background-color: #06c1ae;
+    z-index: 3;
+  }
+
+  .NeedBottomLine {
+    border-bottom: 1px solid #d6d6d6;
+    font-size: 14px;
+    width: 60px;
+  }
+
+  .confirm-edit-done-box {
+    border-bottom: 1px solid #d6d6d6;
+    font-size: 12px;
+    width: 80px;
+    text-align: center;
+  }
+
+
+
+  .remaster-global-tips {
+    z-index: 9999;
+    position: fixed;
+    width: auto;
+    max-width: 300px;
+    height: auto;
+    color:
+      white;
+    padding: 15px;
+    top: 50%;
+    text-align: center;
+    left: 50%;
+    background-color: rgba(0, 0, 0, .43);
+    border-radius: 5px;
+    transform: translate(-50%, -50%) scale(0);
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      opacity 0.1s 0.025s, transform 0.1s cubic-bezier(1, -0.17, 1, 0.13);
+  }
+
+  .remaster-global-tips.remaster-in-show {
+    opacity: 1;
+    transition: opacity 0.001s cubic-bezier(0.58, 0.08, 1,
+        -0.18), transform 0.125s cubic-bezier(0.04, 0.84, 0.42, 0.76);
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .remaster-global-tips.reload {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+    transition: opacity 0.01s 0.025s, transform 0.1s cubic-bezier(1, -0.17, 1, 0.13);
+  }
+
+  .remaster-confirm-box {
+    position: fixed;
+    top:
+      0;
+    left: 0;
+    height: 0;
+    width: 0;
+    overflow: hidden;
+    z-index: 9998;
+    background-color: rgba(165, 165, 165, .46);
+    transition-delay: .15s;
+  }
+
+  .remaster-confirm-box.remaster-in-show {
+    height: 100%;
+    width: 100%;
+    transition-delay:
+      0.0001s;
+  }
+
+  .remaster-confirm-box .remaster-back.remaster-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 0;
+    width: 0;
+    transition-delay: 0.2s;
+  }
+
+  .remaster-confirm-box.remaster-in-show .remaster-back.remaster-bg {
+    height: 100%;
+    width: 100%;
+    transition-delay: 0.001s;
+  }
+
+  .remaster-confirm-box .remaster-confirm-content-box {
+    position: absolute;
+    width: 80%;
+    left: 10%;
+    top: 30%;
+    min-height: 40px;
+    background-color: white;
+    border-radius: 5px;
+    transform: scale(0.5);
+    opacity: 0;
+    transition: opacity 0.1s 0.025s, transform 0.1s cubic-bezier(1, -0.17, 1, 0.13);
+  }
+
+  .remaster-confirm-box.remaster-in-show .remaster-confirm-content-box {
+    opacity: 1;
+    transition: opacity 0.001s cubic-bezier(0.58, 0.08, 1, -0.18),
+      transform 0.125s cubic-bezier(0.04, 0.84, 0.42, 0.76);
+    transform: scale(1);
+  }
+
+  .remaster-confirm-content-box .remaster-content {
+    width: 100%;
+    padding: 20px 10px;
+    text-align: center;
+  }
+
+  .remaster-confirm-content-box .remaster-confirm-action-box {
+    width: 100%;
+    height: 40px;
+    border-top: 0.5px solid #b1daf7;
+    display: flex;
+  }
+
+  .remaster-confirm-content-box .remaster-confirm-action-box .remaster-confirm-action-sure {
+    flex: 1;
+    text-align: center;
+    line-height: 40px;
+  }
+
+  .remaster-confirm-content-box .remaster-confirm-action-box .remaster-confirm-action-cancel {
+    flex: 1;
+    text-align: center;
+    line-height: 40px;
+    border-right: 1px solid #b1daf7;
+  }
+</style>
+
+<div class="personal_Search">
+    <input type="text" placeholder="输入姓名筛选" id="keywords">
+</div>
+
+        <div class="SendBox" style="width: 100%;background-color: white;padding:5px;position: relative;height: calc(100% - 0px);margin-top: 10px;" >
+           <div class="BoxTop" style="display: flex;height: 30px;line-height: 30px;" >
+                <div tab-key="0" class="boxTopItem" style="flex:1;text-align: center;">未完成</div>
+                <div tab-key="1" class="boxTopItem" style="flex:1;text-align: center;">已完成</div>
+           </div>
+           <div class="BoxTopSlide"> </div>
+
+           <script>
+               $(function(){
+                   $(".boxTopItem[tab-key=0]").click()
+               })
+               $(".boxTopItem").on("click",function(){
+                   $(this).siblings().removeClass("active")
+                   $(this).addClass("active")
+                   $(".BoxContent").animate({
+                       'margin-left':Number($(this).attr("tab-key")) * -100 + '%'
+                   },150)
+                   $(".BoxTopSlide").animate({
+                       'left':Number($(this).attr("tab-key")) * 50 + '%',
+                       'margin-left':(1 - Number($(this).attr("tab-key"))) * 5 + 'px'
+                   },150)
+               })
+           </script>
+            <div style="width:100%;position: relative;overflow: hidden;height: calc(100% - 32px);margin-top: 1px;border-top: 1px solid #d6d6d6;" >
+                <div class="BoxContent" style="width: 200%;left:0;display: flex;height: 100%;" >
+                    <div style="width:50%;height: 100%;overflow-y: auto;">
+                        {loop $list $kl}
+                        {if $kl['is_send'] != 1}
+                        <div class="StuLine" style="display: flex;height: 50px;line-height: 50px;padding:0 10px;font-size: 16px;" onclick="gotopage(`{$kl['sid']}`)">
+                            <div>
+                                <img src="{if !empty($kl['icon'])}{php echo tomedia($kl['icon'])}{else}{php echo tomedia($school['spic'])}{/if}" style="height: 40px;width: 40px;border-radius: 50%;margin-top: 5px;">
+                            </div>
+                            <div class="NeedBottomLine stuName" style="flex:1;margin-left: 10px;padding:0 5px">
+                                {$kl['s_name']}
+                            </div>
+                            <div class="NeedBottomLine">
+                               {$kl['done']}/{$kl['allc']}页
+                            </div>
+                            <div class="confirm-edit-done-box">
+                              {if $kl['done'] == $kl['allc'] }
+                              <span onclick="ComfirmEdit(`{$kl['sid']}`)" style="background-color: #3cc2ea;padding:3px 10px;border-radius: 15px;">完成编辑</span>
+                              {else}
+                              <span style="color:red">待完成</span>
+                              {/if}
+                           </div>
+                        </div>
+                        {/if}
+                        {/loop}
+                    </div>
+
+
+                    <div style="width:50%;height: 100%;overflow-y: auto;">
+                        {loop $list $kl}
+                        {if $kl['is_send'] == 1}
+                        <div class="StuLine" style="display: flex;height: 50px;line-height: 50px;padding:0 10p;font-size: 16px;" onclick="gotopage(`{$kl['sid']}`)">
+                            <div>
+                                <img src="{if !empty($kl['icon'])}{php echo tomedia($kl['icon'])}{else}{php echo tomedia($school['spic'])}{/if}" style="height: 40px;width: 40px;border-radius: 50%;margin-top: 5px;">
+                            </div>
+                            <div class="NeedBottomLine" style="flex:1;margin-left: 10px;padding:0 5px">
+                                {$kl['s_name']}
+                            </div>
+                            <div class="NeedBottomLine">
+                               {$kl['done']}/{$kl['allc']}页
+                            </div>
+                            
+                        </div>
+                        {/if}
+                        {/loop}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+      .richtips-root{position: fixed;top:0;left: 0;background-color: rgba(121, 121, 121, 0.45);height: 0;width: 0;z-index: 999;overflow: hidden;}
+      .richtips-root.inshow{height: 100%; width: 100%; transition-delay: 0.0001s;}
+      .richtips-content-box{position: absolute; width: 80%; left: 10%; top: 30%;background-color: white;min-height: 40px;border-radius: 5px;transform: scale(0.5);}
+      .richtips-root.inshow .richtips-content-box{transform: scale(1);transition: transform .15s cubic-bezier(0, 1.68, 0.68,1) .0001s;}
+    </style>
+
+    <div id="confirm-edit" class="richtips-root">
+        
+      <div class="richtips-content-box" >
+        <div style="width: 100%;font-size: 14px;padding:10px 15px;">
+          <div style="font-size: 16px;padding:10px 0px" >
+           是否确认该学生完成编辑？
+          </div>
+          <div style="font-size: 14px;color:#636363">
+            <div>
+              <i class="fas fa-exclamation-triangle"></i> 注意：
+            </div>
+            <div>
+              家长和老师均确认完成编辑后，该学生的成长手册将会被转换成PDF并存档，存档后的成长手册<span style="color:#ff6161;font-weight: bold;">不可编辑</span>
+            </div>
+          </div>
+        </div>
+        <div style="height: 40px;width: 100%;display: flex;justify-content: space-around; align-items: center;margin:10px 0;">
+            <div onclick='$("#confirm-edit").removeClass("inshow")' style="background-color: #b5b5b5;padding:2px 20px;border-radius: 15px;">取 消</div>
+            <div onclick="SureConfirmEdit()" style="background-color: #00b8ff;padding:2px 20px;border-radius: 15px;">确 定</div>
+        </div>
+      </div>
+    </div>
+    <script>
+
+var checksid = 0;
+function ComfirmEdit(sid){
+  event.stopPropagation()
+  checksid = sid;
+  $("#confirm-edit").addClass("inshow")
+}
+
+function SureConfirmEdit(){
+  $("#confirm-edit").removeClass("inshow")
+  sendManual()
+}
+$(function () {
+    $(".remodal_backgroud").on('click', function () {
+        $(".remodal_right").removeClass("onshow")
+        $(".remodal_right").addClass("onhide")
+    })
+})
+
+function SwitchClass(id) {
+    window.location.href = "{php echo $this->createMobileUrl('tmanuallist',array('op'=>'display','schoolid'=> $schoolid))}" + "&bj_id=" + id;
+}
+
+function showBjList() {
+    $(".remodal_right").addClass("onshow")
+    $(".remodal_right").removeClass("onhide")
+}
+
+function goback(){
+    window.location.href = "{php echo $this->createMobileUrl('tmanuallist',array('op'=>'display','schoolid'=> $schoolid))}" + "&bj_id=" + `{$_GPC['bj_id']}`;
+}
+
+function sendManual(){
+    
+    $.post("{php echo $this->createMobileUrl('indexajax',array('op'=>'sendManual','schoolid'=> $schoolid,'weid'=>$weid))}",{sid:checksid,gid:`{$_GPC['fileid']}`,'type':'tea'},
+    function(data){
+        alert(data.msg)
+        location.reload()
+    },'json');
+    // $.post("{php echo $this->createMobileUrl('indexajax',array('op'=>'sendManual','schoolid'=> $schoolid,'weid'=>$weid))}",{bjid:`{$_GPC['bj_id']}`,gid:`{$_GPC['fileid']}`},
+    // function(data){
+    //     console.log(data)
+    //     alert(data.msg)
+    //     location.reload()
+    // },'json');
+}
+
+function IntoDetail(id) {
+    window.location.href = "{php echo $this->createMobileUrl('tmanualstulist',array('op'=>'display','schoolid'=> $schoolid,'bj_id'=>$bj_id ))}" + "&fileid=" + id;
+}
+
+function gotopage(sid){
+    window.location.href = "{php echo $this->createMobileUrl('tmanuallookstupage',array('op'=>'display','schoolid'=> $schoolid))}" + "&sid=" + sid + "&id=" + `{$_GPC['fileid']}`;
+}
+
+
+new FilterWord({
+    'inputDom':'#keywords',
+    'actDom':'.StuLine',
+    'txtDom':'.stuName',
+    'isSlide':true
+}).filter_init()
+
+</script>
+
+</body>
+{php include $this->template('newfooter');}
+
+</html>

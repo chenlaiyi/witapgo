@@ -1,0 +1,362 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name = "format-detection" content ="telephone=no">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>{$title}</title>
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_CSS__}/base.css">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_CSS__}/mall.css?v=20191101">
+    <!-- 移动端适配 -->
+    <script>
+        var html = document.querySelector('html');
+        changeRem();
+        window.addEventListener('resize', changeRem);
+
+        function changeRem() {
+            var width = html.getBoundingClientRect().width;
+            html.style.fontSize = width / 10 + 'px';
+        }
+        function FloatMoney(value) {
+            if (value == "")
+            {
+                return "0.00";
+            }
+            var value = Math.round(parseFloat(value) * 100) / 100;
+            var xsd = value.toString().split(".");
+            if (xsd.length == 1) {
+                value = value.toString() + ".00";
+                return value;
+            }
+            if (xsd.length > 1) {
+                if (xsd[1].length == 1) {
+                    value = value.toString() + "0";
+                }
+                else if (xsd[1].length < 2) {
+                    value = value.toString();
+                }
+                return value;
+            }
+        }
+    </script>
+    <script src="{__MOBILE_USER_JS__}/jquery-2.1.4.min.js"></script>
+    <script src="{__PLUGIN__}/layer/mobile/2.0/layer.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script>
+        // jssdk config 对象
+        jssdkconfig = {php echo json_encode($_W['account']['jssdkconfig']);} || {};
+        // 是否启用调试
+        jssdkconfig.debug = false;
+        jssdkconfig.jsApiList = [
+            'checkJsApi',
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'getLocation',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'hideMenuItems',
+            'showMenuItems'
+        ];
+        wx.config(jssdkconfig);
+        wx.error(function (res) {
+            layer.open({ content: '对不起，微信JSSDK信息验证失败！', skin: 'msg', time: 2 });
+        });
+        wx.ready(function () {
+            wx.hideMenuItems({
+                menuList: ["menuItem:share:timeline", "menuItem:share:appMessage", "menuItem:share:qq", "menuItem:share:weiboApp", "menuItem:share:facebook", "menuItem:share:QZone",  "menuItem:openWithQQBrowser", "menuItem:openWithSafari", "menuItem:share:email"] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮
+            });
+        });
+    </script>
+</head>
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<style>
+    .scroll {
+        position: fixed;
+        width: 100%;
+    }
+    body {position: static}
+    .layui-m-layercont{
+        padding:10px 0;
+    }
+    .tabContainer ul.tabHd li {
+        width: 33.33%;
+    }
+</style>
+<body style="background-color:#fff;">
+<!--中奖用户-->
+<section>
+    <section class="tabContainer">
+        <ul id="tabHd" class="tabHd">
+            <li><a href="{php echo $this->createMobileUrl('obj_voice',array('act'=>'writeOff','store_id'=>$store_id,'token'=>$object['token'],'store_id'=>$store_id,'v_store_id'=>$v_store_id))}"><span>商品核销</span></a></li>
+            <li class="active"><a href="{php echo $this->createMobileUrl('obj_voice',array('act'=>'writeOffCard','store_id'=>$store_id,'token'=>$object['token'],'store_id'=>$store_id,'v_store_id'=>$v_store_id))}"><span>卡券核销</span></a></li>
+        </ul>
+    </section>
+    <section id="ContentList">
+        <ul class="prizeUser" id="LoadLists">
+
+        </ul>
+    </section>
+</section>
+<section class="buttonBox"></section>
+<!--底部浮动操作按钮-->
+<div class="pro_fix">
+    <ul>
+        <li id="btnCode" class="code"> <a href="javascript:void(0);">手动核销</a> </li>
+        <li id="btnScan" class="scan"> <a href="javascript:void(0);">扫码核销</a> </li>
+    </ul>
+</div>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li> <img src="<%= rows[i].headurl %>" class="headPic">
+        <h4><%= rows[i].nickname %><span class="ml10 cf35"><%= rows[i].card_name %></span></h4>
+        <p>核销时间：<%= rows[i].createtime %></p>
+    </li>
+    <% } %>
+</script>
+<?php
+//加载common文件注册jssdk
+load()->app('common');
+register_jssdk();
+?>
+<script>
+    $(function(){
+        //dropload
+        var page = 0;
+        var pageSize = 10;
+        $('#ContentList').dropload({
+            scrollArea : window,
+            domUp : {
+                domClass   : 'dropload-up',
+                domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+            },
+            domDown : {
+                domClass   : 'dropload-down',
+                domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+            },
+            loadUpFn : function(me){
+                $.ajax({
+                    type: 'GET',
+                    url: "{php echo $this->createMobileUrl('obj_voice', array('act' => 'getCardJsonList','store_id' => $store_id,'token'=>$object['token'],'v_store_id'=>$v_store_id));}",
+                    data:{
+                        "page":1,
+                        "pageSize":pageSize
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        var html = template("listtpl", data);
+                        $('#LoadLists').html(html);
+                        // 每次数据加载完，必须重置
+                        me.resetload();
+                        // 重置页数，重新获取loadDownFn的数据
+                        page = 1;
+                        // 解锁loadDownFn里锁定的情况
+                        me.unlock();
+                        me.noData(false)
+                    },
+                    error: function(xhr, type){
+                        layer.open({
+                            content: '系统错误，稍后重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            loadDownFn : function(me){
+                page++;
+                // 拼接HTML
+                var html = '';
+                $.ajax({
+                    type: 'GET',
+                    url: "{php echo $this->createMobileUrl('obj_voice', array('act' => 'getCardJsonList','store_id' => $store_id,'token'=>$object['token'],'v_store_id'=>$v_store_id));}",
+                    data:{
+                        "page":page,
+                        "pageSize":pageSize,
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        var arrLen = data.rows.length;
+                        if(arrLen > 0){
+                            var html = template("listtpl", data);
+                            // 如果没有数据
+                        }else{
+                            // 锁定
+                            me.lock();
+                            // 无数据
+                            me.noData();
+                        }
+
+                        // 插入数据到页面，放到最后面
+                        $('#LoadLists').append(html);
+                        // 每次数据插入，必须重置
+                        me.resetload()
+                    },
+                    error: function(xhr, type){
+                        layer.open({
+                            content: '系统错误，稍后重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            threshold : 50
+        });
+
+        //手动核销
+        $("#btnCode").click(function () {
+            layer.open({
+                title: [
+                    "手动核销",
+                    'background-color:#fee002; color:#000;'
+                ],
+                content: "<input id='code' name='code' placeholder='请输入核销码' style='border:none; width:90%; padding:0 2%; border:1px solid #e4e4e4; height: 46px;font-size: 16px;'>",
+                btn: ['确定','取消'],
+                yes:function (index) {
+                    var writecode = $("#code").val();
+                    writeoff('{$openid}',{php echo time()},writecode);
+                }
+            });
+        })
+
+        $("#btnScan").click(function () {
+            wx.scanQRCode({
+                needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+                scanType: ["qrCode"], // 可以指定扫二维码还是一维码，默认二者都有
+                success: function (res) {
+                    window.location.href = res.resultStr;
+                }
+            });
+        })
+
+        wx.error(function(res){
+            alert(JSON.stringify(res));
+        });
+    });
+
+    //解决滚动弹窗滚动穿透
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+
+    //核销操作
+    function writeoff(writeopenid,writetime,writecode){
+        scroll.afterOpen();//禁用页面滚动
+        $.ajax({
+            url: "{php echo $this->createMobileUrl('obj_voice',array('act'=>'getCardInfo','store_id'=>$store_id,'token'=>$object['token'],'v_store_id'=>$v_store_id))}",
+            type: "post",
+            dataType: "json",
+            data: {writeopenid: writeopenid,writetime:writetime,writecode:writecode},
+            success: function (result) {
+                if (result.status === 1) {
+                    var item = result.cardInfo;
+                    var content = "<li onclick='confirmWrite(\""+writeopenid+"\","+writetime+",\""+writecode+"\")'><div class='txtContent'><span class='receive white'>点击<br>核销</span><dl><dd><p>"+item['card_name']+"</p><p>"+item['store_name']+"</p><p>面值:"+item['card_money']+"元&nbsp;&nbsp;可用"+item['card_use_num']+"次&nbsp;&nbsp;已用"+item['card_writeoff_num']+"次</p></dd></dl><section><span class='fr'>"+item['card_use_limit']+"</span><span class='c6'>到期时间："+item['card_end_time']+"</span></section></div><figure><img src='"+item['card_pic_url']+"' width='100%'></figure></li>";
+                    layer.open({
+                        title: [
+                            "用户卡券核销",
+                            'background-color:#fee002; color:#000;'
+                        ],
+                        content: "<div style='max-height: 300px;overflow-y: scroll;'><ul class='quanList'>"+content+"</ul></div>"
+                    });
+                } else {
+                    layer.open({
+                        title: [
+                            "错误提示",
+                            'background-color:#fee002; color:#000;'
+                        ],
+                        content: result.msg,
+                        btn:['确定'],
+                        yes:function () {
+                            window.location.href="{php echo $this->createMobileUrl('obj_voice',array('act'=>'writeOffCard','store_id'=>$store_id,'token'=>$object['token'],'v_store_id'=>$v_store_id))}";
+                        }
+                    });
+                }
+
+                $(".layui-m-layershade").on("click",function () {
+                    scroll.beforeClose();//恢复页面滚动
+                })
+            }
+        });
+    }
+
+    //确认核销
+    function confirmWrite(writeopenid,writetime,writecode) {
+        $.ajax({
+            url: "{php echo $this->createMobileUrl('obj_voice',array('act'=>'cardConfirmWrite','store_id'=>$store_id,'token'=>$object['token'],'v_store_id'=>$v_store_id))}",
+            type: "post",
+            dataType: "json",
+            data: {writeopenid: writeopenid,writetime:writetime,writecode:writecode},
+            success: function (result) {
+                if (result.status === 1) {
+                    layer.open({
+                        title: [
+                            "成功提示",
+                            'background-color:#fee002; color:#000;'
+                        ],
+                        content: result.msg,
+                        btn:['确定'],
+                        yes:function () {
+                            window.location.href="{php echo $this->createMobileUrl('obj_voice',array('act'=>'writeOffCard','store_id'=>$store_id,'token'=>$object['token'],'v_store_id'=>$v_store_id))}";
+                        }
+                    });
+                } else {
+                    layer.open({
+                        title: [
+                            "错误提示",
+                            'background-color:#fee002; color:#000;'
+                        ],
+                        content: result.msg,
+                        btn:['确定'],
+                        yes:function () {
+                            window.location.href="{php echo $this->createMobileUrl('obj_voice',array('act'=>'writeOffCard','store_id'=>$store_id,'token'=>$object['token'],'v_store_id'=>$v_store_id))}";
+                        }
+                    });
+                }
+            }
+        });
+    }
+    //扫码进入
+    var writeopenid = '{$writeopenid}';
+    var writetime = parseInt('{$writetime}');
+    var writecode = '{$writecode}';
+    if(writeopenid != "" && writetime > 0 && writecode != ""){
+        writeoff(writeopenid,writetime,writecode);
+    }
+</script>
+</body>
+</html>

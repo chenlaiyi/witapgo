@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+	<style>
+		.box-excel { float: right; margin-bottom: 10px; }
+	</style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li {if !$action} class="layui-this" {/if}>
+						<a href="{php echo webUrl('membership')}">会员列表</a>
+					</li>
+					<li {if $action == 'signIn'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('membership', ['action' => 'signIn'])}">签到</a>
+					</li>
+					<li {if $action == 'private'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('membership', ['action' => 'private'])}">私教</a>
+					</li>
+					<li {if $action == 'level'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('membership', ['action' => 'level'])}">会员等级</a>
+					</li>
+					<li {if $action == 'memberCard'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('membership', ['action' => 'memberCard'])}">会员卡</a>
+					</li>
+					<li {if $action == 'log'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('membership', ['action' => 'log'])}">会员后台操作日志</a>
+					</li>
+					<li {if $action == 'userLabel'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('membership', ['action'=>'userLabel'])}">标签组</a>
+					</li>
+				</ul>
+			</div>
+
+		{if !$action}
+			<div class="box-tools">
+				<div class="box-search">
+					<form action="{php echo webUrl('membership')}" method="post">
+						<div class="layui-input-inline">
+							<input type="text" name="query" value="{$q}" class="layui-input"
+								placeholder="用户昵称、姓名或电话">
+						</div>
+						<div class="layui-input-inline">
+							<button class="layui-btn" lay-submit lay-filter="">搜索</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="box-excel">
+				<a type="button" href="{php echo webUrl('exportMemberAsExcel')}"
+				   class="layui-btn layui-btn-sm" onclick="exportMemberAsExcel(this)">导出Excel</a>
+				<script>
+					function exportMemberAsExcel(elem) {
+						const query = document.querySelector('form input[name="query"]').value
+						const old = elem.href.split('?')
+						elem.href = old[0] + '?' + old[1].split('&').filter(i => !i.startsWith('page=')).join('&') +
+							'&query=' + query.trim()
+					}
+				</script>
+			</div>
+			<div class="layui-form">
+				<table class="layui-table">
+					<thead>
+					<tr>
+						<th>ID</th>
+						<th>用户头像</th>
+						<th>用户信息</th>
+						<th>会员详情</th>
+						<th>操作</th>
+					</tr>
+					</thead>
+					<tbody>
+					{loop $list $index $item}
+					<tr>
+						<td class="wmin20">{$item['id']}</td>
+						<td>
+							<div class="box-table-img">
+								<img class="circle" src="{php echo tomedia($item['avatar'])}"
+									data-url="{php echo tomedia($item['avatar'])}" >
+							</div>
+						</td>
+						<td>
+							<span>昵称：{$item['nickname']}</span><br>
+							<span>姓名：{$item['real_name']}</span><br>
+							<span>电话：{$item['tel']}</span>
+						</td>
+						<td>
+							<span>等级：{$item['memberLevelName']}</span><br>
+							<span>余额：￥{$item['balance']}</span><br>
+							<span>奖金：￥{$item['commission']}</span><br>
+							<span>剩余约课次数：{$item['left_times']}</span><br>
+							<span>无限约课到期日期：{$item['due_time']}</span>
+						</td>
+						<td class="td-button">
+							<a href="{php echo webUrl('editUser',['id'=>$item['id']])}"
+								class="layui-btn layui-btn-sm">编辑</a>
+							<a href="{php echo webUrl('incDecBalance',['uid'=>$item['id'],'nickname'=>$item['nickname'],'balance'=>$item['balance']])}"
+								class="layui-btn layui-btn-sm">增减余额</a>
+							<a href="{php echo webUrl('incDecTimes', ['uid'=>$item['id'],'nickname'=>$item['nickname']])}"
+								class="layui-btn layui-btn-sm">增减约课次数</a>
+							<a href="{php echo webUrl('incDecDueTime', ['uid'=>$item['id'],'nickname'=>$item['nickname']])}"
+								class="layui-btn layui-btn-sm">增减到期时间</a>
+							<div style="height: 8px;"></div>
+							<a href="{php echo webUrl('addPrivateCoach', ['uid'=>$item['id'],'nickname'=>$item['nickname']])}"
+								class="layui-btn layui-btn-sm">增加私教</a>
+							<a href="{php echo webUrl('giveMemberCard',['uid'=>$item['id'],'nickname'=>$item['nickname']])}"
+								class="layui-btn layui-btn-sm">添加会员卡</a>
+							<a href="{php echo webUrl('userMemberCardList',['uid'=>$item['id'],'nickname'=>$item['nickname']])}"
+								class="layui-btn layui-btn-sm">卡片列表</a>
+							<a href="javascript:;" class="layui-btn layui-btn-sm btn-admin-set"
+								data-uid="{$item['id']}" data-role="{$item['role']}">{php echo $item['role']=='1'?'取消管理员':'设为管理员'}</a>
+						</td>
+					</tr>
+					{/loop}
+					</tbody>
+				</table>
+				<div class="pager">
+					{$pager}
+				</div>
+			</div>
+			<script>
+				layui.use(['laypage', 'layer'], function(){
+					var laypage = layui.laypage;
+					var layer = layui.layer;
+
+					// 分页
+					laypage.render({
+						elem: $('.pager')
+						,limit: '{php echo $pageSize; }'
+						,count: '{php echo $total; }'
+						,theme: '#1E9FFF'
+						,curr:  '{php echo $pageIndex; }'
+						,hash: '{php echo $pageIndex; }'
+						,jump: function (obj, first) {
+							if (first != true) {
+								var currentPage = obj.curr; //获取点击的页码
+								window.location.href = "{php echo webUrl('membership')}&page=" + currentPage;
+							}
+						}
+					});
+					$('.pager').show();
+
+					// 设为管理员
+					$(document).on('click', '.btn-admin-set', function () {
+						let $obj = $(this);
+						let $uid = $obj.data('uid');
+						let $role = $obj.data('role');
+						layer.confirm("确定要设置为管理员", {
+							offset: '20%',
+							btn: ["再想想", "设置"],
+							scrollbar: false,
+							closeBtn: 0,
+							success: function (layero, index) {
+								this.enterEsc = function (event) {
+									if (event.keyCode === 13) {
+										fun_admin_set();
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+									if (event.keyCode === 27) {
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+								};
+								$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+							}
+							, end: function(){
+								$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+							}
+						}, function (i) {
+						   layer.close(i);
+						}, function (i) {
+							fun_admin_set();
+						});
+
+						// 事件
+						function fun_admin_set()
+						{
+							let $url = "{php echo webUrl('manager')}";
+
+							$.ajax({
+								type: "POST",
+								url: $url,
+								dataType: 'json',
+								data: {
+									uid: $uid,
+									role: $role,
+								},
+								success: function (rs) {
+									if (rs && rs.code.toString() === '0') {
+										window.location.href = "{php echo webUrl('membership')}";
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+											shift: 6,
+										});
+									}
+								},
+								error: function () {
+									layer.msg("保存过程发生错误，请与管理员联系" , {
+										offset: '20%',
+										shift: 6,
+									});
+								}
+							});
+						}
+					});
+				});
+			</script>
+		{/if}
+
+
+		{if $action == 'signIn'}
+			<div class="box-tools">
+				<div class="box-search">
+					<form action="{php echo webUrl('membership', ['action'=>'signIn'])}" method="post">
+						<div class="layui-input-inline">
+							<input type="text" name="timestart" placeholder="yyyy-MM-dd" class="layui-input" id="time-start">
+						</div>
+						<div class="layui-input-inline">-</div>
+						<div class="layui-input-inline">
+							<input type="text" name="timeend" placeholder="yyyy-MM-dd" class="layui-input" id="time-end">
+						</div>
+						<div class="layui-input-inline">
+							<button class="layui-btn" lay-submit lay-filter="">搜索</button>
+						</div>
+					</form>
+					<script>
+						layui.use('laydate', function(){
+							var laydate = layui.laydate;
+
+							laydate.render({
+								elem: '#time-start'
+								,type: 'date'
+								,format: 'yyyy-MM-dd'
+								,value: "{$startDate}"
+							});
+
+							laydate.render({
+								elem: '#time-end'
+								,type: 'date'
+								,format: 'yyyy-MM-dd'
+								,value: "{$endDate}"
+							});
+						});
+					</script>
+				</div>
+			</div>
+			<div class="box-excel">
+				<a type="button" href="{php echo webUrl('exportSignInAsExcel')}"
+					class="layui-btn layui-btn-sm" onclick="exportSignInAsExcel(this)">导出Excel</a>
+				<script>
+					function exportSignInAsExcel(elem) {
+						const start = document.querySelector('form input[name="start"]').value
+						const end = document.querySelector('form input[name="end"]').value
+						elem.href += '&start=' + start + '&end=' + end
+					}
+				</script>
+			</div>
+			<div class="layui-form">
+				<table class="layui-table">
+					<thead>
+					<tr>
+						<th>ID</th>
+						<th>昵称</th>
+						<th>类型</th>
+						<th>课程</th>
+						<th>教练</th>
+						<th>签到时间</th>
+					</tr>
+					</thead>
+					<tbody>
+					{loop $list $index $item}
+					<tr>
+						<td class="wmin20">{$item['id']}</td>
+						<td>{$item['nickname']}</td>
+						<td>{php echo $item['type'] == 0 ? '团课' : '私教'}</td>
+						<td>{$item['course_name']}</td>
+						<td>{$item['coach_name']}</td>
+						<td>{$item['datetime']}</td>
+					</tr>
+					{/loop}
+					</tbody>
+				</table>
+				<div class="pager">
+					{$pager}
+				</div>
+			</div>
+		{/if}
+
+
+		{if $action == 'private'}
+			<div class="box-tools">
+				<div class="box-search">
+					<form action="{php echo webUrl('membership', ['action' => 'private'])}" method="post">
+						<div class="layui-input-inline">
+							<input type="text" name="query" value="{$q}" class="layui-input"
+								placeholder="昵称、教练">
+						</div>
+						<div class="layui-input-inline">
+							<button class="layui-btn" lay-submit lay-filter="">搜索</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="box-excel">
+				<a type="button" href="{php echo webUrl('exportPrivateAsExcel')}"
+					class="layui-btn layui-btn-sm" onclick="exportPrivateAsExcel(this)">导出Excel</a>
+				<script>
+					function exportPrivateAsExcel(elem) {
+						const nickname = document.querySelector('form input[name="nickname"]').value
+						const coach = document.querySelector('form input[name="coach"]').value
+						const old = elem.href.split('?')
+						elem.href = old[0] + '?' + old[1].split('&').filter(i => !i.startsWith('page=')).join('&') +
+							'&nickname=' + nickname.trim() + '&coach=' + coach.trim()
+					}
+				</script>
+			</div>
+			<div class="layui-form">
+				<table class="layui-table">
+					<thead>
+					<tr>
+						<th>ID</th>
+						<th>用户昵称</th>
+						<th>教练</th>
+						<th>总课时数</th>
+						<th>剩余课时数</th>
+						<th>操作</th>
+					</tr>
+					</thead>
+					<tbody>
+					{loop $list $index $item}
+					<tr>
+						<td class="wmin20">{$item['id']}</td>
+						<td>{$item['nickname']}</td>
+						<td>{$item['coach']}</td>
+						<td>{$item['num']}</td>
+						<td>{$item['left_times']}</td>
+						<td>
+							{if !$item['order_id'] && $item['num'] == $item['left_times']}
+								<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger btn-del"
+									data-id="{$item['id']}">删除</a>
+							{/if}
+						</td>
+					</tr>
+					{/loop}
+					</tbody>
+				</table>
+				<div class="pager">
+					{$pager}
+				</div>
+			</div>
+			<script>
+				layui.use(['laypage', 'layer'], function(){
+					var laypage = layui.laypage;
+					var layer = layui.layer;
+
+					// 删除
+					$(document).on('click', '.btn-del', function () {
+						$obj = $(this);
+						$del_id = $obj.data('id');
+						layer.confirm("确定要删除吗", {
+							offset: '20%',
+							btn: ["再想想", "删除"],
+							scrollbar: false,
+							closeBtn: 0,
+							success: function (layero, index) {
+								this.enterEsc = function (event) {
+									if (event.keyCode === 13) {
+										fun_del();
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+									if (event.keyCode === 27) {
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+								};
+								$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+							}
+							, end: function(){
+								$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+							}
+						}, function (i) {
+						   layer.close(i);
+						}, function (i) {
+							fun_del();
+						});
+
+						// 删除事件
+						function fun_del()
+						{
+							let $url = "{php echo webUrl('delPrivateCoach')}";
+
+							$.ajax({
+								type: "POST",
+								url: $url,
+								dataType: 'json',
+								data: {
+									id: $del_id
+								},
+								success: function (rs) {
+									if (rs && rs.code.toString() === '0') {
+										$obj.closest('tr').fadeOut(200, function () {
+											$obj.remove();
+											layer.msg("成功", {time: 500});
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+											shift: 6,
+										});
+										$obj.removeClass('lock');
+									}
+								},
+								error: function () {
+									layer.msg("保存过程发生错误，请与管理员联系" , {
+										offset: '20%',
+										shift: 6,
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						}
+					});
+				});
+			</script>
+		{/if}
+
+
+		{if $action == 'level'}
+			<div>
+				<a href="{php echo webUrl('addMemberLevel')}" class="layui-btn">添加</a>
+			</div>
+			<div class="layui-form">
+				<table class="layui-table">
+					<thead>
+					<tr>
+						<th>ID</th>
+						<th>等级</th>
+						<!--<th>图标</th>-->
+						<th>价格</th>
+						<th>操作</th>
+					</tr>
+					</thead>
+					<tbody>
+					{loop $list $index $item}
+					<tr>
+						<td class="wmin20">{$item['id']}</td>
+						<td>{$item['name']}</td>
+						<!--<td><img style="height: 66px;width: 66px;" src="{php echo tomedia($item['icon']);}"></td>-->
+						<td>{$item['price']}</td>
+						<td class="td-button">
+							<a href="{php echo webUrl('editMemberLevel', array('id' => $item['id']))}"
+								class="layui-btn layui-btn-sm">编辑</a>
+							<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger btn-del"
+									data-id="{$item['id']}">删除</a>
+						</td>
+					</tr>
+					{/loop}
+					</tbody>
+				</table>
+				<div class="pager">
+					{$pager}
+				</div>
+			</div>
+			<script>
+				layui.use(['laypage', 'layer'], function(){
+					var laypage = layui.laypage;
+					var layer = layui.layer;
+
+					// 分页
+					laypage.render({
+						elem: $('.pager')
+						,limit: '{php echo $pageSize; }'
+						,count: '{php echo $total; }'
+						,theme: '#1E9FFF'
+						,curr:  '{php echo $pageIndex; }'
+						,hash: '{php echo $pageIndex; }'
+						,jump: function (obj, first) {
+							if (first != true) {
+								var currentPage = obj.curr; //获取点击的页码
+								window.location.href = "{php echo webUrl('membership', ['action'=>'level'])}&page=" + currentPage;
+							}
+						}
+					});
+					$('.pager').show();
+
+					// 删除
+					$(document).on('click', '.btn-del', function () {
+						$obj = $(this);
+						$del_id = $obj.data('id');
+						layer.confirm("确定要删除吗", {
+							offset: '20%',
+							btn: ["再想想", "删除"],
+							scrollbar: false,
+							closeBtn: 0,
+							success: function (layero, index) {
+								this.enterEsc = function (event) {
+									if (event.keyCode === 13) {
+										fun_del();
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+									if (event.keyCode === 27) {
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+								};
+								$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+							}
+							, end: function(){
+								$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+							}
+						}, function (i) {
+						   layer.close(i);
+						}, function (i) {
+							fun_del();
+						});
+
+						// 删除事件
+						function fun_del()
+						{
+							let $url = "{php echo webUrl('delMemberLevel')}";
+
+							$.ajax({
+								type: "POST",
+								url: $url,
+								dataType: 'json',
+								data: {
+									id: $del_id
+								},
+								success: function (rs) {
+									if (rs && rs.code.toString() === '0') {
+										$obj.closest('tr').fadeOut(200, function () {
+											$obj.remove();
+											layer.msg("成功", {time: 500});
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+											shift: 6,
+										});
+										$obj.removeClass('lock');
+									}
+								},
+								error: function () {
+									layer.msg("保存过程发生错误，请与管理员联系" , {
+										offset: '20%',
+										shift: 6,
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						}
+					});
+				});
+			</script>
+		{/if}
+
+
+		{if $action == 'memberCard'}
+			<div>
+				<a href="{php echo webUrl('addMemberCard')}" class="layui-btn">添加</a>
+			</div>
+			<div class="layui-form">
+				<table class="layui-table">
+					<thead>
+					<tr>
+						<th>ID</th>
+						<th>名称</th>
+						<th>价格</th>
+						<th>类型</th>
+						<th>规格</th>
+						<th>排序</th>
+						<th>有效期</th>
+						<th>课程名</th>
+						<th>对外售卖</th>
+						<th>操作</th>
+					</tr>
+					</thead>
+					<tbody>
+					{loop $list $index $item}
+					<tr>
+						<td class="wmin20">{$item['id']}</td>
+						<td>{$item['name']}</td>
+						<td>{$item['price']}</td>
+						<td>
+							{if $item['type'] == 0}时间卡
+							{else if $item['type'] == 1}不限时次卡
+							{else if $item['type'] == 2}储值卡
+							{else if $item['type'] == 3}课程次卡
+							{else if $item['type'] == 5}限时次卡
+							{/if}
+						</td>
+						<td>
+							{if $item['type'] == 0}时长：{$item['time']} 天
+							{else if $item['type'] == 1}次数：{$item['times']}
+							{else if $item['type'] == 2}面额：￥{$item['money']}
+							{else if $item['type'] == 3}次数：{$item['times']}
+							{else if $item['type'] == 5}次数：{$item['times']}
+							{/if}
+						</td>
+						<td>{$item['sort']}</td>
+						<td>
+							{if $item['time'] > 0}有效期：{$item['time']} 天
+							{else}长久有效
+							{/if}
+						</td>
+						<td>{$item['course']}</td>
+						<td>{php echo $item['to_sell'] == 1 ? '是' : '否'}</td>
+						<td class="td-button">
+							<a href="{php echo webUrl('editMemberCard', array('id' => $item['id']))}"
+								class="layui-btn layui-btn-sm">编辑</a>
+							<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger btn-del"
+									data-id="{$item['id']}">删除</a>
+						</td>
+					</tr>
+					{/loop}
+					</tbody>
+				</table>
+				<div class="pager">
+					{$pager}
+				</div>
+			</div>
+			<script>
+				layui.use(['laypage', 'layer'], function(){
+					var laypage = layui.laypage;
+					var layer = layui.layer;
+
+					// 分页
+					laypage.render({
+						elem: $('.pager')
+						,limit: '{php echo $pageSize; }'
+						,count: '{php echo $total; }'
+						,theme: '#1E9FFF'
+						,curr:  '{php echo $pageIndex; }'
+						,hash: '{php echo $pageIndex; }'
+						,jump: function (obj, first) {
+							if (first != true) {
+								var currentPage = obj.curr; //获取点击的页码
+								window.location.href = "{php echo webUrl('membership', ['action'=>'memberCard'])}&page=" + currentPage;
+							}
+						}
+					});
+					$('.pager').show();
+
+					// 删除
+					$(document).on('click', '.btn-del', function () {
+						$obj = $(this);
+						$del_id = $obj.data('id');
+						layer.confirm("确定要删除吗", {
+							offset: '20%',
+							btn: ["再想想", "删除"],
+							scrollbar: false,
+							closeBtn: 0,
+							success: function (layero, index) {
+								this.enterEsc = function (event) {
+									if (event.keyCode === 13) {
+										fun_del();
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+									if (event.keyCode === 27) {
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+								};
+								$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+							}
+							, end: function(){
+								$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+							}
+						}, function (i) {
+						   layer.close(i);
+						}, function (i) {
+							fun_del();
+						});
+
+						// 删除事件
+						function fun_del()
+						{
+							let $url = "{php echo webUrl('delMemberCard')}";
+
+							$.ajax({
+								type: "POST",
+								url: $url,
+								dataType: 'json',
+								data: {
+									id: $del_id
+								},
+								success: function (rs) {
+									if (rs && rs.code.toString() === '0') {
+										$obj.closest('tr').fadeOut(200, function () {
+											$obj.remove();
+											layer.msg("成功", {time: 500});
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+											shift: 6,
+										});
+										$obj.removeClass('lock');
+									}
+								},
+								error: function () {
+									layer.msg("保存过程发生错误，请与管理员联系" , {
+										offset: '20%',
+										shift: 6,
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						}
+					});
+				});
+			</script>
+
+		{/if}
+
+
+		{if $action == 'log'}
+			<div class="layui-form">
+				<table class="layui-table">
+					<thead>
+					<tr>
+						<th>ID</th>
+						<th>用户</th>
+						<th>时间</th>
+						<th>详情</th>
+					</tr>
+					</thead>
+					<tbody>
+					{loop $list $index $item}
+					<tr>
+						<td style="max-width: 30px">{$item['id']}</td>
+						<td>{$item['nickname']}</td>
+						<td>{php echo date('Y-m-d H:i:s', $item['create'])}</td>
+						<td>{$item['details']}</td>
+					</tr>
+					{/loop}
+					</tbody>
+				</table>
+				<div class="pager">
+					{$pager}
+				</div>
+			</div>
+			<script>
+				layui.use(['laypage', 'layer'], function(){
+					var laypage = layui.laypage;
+					var layer = layui.layer;
+
+					// 分页
+					laypage.render({
+						elem: $('.pager')
+						,limit: '{php echo $pageSize; }'
+						,count: '{php echo $total; }'
+						,theme: '#1E9FFF'
+						,curr:  '{php echo $pageIndex; }'
+						,hash: '{php echo $pageIndex; }'
+						,jump: function (obj, first) {
+							if (first != true) {
+								var currentPage = obj.curr; //获取点击的页码
+								window.location.href = "{php echo webUrl('membership', ['action'=>'log'])}&page=" + currentPage;
+							}
+						}
+					});
+					$('.pager').show();
+				});
+			</script>
+		{/if}
+
+
+		{if $action == 'userLabel'}
+			<div>
+				<a href="{php echo webUrl('addUserLabel')}" class="layui-btn">添加</a>
+			</div>
+			<div class="layui-form">
+				<table class="layui-table">
+					<thead>
+					<tr>
+						<th>ID</th>
+						<th>标签名称</th>
+						<th>会员数</th>
+						<th>标签描述</th>
+						<th>操作</th>
+					</tr>
+					</thead>
+					<tbody>
+					{loop $list $index $item}
+					<?php $item['query'] = 'label*'.$item['id']; ?>
+					<tr>
+						<td class="wmin20">{$item['id']}</td>
+						<td>{$item['title']}</td>
+						<td>{$item['user_total']}</td>
+						<td>{$item['subtitle']}</td>
+						<td class="td-button">
+							<a href="{php echo webUrl('editUserLabel', array('id'=>$item['id']))}"
+							   class="layui-btn layui-btn-sm">编辑</a>
+							<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger btn-del"
+							   data-id="{$item['id']}">删除</a>
+							<a href="{php echo webUrl('membership',['query'=>$item['query']])}"
+							   class="layui-btn layui-btn-sm">会员</a>
+						</td>
+					</tr>
+					{/loop}
+					</tbody>
+				</table>
+				<div class="pager">
+					{$pager}
+				</div>
+			</div>
+			<script>
+				layui.use(['laypage', 'layer'], function(){
+					var laypage = layui.laypage;
+					var layer = layui.layer;
+
+					// 分页
+					laypage.render({
+						elem: $('.pager')
+						,limit: '{php echo $pageSize; }'
+						,count: '{php echo $total; }'
+						,theme: '#1E9FFF'
+						,curr:  '{php echo $pageIndex; }'
+						,hash: '{php echo $pageIndex; }'
+						,jump: function (obj, first) {
+							if (first != true) {
+								var currentPage = obj.curr; //获取点击的页码
+								window.location.href = "{php echo webUrl('membership', ['action'=>'memberCard'])}&page=" + currentPage;
+							}
+						}
+					});
+					$('.pager').show();
+
+					// 删除
+					$(document).on('click', '.btn-del', function () {
+						$obj = $(this);
+						$del_id = $obj.data('id');
+						layer.confirm("确定要删除吗", {
+							offset: '20%',
+							btn: ["再想想", "删除"],
+							scrollbar: false,
+							closeBtn: 0,
+							success: function (layero, index) {
+								this.enterEsc = function (event) {
+									if (event.keyCode === 13) {
+										fun_del();
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+									if (event.keyCode === 27) {
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+								};
+								$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+							}
+							, end: function(){
+								$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+							}
+						}, function (i) {
+							layer.close(i);
+						}, function (i) {
+							fun_del();
+						});
+
+						// 删除事件
+						function fun_del()
+						{
+							let $url = "{php echo webUrl('DelUserLabel')}";
+
+							$.ajax({
+								type: "POST",
+								url: $url,
+								dataType: 'json',
+								data: {
+									id: $del_id
+								},
+								success: function (rs) {
+									if (rs && rs.code.toString() === '0') {
+										$obj.closest('tr').fadeOut(200, function () {
+											$obj.remove();
+											layer.msg("成功", {time: 500});
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+											shift: 6,
+										});
+										$obj.removeClass('lock');
+									}
+								},
+								error: function () {
+									layer.msg("保存过程发生错误，请与管理员联系" , {
+										offset: '20%',
+										shift: 6,
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						}
+					});
+				});
+			</script>
+
+		{/if}
+
+
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

@@ -1,0 +1,81 @@
+{template 'common/header'}
+<link rel="stylesheet" type="text/css" href="../addons/{php echo $_GPC['m']}/resource/css/style.css" />
+<link rel="stylesheet" type="text/css" href="../addons/{php echo $_GPC['m']}/resource/swal/dist/sweetalert2.min.css" />
+<link rel="stylesheet" type="text/css" href="../addons/{php echo $_GPC['m']}/resource/bootstrap-select/bootstrap-select.min.css" />
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            消费记录
+        </h3>
+    </div>
+    <div class="panel-body">
+        {template 'old/Record/menu'}
+        <div class="ibox-content">
+            <form action="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'count_store','version_id'=>$_GPC['version_id'])}" id="searchform" method="post">
+                <div class="row" style="padding: 0 15px;">
+                    <div class="col-sm-4">
+                        {php echo xc_form_field_daterange('times',$times);}
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-default " style="margin-right:5px;">查询</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <form action="" method="post" class="form-horizontal form">
+            <input type="hidden" name="token" value="{$_W['token']}">
+            <div class="table-responsive panel-body">
+                <table class="table-striped table-bordered table-hover dataTables-example table">
+                    <thead class="navbar-inner">
+                    <tr>
+                        <th>门店</th>
+                        <th>会员充值</th>
+                        <th>余额支付</th>
+                        <th>买单收银</th>
+                        <th>消单</th>
+                        <th>配货消耗</th>
+                        <th>退款</th>
+                        <th>线下收入</th>
+                        <th>线上收入</th>
+                        <th>总计收入</th>
+                    </tr>
+                    </thead>
+                    <tbody id="level-list">
+                    {loop $list $index $item}
+                    <tr>
+                        <td><div class="type-parent">{$item['name']}</div></td>
+                        <td><div class="type-parent">{$item['card_pay']}</div></td>
+                        <td><div class="type-parent">{$item['y_pay']}</div></td>
+                        <td><div class="type-parent">{$item['buy_pay']}</div></td>
+                        <td><div class="type-parent">{$item['set_pay']}</div></td>
+                        <td><div class="type-parent">{$item['service_pay']}</div></td>
+                        <td><div class="type-parent">{$item['tui_pay']}</div></td>
+                        <td><div class="type-parent">{$item['down_pay']}</div></td>
+                        <td><div class="type-parent">{$item['up_pay']}</div></td>
+                        <td><div class="type-parent">{$item['all_pay']}</div></td>
+                    </tr>
+                    {/loop}
+                    <tr>
+                        <td><div class="type-parent">{$amount['name']}</div></td>
+                        <td><div class="type-parent">{$amount['card_pay']}</div></td>
+                        <td><div class="type-parent">{$amount['y_pay']}</div></td>
+                        <td><div class="type-parent">{$amount['buy_pay']}</div></td>
+                        <td><div class="type-parent">{$amount['set_pay']}</div></td>
+                        <td><div class="type-parent">{$amount['service_pay']}</div></td>
+                        <td><div class="type-parent">{$amount['tui_pay']}</div></td>
+                        <td><div class="type-parent">{$amount['down_pay']}</div></td>
+                        <td><div class="type-parent">{$amount['up_pay']}</div></td>
+                        <td><div class="type-parent">{$amount['all_pay']}</div></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div style="text-align: right;">
+                    {$pager}
+                </div>
+            </div>
+        </form>
+
+
+    </div>
+</div>
+{template 'common/footer'}

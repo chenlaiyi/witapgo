@@ -1,0 +1,94 @@
+<div class="main-im">
+    <div id="open_im" class="open-im">&nbsp;</div>
+    <div id="im_main" style="display:none;">
+        {if $_GPC['do']!="login" && $_GPC['do']!="register" && $_GPC['do']!="resetpsd"}
+        <div class="mod_hang_qrcode jdc_feedback_qrcode">
+            <div class="mod_hang_qrcode_btn"><a href="{php echo $this->createWebAppUrl('sys_faq',array('act' => 'index'));}" class="mod_hang_qrcode_btn"><img src="{__WEBAPP_IMG__}/faq.png" width="30" height="30"><span>常见问题</span></a></div>
+        </div>
+        {/if}
+        <div class="mod_hang_appeal">
+            <div class="mod_hang_appeal_btn"><img src="{__WEBAPP_IMG__}/people.png" width="30" height="30"> <span>咨询反馈</span></div>
+            <div class="mod_hang_appeal_show">
+                <ul>
+                    <li><a href="tel:{$config['tel']}" target="_blank">
+                        <div class="icon_box"><img src="{__WEBAPP_IMG__}/tel.png" width="30" height="30"></div>
+                        <div class="text_box">
+                            <h5>人工客服</h5>
+                            <p>联系电话：{$config['tel']}</p>
+                        </div>
+                    </a></li>
+                    <li id="entry"><a href="http://wpa.qq.com/msgrd?v=3&uin={$config['qq']}&site={$GLOBALS['config']['name']}&menu=yes" target="_blank">
+                        <div class="icon_box"><img src="{__WEBAPP_IMG__}/qq.png" width="30" height="30"></div>
+                        <div class="text_box">
+                            <h5>腾讯客服</h5>
+                            <p>7*24 全时处理：{$config['qq']}</p>
+                        </div>
+                    </a></li>
+                    <li><a href="javascript:void(0);" target="_blank" class="f-cb">
+                        <div class="icon_box"><img src="{__WEBAPP_IMG__}/wx.png" width="30" height="30"></div>
+                        <div class="text_box">
+                            <h5>微信客服</h5>
+                            <p>7*24 全时处理 倾耳聆听</p>
+                        </div>
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+        {if !empty($config['wx_qrcode'])}
+        <div class="mod_hang_qrcode jdc_hang_qrcode"><a class="mod_hang_qrcode_btn"><img src="{__WEBAPP_IMG__}/qrcode.png" width="30" height="30"><span>扫码关注</span></a>
+            <div class="mod_hang_qrcode_show">
+                <div class="mod_hang_qrcode_show_bg">
+                    <img src="{php echo tomedia($config['wx_qrcode'])}" width="125"  height="125">
+                </div>
+                <p>官方微信公众号</p>
+            </div>
+        </div>
+        {/if}
+        <div class="mod_hang_qrcode" id="close_im"><a class="mod_hang_qrcode_btn"><img src="{__WEBAPP_IMG__}/close.png" width="30" height="30"><span>关闭帮助</span></a></div>
+    </div>
+</div>
+<script id="servicetpl" type="text/html">
+    <div class="kefu_wechat">
+        <ul>
+            <%for(i = 0; i < rows.length; i ++) {%>
+            <li><img src="<%=rows[i]["qrcode"]%>"><p class="nickname"><%=rows[i]["name"]%></p><p><span class="tel"><%=rows[i]["mobile"]%></span></p></li>
+            <%}%>
+        </ul>
+    </div>
+</script>
+<script>
+    $(function(){
+        $('#close_im').bind('click',function(){
+            $('#main-im').css("height","0");
+            $('#im_main').hide();
+            $('#open_im').show();
+        });
+        $('#open_im').bind('click',function(e){
+            $('#main-im').css("height","272");
+            $('#im_main').show();
+            $(this).hide();
+        });
+
+        $(".f-cb").click(function(){
+            myrequire(['arttemplate'], function (template) {
+                $.ajax({
+                    type: "get",
+                    url: "{php echo $this->createWebAppUrl('sys_service');}",
+                    data: {},
+                    dataType:'json',
+                    success: function (data) {
+                        var html = template("servicetpl",data);
+                        //页面层
+                        layer.open({
+                            type: 1
+                            ,content: html
+                            ,anim: 'up'
+                            ,style: 'position:fixed; bottom:0; left:0; width: 100%;padding:10px 0; border:none;'
+                        });
+                    }
+                });
+            });
+        });
+
+    });
+</script>

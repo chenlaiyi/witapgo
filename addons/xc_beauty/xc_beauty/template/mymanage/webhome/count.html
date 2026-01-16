@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {template 'common/edithead'}
+    <!--微擎 -->
+    <!--这个放在最后一切平白安全-->
+    <style>
+        .float-e-margins{background: #fff;padding: 10px;margin-bottom: 25px;border-top:#e7eaec 2px solid;}
+        .ibox-content{border-top:#eee 1px solid;overflow: hidden;}
+        .ibox-content .stat-percent{float: right;}
+        .count{text-align: center;padding-top: 20px;font-size: 30px;padding-bottom: 10px;}
+        .count p{margin: 0;}
+        .count p:nth-child(1){color: #448ACA;}
+        .count p:nth-child(2){font-size: 20px;}
+        .no-margins{color: #FFB21A;}
+    </style>
+    <script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.canvaswrapper.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.colorhelpers.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.saturated.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.browser.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.drawSeries.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.errorbars.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.uiConstants.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.logaxis.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.symbol.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.flatdata.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.navigate.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.fillbetween.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.stack.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.touchNavigate.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.hover.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.touch.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.time.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.axislabels.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.selection.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.composeImages.js"></script>
+    <script language="javascript" type="text/javascript" src="../addons/{$_GPC['m']}/resource/flot/jquery.flot.legend.js"></script>
+</head>
+<body class="nav-md" style="min-width: 400px">
+<div>
+    <div class="container xc_edit_from" style="background: #f2f2f2;">
+        <div class="main_container" style="overflow-x: hidden;min-height: calc(100vh - 20px);background-color: white;width: 100%;background: #f2f2f2;">
+            <div class="col-md-12 col-xs-12">
+                <div class="row">
+                    <div class="col-md-12 col-xs-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>商城信息</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-md-3 col-xs-3 count">
+                                        <p>{$user}</p>
+                                        <p>用户数</p>
+                                    </div>
+                                    <div class="col-md-3 col-xs-3 count">
+                                        <p>{$service}</p>
+                                        <p>商品数</p>
+                                    </div>
+                                    <div class="col-md-3 col-xs-3 count">
+                                        <p>{$order}</p>
+                                        <p>订单数</p>
+                                    </div>
+                                    <div class="col-md-3 col-xs-3 count">
+                                        <p>{$store}</p>
+                                        <p>门店数</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-xs-4">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>今日新增用户</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <h1 class="no-margins">{$user_today}</h1>
+                                {if $user_prev==0}
+                                <div class="stat-percent font-bold text-info">100% <i class="fa fa-level-up"></i></div>
+                                {else}
+                                {if $user_prev>$user_today}
+                                <div class="stat-percent font-bold text-danger">{php echo round(($user_prev-$user_today)/$user_prev*100,2);}% <i class="fa fa-level-down"></i></div>
+                                {else}
+                                <div class="stat-percent font-bold text-info">{php echo round(($user_today-$user_prev)/$user_prev*100,2);}% <i class="fa fa-level-up"></i></div>
+                                {/if}
+                                {/if}
+                                <small>比昨日新增用户</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-xs-4">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>今日订单</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <h1 class="no-margins">{$order_today}</h1>
+                                {if $order_prev==0}
+                                <div class="stat-percent font-bold text-info">100% <i class="fa fa-level-up"></i></div>
+                                {else}
+                                {if $order_prev>$order_today}
+                                <div class="stat-percent font-bold text-danger">{php echo round(($order_prev-$order_today)/$order_prev*100,2);}% <i class="fa fa-level-down"></i></div>
+                                {else}
+                                <div class="stat-percent font-bold text-info">{php echo round(($order_today-$order_prev)/$order_prev*100,2);}% <i class="fa fa-level-up"></i></div>
+                                {/if}
+                                {/if}
+                                <small>比昨日订单</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-xs-4">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>今日收入</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <h1 class="no-margins">{$amount}</h1>
+                                {if $amount_prev==0}
+                                <div class="stat-percent font-bold text-info">100% <i class="fa fa-level-up"></i></div>
+                                {else}
+                                {if $amount_prev>$amount}
+                                <div class="stat-percent font-bold text-danger">{php echo round(($amount_prev-$amount)/$amount_prev*100,2);}% <i class="fa fa-level-down"></i></div>
+                                {else}
+                                <div class="stat-percent font-bold text-info">{php echo round(($amount-$amount_prev)/$amount_prev*100,2);}% <i class="fa fa-level-up"></i></div>
+                                {/if}
+                                {/if}
+                                <small>比昨日收入</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-xs-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>近七日收入</h5>
+                            </div>
+                            <div class="ibox-content" style="padding-top: 20px;">
+                                <div id="placeholder" style="width: 100%;height: 400px;position: relative;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{template 'common/editfoot'}
+<script>
+    var arr ={$arr};
+    var oilprices ={$oilprices};
+    $.plot("#placeholder", [oilprices],{xaxis :{ticks : arr}});
+</script>
+</body>
+</html>

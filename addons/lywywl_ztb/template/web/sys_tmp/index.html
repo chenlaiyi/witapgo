@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">模板</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="">数据列表</a></li>
+                            <li><a href="javascript:;" id="btn_sync">可同步模板（{$total}）</a></li>
+                            <li><a href="javascript:;" id="btn_add" data-url="{php echo $this->createWebUrl('sys_tmp', array('act' => 'modify'));}">创建自定义模板</a></li>
+                            <li><a href="javascript:;" id="btn_update">可更新资源文件（缺少：{php echo count($addFileArr)} 更新：{php echo count($updateFileArr)}）</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchTypes" class="col-sm-1 control-label">模板分类</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchTypes">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $objList $type}
+                                                    <option value="{$type['id']}">{$type['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchFestival">适用节日</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchFestival">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $festivalList $festival}
+                                                    <option value="{$festival['id']}">{$festival['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchIndustry">适用行业</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchIndustry">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $industryList $industry}
+                                                    <option value="{$industry['id']}">{$industry['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchStatus" class="col-sm-1 control-label">模板状态</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchStatus">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="1">启用</option>
+                                                    <option value="0">禁用</option>
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchToken">案例设置</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchToken">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="1">已设置</option>
+                                                    <option value="0">未设置</option>
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchBogus">数据伪造</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchBogus">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="1">已设置</option>
+                                                    <option value="0">未设置</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchActivityType" class=" col-sm-1 control-label">活动类别</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchActivityType">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $activityTypes $index $activity}
+                                                    <option value="{$index}">{$activity}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索</button>
+                                            <button id="btn_reset" type="button" class="btn btn-sm btn-danger">同步数据</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="table-responsive">
+                                <ul class="mailbox-attachments clearfix" id="box" >
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script id="temptpl" type="text/html">
+    <%for(i = 0; i < rows.length; i ++) {%>
+    <li style="overflow: hidden; height:275px ;"><em><%=rows[i]["activity_types"]%></em>
+        <span class="mailbox-attachment-icon"><img src='<%=rows[i]["thumb_url"]%>' width="100%" height="100%" onerror="this.src='{__IMG__}/nopic.png';this.onerror=null"></span>
+        <div class="mailbox-attachment-info">
+            <a href="{php echo $this->createWebUrl('obj_activity', array('act' => 'index'));}&tmp_id=<%=rows[i]["tid"]%>" class="mailbox-attachment-name" style="height: 14px; overflow: hidden; display: inline-block; text-overflow: ellipsis; white-space: nowrap; width: 100%;" ><i class="fa fa-circle"></i> <%=rows[i]["name"]%></a>
+            <span class="mailbox-attachment-size">
+                          <%=rows[i]["use_num"]%> / <span id="bogusshow<%=rows[i]["id"]%>"><%=rows[i]["bogus_num"]%></span>
+                <div class="btn-group pull-right">
+                    <button type="button" class="btn btn-info btn-xs btn-flat" onclick="javascrtpt:window.location.href='{php echo $this->createWebUrl('obj_activity', array('act' => 'index'));}&tmp_id=<%=rows[i]["tid"]%>'"><i class="fa fa-reorder"></i></button>
+                    <button type="button" class="btn btn-info btn-xs btn-flat tmpbogus" id="bogus<%=rows[i]["id"]%>" data-id="<%=rows[i]["id"]%>" data-bogus="<%=rows[i]["bogus_num"]%>" data-token="<%=rows[i]["token"]%>"><i class="fa fa-gear"></i></button>
+                    <button type="button" class="btn btn-info btn-xs btn-flat tmpstatus" id="status<%=rows[i]["id"]%>" data-id="<%=rows[i]["id"]%>" data-status="<%=rows[i]["status"]%>">
+                    <%if(rows[i]["status"]==1) {%>
+                    <i class="fa fa-eye"></i>
+                    <%}else{%>
+                    <i class="fa fa-eye-slash"></i>
+                    <%}%>
+                    </button>
+                    <%if(rows[i]["types"]==1) {%>
+                    <a href="{php echo $this->createWebUrl('sys_tmp', array('act' => 'modify'));}&id=<%=rows[i]["tid"]%>" class="btn btn-info btn-xs btn-flat"><i class="fa fa-edit"></i></a>
+                    <button type="button" class="btn btn-info btn-xs btn-flat tmpdel" data-id="<%=rows[i]["tid"]%>" ><i class="fa fa-trash"></i></button>
+                    <%}%>
+                </div>
+             </span>
+        </div>
+    </li>
+    <%}%>
+</script>
+<script id="bogustpl" type="text/html">
+    <form class="form-horizontal" name="form_content" id="form_content" method="post">
+        <div class=link-modal>
+            <div class="form-group">
+                <label for="edit_token" class="col-sm-2 control-label">活动案例设置</label>
+                <div class="col-sm-10">
+                    <input class="form-control" id="edit_token" maxlength="50" placeholder="请输入案例活动的唯一标识TOKEN！" type="text" value="<%=token%>"/>
+                    <p class="help-block"><strong class="text-danger">提示：</strong> 请点击活动操作菜单，将连接地址中的<code>TOKEN</code>传参填写至此处</p>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0px;">
+                <label for="edit_bogus_num" class="col-sm-2 control-label">伪造使用数量</label>
+                <div class="col-sm-10">
+                    <input class="form-control" id="edit_bogus_num" maxlength="10" placeholder="请输入需要伪造的商家使用数量！" type="text" value="<%=bogus%>"/>
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<script id="updatetpl" type="text/html">
+    <div style="text-align: center;">
+        <canvas id="myCanvas" width="256" height="256">您的浏览器不支持canvas！</canvas>
+    </div>
+    <div style="color:#828a8e;font-size: 14px;">
+        <p>全部文件：<span id="totalFiles">0/0</span></p>
+        <p>正在下载：<span id="currentFile">未开始</span></p>
+        <p>温馨提示：更新过程中请不要关闭当前页面</p>
+    </div>
+    <ul id="reslist" style="display: none;">
+        {loop $addFileArr $item}
+        <li data-path="{$item}" data-status="0"><span class="text-red">[缺少]</span>{$item}<em class="text-green" style="display: none;margin-left: 10px;">[下载中……]</em></li>
+        {/loop}
+        {loop $updateFileArr $item}
+        <li data-path="{$item}" data-status="0"><span class="text-red">[更新]</span>{$item}<em class="text-green" style="display: none;margin-left: 10px;">[下载中……]</em></li>
+        {/loop}
+    </ul>
+</script>
+<script>
+    $(function () {
+        SelectNav("模板列表");
+
+        //x,y 坐标,radius 半径,process 百分比,backColor 中心颜色, proColor 进度颜色, fontColor 中心文字颜色
+        function DrowProcess(x,y,radius,process,backColor,proColor,fontColor){
+            var canvas = document.getElementById('myCanvas');
+            if (canvas.getContext) {
+                var cts = canvas.getContext('2d');
+            }else{
+                return;
+            }
+
+            cts.beginPath();
+            // 坐标移动到圆心
+            cts.moveTo(x, y);
+            // 画圆,圆心是24,24,半径24,从角度0开始,画到2PI结束,最后一个参数是方向顺时针还是逆时针
+            cts.arc(x, y, radius, 0, Math.PI * 2, true);
+            cts.closePath();
+            // 填充颜色
+            cts.fillStyle = backColor;
+            cts.fill();
+
+            cts.beginPath();
+            // 画扇形的时候这步很重要,画笔不在圆心画出来的不是扇形
+            cts.moveTo(x, y);
+            // 跟上面的圆唯一的区别在这里,不画满圆,画个扇形
+            if(process == 0){
+                cts.arc(x, y, radius, Math.PI * 1.5, Math.PI * 1.5, false);
+            } else if(process >= 100){
+                cts.arc(x, y, radius, 0, Math.PI * 2, false);
+            } else {
+                cts.arc(x, y, radius, Math.PI * 1.5, Math.PI * 1.5 -  Math.PI * 2 * (100 - process) / 100, false);
+            }
+            cts.closePath();
+            cts.fillStyle = proColor;
+            cts.fill();
+
+            //填充背景白色
+            cts.beginPath();
+            cts.moveTo(x, y);
+            cts.arc(x, y, radius - (radius * 0.26), 0, Math.PI * 2, true);
+            cts.closePath();
+            cts.fillStyle = 'rgba(255,255,255,1)';
+            cts.fill();
+
+            // 画一条线
+            cts.beginPath();
+            cts.arc(x, y, radius-(radius*0.30), 0, Math.PI * 2, true);
+            cts.closePath();
+            // 与画实心圆的区别,fill是填充,stroke是画线
+            cts.strokeStyle = backColor;
+            cts.stroke();
+
+            //在中间写字
+            cts.font = "36pt Arial";
+            cts.fillStyle = fontColor;
+            cts.textAlign = 'center';
+            cts.textBaseline = 'middle';
+            cts.moveTo(x, y);
+            cts.fillText(process+"%", x, y);
+        }
+
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            $(".select2").select2();
+            myrequire([ 'arttemplate'], function (template) {
+
+                LoadData();
+
+                //加载数据
+                function LoadData() {
+                    $("#box").html("<div class='load-down'><div class='load-load'><span class='loading'></span>模板数据加载中...</div></div>");
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebUrl('sys_tmp', array('act' => 'getJsonList'));}",
+						dataType: "json",
+                        data:
+                        {
+                            obj_types: $("#SearchTypes").val(),
+                            festival: $("#SearchFestival").val(),
+                            industry: $("#SearchIndustry").val(),
+                            status: $("#SearchStatus").val(),
+                            bogus: $("#SearchBogus").val(),
+                            token: $("#SearchToken").val(),
+                            activityType: $("#SearchActivityType").val()
+                        },
+                        success: function (data) {
+                            var html = template("temptpl", data);
+                            $("#box").html(html);
+                        }
+                    });
+                }
+
+                //模板筛选
+                $("#btn_query").click(function () {
+                    LoadData();
+                });
+
+                //同步数据
+                $("#btn_sync").click(function(){$("#btn_reset").click();});
+                $("#btn_reset").click(function () {
+                    $.ajax({
+                        type: "post",
+						dataType: "json",
+                        url: "{php echo $this->createWebUrl('sys_tmp', array('act' => 'syncData'));}",
+                        data: {},
+                        success: function (data) {
+                            if (data.status == 1) {
+                                Command: toastr["success"](data.msg, "成功提示");
+                                LoadData();
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                });
+
+                //添加模板
+                $("#btn_add").click(function(){
+                    var url = $(this).data("url");
+                    layer.open({
+                        content: '<div style="text-align:left;max-height: 300px;overflow-y: auto;">创建自定义模板可以参考已有系统模板进行设计。</div>'
+                        ,btn: ['确定并创建']
+                        ,yes: function(index){
+                            window.location.href = url;
+                            layer.close(index);
+                        }
+                    });
+                });
+
+                //更新模板资源
+                $("#btn_update").click(function(){
+                    /*{if count($addFileArr)+count($updateFileArr)>0 }*/
+                    var html = template("updatetpl",{});
+                    require(["jquery", "util"], function(){
+                        var footer = '<button type="button" class="btn btn-primary" id="updateBtn">更新</button> <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>';
+                        var modalobj = util.dialog('更新资源文件',html ,footer,{containerName:'fedex-container'});
+                        modalobj.modal({'backdrop': false,'keyboard': true});
+                        modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                        modalobj.modal('show');
+                        DrowProcess(128,128,128,0,'#ddd','#00c0ef','#00acd6');
+                        var all = $("#fedex-container #reslist li").length;
+                        $("#totalFiles").text(all + " / 0");
+                    });
+                    /*{else}*/
+                    layer.open({
+                        content: '没有可更新资源文件！'
+                        ,btn: '我知道了'
+                    });
+                    /*{/if}*/
+                });
+                /*{if count($addFileArr)+count($updateFileArr)>0 }*/
+                //提示更新资源文件
+                $("#btn_update").click();
+                /*{/if}*/
+                $(document).on('click','#updateBtn',function () {
+                    $("#updateBtn").attr('disabled',true).text('正在更新…');
+                    updateRes();
+                });
+                function updateRes(){
+                    var li = $("#fedex-container #reslist li[data-status='0']");
+                    var total = $("#fedex-container #reslist li").length;
+                    var success = $("#fedex-container #reslist li[data-status='1']").length;
+                    var error = $("#fedex-container #reslist li[data-status='-1']").length;
+                    DrowProcess(128,128,128,((success*100)/total).toFixed(0),'#ddd','#00c0ef','#00acd6');
+                    $("#totalFiles").text(total + " / " + success);
+                    $("#currentFile").text(li.eq(0).data("path"));
+
+                    if(li.length == 0){
+                        $("#updateBtn").attr('disabled',false).text('更新');
+                        $("#fedex-container").modal('hide');
+                        var text = '';
+                        if(success > 0){
+                            text += '更新'+success+'个文件';
+                        }
+                        if(error > 0){
+                            text += (text == '' ? '':'、')+'失败'+error+'个文件（请检查相关目录是否有读写权限）';
+                        }
+                        setTimeout(function () {
+                            window.location.reload();
+                        },2000);
+                        layer.open({
+                            content: text
+                            ,btn: '我知道了'
+                        });
+                    }else{
+                        $.ajax({
+                            type: "post",
+                            dataType: "json",
+                            url: "{php echo $this->createWebUrl('sys_tmp', array('act' => 'update'));}",
+                            data: {path: li.eq(0).data('path')},
+                            beforeSend: function(){
+                                li.eq(0).find('em').show();
+                            },
+                            success: function (data) {
+                                if (data.status == 1) {
+                                    li.eq(0).attr('data-status','1').find('em').text('[已完成]');
+                                } else {
+                                    li.eq(0).attr('data-status','-1').find('em').text('[出错了]').removeClass('text-green').addClass('text-red');
+                                }
+                                setTimeout(updateRes,100);
+                            },
+                            error: function(){
+                                Command: toastr["error"]("请求错误，请重试！", "错误提示");
+                            }
+                        });
+                    }
+                }
+
+                //删除模板
+                $(document).on("click", ".tmpdel", function(){
+                    var id = $(this).data("id");
+                    //询问框
+                    layer.open({
+                        content: '你确定要删除吗？'
+                        , btn: ['确定', '取消']
+                        , yes: function (index) {
+                            $.ajax({
+                                type: "post",
+								dataType: "json",
+                                url: "{php echo $this->createWebUrl('sys_tmp', array('act' => 'del'));}",
+                                data: {'id':id},
+                                success: function (data) {
+                                    if (data.status == 1) {
+                                        Command: toastr["success"](data.msg, "成功提示");
+                                        LoadData();
+                                    }
+                                    else {
+                                        Command: toastr["error"](data.msg, "错误提示");
+                                    }
+                                }
+                            });
+                            layer.close(index);
+                        }
+                    });
+                });
+
+                //修改状态
+                $(document).on("click", ".tmpstatus", function(){
+                    var id = $(this).data("id");
+                    var status = $(this).data("status")==1 ? 0 : 1;
+                    $.ajax({
+                        type: "post",
+						dataType: "json",
+                        url: "{php echo $this->createWebUrl('sys_tmp', array('act' => 'setStatus'));}",
+                        data: {'id':id,'status':status},
+                        success: function (data) {
+                            if (data.status == 1) {
+                                Command: toastr["success"](data.msg, "成功提示");
+                                if(status==0)
+                                {
+                                    $("#status"+id).html("<i class='fa fa-eye-slash'></i>");
+                                    $("#status"+id).data("status", 0);
+                                }
+                                else
+                                {
+                                    $("#status"+id).html("<i class='fa fa-eye'></i>");
+                                    $("#status"+id).data("status", 1);
+                                }
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                });
+
+                //修改设置
+                $(document).on("click", ".tmpbogus", function(){
+                    var id = $(this).data("id");
+                    var bogus = $(this).data("bogus");
+                    var token = $(this).data("token");
+                    var dataArr = {
+                        bogus : bogus,
+                        token:token
+                    };
+                    var bogusHtml = template("bogustpl", dataArr);
+
+                    require(["jquery", "util"], function(){
+                        var footer = '<button type="button" class="btn btn-default" data-dismiss="modal" id="bogusBtn" data-id="'+ id +'">确认</button> <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                        var modalobj = util.dialog('活动参数设置',bogusHtml ,footer,{containerName:'fedex-container'});
+                        modalobj.modal({'keyboard': true});
+                        modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                        modalobj.modal('show');
+                    });
+                });
+
+                //保存设置
+                $(document).delegate("#bogusBtn", "click", function() {
+                    var bogus_num=$("#edit_bogus_num").val();
+                    var token=$("#edit_token").val();
+                    var bogus_id = $(this).data("id");
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebUrl('sys_tmp', array('act' => 'bogusData'));}",
+                        data: {
+                            id: bogus_id,
+                            bogus_num: bogus_num,
+                            token: token
+                        },
+                        dataType:'json',
+                        success: function (data, status) {
+                            if (data.status == 1) {
+                                Command: toastr["success"](data.msg, "成功提示");
+                                $("#bogusshow"+bogus_id).html(bogus_num);
+                                $("#bogus"+bogus_id).data('token',token);
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                });
+
+            });
+        });
+    });
+</script>
+</body>
+</html>

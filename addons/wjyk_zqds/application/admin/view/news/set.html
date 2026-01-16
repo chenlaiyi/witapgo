@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>系统设置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+    <style>
+		.layui-form-label{
+			width:145px;
+        }
+		.layui-input-block{
+			margin-left:175px;
+		}
+        form{
+            padding-right:15px ;
+        }
+    </style>
+</head>
+<body>
+<form class="layui-form" style="margin-top:21px;">	<div class="layui-form-item">	<label class="layui-form-label">AppId</label>	<div class="layui-input-block">		<input type="text" name="appid" autocomplete="off" class="layui-input" value="{$set['appid']}">	</div>  </div>  <div class="layui-form-item">	<label class="layui-form-label">AppSecret</label>	<div class="layui-input-block">		<input type="text" name="appsecret" autocomplete="off" class="layui-input" value="{$set['appsecret']}">	</div>  </div>	<div class="layui-form-item">    <div class="layui-inline">      <label class="layui-form-label">看新闻可得{$name}</label>      <div class="layui-input-inline" style="width: 100px;">        <input type="text" name="min_integral"  autocomplete="off" class="layui-input" value="{$set['min_integral']}">      </div>      <div class="layui-form-mid">   -</div>      <div class="layui-input-inline" style="width: 100px;">        <input type="text" name="max_integral"  autocomplete="off" class="layui-input" value="{$set['max_integral']}">      </div>      <div class="layui-form-mid"> 可得{$name}范围（最小值-最大值）</div>    </div>  </div>    <div class="layui-form-item">    <label class="layui-form-label">看新闻时间</label>    <div class="layui-input-inline">        <input type="number" name="news_time" required lay-verify="required" autocomplete="off" class="layui-input" value="{$set['news_time']}">    </div>    <div class="layui-form-mid"> 观看新闻到指定时间后可获得奖励，单位（秒）</div>  </div>
+  <div class="layui-form-item">
+      <label class="layui-form-label">看新闻详情图</label>
+      <button type="button" class="layui-btn" id="test1">上传图片</button>      <div class="layui-form-mid layui-word-aux">建议上传88px * 106px尺寸</div>
+      <div class="layui-input-block">
+          <img class="layui-upload-img" id="demo1" style="margin-top: 10px;width: 88px;height: 106px;" {if $set['detail_pic']==''}{else}src="{$set['detail_pic']}"{/if}">
+          <input type="hidden" name="detail_pic" id="detail_pic" value="{$set['detail_pic']}">
+      </div>
+  </div>    <div class="layui-form-item">      <label class="layui-form-label">看新闻结束背景图</label>      <button type="button" class="layui-btn" id="test2">上传图片</button>      <div class="layui-form-mid layui-word-aux">建议上传354px * 356px尺寸</div>      <div class="layui-input-block">          <img class="layui-upload-img" id="demo2" style="margin-top: 10px;width: 354px;height: 356px;" {if $set['end_pic']==''}{else}src="{$set['end_pic']}"{/if}">          <input type="hidden" name="end_pic" id="end_pic" value="{$set['end_pic']}">      </div>  </div>      
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit lay-filter="demo1">立即提交</button>
+    </div>
+  </div>
+  <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+<div class="layui-footer" style="position:absolute;bottom:0;text-align:center;width:100%">	{include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}
+</div>
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script>
+	layui.config({
+	    base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+	}).extend({
+	    index: 'lib/index' //主入口模块
+	}).use(['jquery','layer', 'index', 'table','upload'], function(){
+		var $ = layui.$
+		, layer = layui.layer
+	    , table = layui.table
+	    , form = layui.form
+	    , upload = layui.upload;
+
+		
+		upload.render({
+            elem: '#test1'            	,exts: 'jpg|png|jpeg|gif'
+            ,url: "{:siteUrl('admin/index/upload','','web')}" 
+            ,done: function(res){
+                if(res.code < 0){
+                    return layer.msg('上传失败');
+                }else{
+                    $('#demo1').attr('src', res.msg); 
+                    $('#detail_pic').val(res.msg);
+                }
+            }
+        });
+		
+		upload.render({
+            elem: '#test2'            	,exts: 'jpg|png|jpeg|gif'
+            ,url: "{:siteUrl('admin/index/upload','','web')}" 
+            ,done: function(res){
+
+                if(res.code < 0){
+                    return layer.msg('上传失败');
+                }else{
+                    $('#demo2').attr('src', res.msg); 
+                    $('#end_pic').val(res.msg);
+                }
+            }
+        });			
+        form.on('submit(demo1)', function(data){
+            var admin = layui.admin
+            admin.req({
+                url:"{:siteUrl('admin/news/set_news','','web')}",
+                data:data.field,
+                type:"POST",
+                done:res=>{
+                    if(res.code == 0 ){
+                		layer.msg("设置成功");
+                	}
+                }
+            })
+            return false
+        });
+
+    });
+</script>
+</body>
+</html>

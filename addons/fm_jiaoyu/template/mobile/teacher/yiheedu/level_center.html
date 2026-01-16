@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="no">
+<meta name="format-detection" content="telephone=no">
+<link type="text/css" rel="stylesheet" href="{OSSURL}public/web/font-awesome5pro/css/all.min.css" />
+<script type="text/javascript" src="{MODULE_URL}public/mobile/js/autofitui.js?v=1.0.0"></script>
+<script type="text/javascript" src="{MODULE_URL}public/mobile/js/jquery-1.11.3.min.js?v=4.8"></script>
+<title>{$school['title']}</title>
+<style>
+
+    html body{width: 100%;height: 100%;background-color: #efefef;padding:0;margin: 0;  }
+    html body *{box-sizing: border-box;}
+
+    .levelTitle{ padding: 5px; }
+    .level_box{ display: inline-block; line-height: 20px; width: 100%; border: 1px solid #ccc; border-radius: 5px; background-color: #f5f5f5; }
+    .level_box2{ display: inline-block; line-height: 20px; width: 100%; border: 1px solid #ccc; border-radius: 10px; background-color: #f5f5f5; }
+    .level_box2 .avatar{ margin-left: 60px; }
+    .level_box3{ display: inline-block; line-height: 20px; width: 100%; border: 1px solid #ccc; border-radius: 10px; background-color: #f5f5f5; }
+    .level_box3 .avatar{ margin-left: 100px; }
+    .nickname{ padding: 10px; float: left;margin-left: 10px; }
+    .avatar{ float: left; width: 40px; height: 40px; border-radius: 50%; margin-left: 20px; }
+    .looknext{ float: right; margin-right: 20px; padding: 10px; font-size: 12px; }
+    .top-info-box{width:calc(100% - 20px);background-color: #509ff1;margin: 10px;border-radius: 5px;padding: 10px;}
+    .kcinfo-box{display: flex;align-items: center;}
+    .kcthumb{ width: 60px;height: 60px;background-color: #fff;border-radius: 50%}
+    .kcname-time{margin-left: 10px;display: flex;flex-direction: column;flex:1;overflow: auto;}
+    .kcname{line-height: 30px;font-size: 18px;color:white;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100%;}
+    .kc-extra-info{line-height: 20px;color:#efefef;font-size: 14px;display: flex;}
+    .kc-type{background-color: #ff5f5f;padding: 0px 5px;font-size: 12px;border-radius: 5px;margin-right: 5px;}
+
+    .promoter{background-color: white;width: 100%;display: flex;padding: 10px;align-items: center;color:#2b2b2b;margin-top: 10px;border-bottom: 1px solid #efefef;}
+    .log-thumb{width: 40px;height: 40px;background-color: red;}
+    .log-text-box{flex:1;padding-left:10px;}
+    .log-name-time{display: flex;align-items: center;margin: 5px 0;}
+    .log-name-time .name{font-size: 16px;margin-right: 20px;}
+    .log-name-time .time{font-size: 12px;color:gray}
+
+    .promoter-thumb{width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ccc;}
+    .child-in-child{--lineColor:#efefef;padding-left: 20px;width: 100%;position: relative;}
+    .child-in-child:before{content:"";border-left: 1px solid var(--lineColor);height:100%;position: absolute;left: 10px;}
+    .child-in-child:after{content:"";border-bottom: 1px solid var(--lineColor);width: 10px;position: absolute;left: 10px;top:36px}
+    .child-in-child:last-of-type:before{height: 36px;}
+    .inchild{margin-top: 0;padding-left: 5px;}
+    .child-promoter{width: 100%;background-color: white;padding-left: 15px;display: none;}
+    .jointime-box{font-size: 14px;color:gray;display: flex;justify-content: space-between;}
+    .anlz-box{flex:1;color: gray;font-size: 14px;}
+    .show-child-btn{color:#4384fd;font-size: 13px;}
+    .show-child-btn i{transition: all .15s;}
+    .show-child-btn.inshow i{transform: rotate(180deg);}
+</style>
+</head>
+<body>
+    <div class="top-info-box default-boxshadow">
+        <div class="kcinfo-box">
+            <div>
+                <img src="{php echo tomedia($kc['thumb'])}" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ccc;">
+            </div>
+            <div class="kcname-time">
+                <div class="kcname">{$kc['name']}</div>
+                <div class="kc-extra-info">
+                    <span class="kc-type" >{$kc['kc_type']}</span>
+                    <span>{$kc['start']} - {$kc['end']}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 我的上级 -->
+    {if $mySuperior['tname']}
+    <div class="levelTitle">我的上级</div>
+    <div class="promoter">
+        <div>
+            <img class="promoter-thumb" src="{php echo tomedia($mySuperior['thumb'])}">
+        </div>
+        <div class="log-text-box">
+            <div class="log-name-time">
+                <div class="name">{$mySuperior['tname']}</div>
+            </div>
+            <div style="font-size: 14px;color:gray">
+                <span > 2020/01/01 加入</span>
+            </div>
+        </div>
+    </div>
+    {/if}
+
+    <!-- 我的下级 -->
+    {if $show_level >0}
+    <div class="levelTitle">我的下级</div>
+        {if count($myChildList) > 0} 
+        {loop $myChildList $child}
+        <div class="promoter-tree" style="width: 100%;" onclick="lookMyFans(`{$child['son_id']}`,`{$_GPC['kc_id']}`)">
+            <div class="promoter">
+                <div>
+                    <img src="{php echo tomedia($mySuperior['thumb'])}" class="promoter-thumb">
+                </div>
+                <div class="log-text-box">
+                    <div class="log-name-time">
+                        <div class="name">{$child['tname']}</div>
+                        <div class="anlz-box">
+                           成功  <span style="color:#4fa984;">{$child['success']}</span> 次,失败 <span  style="color:#ec6565">{$child['fail']}</span> 次
+                        </div>
+                    </div>
+                    <div class="jointime-box">
+                        <span>{php echo date("Y/m/d",$child['createtime'])} 加入</span>
+                        {if count($child['child']) > 0}
+                        <span class="show-child-btn" onclick="SwitchChildTree(this)">查看下级 <i class="fas fa-angle-down"></i> </span>
+                        {/if}
+                    </div>
+                </div>
+            </div>
+            {if count($child['child']) > 0}
+            <div class="child-promoter">
+                {loop $child['child'] $child2nd}
+                <div class="child-in-child promoter-tree" onclick="lookMyFans(`{$child2nd['son_id']}`,`{$_GPC['kc_id']}`)">
+                    <div class="promoter inchild">
+                        <div>
+                            <img src="{php echo tomedia($child2nd['thumb'])}" class="promoter-thumb">
+                        </div>
+                        <div class="log-text-box">
+                            <div class="log-name-time">
+                                <div class="name">{$child2nd['tname']}</div>
+                                <div class="anlz-box">
+                                   成功 <span style="color:#4fa984;">{$child2nd['success']}</span> 次,失败 <span  style="color:#ec6565">{$child2nd['fail']}</span> 次
+                                </div>
+                            </div>
+                            <div class="jointime-box">
+                                <span>{php echo date("Y/m/d",$child2nd['createtime'])} 加入</span>
+                                {if count($child2nd['child']) > 0}
+                                <span class="show-child-btn" onclick="SwitchChildTree(this)">查看下级 <i class="fas fa-angle-down"></i> </span>
+                                {/if}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="child-promoter"> 
+                        {loop $child2nd['child'] $child3rd}
+                    
+                        <div class="child-in-child promoter-tree" onclick="lookMyFans(`{$child3rd['son_id']}`,`{$_GPC['kc_id']}`)">
+                            <div class="promoter inchild">
+                                <div>
+                                    <img src="{php echo tomedia($child3rd['thumb'])}" class="promoter-thumb">
+                                </div>
+                                <div class="log-text-box">
+                                    <div class="log-name-time">
+                                        <div class="name">{$child3rd['tname']}</div>
+                                        <div class="anlz-box">
+                                        成功 <span style="color:#4fa984;">{$child3rd['success']}</span> 次,失败 <span  style="color:#ec6565">{$child3rd['fail']}</span> 次
+                                        </div>
+                                    </div>
+                                    <div class="jointime-box">
+                                        <span>{php echo date("Y/m/d",$child3rd['createtime'])} 加入</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {/loop}
+                    </div> 
+                </div>
+            {/loop}
+            </div>
+            {/if}
+        </div>
+        {/loop}
+        {else}
+         <div style="width: 100%;line-height: 30px;color:gray;text-align: center;" >
+            您目前没有下级
+         </div>
+        {/if}
+    {/if}
+    
+   
+
+<script>
+
+    function SwitchChildTree(e){
+        const target = $(e).parents(".promoter-tree")[0] 
+        if($(e).hasClass("inshow"))
+        {
+            $(target).find(".child-promoter").slideUp(150)
+            $(target).find(".show-child-btn").removeClass("inshow")
+            $(e).removeClass("inshow")
+        }
+        else{
+            $(target).children(".child-promoter").slideDown(150)
+            $(e).addClass("inshow")
+        }
+       
+        e = window.event;
+		e.stopPropagation();
+		e.preventDefault();
+    }
+
+    function lookMyFans(pu_id,kc_id){
+        e = window.event;
+		e.stopPropagation();
+		e.preventDefault();
+        location.href = "{php echo $this->createMobileUrl('myfans', array('schoolid' => $schoolid))}&pu_id="+pu_id+'&kc_id='+kc_id;
+    }
+    function lookLevel(level){
+        if(level == 2){
+            $(`#showLevel_2`).slideToggle()
+            $(`#showLevel_3`).slideUp()
+        }else{
+            $(`#showLevel_3`).slideToggle()
+        }
+    }
+</script>
+
+</body>
+</html>

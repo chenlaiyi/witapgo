@@ -1,0 +1,97 @@
+<header class="main-header">
+    <a href="{php echo $this->createWebAppUrl('home');}" class="logo">
+        <!-- 系统32*32LOGO -->
+        <span class="logo-mini"><img src="{if !empty($GLOBALS['config']['logo_small'])}{php echo tomedia($GLOBALS['config']['logo_small'])}{else}{__WEBAPP_IMG__}/smalllogo.png{/if}" width="28" height="28"
+                                     alt="{php echo $_W['uniaccount']['name']}"
+                                     title="{php echo $_W['uniaccount']['name']}"></span>
+        <!-- 系统200*32LOGO -->
+        <span class="logo-lg"><img src="{if !empty($GLOBALS['config']['logo_big'])}{php echo tomedia($GLOBALS['config']['logo_big'])}{else}{__WEBAPP_IMG__}/logo.png{/if}" width="110" height="28"
+                                   alt="{php echo $_W['uniaccount']['name']}"
+                                   title="{php echo $_W['uniaccount']['name']}"></span>
+    </a>
+
+    <nav class="navbar navbar-static-top" role="navigation">
+        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">切换导航</span>
+        </a>
+        <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+                <!-- 移动终端 -->
+                <li class="dropdown notifications-menu">
+                    <a href="#" id="mobileQrPreview_btn" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-phone"></i></a>
+                    <ul class="dropdown-menu">
+                        <li class="header" style="text-align: center;">打开微信扫一扫 手机同步管理</li>
+                        <li>
+                            <ul class="menu">
+                                    <img src="" data-src="{php echo $this->createWebAppUrl('home', array('act' => 'mobileQrPreview'));}" id="mobileQrPreview_img" width="200" height="200" style="margin-left: 20px; margin-top: 20px;">
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <!-- 可用余额 -->
+                <li>
+                    <a href="{php echo $this->createWebAppUrl('store_recharge');}"><i class="fa fa-cny"></i> {$store['money']}元</a>
+                </li>
+                <!-- 可用短信 -->
+                <li style="display: {if $config['sms_obj']!=1}none{/if};">
+                    <a href="{php echo $this->createWebAppUrl('sys_sms');}"><i class="fa fa-envelope"></i> {$store['sms']} 短信</a>
+                </li>
+                <!-- 管理员信息 -->
+                <li class="dropdown user user-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="商户信息">
+                        <img src="{if !empty($_W['store_user']['headurl'])}{php echo tomedia($_W['store_user']['headurl'])}{else}{php echo tomedia($config['store_head'])}{/if}" class="user-image" alt="{$store['name']}">
+                        <span class="hidden-xs">{$store['name']}</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="user-header">
+                            <img src="{if !empty($_W['store_user']['headurl'])}{php echo tomedia($_W['store_user']['headurl'])}{else}{php echo tomedia($config['store_head'])}{/if}" class="img-circle" alt="{$store['name']}">
+                            <p>
+                                {if $store['is_vip'] == 1}
+                                <span>{$store['name']}</span>
+                                {else}
+                                <span>{$store['name']}</span>
+                                {/if}
+                                <small>到期时间：{php echo date('Y-m-d H:i:s',$store['endtime'])}</small>
+                            </p>
+                        </li>
+                        <li class="user-body">
+                            <div>
+                                <small>
+                                    账户注册时间：<?php echo date('Y-m-d H:i:s',$store['createtime']) ?> <br/>
+                                    上次登录地址：{$store['loginip']}<br/>
+                                    上次登录时间：<?php echo date('Y-m-d H:i:s',$store['logintime']) ?> <br/>
+                                </small>
+                            </div>
+                        </li>
+                        <li class="user-footer">
+                            <div class="pull-left">
+                                <a href="{php echo $this->createWebAppUrl('store_account',array('act' => 'modify_pwd'));}" class="btn btn-default btn-flat">
+                                    <i class="fa   fa-expeditedssl"></i>
+                                    账户安全
+                                </a>
+                            </div>
+                            <div class="pull-right">
+                                <a href="{php echo $this->createWebAppUrl('login',array('act' => 'loginout'));}" class="btn btn-default btn-flat">
+                                    <i class="fa  fa-power-off"></i>
+                                    退出系统
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <!-- 系统设置 -->
+                <li>
+                    <a href="{php echo $this->createWebAppUrl('store_account', array('act' => 'index'));}" title="商户配置"><i class="fa fa-gear"></i></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<script>
+    $("#mobileQrPreview_btn").click(function(){
+        if(!$(this).parent().hasClass("open"))
+        {
+            $("#mobileQrPreview_img").attr("src",$("#mobileQrPreview_img").data('src'));
+        }
+    });
+</script>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{$school['title']}</title>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes" />
+<link type="text/css" rel="stylesheet" href="{OSSURL}public/mobile/css/bindingFormFor.css" />
+<link type="text/css" rel="stylesheet" href="{OSSURL}public/mobile/css/greenStyle.css?v=4.60120" />
+{php echo register_jssdks();}
+<script type="text/javascript" src="{MODULE_URL}public/mobile/js/jquery-1.11.3.min.js?v=4.6"></script>
+<script type="text/javascript" src="{MODULE_URL}public/mobile/js/remaster.main.js"></script>
+{php include $this->template('port');}
+<style>
+#birthday{border-bottom:1px solid #c6c6c6;position:relative;display:block;height:30px;line-height:30px;opacity:1;}
+#selMonth{margin-left:-40px;position:relative;z-index:10;opacity:0;}
+.item-button{position: absolute;right: 0px;border-radius: 5px;border: 1px solid #14c682;bottom: 0px;}
+.item-button a{margin: 2px;font-size: 13px;color: #6f6969;}
+</style>
+</head>
+	<body>
+		<div class="all">
+			<div class="bangdingForm">
+				<div class="bangdingBox">
+					<div class="changeBox activeBox">
+						<ul>						
+							<li>
+								<span class="l">您的推广人：</span>
+								<span class="r">
+									<input type="text" value="{$relationInfo['name']}" disabled/>
+								</span>
+							</li>
+							<li>
+								<span class="l">关联课程课程：</span>
+								<span class="r">
+									<input type="text" value="{$relationInfo['kcname']}" disabled/>
+									<input id="kc_id" type="hidden" value="{$relationInfo['kc_id']}"/>
+								</span>
+                            </li>
+
+                            <li>
+								<span class="l">姓名：</span>
+								<span class="r">
+									<input id="tname" type="text" value="{$teacher['tname']}"/>
+								</span>
+                            </li>
+							<li>
+								<span class="l">手机号码：</span>
+								<span class="r">
+									<input id="mobile" type="tel" maxlength="11" value="{$teacher['mobile']}"/>
+								</span>
+							</li>
+                            <input id="relation_id" type="hidden" value="{$relationInfo['id']}"/>
+						</ul>
+						<div class="submitBtn mainColor" onclick="Tijiao();">提交</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>	
+{php include $this->template('footer');}
+</html>
+<script>
+    _INIT_ReTips()
+    var allow = `{$allow}`;
+    var msg = `{$msg}`;
+    if(allow == 0){
+        ReTipsShow(msg)
+        setTimeout(function(){
+            location.href = "{php echo $this->createMobileUrl('detail',array('schoolid' => $schoolid))}"
+        },3000);
+    }else{
+        if(msg){
+            ReConfirm({'confirm':msg},function(e){
+                if(e === false){
+                    setTimeout(function(){
+                        location.href = "{php echo $this->createMobileUrl('detail',array('schoolid' => $schoolid))}"
+                    },3000);
+                }
+            })
+        }
+    }
+    function Tijiao(){
+        if(`{$deal}`){
+            if(!confirm(`{$deal}`)){
+                return
+            }
+        }
+        
+        var FormData = {
+            'mobile' : $("#mobile").val(),
+            'tname' : $("#tname").val(),
+            'relation_id' : $("#relation_id").val(),
+            'openid' : `{$openid}`,
+        }
+        if(!FormData.tname){
+            ReTipsShow('填写姓名')
+            return
+        }
+        if(!FormData.mobile){
+            ReTipsShow('填写手机号')
+            return
+        }
+        
+        $.ajax({
+            url: "{php echo $this->createMobileUrl('kcajax', array('op' => 'save_yiheedu_form','schoolid'=>$schoolid,'weid'=>$weid))}",
+            type: "post",
+            dataType: "json",
+            data:FormData,
+            success: function (res) {
+                ReTipsShow(res.msg)
+                setTimeout(function(){
+                    location.href = "{php echo $this->createMobileUrl('detail',array('schoolid' => $schoolid))}"
+                },1500);
+            },
+            error: function (jqXHR, textStatus, errorThrown){
+                console.log(jqXHR)
+                console.log(textStatus)
+                console.log(errorThrown)
+                //DoSomething
+            }
+        });
+    }
+</script>

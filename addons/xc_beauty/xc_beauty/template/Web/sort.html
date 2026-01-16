@@ -1,0 +1,709 @@
+{template 'common/header'}
+<link rel="stylesheet" type="text/css" href="../addons/{php echo $_GPC['m']}/resource/css/style.css" />
+<link rel="stylesheet" type="text/css" href="../addons/{php echo $_GPC['m']}/resource/swal/dist/sweetalert2.min.css" />
+<style>
+    .sort_left{
+        margin-top: 10px;
+    }
+    .sort_item{
+        align-items: center;
+        cursor: pointer;
+        border:cornflowerblue 2px dashed;
+        position: relative;
+        text-align: center;
+    }
+    .sort_status{
+        overflow: hidden;
+        position: absolute;
+        top:0;
+        left: 100%;
+        width: 62px;
+        height: 32px;
+        padding-left: 10px;
+        text-align: left;
+    }
+    .sort_item i{
+        position: absolute;
+        top:0;
+        right: 100%;
+        color: red;
+        padding-right: 10px;
+    }
+    .sort_right,.sort_right2{
+        padding-left: 40px;
+    }
+</style>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            {$xtitle}
+        </h3>
+    </div>
+    <div class="panel-body">
+        {template 'Web/menu'}
+        <form class="form-horizontal" role="form" method="post" action="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'savemodel','version_id'=>$_GPC['version_id'])}" name="submit" style="padding: 20px 0;">
+            <div class="form-group">
+                <label for="name" class="col-sm-2 control-label">名称</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  name="name" id="name" value="{$list['name']}">
+                    <input type="hidden" name="id" value="{$list['id']}">
+                    <input type="hidden" name="sort">
+                </div>
+            </div>
+            <div class="form-group" style="display: none;">
+                <label  class="col-sm-2 control-label">首页图片(375*250)</label>
+                <div class="col-sm-8">
+                    {php echo tpl_form_field_image('wwww');}
+                </div>
+            </div>
+            <div class="form-group sort_customize">
+                <label  class="col-sm-2 control-label">首页排版</label>
+                <div class="col-sm-10">
+                    <div class="status_btn">
+                        <nav class="btn btn-default btn-sm display" title="推荐">推荐</nav>
+                        <nav class="btn btn-default btn-sm ads" title="广告">广告</nav>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <div class="sort_left">
+                                {if $list['content']['sort']}
+                                {loop $list['content']['sort'] $index $item}
+                                {if $item['name']=='banner'}
+                                <div class="sort_item flex-wap" data-id="banner">
+                                    <div class="flex">轮播图</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/banner.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        {if $item['status']==1}
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                        {else}
+                                        <input type="checkbox" class="js-switch" value="1" name="sort_status">
+                                        {/if}
+                                    </div>
+                                </div>
+                                {elseif $item['name']=='map'}
+                                <div class="sort_item flex-wap" data-id="map">
+                                    <div class="flex">地址</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/map.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        {if $item['status']==1}
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                        {else}
+                                        <input type="checkbox" class="js-switch" value="1" name="sort_status">
+                                        {/if}
+                                    </div>
+                                </div>
+                                {elseif $item['name']=='ad'}
+                                <div class="sort_item flex-wap" data-id="ad">
+                                    <div class="flex">公告</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/ad.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        {if $item['status']==1}
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                        {else}
+                                        <input type="checkbox" class="js-switch" value="1" name="sort_status">
+                                        {/if}
+                                    </div>
+                                </div>
+                                {elseif $item['name']=='coupon'}
+                                <div class="sort_item flex-wap" data-id="coupon">
+                                    <div class="flex">优惠券</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/coupon.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        {if $item['status']==1}
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                        {else}
+                                        <input type="checkbox" class="js-switch" value="1" name="sort_status">
+                                        {/if}
+                                    </div>
+                                </div>
+                                {elseif $item['name']=='pclass'}
+                                <div class="sort_item flex-wap" data-id="pclass">
+                                    <div class="flex">分类</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/pclass.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        {if $item['status']==1}
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                        {else}
+                                        <input type="checkbox" class="js-switch" value="1" name="sort_status">
+                                        {/if}
+                                    </div>
+                                </div>
+                                {elseif $item['name']=='prize'}
+                                <div class="sort_item flex-wap" data-id="prize">
+                                    <div class="flex">新人专区</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/prize.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        {if $item['status']==1}
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                        {else}
+                                        <input type="checkbox" class="js-switch" value="1" name="sort_status">
+                                        {/if}
+                                    </div>
+                                </div>
+                                {elseif $item['name']=='nav'}
+                                <div class="sort_item flex-wap" data-id="nav">
+                                    <div class="flex">导航</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/nav.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        {if $item['status']==1}
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                        {else}
+                                        <input type="checkbox" class="js-switch" value="1" name="sort_status">
+                                        {/if}
+                                    </div>
+                                </div>
+                                {elseif $item['name']=='group'}
+                                <div class="sort_item flex-wap" data-id="group">
+                                    <div class="flex">团购</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/group.jpg" width="100%">
+                                    </div>
+                                    <div class="sort_status">
+                                        {if $item['status']==1}
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                        {else}
+                                        <input type="checkbox" class="js-switch" value="1" name="sort_status">
+                                        {/if}
+                                    </div>
+                                </div>
+                                {elseif $item['name']=='display'}
+                                <div class="sort_item flex-wap" data-id="display" data-title="{$item['title']}" data-value="{$item['value']}">
+                                    <i class="fa fa-remove"></i>
+                                    <div class="flex">推荐</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/display.jpg" width="100%">
+                                    </div>
+                                    <div class="sort_status">
+                                        {if $item['status']==1}
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                        {else}
+                                        <input type="checkbox" class="js-switch" value="1" name="sort_status">
+                                        {/if}
+                                    </div>
+                                </div>
+                                {elseif $item['name']=='ads'}
+                                <div class="sort_item flex-wap" data-id="ads" data-img="{$item['img']}" data-link="{$item['link']}">
+                                    <i class="fa fa-remove"></i>
+                                    <div class="flex">广告</div>
+                                    <div style="width: 300px;">
+                                        {if $item['img']}
+                                        <img src="{php echo tomedia($item['img'])}" width="100%">
+                                        {else}
+                                        <img src="../addons/{$_GPC['m']}/resource/images/ads.jpg" width="100%">
+                                        {/if}
+                                    </div>
+                                    <div class="sort_status">
+                                        {if $item['status']==1}
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                        {else}
+                                        <input type="checkbox" class="js-switch" value="1" name="sort_status">
+                                        {/if}
+                                    </div>
+                                </div>
+                                {/if}
+                                {/loop}
+                                {else}
+                                <div class="sort_item flex-wap" data-id="banner">
+                                    <div class="flex">轮播图</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/banner.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                    </div>
+                                </div>
+                                <div class="sort_item flex-wap" data-id="map">
+                                    <div class="flex">地址</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/map.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                    </div>
+                                </div>
+                                <div class="sort_item flex-wap" data-id="ad">
+                                    <div class="flex">公告</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/ad.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                    </div>
+                                </div>
+                                <div class="sort_item flex-wap" data-id="coupon">
+                                    <div class="flex">优惠券</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/coupon.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                    </div>
+                                </div>
+                                <div class="sort_item flex-wap" data-id="pclass">
+                                    <div class="flex">分类</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/pclass.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                    </div>
+                                </div>
+                                <div class="sort_item flex-wap" data-id="prize">
+                                    <div class="flex">新人专区</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/prize.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                    </div>
+                                </div>
+                                <div class="sort_item flex-wap" data-id="nav">
+                                    <div class="flex">导航</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/nav.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                    </div>
+                                </div>
+                                <div class="sort_item flex-wap" data-id="group">
+                                    <div class="flex">团购</div>
+                                    <div style="width: 300px;">
+                                        <img src="../addons/{$_GPC['m']}/resource/images/group.jpg" width="100%"/>
+                                    </div>
+                                    <div class="sort_status">
+                                        <input type="checkbox" checked class="js-switch" value="1" name="sort_status">
+                                    </div>
+                                </div>
+                                {/if}
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="sort_right" style="position: relative;padding-top: 10px;display: none;">
+                                <div id="ad_model" style="position: absolute;top: 0;z-index: 99;background: #fff;">
+                                    <div class="input-group" style="width: 100%;margin-bottom: 10px;">
+                                        <span class="input-group-btn"><button class="btn btn-default" type="button">标题</button></span>
+                                        <input type="text" name="sort_title" class="form-control" autocomplete="off">
+                                    </div>
+                                    <div class="input-group" style="margin-bottom: 10px;">
+                                        <input type="text" name="service" class="form-control" autocomplete="off">
+                                        <span class="input-group-btn"><button class="btn btn-default sort_link" type="button" data-toggle="modal" data-target="#sort_link">选择项目</button></span>
+                                        <span class="input-group-btn"><button class="btn btn-default parameter_add" type="button"><i class="fa fa-plus"></i></button></span>
+                                        <span class="input-group-btn"><button class="btn btn-danger parameter_del" type="button"><i class="fa fa-remove"></i></button></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sort_right2" style="position: relative;padding-top: 10px;display: none;">
+                                <div id="ad_model2" style="position: absolute;top: 0;z-index: 99;background: #fff;">
+                                    <div class="input-group" style="width: 100%;margin-bottom: 10px;">
+                                        <input type="text" name="ad_img" value="" class="form-control" autocomplete="off">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button" onclick="showImageDialog(this);">选择图片</button>
+                                        </span>
+                                    </div>
+                                    <div class="input-group" style="width: 100%;margin-bottom: 10px;">
+                                        <input type="text" name="ad_link" value="" class="form-control" autocomplete="off">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default link" type="button" data-toggle="modal" data-target="#sort_link2">选择链接</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <input type="button" name="submit" class="btn btn-default" value="提交">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!--首页排版链接选择-->
+<div class="modal fade" id="sort_link"><div class="modal-dialog">
+    <style>
+        #sort_link .modal-body {padding: 10px 15px;}
+        #sort_link .tab-pane {margin-top: 5px; min-height: 400px; max-height: 400px; overflow-y: auto;}
+        #sort_tab{margin-bottom: 10px;}
+    </style>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">链接</h4>
+        </div>
+        <div class="modal-body">
+            <ul class="nav nav-tabs" id="selectUrlTab">
+                <li role="presentation" class="active"><a href="#sort_service">服务项目</a></li>
+                <li role="presentation"><a href="#sut_store">商城</a></li>
+                <li role="presentation"><a href="#sut_package">套餐</a></li>
+                <li role="presentation"><a href="#sut_score">积分商城</a></li>
+            </ul>
+            <div class="tab-content ">
+                <div class="tab-pane active" id="sort_service">
+                    <iframe width="100%" height="395" frameborder="no" border="0" scrolling="no" allowtransparency="yes" src="{url 'site/entry/web',array('m'=>$_GPC['m'],'op'=>'sort_service','version_id'=>$_GPC['version_id'])}"></iframe>
+                </div>
+                <div class="tab-pane" id="sut_store">
+                    <iframe width="100%" height="395" frameborder="no" border="0" scrolling="no" allowtransparency="yes" src="{url 'site/entry/web',array('m'=>$_GPC['m'],'op'=>'sort_store','version_id'=>$_GPC['version_id'])}"></iframe>
+                </div>
+                <div class="tab-pane" id="sut_package">
+                    <iframe width="100%" height="395" frameborder="no" border="0" scrolling="no" allowtransparency="yes" src="{url 'site/entry/web',array('m'=>$_GPC['m'],'op'=>'sort_package','version_id'=>$_GPC['version_id'])}"></iframe>
+                </div>
+                <div class="tab-pane" id="sut_score">
+                    <iframe width="100%" height="395" frameborder="no" border="0" scrolling="no" allowtransparency="yes" src="{url 'site/entry/web',array('m'=>$_GPC['m'],'op'=>'sort_score','version_id'=>$_GPC['version_id'])}"></iframe>
+                </div>
+            </div>
+            <script>
+                $("#sort_link").find('#selectUrlTab a').click(function(e) {
+                    $('#tab').val($(this).attr('href'));
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
+            </script>
+        </div>
+        <div class="modal-footer">
+            <button data-dismiss="modal" class="btn btn-default" id="sort_close" type="button">关闭</button>
+        </div>
+    </div>
+</div></div>
+<div class="modal fade" id="sort_link2"><div class="modal-dialog">
+    <style>
+        #sort_link2 .modal-body {padding: 10px 15px;}
+        #sort_link2 .tab-pane {margin-top: 5px; min-height: 400px; max-height: 400px; overflow-y: auto;}
+        #sort_tab{margin-bottom: 10px;}
+    </style>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">链接</h4>
+        </div>
+        <div class="modal-body">
+            <ul class="nav nav-tabs" id="selectUrlTab2">
+                <li role="presentation" class="active"><a href="#ad_app">页面</a></li>
+                <li role="presentation"><a href="#ad_class">服务分类</a></li>
+                <li role="presentation"><a href="#ad_service">服务项目</a></li>
+                <li role="presentation"><a href="#ad_store">商城</a></li>
+                <li role="presentation"><a href="#ad_art">文章</a></li>
+            </ul>
+            <div class="tab-content ">
+                <div class="tab-pane active" id="ad_app">
+                    <nav data-dismiss="modal" data-href="../index/index" class="btn btn-default btn-sm" title="首页">首页</nav>
+                    <nav data-dismiss="modal" data-href="../service/service" class="btn btn-default btn-sm" title="项目">项目</nav>
+                    <nav data-dismiss="modal" data-href="../rotate/rotate" class="btn btn-default btn-sm" title="抽奖">抽奖</nav>
+                    <nav data-dismiss="modal" data-href="../store/porder" class="btn btn-default btn-sm" title="预约">预约</nav>
+                    <nav data-dismiss="modal" data-href="../user/user" class="btn btn-default btn-sm" title="我的">我的</nav>
+                    <nav data-dismiss="modal" data-href="../../pages/card/card" class="btn btn-default btn-sm" title="会员卡">会员卡</nav>
+                    <nav data-dismiss="modal" data-href="../../pages/over/over" class="btn btn-default btn-sm" title="余额">余额</nav>
+                    <nav data-dismiss="modal" data-href="../../pages/score/score" class="btn btn-default btn-sm" title="积分">积分</nav>
+                    <nav data-dismiss="modal" data-href="../../pages/coupon/coupon" class="btn btn-default btn-sm" title="优惠券">优惠券</nav>
+                    <nav data-dismiss="modal" data-href="../../pages/order/buy" class="btn btn-default btn-sm" title="买单">买单</nav>
+                    <nav data-dismiss="modal" data-href="../../pages/share/index" class="btn btn-default btn-sm" title="分销">分销</nav>
+                    <nav data-dismiss="modal" data-href="../../pages/address/address" class="btn btn-default btn-sm" title="地址">地址</nav>
+                    <nav style="margin-top: 5px;" data-dismiss="modal" data-href="../../pages/store/index" class="btn btn-default btn-sm" title="门店列表">门店列表</nav>
+                    <nav style="margin-top: 5px;" data-dismiss="modal" data-href="../../pages/mall/mall" class="btn btn-default btn-sm" title="商城">商城</nav>
+                    <nav style="margin-top: 5px;" data-dismiss="modal" data-href="../../pages/package/package" class="btn btn-default btn-sm" title="套餐">套餐</nav>
+                    <nav style="margin-top: 5px;" data-dismiss="modal" data-href="../../pages/jishi/index" class="btn btn-default btn-sm" title="技师">技师</nav>
+                    <nav style="margin-top: 5px;" data-dismiss="modal" data-href="../../pages/r_card/index" class="btn btn-default btn-sm" title="充值卡">充值卡</nav>
+                    <nav style="margin-top: 5px;" data-dismiss="modal" data-href="../../pages/mall_score/index" class="btn btn-default btn-sm" title="积分商城">积分商城</nav>
+                </div>
+                <div class="tab-pane" id="ad_service">
+                    <iframe width="100%" height="395" frameborder="no" border="0" scrolling="no" allowtransparency="yes" src="{url 'site/entry/web',array('m'=>$_GPC['m'],'op'=>'sort_service','version_id'=>$_GPC['version_id'])}"></iframe>
+                </div>
+                <div class="tab-pane" id="ad_class">
+                    <iframe width="100%" height="395" frameborder="no" border="0" scrolling="no" allowtransparency="yes" src="{url 'site/entry/web',array('m'=>$_GPC['m'],'op'=>'sort_class','version_id'=>$_GPC['version_id'])}"></iframe>
+                </div>
+                <div class="tab-pane" id="ad_store">
+                    <iframe width="100%" height="395" frameborder="no" border="0" scrolling="no" allowtransparency="yes" src="{url 'site/entry/web',array('m'=>$_GPC['m'],'op'=>'sort_store','version_id'=>$_GPC['version_id'])}"></iframe>
+                </div>
+                <div class="tab-pane" id="ad_art">
+                    <iframe width="100%" height="395" frameborder="no" border="0" scrolling="no" allowtransparency="yes" src="{url 'site/entry/banner',array('m'=>$_GPC['m'],'op'=>'article','version_id'=>$_GPC['version_id'])}"></iframe>
+                </div>
+            </div>
+            <script>
+                $("#sort_link2").find('#selectUrlTab2 a').click(function(e) {
+                    $('#tab').val($(this).attr('href'));
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
+                $("#ad_app").find("nav").click(function(){
+                    $(ad_objc).parent().prev().val($(this).attr("data-href"));
+                });
+            </script>
+        </div>
+        <div class="modal-footer">
+            <button data-dismiss="modal" class="btn btn-default" id="sort_close2" type="button">关闭</button>
+        </div>
+		
+    </div>
+</div></div>
+<!--首页排版链接选择 end-->
+<script language="javascript">
+    require(['jquery.ui'],function(){
+        $('.sort_left').sortable({scroll:'false'});
+        $('.sort_left').sortable('option', 'scroll', false);
+    })
+</script>
+<script>
+    var sort_objc="";
+    var ad_objc="";
+    var objc="";
+    require(["../addons/{php echo $_GPC['m']}/resource/swal/dist/sweetalert2.min.js"],function(){
+        $(function(){
+            //添加
+            $(".status_btn .display").click(function(){
+                $(".sort_left").append('<div class="sort_item flex-wap" data-id="display">'+
+                '<i class="fa fa-remove"></i>'+
+                '<div class="flex">推荐</div><div style="width: 300px;">'+
+                '<img src="../addons/'+"{$_GPC['m']}"+'/resource/images/display.jpg" width="100%"/></div>'+
+                '<div class="sort_status"><input type="checkbox" checked class="js-switch" value="1" name="sort_status"></div></div>');
+                prev_objc();
+                var top=$(".sort_left .sort_item:last").position().top;
+                $("#ad_model").empty();
+                $("#ad_model").append('<div class="input-group" style="width: 100%;margin-bottom: 10px;">' +
+                        '<span class="input-group-btn"><button class="btn btn-default" type="button">标题</button></span>' +
+                        '<input type="text" name="sort_title" class="form-control" autocomplete="off"> ' +
+                        '</div> ' +
+                        '<div class="input-group" style="margin-bottom: 10px;"> ' +
+                        '<input type="text" name="service" class="form-control" autocomplete="off"> ' +
+                        '<span class="input-group-btn"><button class="btn btn-default sort_link" type="button" data-toggle="modal" data-target="#sort_link">选择项目</button></span> ' +
+                        '<span class="input-group-btn"><button class="btn btn-default parameter_add" type="button"><i class="fa fa-plus"></i></button></span> ' +
+                        '<span class="input-group-btn"><button class="btn btn-danger parameter_del" type="button"><i class="fa fa-remove"></i></button></span> ' +
+                        '</div>');
+                $(".sort_right").show();
+                $("#ad_model").css({'top':top});
+                objc=$(".sort_left .sort_item:last");
+            });
+            $(".status_btn .ads").click(function(){
+                $(".sort_left").append('<div class="sort_item flex-wap" data-id="ads">' +
+                        '<i class="fa fa-remove"></i>' +
+                        '<div class="flex">广告</div>' +
+                        '<div style="width: 300px;">' +
+                        '<img src="../addons/'+"{$_GPC['m']}"+'/resource/images/ads.jpg" width="100%"> '+
+                        '</div>' +
+                        '<div class="sort_status">' +
+                        '<input type="checkbox" checked class="js-switch" value="1" name="sort_status">' +
+                        '</div>' +
+                        '</div>');
+                prev_objc();
+                var top=$(".sort_left .sort_item:last").position().top;
+                $("#ad_model2").find("input[name='ad_img']").val("");
+                $("#ad_model2").find("input[name='ad_link']").val("");
+                $(".sort_right2").show();
+                $("#ad_model2").css({'top':top});
+                objc=$(".sort_left .sort_item:last");
+            });
+            //删除
+            $(".sort_left").on('click','.fa-remove',function(){
+                $(this).parent().remove();
+                if($(this).parent().attr("data-id")=='display'){
+                    $(".sort_right").hide();
+                }
+                if($(this).parent().attr("data-id")=='ads'){
+                    $(".sort_right2").hide();
+                }
+                prev_objc();
+                var top=$(".sort_left .sort_item:last").position().top;
+            });
+            //右边添加
+            $(".sort_right").on('click','.parameter_add',function(){
+                $(this).parent().parent().after('<div class="input-group" style="margin-bottom: 10px;">' +
+                        '<input type="text" name="service" class="form-control" autocomplete="off">' +
+                        '<span class="input-group-btn"><button class="btn btn-default sort_link" type="button" data-toggle="modal" data-target="#sort_link">选择项目</button></span>' +
+                        '<span class="input-group-btn"><button class="btn btn-default parameter_add" type="button"><i class="fa fa-plus"></i></button></span> ' +
+                        '<span class="input-group-btn"><button class="btn btn-danger parameter_del" type="button"><i class="fa fa-remove"></i></button></span>' +
+                        '</div>');
+            });
+            //右边删除
+            $(".sort_right").on('click','.parameter_del',function(){
+                if($(this).parent().parent().siblings().length>1){
+                    $(this).parent().parent().remove();
+                }
+            });
+            $(".sort_right").on('click','.sort_link',function(){
+                sort_objc=this;
+                ad_objc="";
+            });
+            $(".sort_right2").on('click','.link',function(){
+                sort_objc="";
+                ad_objc=this;
+            });
+
+            //移动
+            $(".sort_left").on('mouseup','.sort_item',function(){
+                prev_objc();
+                $(".sort_right").hide();
+                $(".sort_right2").hide();
+                objc=$(this);
+                next_objc();
+            });
+            $("input[name='submit']").click(function(){
+                prev_objc();
+                getjson();
+                var data=$(".form-horizontal").serialize();
+                $.ajax({
+                    type:"post",
+                    url:"{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'savesort','version_id'=>$_GPC['version_id'])}",
+                    data:data,
+                    dataType:'json',
+                    success:function(res){
+                        if(res.status==1){
+                            swal('操作成功!', '操作成功!', 'success');
+                        }else{
+                            swal('操作失败!', '操作失败!', 'error');
+                        }
+                    }
+                })
+            });
+
+            $("body").on("click",'#material-Modal .modal-footer .btn.btn-primary',function(){
+                var tmp =$("body").find("input[name='ad_img']").attr("url");//模拟上传后文件地址
+                var type=$(objc).attr("data-id");
+                if(type=='ads'){
+                    $(objc).find("img").attr("src",tmp);
+                }
+            });
+        })
+    });
+
+
+    /**
+     * 数据收集
+     */
+    function getjson(){
+        var sort=[];
+        $(".sort_customize").find(".sort_item").each(function(){
+            var data={};
+            data.name=$(this).attr("data-id");
+            if($(this).find("input[name='sort_status']").is(":checked")){
+                data.status=1;
+            }else{
+                data.status=-1;
+            }
+            if(data.name=='display'){
+                var title=$(this).attr("data-title");
+                var value=$(this).attr("data-value");
+                if(typeof title!='undefined' && typeof value!='undefined'){
+                    data.title=title;
+                    data.value=JSON.parse(value);
+                    sort.push(data);
+                }
+            }else if(data.name=='ads'){
+                var img=$(this).attr("data-img");
+                var link=$(this).attr("data-link");
+                if(typeof img!='undefined'){
+                    data.img=img;
+                    if(typeof link!='undefined'){
+                        data.link=link;
+                    }
+                    sort.push(data);
+                }
+            }else{
+                sort.push(data);
+            }
+        });
+        if(sort.length>0){
+            $("input[name='sort']").val(JSON.stringify(sort));
+        }
+    }
+
+    /**
+     * 上一个处理
+     */
+    function prev_objc(){
+        if(objc!="" && objc.attr("data-id")=='display'){
+            var title=$("#ad_model").find("input[name='sort_title']").val();
+            var value=[];
+            $("#ad_model").find(".input-group").each(function(){
+                var service=$(this).find("input[name='service']").val();
+                if(service!="" && typeof service!='undefined'){
+                    var data={};
+                    data.id=$(this).find("input[name='service']").attr("data-service");
+                    data.name=service;
+                    value.push(data);
+                }
+            });
+            if(title!="" && value.length>0){
+                objc.attr("data-title",title);
+                objc.attr("data-value",JSON.stringify(value));
+            }
+        }else if(objc!="" && objc.attr("data-id")=='ads'){
+            var img=$("#ad_model2").find("input[name='ad_img']").val();
+            var link=$("#ad_model2").find("input[name='ad_link']").val();
+            if(img!=""){
+                objc.attr("data-img",img);
+            }
+            if(link!=""){
+                objc.attr("data-link",link);
+            }
+        }
+    }
+    /**
+     * 下一个处理
+     */
+    function next_objc(){
+        if(objc.attr("data-id")=='display'){
+            $("#ad_model").empty();
+            var title=objc.attr("data-title");
+            if(title=="" || typeof title=='undefined'){
+                title="";
+            }
+            $("#ad_model").append('<div class="input-group" style="width: 100%;margin-bottom: 10px;">' +
+                    '<span class="input-group-btn"><button class="btn btn-default" type="button">标题</button></span>' +
+                    '<input type="text" name="sort_title" class="form-control" autocomplete="off" value="'+title+'">' +
+                    '</div>');
+            var value=objc.attr("data-value");
+            console.log(value);
+            if(value!=="" && typeof value!='undefined'){
+                value=JSON.parse(value);
+                for(var i=0;i<value.length;i++){
+                    $("#ad_model").append('<div class="input-group" style="margin-bottom: 10px;">' +
+                            '<input type="text" name="service" class="form-control" autocomplete="off" data-service="'+value[i]['id']+'" value="'+value[i]['name']+'">' +
+                            '<span class="input-group-btn"><button class="btn btn-default sort_link" type="button" data-toggle="modal" data-target="#sort_link">选择项目</button></span> ' +
+                            '<span class="input-group-btn"><button class="btn btn-default parameter_add" type="button"><i class="fa fa-plus"></i></button></span> ' +
+                            '<span class="input-group-btn"><button class="btn btn-danger parameter_del" type="button"><i class="fa fa-remove"></i></button></span> ' +
+                            '</div>');
+                }
+            }else{
+                $("#ad_model").append('<div class="input-group" style="margin-bottom: 10px;">' +
+                        '<input type="text" name="service" class="form-control" autocomplete="off">' +
+                        '<span class="input-group-btn"><button class="btn btn-default sort_link" type="button" data-toggle="modal" data-target="#sort_link">选择项目</button></span> ' +
+                        '<span class="input-group-btn"><button class="btn btn-default parameter_add" type="button"><i class="fa fa-plus"></i></button></span> ' +
+                        '<span class="input-group-btn"><button class="btn btn-danger parameter_del" type="button"><i class="fa fa-remove"></i></button></span> ' +
+                        '</div>');
+            }
+            var top=objc.position().top;
+            $(".sort_right").show();
+            $("#ad_model").css({'top':top});
+        }else if(objc.attr("data-id")=='ads'){
+            var img=objc.attr("data-img");
+            var link=objc.attr("data-link");
+            console.log(img);
+            console.log(link);
+            if(img!="" && typeof img!='undefined'){
+                $("#ad_model2").find("input[name='ad_img']").val(img);
+            }
+            if(link!="" && typeof link!='undefined'){
+                $("#ad_model2").find("input[name='ad_link']").val(link);
+            }
+            var top=objc.position().top;
+            $(".sort_right2").show();
+            $("#ad_model2").css({'top':top});
+        }
+    }
+</script>
+{template 'common/footer'}

@@ -1,0 +1,199 @@
+<!doctype html>
+<html>
+{template 'user/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<body>
+<!--积分-->
+<section class="cash_withdraw">
+    <ul class="clearfix">
+        <li><p class="font28">可提金额(元)</p><p class="price">{$userModel['money']}</p><em></em></li>
+        <li><p class="font28">累计提现(元)</p><p class="price">{$refundTotalMoney}</p></li>
+    </ul>
+</section>
+<section class="cash_bg mb24">
+    <p class="font30">提现金额 <span class="main_red">(单次提现金额限制 {$storeConfig['min_refund_money']} - {if empty($config['refund_max_money'])}5000.00{else}{$config['refund_max_money']}{/if})</span></p>
+    <section class="cash_money">
+        <span>¥</span>
+        <input class="regInput" type="number" maxlength="10" step="0.01" id="money" name="money" placeholder="请输入提现金额" onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}" onblur = "this.value=FloatMoney(this.value)">
+        <em class="cash_all" data-money="{$userModel['money']}">全部</em>
+    </section>
+</section>
+
+<section class="bg_fff">
+    <h2 class="integral_title tc font30 fn">资金提现记录</h2>
+    <section id="ContentList">
+    <ul class="integral_list cash_withdraw_list" id="LoadLists">
+
+    </ul>
+    </section>
+</section>
+<section class="h24"></section>
+<!--浮动-->
+<div class="goods_detail_fixed"></div>
+<div class="pro_fix">
+    <ul>
+        <li id="btnScan" class="scan" style="width:100%;"><input id="btnSubmit" type="button" class="button" value="确认提现"/></li>
+    </ul>
+</div>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li style="height: auto;" data-id="<%= rows[i].id %>">
+        <section class="fr tr"><p class="fen">￥<%= rows[i].money %></p></section>
+        <section>
+            <%if(rows[i].status == 1){%>
+            <h3 class="fn main_green font36">已到账</h3>
+            <%}%>
+            <%if(rows[i].status == 2){%>
+            <h3 class="fn main_red font36">已驳回</h3>
+            <%}%>
+            <%if(rows[i].status == 0){%>
+            <h3 class="fn font36">待处理</h3>
+            <%}%>
+            <time class="font28 c9 db">申请时间：<%= rows[i].createtime %></time>
+            <%if(rows[i].status == 2){%>
+            <p class="font28 c9">驳回原因：<%= rows[i].note %></p>
+            <%}%>
+        </section>
+    </li>
+    <% } %>
+</script>
+<script type="text/javascript">
+    $(function() {
+        $('.cash_all').click(function () {
+            $('#money').val($(this).data('money'));
+        });
+
+        var page = 0;
+        var pageSize = 10;
+
+        $('#ContentList').dropload({
+            scrollArea : window,
+            domUp : {
+                domClass   : 'dropload-up',
+                domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+            },
+            domDown : {
+                domClass   : 'dropload-down',
+                domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+            },
+            loadUpFn : function(me){
+                $.ajax({
+                    type: 'GET',
+                    url: "{php echo $this->createMobileUrl('user.user_refund', array('act' => 'getJsonList','store_id' => $store_id));}",
+                    data:{
+                        "page":1,
+                        "pageSize":pageSize
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        var html = template("listtpl", data);
+                        $('#LoadLists').html(html);
+                        // 每次数据加载完，必须重置
+                        me.resetload();
+                        // 重置页数，重新获取loadDownFn的数据
+                        page = 1;
+                        // 解锁loadDownFn里锁定的情况
+                        me.unlock();
+                        me.noData(false);
+                    },
+                    error: function(xhr, type){
+                        layer.open({
+                            content: '系统错误，稍后重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            loadDownFn : function(me){
+                page++;
+                // 拼接HTML
+                var result = '';
+                $.ajax({
+                    type: 'GET',
+                    url: "{php echo $this->createMobileUrl('user.user_refund', array('act' => 'getJsonList','store_id' => $store_id));}",
+                    data:{
+                        "page":page,
+                        "pageSize":pageSize
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        var arrLen = data.rows.length;
+                        if(arrLen > 0){
+                            var html = template("listtpl", data);
+                            // 如果没有数据
+                        }else{
+                            // 锁定
+                            me.lock();
+                            // 无数据
+                            me.noData();
+                        }
+
+                        // 插入数据到页面，放到最后面
+                        $('#LoadLists').append(html);
+                        // 每次数据插入，必须重置
+                        me.resetload()
+                    },
+                    error: function(xhr, type){
+                        layer.open({
+                            content: '系统错误，稍后重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            threshold : 50
+        });
+
+        //点击提交申请
+        $("#btnSubmit").click(function () {
+            var money = $("#money").val();
+            if (money <= 0) {
+                layer.open({ content: "对不起，请输入合法金额！", skin: 'msg', time: 2 });
+                $("#money").focus();
+                return false;
+            }
+
+            $.ajax({
+                url: "{php echo $this->createMobileUrl('user.user_refund', array('act' => 'refund','store_id' => $store_id));}",
+                type: "post",
+                dataType: "json",
+                data: { money: money },
+                beforeSend: function (){
+                    $("#btnSubmit").attr("disabled", true);
+                },
+                success: function (result) {
+                    if (result.status) {
+                        layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 2000);
+                        return true;
+                    } else {
+                        $("#btnSubmit").attr("disabled", false);
+                        layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                        return false;
+                    }
+                },
+                error: function () {
+                    $("#btnSubmit").attr("disabled", false);
+                    layer.open({ content: '对不起，请求出错了，请重试！', skin: 'msg', time: 2 });
+                    return false;
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!--订单详情-->
+{if $model['status'] == 1}
+<section class="order_state"><span class="unpaid font30">待付款</span></section>
+{elseif $model['status'] == 2}
+<section class="order_state"><span class="daifahuo font30">待发货</span></section>
+{elseif $model['status'] == 3}
+<section class="order_state"><span class="yifahuo font30">已发货</span></section>
+{elseif $model['status'] == 4}
+<section class="order_state"><span class="complet font30">已完成</span></section>
+{else}
+<section class="order_state"><span class="complet font30">已完成</span></section>
+{/if}
+{if $model['is_fedex']==1 && $model['status']>2}
+{if $model['fedex_id']==0}
+<!--物流信息-->
+<section class="bgfff"> <a href="javascript:void(0);" class="item_addr clearfix">
+    <section class="addr van fl">
+        <p class="main_green">商品由商家提供上门服务，请安排服务人员上门服务，完毕后请提醒用户点击收货。</p>
+    </section>
+    </a>
+</section>
+{else}
+<section class="bgfff"> <a href="javascript:;"  id="DetailsLogisticsBtn" data-ordernumber="{$model['ordernumber']}" data-fedex_code="{$model['fedex_code']}"  data-fedex_number="{$model['fedex_number']}" data-mobile="{$model['mobile']}" class="item_addr clearfix">
+    <section class="addr van fl" id="logistics">
+        <p class="main_green">物流订单查询中，请稍后…</p>
+    </section>
+    <i class="arrow_r"></i></a>
+</section>
+<script type="text/javascript">
+    $(function () {
+        getOrderTraces();
+    })
+</script>
+{/if}
+{/if}
+{if $model['is_fedex']==1}
+<section class="bgfff">
+    <section class="item_addr item_addr_1 clearfix">
+        <section class="addr fl">
+            <p><span>{$model['username']}</span><span class="pl15">{$model['mobile']}</span></p>
+            <p>{$model['province']}{$model['city']}{$model['county']}{$model['address']} （{$model['postcode']}）</p>
+        </section>
+    </section>
+</section>
+{else}
+<section class="bgfff">
+    <section class="item_addr item_addr_1 clearfix">
+        <section class="addr fl">
+            <p><span>{$model['username']}</span><span class="pl15">{$model['mobile']}</span></p>
+            <p>
+                {if $model['status'] == 3}
+                商品没有开启物流，用户需自行到店核销！
+                {else}
+                核销码：{$model['writecode']} 核销人OPENID：{$model['admins']}
+                {/if}
+            </p>
+        </section>
+    </section>
+</section>
+{/if}
+<!--商品-->
+<section class="mb24">
+    <section class="order_item order_detail_item">
+        <section class="order_goods"> <img src="{php echo tomedia($model['product_thumb'])}"/>
+            <h3>{$model['product_title']}</h3>
+            <p class="font26 c9"><span class="font30 main_red price">{$model['score']}</span>积分
+                {if $model['total_money']>0}
+                <span class="font30 black plus">+</span><span class="font30 main_red price">{$model['total_money']}</span>元
+                {/if}
+            </p>
+        </section>
+    </section>
+    <div class="order_detail_price bgfff">
+        <ul class="font30">
+            <li><span class="fr">{$model['score']} 积分</span><span class="c9 font28">积分支付</span></li>
+            <li><span class="fr">￥{$model['sys_money']}</span><span class="c9 font28">余额抵扣</span></li>
+            <li><span class="fr">￥{$model['pay_money']}</span><span class="c9 font28">微信支付</span></li>
+            <li><span class="fr">￥{$model['endmoney']}</span><span class="c9 font28">结算金额</span></li>
+            <li><span class="fr">{php echo getNicknameByOpenid($model['openid'])}</span><span class="c9 font28">购买用户</span></li>
+            <li><span class="fr">{$model['openid']}</span><span class="c9 font28">OPENID</span></li>
+            <li><span class="fr main_red">￥{$model['total_money']}</span><span class="c9 font28">合计支付</span></li>
+        </ul>
+    </div>
+</section>
+<!--订单备注-->
+<section class="order_detail_info font28">
+    <ul>
+        <li><span>订单备注：</span>{$model['note']}</li>
+    </ul>
+</section>
+<!--订单编号-->
+<section class="order_detail_info font28" >
+    <ul>
+        <li><span>订单编号：</span>{$model['ordernumber']}</li>
+        {loop $logList $index $item}
+        <li>
+            {if $item['status'] == 1}
+            <span>下单时间：</span>
+            {elseif $item['status'] == 2}
+            <span>支付时间：</span>
+            {elseif $item['status'] == 3}
+            <span>发货时间：</span>
+            {elseif $item['status'] == 4}
+            <span>收货时间：</span>
+            {else}
+            <span>取消时间：</span>
+            {/if}
+            {php echo date('Y-m-d H:i:s', $item['createtime'])}</li>
+        {/loop}
+    </ul>
+</section>
+<section style="height: 1.31rem;"></section>
+<section class="buttonFloat"><a href="javascript:;" class="db font32 yellowBtn" style="background: #FFD112;" onclick="closeWindows();">返回</a></section>

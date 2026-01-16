@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+	<style>
+		.box-excel { float: right; margin-bottom: 10px; }
+	</style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li {if !$action} class="layui-this" {/if}>
+						<a href="{php echo webUrl('orderList')}">预约记录</a>
+					</li>
+					<li {if $action == 'others'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('orderList', ['action'=>'others'])}">其它</a>
+					</li>
+					<li {if $action == 'refund'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('orderList', ['action'=>'refund'])}">退款记录</a>
+					</li>
+				</ul>
+			</div>
+
+
+			{if !$action}
+				<div class="box-tools">
+					<div class="box-search">
+						<form action="{php echo webUrl('orderList')}" method="post">
+							<div class="layui-input-inline">
+								<input type="text" name="query" value="{$q}" class="layui-input"
+									placeholder="用户昵称、姓名或电话">
+							</div>
+							<div class="layui-input-inline">
+								<button class="layui-btn" lay-submit lay-filter="">搜索</button>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="box-excel">
+					<a type="button" href="{php echo webUrl('exportOrderListAsExcel',['page'=>$pageIndex])}"
+						class="layui-btn layui-btn-sm">导出Excel</a>
+				</div>
+				<div class="layui-form">
+					<table class="layui-table">
+						<thead>
+						<tr>
+							<th>ID</th>
+							<th>课程信息</th>
+							<th>用户信息</th>
+							<th>时间</th>
+							<th>金额</th>
+							<th>状态</th>
+							<th style="width: 190px">操作</th>
+						</tr>
+						</thead>
+						<tbody>
+						{loop $list $index $item}
+						<tr>
+							<td class="wmin20">{$item['id']}</td>
+							<td>
+								门店：{$item['store']}<br>
+								教练：{$item['coach']}<br>
+								课程：{$item['course']}
+							</td>
+							<td>
+								昵称：{$item['nickname']}
+								{if !empty($item['real_name'])}
+								<br>姓名：{$item['real_name']}
+								{/if}
+								{if !empty($item['tel'])}
+								<br>电话：{$item['tel']}
+								{/if}
+							</td>
+							<td>
+								上课：{$item['courseTime']}<br>
+								付款：{$item['time_format']}<br>
+							</td>
+							<td>{$item['paid_money']}</td>
+							<td class="txt-status">{$item['statusText']}</td>
+							<td>
+								{if $item['type'] == 0 && 3 == $item['status']}
+									{if $item['subtype'] == 0 || $item['subtype'] == 127}
+										<span class="refund">
+											<a href="javascript:;" class="layui-btn layui-btn-sm btn-refund"
+												data-id="{$item['id']}">手动退款</a>
+											<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger btn-refuseRefund"
+												data-id="{$item['id']}">拒绝退款</a>
+										</span>
+									{elseif $item['subtype'] == 2 || $item['subtype'] == 3 || $item['subtype'] == 5}
+										<span class="allowCancelBook">
+											<a href="javascript:;" class="layui-btn layui-btn-sm btn-allowCancelBook"
+												data-id="{$item['id']}" data-subtype="{$item['subtype']}" data-other_id="{$item['other_id']}"
+												data-cpid="{$item['plan_id']}">允许取消</a>
+											<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger btn-refuseCancelBook"
+												data-id="{$item['id']}" data-subtype="{$item['subtype']}" data-other_id="{$item['other_id']}"
+												data-cpid="{$item['plan_id']}">拒绝</a>
+										</span>
+									{/if}
+								{/if}
+								<div style="height: 8px;"></div>
+								<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger btn-del-2"
+									data-id="{$item['id']}">删除</a>
+							</td>
+						</tr>
+						{/loop}
+						</tbody>
+					</table>
+					<div class="pager">
+						{$pager}
+					</div>
+				</div>
+				<script>
+					layui.use(['laypage', 'layer'], function(){
+						var laypage = layui.laypage;
+						var layer = layui.layer;
+
+						// 分页
+						laypage.render({
+							elem: $('.pager')
+							,limit: '{php echo $pageSize; }'
+							,count: '{php echo $total; }'
+							,theme: '#1E9FFF'
+							,curr:  '{php echo $pageIndex; }'
+							,hash: '{php echo $pageIndex; }'
+							,jump: function (obj, first) {
+								if (first != true) {
+									var currentPage = obj.curr; //获取点击的页码
+									window.location.href = "{php echo webUrl('orderList')}&page=" + currentPage;
+								}
+							}
+						});
+						$('.pager').show();
+
+						// 退款
+						$(document).on('click', '.btn-refund', function () {
+							$obj = $(this);
+							$del_id = $obj.data('id');
+							layer.confirm("确定要退款吗", {
+								offset: '20%',
+								btn: ["再想想", "退款"],
+								scrollbar: false,
+								closeBtn: 0,
+								success: function (layero, index) {
+									this.enterEsc = function (event) {
+										if (event.keyCode === 13) {
+											fun_refund()
+											layer.close(index);
+											return false; //阻止系统默认回车事件
+										}
+										if (event.keyCode === 27) {
+											layer.close(index);
+											return false; //阻止系统默认回车事件
+										}
+									};
+									$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+								}
+								, end: function(){
+									$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+								}
+							}, function (i) {
+							   layer.close(i);
+							}, function (i) {
+								fun_refund()
+							});
+
+							// 退款
+							function fun_refund()
+							{
+								let $url = "{php echo webUrl('refund')}";
+
+								$.ajax({
+									type: "POST",
+									url: $url,
+									dataType: 'json',
+									data: {
+										id: $del_id
+									},
+									success: function (rs) {
+										if (rs && rs.code.toString() === '0') {
+											setTimeout(function () {
+												$obj.closest('tr').find('.refund').fadeOut();
+												$obj.closest('tr').find('.txt-status').text('已退款');
+												layer.msg("成功", {time: 500});
+											}, 200);
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+												shift: 6,
+											});
+										}
+									},
+									error: function () {
+										layer.msg("保存过程发生错误，请与管理员联系" , {
+											offset: '20%',
+											shift: 6,
+										});
+									}
+								});
+							}
+						});
+						// 拒绝退款
+						$(document).on('click', '.btn-refuseRefund', function () {
+							$obj = $(this);
+							$del_id = $obj.data('id');
+							layer.confirm("确定要拒绝退款吗", {
+								offset: '20%',
+								btn: ["再想想", "拒绝退款"],
+								scrollbar: false,
+								closeBtn: 0,
+								success: function (layero, index) {
+									this.enterEsc = function (event) {
+										if (event.keyCode === 13) {
+											fun_refuseRefund()
+											layer.close(index);
+											return false; //阻止系统默认回车事件
+										}
+										if (event.keyCode === 27) {
+											layer.close(index);
+											return false; //阻止系统默认回车事件
+										}
+									};
+									$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+								}
+								, end: function(){
+									$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+								}
+							}, function (i) {
+							   layer.close(i);
+							}, function (i) {
+								fun_refuseRefund()
+							});
+
+							// 拒绝退款
+							function fun_refuseRefund()
+							{
+								let $url = "{php echo webUrl('refuseRefund')}";
+
+								$.ajax({
+									type: "POST",
+									url: $url,
+									dataType: 'json',
+									data: {
+										id: $del_id
+									},
+									success: function (rs) {
+										if (rs && rs.code.toString() === '0') {
+											setTimeout(function () {
+												$obj.closest('tr').find('.refund').fadeOut();
+												$obj.closest('tr').find('.txt-status').text('已拒绝退款');
+												layer.msg("成功", {time: 500});
+											}, 200);
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+												shift: 6,
+											});
+										}
+									},
+									error: function () {
+										layer.msg("保存过程发生错误，请与管理员联系" , {
+											offset: '20%',
+											shift: 6,
+										});
+									}
+								});
+							}
+						});
+
+
+						// 允许取消
+						$(document).on('click', '.btn-allowCancelBook', function () {
+							$obj = $(this);
+							$del_id = $obj.data('id');
+							$subtype = $obj.data('subtype');
+							$other_id = $obj.data('other_id');
+							$cpid = $obj.data('cpid');
+							layer.confirm("确定要允许取消吗", {
+								offset: '20%',
+								btn: ["再想想", "允许"],
+								scrollbar: false,
+								closeBtn: 0,
+								success: function (layero, index) {
+									this.enterEsc = function (event) {
+										if (event.keyCode === 13) {
+											fun_allowCancelBook();
+											layer.close(index);
+											return false; //阻止系统默认回车事件
+										}
+										if (event.keyCode === 27) {
+											layer.close(index);
+											return false; //阻止系统默认回车事件
+										}
+									};
+									$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+								}
+								, end: function(){
+									$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+								}
+							}, function (i) {
+							   layer.close(i);
+							}, function (i) {
+								fun_allowCancelBook();
+							});
+
+							// 允许取消取消
+							function fun_allowCancelBook()
+							{
+								let $url = "{php echo webUrl('allowCancelBook')}";
+
+								$.ajax({
+									type: "POST",
+									url: $url,
+									dataType: 'json',
+									data: {
+										id: $del_id,
+										subtype: $subtype,
+										other_id: $other_id,
+										cpid: $cpid,
+									},
+									success: function (rs) {
+										if (rs && rs.code.toString() === '0') {
+											setTimeout(function () {
+												$obj.closest('tr').find('.allowCancelBook').fadeOut();
+												$obj.closest('tr').find('.txt-status').text('已取消');
+												layer.msg("成功", {time: 500});
+											}, 200);
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+												shift: 6,
+											});
+										}
+									},
+									error: function () {
+										layer.msg("保存过程发生错误，请与管理员联系" , {
+											offset: '20%',
+											shift: 6,
+										});
+									}
+								});
+							}
+						});
+						// 拒绝
+						$(document).on('click', '.btn-refuseCancelBook', function () {
+							$obj = $(this);
+							$del_id = $obj.data('id');
+							$subtype = $obj.data('subtype');
+							$other_id = $obj.data('other_id');
+							$cpid = $obj.data('cpid');
+							layer.confirm("确定要拒绝吗", {
+								offset: '20%',
+								btn: ["再想想", "拒绝"],
+								scrollbar: false,
+								closeBtn: 0,
+								success: function (layero, index) {
+									this.enterEsc = function (event) {
+										if (event.keyCode === 13) {
+											fun_cancel();
+											layer.close(index);
+											return false; //阻止系统默认回车事件
+										}
+										if (event.keyCode === 27) {
+											layer.close(index);
+											return false; //阻止系统默认回车事件
+										}
+									};
+									$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+								}
+								, end: function(){
+									$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+								}
+							}, function (i) {
+							   layer.close(i);
+							}, function (i) {
+								fun_cancel();
+							});
+
+							// 拒绝
+							function fun_cancel()
+							{
+								let $url = "{php echo webUrl('refuseCancelBook')}";
+
+								$.ajax({
+									type: "POST",
+									url: $url,
+									dataType: 'json',
+									data: {
+										id: $del_id,
+										subtype: $subtype,
+										other_id: $other_id,
+										cpid: $cpid,
+									},
+									success: function (rs) {
+										if (rs && rs.code.toString() === '0') {
+											setTimeout(function () {
+												$obj.closest('tr').find('.allowCancelBook').fadeOut();
+												$obj.closest('tr').find('.txt-status').text('已拒绝');
+												layer.msg("成功", {time: 500});
+											}, 200);
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+												shift: 6,
+											});
+										}
+									},
+									error: function () {
+										layer.msg("保存过程发生错误，请与管理员联系" , {
+											offset: '20%',
+											shift: 6,
+										});
+									}
+								});
+							}
+						});
+
+						// 删除
+						$(document).on('click', '.btn-del-2', function () {
+							$obj = $(this);
+							$del_id = $obj.data('id');
+							layer.confirm("确定要删除吗", {
+								offset: '20%',
+								btn: ["再想想", "删除"],
+								scrollbar: false,
+								closeBtn: 0,
+								success: function (layero, index) {
+									this.enterEsc = function (event) {
+										if (event.keyCode === 13) {
+											fun_del_2()
+											layer.close(index);
+											return false; //阻止系统默认回车事件
+										}
+										if (event.keyCode === 27) {
+											layer.close(index);
+											return false; //阻止系统默认回车事件
+										}
+									};
+									$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+								}
+								, end: function(){
+									$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+								}
+							}, function (i) {
+							   layer.close(i);
+							}, function (i) {
+								fun_del_2()
+							});
+
+							// 删除事件
+							function fun_del_2()
+							{
+								let $url = "{php echo webUrl('delBookRecord')}";
+
+								$.ajax({
+									type: "POST",
+									url: $url,
+									dataType: 'json',
+									data: {
+										id: $del_id
+									},
+									success: function (rs) {
+										if (rs && rs.code.toString() === '0') {
+											$obj.closest('tr').fadeOut(200, function () {
+												$obj.remove();
+												layer.msg("成功", {time: 500});
+											});
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+												shift: 6,
+											});
+											$obj.removeClass('lock');
+										}
+									},
+									error: function () {
+										layer.msg("保存过程发生错误，请与管理员联系" , {
+											offset: '20%',
+											shift: 6,
+										});
+										$obj.removeClass('lock');
+									}
+								});
+							}
+						});
+					});
+				</script>
+			{/if}
+
+
+			{if $action == 'others'}
+				<div class="layui-form">
+					<table class="layui-table">
+						<thead>
+						<tr>
+							<th>ID</th>
+							<th>用户昵称</th>
+							<th>付款时间</th>
+							<th>金额</th>
+							<th>详情</th>
+						</tr>
+						</thead>
+						<tbody>
+						{loop $list $index $item}
+						<tr>
+							<td class="wmin20">{$item['id']}</td>
+							<td>{$item['nickname']}</td>
+							<td>{$item['paid_time']}</td>
+							<td>{$item['paid_money']}</td>
+							<td>
+								{if $item['type'] == 1}
+									{$item['level']}
+								{else if $item['type'] == 2}
+									{$item['card']}
+								{else if $item['type'] == 3}
+									{$item['coach']}(私教)
+								{else if $item['type'] == 4}
+									{$item['coach']}(视频)
+								{/if}
+							</td>
+						</tr>
+						{/loop}
+						</tbody>
+					</table>
+					<div class="pager">
+						{$pager}
+					</div>
+				</div>
+				<script>
+					layui.use(['laypage', 'layer'], function(){
+						var laypage = layui.laypage;
+						var layer = layui.layer;
+
+						// 分页
+						laypage.render({
+							elem: $('.pager')
+							,limit: '{php echo $pageSize; }'
+							,count: '{php echo $total; }'
+							,theme: '#1E9FFF'
+							,curr:  '{php echo $pageIndex; }'
+							,hash: '{php echo $pageIndex; }'
+							,jump: function (obj, first) {
+								if (first != true) {
+									var currentPage = obj.curr; //获取点击的页码
+									window.location.href = "{php echo webUrl('orderList', ['action'=>'others'])}&page=" + currentPage;
+								}
+							}
+						});
+						$('.pager').show();
+					});
+				</script>
+			{/if}
+
+			{if $action == 'refund'}
+				<div class="layui-form">
+					<table class="layui-table">
+						<thead>
+						<tr>
+							<th>ID</th>
+							<th>用户昵称</th>
+							<th>退款时间</th>
+							<th>金额</th>
+							<th>详情</th>
+						</tr>
+						</thead>
+						<tbody>
+						{loop $list $index $item}
+						<tr>
+							<td class="wmin20">{$item['id']}</td>
+							<td>{$item['nickname']}</td>
+							<td>{$item['create_time']}</td>
+							<td>{$item['price_format']}</td>
+							<td>{$item['txt']}</td>
+						</tr>
+						{/loop}
+						</tbody>
+					</table>
+					<div class="pager">
+						{$pager}
+					</div>
+				</div>
+				<script>
+					layui.use(['laypage', 'layer'], function(){
+						var laypage = layui.laypage;
+						var layer = layui.layer;
+
+						// 分页
+						laypage.render({
+							elem: $('.pager')
+							,limit: '{php echo $pageSize; }'
+							,count: '{php echo $total; }'
+							,theme: '#1E9FFF'
+							,curr:  '{php echo $pageIndex; }'
+							,hash: '{php echo $pageIndex; }'
+							,jump: function (obj, first) {
+								if (first != true) {
+									var currentPage = obj.curr; //获取点击的页码
+									window.location.href = "{php echo webUrl('orderList', ['action'=>'refund'])}&page=" + currentPage;
+								}
+							}
+						});
+						$('.pager').show();
+					});
+				</script>
+			{/if}
+
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

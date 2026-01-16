@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div id="rightbox">
+    <ul>
+        <li>
+            <a class="num" href="#1F" style="display:none">1F</a>
+            <a class="word" href="#1F" style="display:block">平台信息</a>
+        </li>
+        <li>
+            <a class="num" href="#2F">2F</a>
+            <a class="word" href="#2F">界面参数</a>
+        </li>
+        <li>
+            <a class="num" href="#3F">3F</a>
+            <a class="word" href="#3F">系统协议</a>
+        </li>
+        <li>
+            <a class="num" href="#4F">4F</a>
+            <a class="word" href="#4F">全局分享</a>
+        </li>
+        <li>
+            <a class="num" href="#5F">5F</a>
+            <a class="word" href="#5F">微信接口</a>
+        </li>
+        <li>
+            <a class="num" href="#6F">6F</a>
+            <a class="word" href="#6F">支&nbsp;&nbsp;付&nbsp;&nbsp;宝</a>
+        </li>
+        <li>
+            <a class="num" href="#7F">7F</a>
+            <a class="word" href="#7F">物流接口</a>
+        </li>
+        <li>
+            <a class="num" href="#8F">8F</a>
+            <a class="word" href="#8F">漫道短信</a>
+        </li>
+        <li>
+            <a class="num" href="#9F">9F</a>
+            <a class="word" href="#9F">大鱼短信</a>
+        </li>
+        <li>
+            <a class="num" href="#10F">10F</a>
+            <a class="word" href="#10F">短信配置</a>
+        </li>
+        <li>
+            <a class="num" href="#11F">11F</a>
+            <a class="word" href="#11F">模板消息</a>
+        </li>
+        <li>
+            <a class="num" href="#12F">12F</a>
+            <a class="word" href="#12F">订阅通知</a>
+        </li>
+        <li>
+            <a class="num" href="#13F">13F</a>
+            <a class="word" href="#13F">二&nbsp;&nbsp;维&nbsp;&nbsp;码</a>
+        </li>
+        <li>
+            <a class="num" href="#14F">14F</a>
+            <a class="word" href="#14F">充值提现</a>
+        </li>
+        <li>
+            <a class="num" href="#15F">15F</a>
+            <a class="word" href="#15F">活动设置</a>
+        </li>
+        <li>
+            <a class="num" href="#16F">16F</a>
+            <a class="word" href="#16F">广告设置</a>
+        </li>
+        <li>
+            <a class="num" href="#17F">17F</a>
+            <a class="word" href="#17F">系统域名</a>
+        </li>
+        <li>
+            <a class="num" href="#18F">18F</a>
+            <a class="word" href="#18F">会员屏蔽</a>
+        </li>
+        <li class="last">
+            <a class="num" href="javascript:window.scrollTo(0,0);">TOP</a>
+            <a class="word" href="javascript:window.scrollTo(0,0);">返回顶部</a>
+        </li>
+    </ul>
+</div>
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">系统</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#">站点设置</a></li>
+                            {if !empty($buy_list)}
+                            <li>
+                                <a href="{php echo $this->createWebUrl('plugins_config', array('act' => 'index'));}">插件设置</a>
+                            </li>
+                            {/if}
+                            <li><a href="{php echo $this->createWebUrl('sys_test', array('act' => 'index'));}">接口测试</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content" id="form_content" method="post">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 平台信息设置<a name="1F" id="1F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="name" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>系统平台名称</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="name" maxlength="50"
+                                                       name="config[name]" nullmsg="请输入系统平台名称！" placeholder="请输入系统平台名称"
+                                                       type="text" value="{$config['name']}"/>
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong> 请填写系统平台名称，例如：营销宝 易客来 等名称 展示给平台商家和终端用户。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="power" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>平台技术支持</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="power" maxlength="50" name="config[power]" nullmsg="请输入平台技术支持！" placeholder="请输入平台技术支持" type="text" value="{$config['power']}"/>
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong> 请填写平台技术支持，例如：****网络科技有限公司。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tel" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>平台联系电话</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="tel" maxlength="20"
+                                                       name="config[tel]" nullmsg="请输入平台联系电话！" placeholder="请输入平台联系电话"
+                                                       type="text" value="{$config['tel']}"/>
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong> 请填写平台联系电话，方便商家充值、提现等操作时和您取得联系。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tel" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>平台腾讯客服</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="qq" maxlength="20"
+                                                       name="config[qq]" nullmsg="请输入腾讯QQ号码！" placeholder="请输入腾讯QQ号码"
+                                                       type="text" value="{$config['qq']}"/>
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong> 请填写腾讯QQ号码，方便商家充值、提现等操作时和您取得联系。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="reg_store_days" class="col-sm-2 control-label"><span class="text-red">(*)</span>商家试用天数</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="reg_store_days" maxlength="4"
+                                                       name="config[reg_store_days]" nullmsg="请输入注册商家试用天数！" placeholder="请输入注册商家试用天数"
+                                                       type="number" min="0" value="{$config['reg_store_days']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 设置新注册商家试用天数，达到商家到期时间后，商家登录后将提示到期。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="reg_store_create" class="col-sm-2 control-label"><span class="text-red">(*)</span>商家试用次数</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="reg_store_create" maxlength="4"
+                                                       name="config[reg_store_create]" nullmsg="请输入注册商家试用次数！" placeholder="请输入注册商家试用次数"
+                                                       type="number" min="-1" value="{$config['reg_store_create']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 设置新注册商家可创建活动数量，达到商家活动创建数量后，商家将不能再创建活动。<code>-1为不限次数</code></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="send_sms_limit" class="col-sm-2 control-label"><span class="text-red">(*)</span>发送短信限制</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="send_sms_limit" maxlength="4"
+                                                       name="config[send_sms_limit]" nullmsg="请输入发送短信限制！" placeholder="请输入注发送短信限制"
+                                                       type="number" min="0" value="{$config['send_sms_limit']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 用于商家注册、忘记密码等短信验证，单个手机号每天发送短信上限数，达到上限后将停止向该手机发送短信。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="openid" class="col-sm-2 control-label"><span
+                                                    class="text-red"></span>平台通知微信</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="openid" maxlength="50" name="config[openid]"  placeholder="请输入接收模板消息的微信账户openid" type="text" value="{$config['openid']}"/>
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong>需填写一个接收模板消息的微信账户openid，用于商家注册后接收模板消息等操作。<a href="javascript:void(0);" onClick="showEwmDialog();" target="_blank"> >>获取OPENID</a></p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 系统界面参数<a name="2F" id="2F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>前端平台大LOGO</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('config[logo]',$config['logo']);}
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong> 请上传平台LOGO图片。（建议尺寸：246*50）将展示在用户中心、商家中心等位置。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>前端平台小LOGO</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('config[squarelogo]',$config['squarelogo']);}
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong> 请上传平台LOGO图片。（建议尺寸：48*48）将展示在用户中心、商家中心等位置。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>系统ICO图标</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('config[ico]',$config['ico']);}
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong> 请上传系统ICO图标,建议尺寸32*32,后缀ICO格式，如果上传提示不支持ICO格式，请到<a href="./index.php?c=system&a=attachment&" target="_blank">附件设置</a>图片附件设置>支持文件后缀里添加ICO后缀。</p>
+                                                 </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>后端平台大LOGO</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('config[logo_big]',$config['logo_big']);}
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong> 请上传系统大LOGO,（建议尺寸：110*28）</p>
+                                                 </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>后端平台小LOGO</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('config[logo_small]',$config['logo_small']);}
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong> 请上传系统小LOGO,（建议尺寸：28*28）将展示在活动版权等位置。</p>
+                                                 </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>商家默认头像</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('config[store_head]',$config['store_head']);}
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong> 请上传商家注册后的默认头像，此项只针对PC端注册商家，建议尺寸200*200</p>
+                                                 </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 系统协议设置<a name="3F" id="3F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label  class="col-sm-2 control-label">用户注册协议</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_ueditor('config[agreement]',$config['agreement']);}
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 用户注册协议,商家注册时勾选显示的注册协议内容。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">发布活动协议</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_ueditor('config[promulgate]',$config['promulgate']);}
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 发布活动协议,商家发布活动时需要遵守的协议内容。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="promulgate_num" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>协议提醒次数
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control"  datatype="n" id="promulgate_num" name="config[promulgate_num]" nullmsg="请输入发布协议展示次数！" onkeyup="if(isNaN(this.value)) this.value='0';" placeholder="请输入协议展示次数" type="text" value="{$config['promulgate_num']}">
+                                                <p class="help-block">请输入数字 例如：1|6|10等数字，注意：0表示每次发布活动都会提示</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 全局分享设置<a name="4F" id="4F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="share_title" class="col-sm-2 control-label"><span class="text-red">(*)</span>全局分享标题</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="share_title" maxlength="200"
+                                                       name="config[share_title]" placeholder="请输入全局分享标题" nullmsg="请输入全局分享标题！"
+                                                       type="text" value="{$config['share_title']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 填写<code onclick="insertAtCursor('share_title',this);">{##NICKNAME##}</code>系统会自动替换为分享用户的昵称。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">全局分享图标</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('config[share_thumb]',$config['share_thumb']);}
+                                                <span class="help-block">
+                                                 <p><strong class="text-danger">提示：</strong> 分享图片可不设置 不设置将使用分享者微信头像。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="share_desc" class="col-sm-2 control-label"><span class="text-red">(*)</span>全局分享描述</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows = "3" datatype="*" name="config[share_desc]" id="share_desc" class="form-control" placeholder = "请输入全局分享描述..." nullmsg="请输入全局分享描述！" maxlength="200">{$config['share_desc']}</textarea>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>   填写<code onclick="insertAtCursor('share_desc',this);">{##NICKNAME##}</code>系统会自动替换为分享用户的昵称,活动分享描述请不要将内容换行，系统将自动过滤到换行符。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="alert alert-danger alert-dismissable">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                    <h4><i class="icon fa fa-warning"></i> 微信企业付款到零钱（微信零钱）接口使用须知</h4>
+                                    1.该接口需要认证微信服务号并开通微信支付接口，开启后请确保微信商户平台账户资金充足，否则系统无法完成支付。<br/>
+                                    2.微信零钱可在任意时间内领取，单笔最低可设置0.3元，但需要另开通微信企业付款接口服务。（请登录微信商户平台申请）
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 微信零钱接口<a name="5F" id="5F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="appid" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>AppID</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="appid" maxlength="50"
+                                                       name="config[appid]" nullmsg="请输入认证服务号AppID！" placeholder="请输入认证服务号AppID"
+                                                       type="text" value="{$config['appid']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请填写您的微信认证服务号AppID,设置好以后请不要更换,否则会造成活动领取限制失效,用户重复领取。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="secret" class="col-sm-2 control-label"><span class="text-red">(*)</span>AppSecret</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="secret" maxlength="100"
+                                                       name="config[secret]" nullmsg="请输入认证服务号AppSecret！" placeholder="请输入认证服务号AppSecret"
+                                                       type="text" value="{$config['secret']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请填写您的微信认证服务号AppSecret,并在公众平台中设置oAuth授权域名为当前系统域名</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="mchid" class="col-sm-2 control-label"><span class="text-red">(*)</span>商户号</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="mchid" maxlength="50"
+                                                       name="config[mchid]" nullmsg="请输入微信商户号！" placeholder="请输入微信商户号"
+                                                       type="text" value="{$config['mchid']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请填写使用或借用的微信支付商户号, 开通微信支付才能获得商户号</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="password" class="col-sm-2 control-label"><span class="text-red">(*)</span>商户支付密钥</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="password" maxlength="100"
+                                                       name="config[password]" nullmsg="请输入商户支付密钥！" placeholder="请输入商户支付密钥"
+                                                       type="text" value="{$config['password']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请填写使用或借用的微信支付商户平台的支付秘钥</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="ip" class="col-sm-2 control-label"><span class="text-red">(*)</span>服务器IP地址</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="ip" maxlength="100"
+                                                       name="config[ip]" nullmsg="请输入服务器IP地址！" placeholder="请输入服务器IP地址"
+                                                       type="text" value="{$config['ip']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 接口需要服务器IP. 系统将自动获取您的服务器IP, 如果获取失败, 请手动填写</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="cert" class="col-sm-2 control-label">商户支付证书</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows = "5" name="config[cert]" id="cert" class="form-control" placeholder = "为保证安全性, 不显示证书内容. 若要修改, 请直接输入..." ></textarea>
+                                                <p class="help-block">{php echo $is_apiclient_cert ?"<span class='label bg-green'>已上传</span>":"<span class='label bg-red'>未上传</span>"} <strong class="text-danger">提示：</strong>   从商户平台上下载支付证书, 解压并取得其中的 <code>apiclient_cert.pem</code> 用记事本打开并复制文件内容, 填至此处。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="key" class="col-sm-2 control-label">支付证书私钥</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows = "5" name="config[key]" id="key" class="form-control" placeholder = "为保证安全性, 不显示证书内容. 若要修改, 请直接输入..." ></textarea>
+                                                <p class="help-block">{php echo $is_apiclient_key ?"<span class='label bg-green'>已上传</span>":"<span class='label bg-red'>未上传</span>"} <strong class="text-danger">提示：</strong>   从商户平台上下载支付证书, 解压并取得其中的 <code>apiclient_key.pem</code> 用记事本打开并复制文件内容, 填至此处。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="rootca" class="col-sm-2 control-label">支付根证书</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows = "5" name="config[rootca]" id="rootca" class="form-control" placeholder = "为保证安全性, 不显示证书内容. 若要修改, 请直接输入..." ></textarea>
+                                                <p class="help-block">{php echo $is_rootca ?"<span class='label bg-green'>已上传</span>":"<span class='label bg-red'>未上传</span>"} <strong class="text-danger">提示：</strong>   从商户平台上下载支付证书, 解压并取得其中的 <code>rootca.pem</code> 用记事本打开并复制文件内容, 填至此处。</p>
+                                                <p class="help-block">（注：由于绝大部分操作系统已内置了微信支付服务器证书的根CA证书，2018年3月6日后，微信不再提供CA证书文件（rootca.pem）下载，没有该证书此项可以不填。）</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 支付宝支付接口<a name="6F" id="6F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="aliappid" class="col-sm-2 control-label"><span
+                                                    class="text-red"></span>支付宝应用AppID</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="aliappid" maxlength="50"
+                                                       name="config[aliappid]" placeholder="请输入支付宝应用AppID"
+                                                       type="text" value="{$config['aliappid']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请填写添加了支付宝电脑网站支付的应用的APPID。<a href="https://b.alipay.com/signing/productDetail.htm?productId=I1011000290000001000" target="_blank">申请及详情请查看这里</a></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="aliprivatekey" class="col-sm-2 control-label"><span class="text-red"></span>支付宝开发者私钥</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows = "5" name="config[aliprivatekey]" id="aliprivatekey" class="form-control" placeholder = "请输入支付宝开发者私钥" >{$config['aliprivatekey']}</textarea>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>   支付宝开发者私钥，由开发者自己生成</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="alipublickey" class="col-sm-2 control-label"><span class="text-red"></span>支付宝公钥</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows = "5" name="config[alipublickey]" id="alipublickey" class="form-control" placeholder = "请输入支付宝公钥" >{$config['alipublickey']}</textarea>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>   支付宝公钥，由支付宝生成</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 快递鸟物流接口<a name="7F" id="7F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="express_uid" class="col-sm-2 control-label">快递鸟用户ID</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="express_uid" maxlength="50"
+                                                       name="config[express_uid]"  placeholder="请输入快递鸟用户ID"
+                                                       type="text" value="{$config['express_uid']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入快递鸟接口的用户ID（申请网址：http://www.kdniao.com/）。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="express_key" class="col-sm-2 control-label">接口加密私钥</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="express_key" maxlength="50"
+                                                       name="config[express_key]"  placeholder="请输入接口加密私钥"
+                                                       type="text" value="{$config['express_key']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 接口加密私钥，快递鸟提供，注意保管，不要泄漏。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>快递鸟套餐</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[express_type]" id="express_type0" class="flat-blue express_type" value="0" {if $config['express_type']==0} checked {/if}> 免费版
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[express_type]" id="express_type1" class="flat-blue express_type" value="1" {if $config['express_type']==1} checked {/if}> 增值版
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 免费版每日限制查询500次，查询量超过500请到快递鸟平台购买增值版套餐。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 漫道短信接口<a name="8F" id="8F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="sms_uid" class="col-sm-2 control-label">短信接口帐户</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="sms_uid" maxlength="50"
+                                                       name="config[sms_uid]"  placeholder="请输入漫道科技短信接口用户ID"
+                                                       type="text" value="{$config['sms_uid']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入短信接口发送的接口账号，申请地址：http://www.zucp.net/。首次调用接口需注册信息 可通过：http://sdk2.entinfo.cn:8060/webservice.asmx?op=Register 提交注册信息</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sms_key" class="col-sm-2 control-label">短信接口私钥</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="sms_key" maxlength="50"
+                                                       name="config[sms_key]"  placeholder="请输入短信接口私钥"
+                                                       type="text" value="{$config['sms_key']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入短信接口的发送密码 例如：6577844</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 大鱼短信接口<a name="9F" id="9F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="aliaccesskeyid" class="col-sm-2 control-label">accessKeyId</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="aliaccesskeyid" maxlength="50"
+                                                       name="config[ali_accesskeyid]"  placeholder="请输入阿里大鱼accessKeyId"
+                                                       type="text" value="{$config['ali_accesskeyid']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入阿里大鱼的accessKeyId，申请地址：https://dayu.aliyun.com/。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="aliaccesskeysecret" class="col-sm-2 control-label">accessKeySecret</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="aliaccesskeysecret" maxlength="50"
+                                                       name="config[ali_accesskeysecret]"  placeholder="请输入阿里大鱼accessKeySecret"
+                                                       type="text" value="{$config['ali_accesskeysecret']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入阿里大鱼的accessKeySecret</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 系统短信配置<a name="10F" id="10F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>系统短信验证</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[sms_types]" id="sms_types0" class="flat-blue sms_types" value="0" {if $config['sms_types']==0} checked {/if}> 漫道短信
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[sms_types]" id="sms_types1" class="flat-blue sms_types" value="1" {if $config['sms_types']==1} checked {/if}> 阿里大鱼
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 商家短信验证（注册、找回密码、更换手机号）可选择漫道和阿里大鱼发送。</p>
+                                            </div>
+                                        </div>
+                                        <div id="sms_types1_box" style="display: {if $config['sms_types'] == 0} none{/if};">
+                                            <div class="form-group">
+                                                <label for="alitmpid" class="col-sm-2 control-label">短信模板编号</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" id="alitmpid" maxlength="50"
+                                                           name="config[ali_tmpid]"  placeholder="请输入阿里大鱼短信模板ID"
+                                                           type="text" value="{$config['ali_tmpid']}"/>
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 短信模板申请：您的验证码：${code},请于10分钟内输入短信验证码，请勿将验证码告知他人！。注：必须包含  <code>${code}</code>验证码。</p>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="alisign" class="col-sm-2 control-label">大鱼短信签名</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" id="alisign" maxlength="50"
+                                                           name="config[ali_sign]"  placeholder="请输入阿里大鱼短信签名"
+                                                           type="text" value="{$config['ali_sign']}"/>
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 请输入阿里大鱼短信签名，例如：维奕网络</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动营销短信</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[sms_obj]" id="sms_obj0" class="flat-blue sms_obj" value="0" {if $config['sms_obj']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[sms_obj]" id="sms_obj1" class="flat-blue sms_obj" value="1" {if $config['sms_obj']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 活动营销类的短信可选择开启关闭状态（开启商家可使用漫道短信发送参与中奖信息，由于阿里大鱼短信发送营销、中奖类短信审核困难 暂不支持）。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sms_price" class="col-sm-2 control-label"><span class="text-red">(*)</span>短信每条价格</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="sms_price" maxlength="10"
+                                                       name="config[sms_price]"  placeholder="请输入短信每条价格"  onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                       onblur = "this.value=FloatMoney(this.value)"
+                                                       type="text" value="{$config['sms_price']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入短信每条的价格，根据短信服务商提供的价格填写。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 商家模板消息<a name="11F" id="11F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                        <label class="col-sm-2 control-label"><span class="text-red">(*)</span>强制关注公众号</label>
+                                        <div class="col-sm-10">
+                                            <label>
+                                                <input type="radio" name="config[is_follow]" id="is_follow0" class="flat-blue obj_is_follow" value="0" {if $config['is_follow']==0} checked {/if}> 关闭
+                                            </label>&nbsp;&nbsp;
+                                            <label>
+                                                <input type="radio" name="config[is_follow]" id="is_follow1" class="flat-blue obj_is_follow" value="1" {if $config['is_follow']==1} checked {/if}> 开启
+                                            </label>&nbsp;&nbsp;
+                                            <p class="help-block"><strong class="text-danger">提示：</strong> 开启后商家必须关注公众号后方可在手机端创建活动,建议开启设置。</p>
+                                        </div>
+                                    </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>公众号二维码</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('config[wx_qrcode]',$config['wx_qrcode']);}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="buypushtmp" class="col-sm-2 control-label">充值微信模板</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="buypushtmp" maxlength="50"
+                                                       name="config[buypushtmp]"  placeholder="请输入微信模板ID！"
+                                                       type="text" value="{$config['buypushtmp']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号 模板库行业《互联网|电子商务》搜索《充值》找到 编号<code>OPENTM413251069</code> 标题 充值成功提醒 点击详情使用这个 然后将获取到的 模板ID写入表格中。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="renewpushtmp" class="col-sm-2 control-label">续费微信模板</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="renewpushtmp" maxlength="50"
+                                                       name="config[renewpushtmp]"  placeholder="请输入微信模板ID！"
+                                                       type="text" value="{$config['renewpushtmp']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号 模板库行业《互联网|电子商务》搜索《续费》找到 编号<code>OPENTM405446252</code>标题 续费成功通知 点击详情使用这个 然后将获取到的 模板ID写入表格中。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="refundpushtmp" class="col-sm-2 control-label">提现微信模板</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="refundpushtmp" maxlength="50"
+                                                       name="config[refundpushtmp]"  placeholder="请输入微信模板ID！"
+                                                       type="text" value="{$config['refundpushtmp']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号 模板库行业《互联网|电子商务》搜索《提现》找到 编号<code>OPENTM409281647</code>标题 提现到账通知 点击详情使用这个 然后将获取到的 模板ID写入表格中。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="orderpushtmp" class="col-sm-2 control-label">订单微信模板</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="orderpushtmp" maxlength="50"
+                                                       name="config[orderpushtmp]"  placeholder="请输入微信模板ID！"
+                                                       type="text" value="{$config['orderpushtmp']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号 模板库行业《互联网|电子商务》搜索《订单支付成功提醒》找到 编号<code>OPENTM416836000</code>标题 订单支付成功提醒 点击详情使用这个 然后将获取到的 模板ID写入表格中。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="originpushtmp" class="col-sm-2 control-label">溯源订单模板</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="originpushtmp" maxlength="50"
+                                                       name="config[originpushtmp]"  placeholder="请输入微信模板ID！"
+                                                       type="text" value="{$config['originpushtmp']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号 模板库行业《互联网|电子商务》搜索《订单支付成功提醒》找到 编号<code>OPENTM416836000</code>标题 订单支付成功提醒 点击详情使用这个 然后将获取到的 模板ID写入表格中。</p>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="form-group">
+                                                <label for="refund_notify_pushtmp" class="col-sm-2 control-label">提现通知模板</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" id="refund_notify_pushtmp" maxlength="50"
+                                                           name="config[refund_notify_pushtmp]"  placeholder="请输入微信模板ID！"
+                                                           type="text" value="{$config['refund_notify_pushtmp']}"/>
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号 模板库行业《互联网|电子商务》搜索《提现通知》找到 编号<code>OPENTM207422808</code>标题 提现通知 点击详情使用这个 然后将获取到的 模板ID写入表格中。（注：此模板用于商家申请提现时，通知平台指定的管理员）</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <div class="form-group">
+                                                <label for="refund_dismissed_pushtmp" class="col-sm-2 control-label">提现驳回模板</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" id="refund_dismissed_pushtmp" maxlength="50"
+                                                           name="config[refund_dismissed_pushtmp]"  placeholder="请输入微信模板ID！"
+                                                           type="text" value="{$config['refund_dismissed_pushtmp']}"/>
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号 模板库行业《互联网|电子商务》搜索《驳回》找到 编号<code>OPENTM411556706</code>标题 申请驳回通知 点击详情使用这个 然后将获取到的 模板ID写入表格中。（注：此模板用于商家申请提现被驳回时，通知被驳回的商家）</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="registerpushtmp" class="col-sm-2 control-label">注册通知模板</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="registerpushtmp" maxlength="50"
+                                                       name="config[registerpushtmp]"  placeholder="请输入微信模板ID！"
+                                                       type="text" value="{$config['registerpushtmp']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号 模板库行业《互联网|电子商务》搜索《注册》找到 编号<code>OPENTM413492465</code>标题 注册成功提醒 点击详情使用这个 然后将获取到的 模板ID写入表格中。（注：此模板用于新商家注册后，通知平台指定的管理员）</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="check_notify_pushtmp" class="col-sm-2 control-label">审核通知模板</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="check_notify_pushtmp" maxlength="50"
+                                                       name="config[check_notify_pushtmp]"  placeholder="请输入微信模板ID！"
+                                                       type="text" value="{$config['check_notify_pushtmp']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号 模板库行业《互联网|电子商务》搜索《审核提醒》找到 编号<code>OPENTM207966013</code>标题 审核提醒 点击详情使用这个 然后将获取到的 模板ID写入表格中。（注：此模板用于商家发布活动处于待审状态，通知平台指定的管理员）</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="invitepushtmp" class="col-sm-2 control-label">招商咨询模板</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="invitepushtmp" maxlength="50"
+                                                       name="config[invitepushtmp]"  placeholder="请输入微信模板ID！"
+                                                       type="text" value="{$config['invitepushtmp']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号 模板库行业《互联网|电子商务》搜索《客户咨询》找到 编号<code>OPENTM412547082</code>标题 客户咨询通知 点击详情使用这个 然后将获取到的 模板ID写入表格中。（注：此模板用于活动用户填写招商咨询信息后，通知平台指定的管理员）</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="invitepushtmp" class="col-sm-2 control-label">活动商家入驻</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="objstorepushtmp" maxlength="50"
+                                                       name="config[objstorepushtmp]"  placeholder="请输入微信模板ID！"
+                                                       type="text" value="{$config['objstorepushtmp']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号 模板库行业《互联网|电子商务》搜索《入驻申请提醒》找到 编号<code>OPENTM407435154</code>标题 入驻申请提醒 点击详情使用这个 然后将获取到的 模板ID写入表格中。（注：此模板用于联盟拓客和锦鲤抽奖活动用户填写商家入驻信息后，通知平台商家及时处理）</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display: none">
+                                            <label for="merchant_expiration" class="col-sm-2 control-label">商家到期提醒</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="merchant_expiration" maxlength="50"
+                                                       name="config[merchant_expiration]"  placeholder="请输入微信模板ID！"
+                                                       type="text" value="{$config['merchant_expiration']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号 模板库行业《互联网|电子商务》搜索《试用版到期提醒》找到 编号<code>OPENTM409372106</code>标题 试用版到期提醒 点击详情使用这个 然后将获取到的 模板ID写入表格中。（注：此模板用于商户服务到期10天之内，通知平台商家到期提醒）</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="grouppushtmp" class="col-sm-2 control-label">用户成团模板</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="grouppushtmp" maxlength="50"
+                                                       name="config[grouppushtmp]"  placeholder="请输入微信模板ID！"
+                                                       type="text" value="{$config['grouppushtmp']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号 模板库行业《互联网|电子商务》搜索《组团成功通知》找到 编号<code>OPENTM412213810</code>标题 组团成功通知 点击详情使用这个 然后将获取到的 模板ID写入表格中。（注：此模板用于全民拼团活动用户成团后，通知用户查看购买结果）</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 订阅通知模板<a name="12F" id="12F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body" id="weixinTemplate_box">
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-2 control-label">批量设置模板</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <button class="btn btn-primary" type="button" onclick="addWeixinTemplate(0)">一键添加模板</button>
+                                                    <button class="btn btn-warning" style="margin-left: 20px;" type="button" onclick="delWeixinTemplate()">清空所有模板</button>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号订阅通知中“服务类目”添加【IT科技->软件服务提供商；电商平台->电商平台】；“一键添加模板”可在公众号中批量添加订阅通知模板，“清空所有模板”会删除公众号下设置的所有订阅通知模板。</p>
+                                            </div>
+                                        </div>
+                                        {loop $priTemplateList $item}
+                                        <div class="form-group">
+                                            <label for="{$item['name']}" class="col-sm-2 control-label">{$item['title']}</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="{$item['name']}" maxlength="50"
+                                                           name="config[{$item['name']}]"  placeholder="请输入订阅通知模板ID！"
+                                                           type="text" value="{$config[$item['name']]}"/>
+                                                    <span class="input-group-btn">
+                                                        <button class="btn btn-primary" type="button" onclick="addWeixinTemplate({$item['tid']})">添加模板</button>
+                                                    </span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 微信公众号订阅通知中搜索<code>{$item['title']}</code>标题，点击选用（模板编号：{$item['tid']}），然后依次勾选关键词（{loop $item['desc'] $key $value}
+                                                    {$value}；{/loop}）提交保存，最后点击查看模板详情，将获取到的模板ID填入表格中。</p>
+                                            </div>
+                                        </div>
+                                        {/loop}
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 二维码生成参数<a name="13F" id="13F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="qrcode_size" class="col-sm-2 control-label"><span class="text-red">(*)</span>生成二维码大小</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="qrcode_size" maxlength="2"
+                                                       name="config[qrcode_size]"  placeholder="请输入生成二维码大小"
+                                                       type="text" value="{$config['qrcode_size']}" datatype="*" nullmsg="请输入生成二维码大小！"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入生成二维码尺寸大小，建议值：<code>5</code> 。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">二维码容错率</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" value="L" name="config[qrcode_level]"
+                                                           class="flat-blue" {if $config['qrcode_level']=='L'} checked
+                                                    {/if}> 少许（7%）
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="M" name="config[qrcode_level]"
+                                                           class="flat-blue" {if $config['qrcode_level']=='M'} checked
+                                                    {/if}> 一般（15%）
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="Q" name="config[qrcode_level]"
+                                                           class="flat-blue" {if $config['qrcode_level']=='Q'} checked
+                                                    {/if}> 较大（25%）
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="H" name="config[qrcode_level]"
+                                                           class="flat-blue" {if $config['qrcode_level']=='H'} checked
+                                                    {/if}> 高（30%）
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请根据需求选择二维码容错率，容错率越小需要遮挡的部分越少。</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 充值提现设置<a name="14F" id="14F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>商家活动结算</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[store_settlement_types]" id="store_settlement_types0" class="flat-blue" value="0" {if $config['store_settlement_types']==0} checked {/if}> 用户活动支付结算给商家
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[store_settlement_types]" id="store_settlement_types1" class="flat-blue" value="1" {if $config['store_settlement_types']==1} checked {/if}> 用户购买核销结算给商家
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>请选择用户参与活动支付、积分商城兑换支付资金的结算方式，<code>用户活动支付结算给商家：</code>（用户参与活动支付后即把资金结算至商家账户），<code>用户购买核销结算给商家</code>（用户参与活动支付后资金抵押至平台，用户首次到店核销或在线发货时将资金结算至商家账户）。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="pay_rate" class="col-sm-2 control-label"><span class="text-red">(*)</span>微信支付费率</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="pay_rate" maxlength="10"
+                                                           name="config[pay_rate]"  placeholder="请输入每笔充值费率"  onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                           onblur = "this.value=FloatMoney(this.value)"
+                                                           type="text" value="{$config['pay_rate']}"/>
+                                                    <span class="input-group-addon">%</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 由于充值平台限制，活动支付将收取一定支付费率，例如0.6%费率,表示千分之六费率，也就是支付1000元，实际到账994元</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="recharge_rate" class="col-sm-2 control-label"><span class="text-red">(*)</span>每笔充值费率</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="recharge_rate" maxlength="10"
+                                                           name="config[recharge_rate]"  placeholder="请输入每笔充值费率"  onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                           onblur = "this.value=FloatMoney(this.value)"
+                                                           type="text" value="{$config['recharge_rate']}"/>
+                                                    <span class="input-group-addon">%</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 由于充值平台限制，在线充值将收取一定充值费率，例如0.6%费率,表示千分之六费率，也就是充值100元，需多支付0.6元</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="recharge_min_money" class="col-sm-2 control-label"><span class="text-red">(*)</span>最小充值金额</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="recharge_min_money" maxlength="10"
+                                                       name="config[recharge_min_money]"  placeholder="请输入最小充值金额"  onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                       onblur = "this.value=FloatMoney(this.value)"
+                                                       type="text" value="{$config['recharge_min_money']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入最小充值金额,建议大于等于10元小于等于100元</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="refund_min_money" class="col-sm-2 control-label"><span class="text-red">(*)</span>最小提现金额</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="refund_min_money" maxlength="10"
+                                                       name="config[refund_min_money]"  placeholder="请输入最小提现金额"  onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                       onblur = "this.value=FloatMoney(this.value)"
+                                                       type="text" value="{$config['refund_min_money']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入用户系统零钱最小提现金额，不小于最小金额方可提现。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="refund_max_money" class="col-sm-2 control-label"><span class="text-red">(*)</span>最大提现金额</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="refund_max_money" maxlength="10"
+                                                       name="config[refund_max_money]"  placeholder="请输入最大提现金额"  onkeyup = "if(isNaN(this.value)){this.value='5000.00';}else{this.value}"
+                                                       onblur = "this.value=FloatMoney(this.value)"
+                                                       type="text" value="{$config['refund_max_money']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入用户系统零钱最大提现金额，不大于最大金额方可提现。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>提现申请通知</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[is_refund_notify]" id="is_refund_notify0" class="flat-blue is_refund_notify" value="0" {if $config['is_refund_notify']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[is_refund_notify]" id="is_refund_notify1" class="flat-blue is_refund_notify" value="1" {if $config['is_refund_notify']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启后商家提现时，将使用手机短信和微信模板信息的方式通知平台指定的管理员。</p>
+                                            </div>
+                                        </div>
+                                        <div id="is_refund_notify" style="display: {if $config['is_refund_notify'] == 0} none{/if};">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span class="text-red">(*)</span>提现通知微信</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" id="refund_notify_openid" name="config[refund_notify_openid]"  placeholder="请输入接收模板消息的微信账户openid" type="text" value="{$config['refund_notify_openid']}"/>
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 开启提现申请通知，需填写一个接收模板消息的微信账户openid。<a href="#11F">设置提现模板</a></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>提现免审功能</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[is_verify_refund]" id="is_verify_refund0" class="flat-blue is_verify_refund" value="0" {if $config['is_verify_refund']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[is_verify_refund]" id="is_verify_refund1" class="flat-blue is_verify_refund" value="1" {if $config['is_verify_refund']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启后商家提现时，平台将无需审核，商家提现的钱将通过企业付款接口直接到账。<code>开启前请先到接口测试页面，确保企业付款接口已经配置正确！</code></p>
+                                            </div>
+                                        </div>
+                                        <div id="is_verify_refund" class="form-group" style="display: {if $config['is_verify_refund'] == 1} none{/if};">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>允许支付宝和银行卡提现</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[is_verify_refund_show]" id="is_verify_refund_show0" class="flat-blue" value="0" {if $config['is_verify_refund_show']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[is_verify_refund_show]" id="is_verify_refund_show1" class="flat-blue" value="1" {if $config['is_verify_refund_show']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启后商家提现时，将允许用户通过支付宝和银行卡的方式提现。<code></code></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="store_refund_remark" class="col-sm-2 control-label"><span class="text-red">(*)</span>商家提现备注</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="store_refund_remark" maxlength="20" datatype="*"
+                                                       name="config[store_refund_remark]" nullmsg="请输入商家提现备注" placeholder="请输入商家提现备注"
+                                                       type="text" value="{$config['store_refund_remark']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 设置自定义商家提现备注信息，以避免平台涉及二清风险。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 活动信息设置<a name="15F" id="15F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动审核功能</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[activity_check]" id="activity_check0" class="flat-blue activity_check" value="0" {if $config['activity_check']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[activity_check]" id="activity_check1" class="flat-blue activity_check" value="1" {if $config['activity_check']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>活动审核功能开启后，商家发布的活动需平台审核通过后才能正常显示。不开启默认审核通过 <code>活动修改、克隆需平台重新审核，进行中活动请告知商家不要修改,避免影响活动正常进行。</code></p>
+                                            </div>
+                                        </div>
+
+
+                                        <div id="is_activity_check" style="display: {if $config['activity_check'] == 0} none{/if};">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span class="text-red">(*)</span>审核通知微信</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" id="check_notify_openid" name="config[check_notify_openid]"  placeholder="请输入接收模板消息的微信账户openid" type="text" value="{$config['check_notify_openid']}"/>
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 商家活动审核微信通知，请填写一个接收模板消息的微信账户openid。<a href="#11F">设置审核模板</a></p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动分享按钮</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[activity_share_btn]" id="activity_share_btn0" class="flat-blue" value="0" {if $config['activity_share_btn']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[activity_share_btn]" id="activity_share_btn1" class="flat-blue" value="1" {if $config['activity_share_btn']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>活动分享按钮关闭后，活动页面不显示一键分享按钮</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动投诉功能</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[is_show_complain]" id="is_show_complain0" class="flat-blue" value="0" {if $config['is_show_complain']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[is_show_complain]" id="is_show_complain1" class="flat-blue" value="1" {if $config['is_show_complain']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>活动投诉功能，关闭后活动模板页面投诉按钮将不再显示。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>创建活动按钮</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[create_btn_types]" id="create_btn_types0" class="flat-blue" value="0" {if $config['create_btn_types']==0} checked {/if}> 左侧
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[create_btn_types]" id="create_btn_types1" class="flat-blue" value="1" {if $config['create_btn_types']==1} checked {/if}> 底部
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>活动页面我也要创建活动按钮展示位置，分为左侧浮动和底部显示。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>客服回访功能</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[is_show_invest]" class="flat-blue" value="0" {if $config['is_show_invest']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[is_show_invest]" class="flat-blue" value="1" {if $config['is_show_invest']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>活动页面我也要创建活动按钮点击后客服回访功能，关闭后点击按钮将直接跳转到注册页面。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动打赏功能</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[is_show_gift]" id="is_show_gift0" class="flat-blue" value="0" {if $config['is_show_gift']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[is_show_gift]" id="is_show_gift1" class="flat-blue" value="1" {if $config['is_show_gift']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>活动礼物打赏功能，开启后投票活动选手允许开启使用礼物打赏功能，开启前请提前完善礼物赠品模板。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动一键关注</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[is_show_follow]" id="is_show_follow0" class="flat-blue is_show_follow" value="0" {if $config['is_show_follow']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[is_show_follow]" id="is_show_follow1" class="flat-blue is_show_follow" value="1" {if $config['is_show_follow']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>活动一键关注关闭后，活动页面顶部不显示一键关注按钮。</p>
+                                            </div>
+                                        </div>
+                                        <div id="follow_text_box" style="display: {if $config['is_show_follow'] == 0} none{/if};">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span class="text-red">(*)</span>关注按钮文字</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" id="follow_text" name="config[follow_text]"  placeholder="请输入页面关注按钮文字" type="text" value="{$config['follow_text']}" maxlength="4"/>
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 活动页面顶部关注按钮文字，默认为一键关注。</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 系统广告设置<a name="16F" id="16F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>商家中心广告</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" value="0" name="config[is_show_storebannerads]" id="is_show_storebannerads0"
+                                                           class="flat-blue is_show_storebannerads" {if $config['is_show_storebannerads']==0} checked
+                                                    {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="1" name="config[is_show_storebannerads]" id="is_show_storebannerads1"
+                                                           class="flat-blue is_show_storebannerads" {if $config['is_show_storebannerads']==1} checked
+                                                    {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <span class="help-block">
+                                                        <p><strong class="text-danger">提示：</strong> 移动端商家中心是否展示设置的横幅广告，开启后请完善横幅广告信息。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div id="storebannerads_open_box" style="display: {if $config['is_show_storebannerads'] != 1} none{/if};">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span class="text-red">(*)</span>横幅广告图片</label>
+                                                <div class="col-sm-10">
+                                                    {php echo tpl_form_field_image('config[storebannerads_url]',$config['storebannerads_url']);}
+                                                    <span class="help-block">
+                                                        <p><strong class="text-danger">提示：</strong> 请按根据情况上传图片 建议尺寸750*200</p>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="storebannerads_link" class="col-sm-2 control-label">广告链接地址</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" id="storebannerads_link" maxlength="250"
+                                                           name="config[storebannerads_link]"  placeholder="请输入广告链接地址"
+                                                           type="text" value="{$config['storebannerads_link']}"/>
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 请输入完整链接地址，以http://或https://开头，例如：http://www.baidu.com/</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 系统域名设置<a name="17F" id="17F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="site_domain" class="col-sm-2 control-label"><span class="text-red">(*)</span>系统主域名设置</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="site_domain" maxlength="50"
+                                                       name="config[site_domain]"  placeholder="请输入系统主域名"
+                                                       type="text" value="{$config['site_domain']}" datatype="*" nullmsg="请输入系统主域名！"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>系统主域名即微信公众号功能设置中的“网页授权域名”，只有在用户授权时使用，授权完成后即跳转到炮灰域名，访问后台时请使用主域名生成二维码，<code>域名请以“http://”或“https://”开头，以“/”结尾</code></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="die_domain" class="col-sm-2 control-label"><span class="text-red">(*)</span>系统炮灰域名</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows = "5" name="config[die_domain]" id="die_domain" class="form-control" placeholder = "请输入系统替死域名" >{$config['die_domain']}</textarea>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 系统采用两种方式：方式1和方式2，可以填写多个炮灰域名，<code>以换行隔开，域名请以“http://”或“https://”开头，以“/”结尾</code></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="pay_domain" class="col-sm-2 control-label">系统支付域名</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="pay_domain" maxlength="50"
+                                                       name="config[pay_domain]"  placeholder="请输入系统主域名"
+                                                       type="text" value="{$config['pay_domain']}" />
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>系统发起微信支付时将使用此域名，可和微信商户平台“支付授权目录”中绑定的域名一致。注意（开启泛解析时此项必填）<code>域名请以“http://”或“https://”开头，以“/”结尾</code></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>(海报/分享)设置</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" value="0" name="config[share_types]"
+                                                           class="flat-blue" {if $config['share_types']=='0'} checked
+                                                    {/if}> 主域名
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="1" name="config[share_types]"
+                                                           class="flat-blue" {if $config['share_types']=='1'} checked
+                                                    {/if}> 炮灰域名
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 主域名：作为用户分享和专属海报的域名，如果炮灰域名出现不能正常使用时，分享和会员专属海报仍然有效。</p>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 炮灰域名：作为用户分享和专属海报的域名，如果炮灰域名出现不能正常使用时，主域名不受影响。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>域名泛解析支持</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" value="0" name="config[domain_types]"
+                                                           class="flat-blue" {if $config['domain_types']=='0'} checked
+                                                    {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="1" name="config[domain_types]"
+                                                           class="flat-blue" {if $config['domain_types']=='1'} checked
+                                                    {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启前请将主域名或炮灰域名泛解析到当前服务器，且域名必须是顶级域名，系统将为每个活动、每个访问者生成一个二级域名。部分域名出现打不开时，不影响其他二级域名的正常使用。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>使用来路判断</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" value="1" name="config[is_incoming_road]"
+                                                           class="flat-blue" {if $config['is_incoming_road']=='1'} checked
+                                                    {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="0" name="config[is_incoming_road]"
+                                                           class="flat-blue" {if $config['is_incoming_road']=='0'} checked
+                                                    {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>系统有来路判断和炮灰域名双重机制。</p>
+                                            </div>
+                                        </div>
+                                        {if getPluginStatus($_W['uniacid'], 'lywywl_ztb_plugin_shareborrow')}
+                                        {if $_W['role'] == 'founder'}
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>分享接口借权</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" value="0" name="config[is_share_borrow]" id="is_share_borrow0"
+                                                           class="flat-blue is_share_borrow" {if $config['is_share_borrow']==0} checked
+                                                    {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="1" name="config[is_share_borrow]" id="is_share_borrow1"
+                                                           class="flat-blue is_share_borrow" {if $config['is_share_borrow']==1} checked
+                                                    {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong> 如果公众号分享接口被封，可开启此功能借权其他公众号分享接口。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="is_share_borrow_box" style="{if $config['is_share_borrow']==0}display:none;{/if}">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>借权公众号ID</label>
+                                            <div class="col-sm-10">
+                                                <div class="col-sm-3" style="padding-left:0;padding-bottom:10px;">
+                                                    <div class="col-sm-3" style="padding:0;">
+                                                        <label class="control-label">全局通用</label>
+                                                    </div>
+                                                    <div class="col-sm-9">
+                                                        <select name="config[share_borrow_uniacid][global]" class="form-control select2">
+                                                            <option value="0">请选择</option>
+                                                            {loop $accountArr $item}
+                                                            <option value="{$item['uniacid']}" {if $item['uniacid'] == $config['share_borrow_uniacid']['global']} selected="selected"{/if}>{$item['name']}</option>
+                                                            {/loop}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                {loop $activityTypes $key $value}
+                                                <div class="col-sm-3" style="padding-left:0;padding-bottom:10px;">
+                                                    <div class="col-sm-3" style="padding:0;">
+                                                        <label class="control-label">{$value}</label>
+                                                    </div>
+                                                    <div class="col-sm-9">
+                                                        <select name="config[share_borrow_uniacid][{$activityTables[$key]}]" class="form-control select2">
+                                                            <option value="0">请选择</option>
+                                                            {loop $accountArr $item}
+                                                            <option value="{$item['uniacid']}" {if $item['uniacid'] == $config['share_borrow_uniacid'][$activityTables[$key]]} selected="selected"{/if}>{$item['name']}</option>
+                                                            {/loop}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                {/loop}
+                                                <div class="clear"></div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 选择前请确保借权公众号参数配置正确。</p>
+                                            </div>
+                                        </div>
+                                        {/if}
+                                        {/if}
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red"></span>备注</label>
+                                            <div class="col-sm-10">
+                                                <p class="help-block"><strong class="text-danger">以上设置仅为学习研究，请根据自己的情况尝试设置，由此带来的任何责任，自行承担。</strong></p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 屏蔽会员设置<a name="18F" id="18F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group" >
+                                            <label for="user_black_key" class="col-sm-2 control-label"><span class="text-red">(*)</span>屏蔽关键词</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows = "8" name="config[user_black_key]" id="user_black_key" class="form-control" placeholder = "请输入屏蔽关键词,如:拓客,营销等" >{$config[user_black_key]}</textarea>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>用于检测过滤来访用户的<code>昵称</code>。请以英文逗号隔开; <code> 如果未设置关键词此功能将不起作用。</code> </p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>关键词屏蔽后操作</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" value="0" name="config[user_black_type]" id="user_black_type0"
+                                                        class="flat-blue user_black_type" {if $config['user_black_type']==0} checked
+                                                    {/if}> 拒绝访问
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="1" name="config[user_black_type]" id="user_black_type1"
+                                                        class="flat-blue user_black_type" {if $config['user_black_type']==1} checked
+                                                    {/if}> 自定义链接
+                                                </label>&nbsp;&nbsp;
+                                                <span class="help-block">
+                                                        <p><strong class="text-danger">提示：</strong> 关键词屏蔽后的操作处理方式; 如果未设置关键词此功能将不起作用。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" id="user_black_to_url_show" style="display: {if $config['user_black_type']==0} none {/if};">
+                                            <label for="user_black_to_url" class="col-sm-2 control-label"><span class="text-red">(*)</span>屏蔽转跳链接</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="user_black_to_url" maxlength="50"
+                                                    name="config[user_black_to_url]"  placeholder="请输入关键词屏蔽后转跳地址"
+                                                    type="text" value="{$config['user_black_to_url']}" />
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>匹配用户昵称后转跳的地址,请自行测试是否能打开后填写。<code>以http://或https://开头</code></p>
+                                            </div>
+                                        </div>
+
+                                        <!--
+                                        <div class="form-group"  style="display: none ">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>区域屏蔽后操作</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" value="0" name="config[is_open_area_black]" id="is_open_area_black0"
+                                                        class="flat-blue is_open_area_black" {if $config['is_open_area_black']==0} checked
+                                                    {/if}> 弹出提示
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="1" name="config[is_open_area_black]" id="is_open_area_black1"
+                                                        class="flat-blue is_open_area_black" {if $config['is_open_area_black']==1} checked
+                                                    {/if}> 拒绝访问
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="2" name="config[is_open_area_black]" id="is_open_area_black2"
+                                                        class="flat-blue is_open_area_black" {if $config['is_open_area_black']==2} checked
+                                                    {/if}> 自定义链接
+                                                </label>&nbsp;&nbsp;
+                                                <span class="help-block">
+                                                        <p><strong class="text-danger">提示：</strong> 区域屏蔽后的操作处理方式;如果活动中未设置访问区域,此功能将不起作用.</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                         -->
+                                        <!-- style="display: {if $config['is_open_area_black']!=2} none {/if};" -->
+
+                                        <!--
+                                        <div class="form-group" id="area_black_to_url_show"  >
+                                            <label for="area_black_to_url" class="col-sm-2 control-label"><span class="text-red">(*)</span>区域屏蔽转跳链接</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="area_black_to_url" maxlength="50"
+                                                    name="config[area_black_to_url]"  placeholder="请输入区域屏蔽后转跳地址"
+                                                    type="text" value="{$config['area_black_to_url']}" />
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>不在区域内会员打开活动后的转跳链接。 <code>如果活动中未设置访问区域,此功能将不起作用;以http://或https://开头</code></p>
+                                            </div>
+                                        </div>
+                                        -->
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red"></span>备注</label>
+                                            <div class="col-sm-10">
+                                                <p class="help-block"><strong class="text-danger">以上设置仅为学习研究，请根据自己的情况尝试设置，由此带来的任何责任，自行承担。</strong></p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <a name="18F" id="18F"></a>
+                                                <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+                                                <input type="hidden" name="token" value="{$_W['token']}"/>
+                                                <input type="hidden" name="submit" value="submit"/>
+                                                <button type="submit" class="btn btn-primary" id="SubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default">
+                                                    <i class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script>
+    $(function () {
+        SelectNav("系统配置");
+
+        myrequire(['icheck','validform','select2'], function () {
+            $(".select2").select2();
+            //初始化icheck控件radio
+            $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+                checkboxClass: 'icheckbox_flat-blue',
+                radioClass: 'iradio_flat-blue'
+            });
+
+            $('.sms_types').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var sms_types = $(this).val();
+                if(sms_types==0)
+                {
+                    $("#sms_types1_box").hide();
+                }
+                else
+                {
+                    $("#sms_types1_box").show();
+                }
+            });
+
+            $('.is_refund_notify').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var is_refund_Notify = $(this).val();
+                if(is_refund_Notify==0)
+                {
+                    $("#is_refund_notify").hide();
+                }
+                else
+                {
+                    $("#is_refund_notify").show();
+                }
+            });
+            $('.is_verify_refund').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var is_verify_refund = $(this).val();
+                if(is_verify_refund==1)
+                {
+                    $("#is_verify_refund").hide();
+                }
+                else
+                {
+                    $("#is_verify_refund").show();
+                }
+            });
+            
+            $('.activity_check').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var is_check_Notify = $(this).val();
+                if(is_check_Notify==0)
+                {
+
+                    $("#is_activity_check").hide();
+                }
+                else
+                {
+                    $("#is_activity_check").show();
+                }
+            });
+
+            $('.is_show_storebannerads').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                if(obj_types==0)
+                {
+                    $("#storebannerads_open_box").hide();
+                }
+                else
+                {
+                    $("#storebannerads_open_box").show();
+                }
+            });
+
+            $('.is_show_follow').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                console.log(obj_types);
+                if(obj_types==0)
+                {
+                    $("#follow_text_box").hide();
+                }
+                else
+                {
+                    $("#follow_text_box").show();
+                }
+            });
+
+            $('.is_share_borrow').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                if($(this).val() == 0)
+                {
+                    $("#is_share_borrow_box").hide();
+                }
+                else
+                {
+                    $("#is_share_borrow_box").show();
+                }
+            });
+            $('.user_black_type').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var user_black_type = $(this).val();
+                if(user_black_type==0)
+                {
+                    $("#user_black_to_url_show").hide();
+                }
+                else
+                {
+                    $("#user_black_to_url_show").show();
+                }
+            });
+            
+            
+            // $('.is_open_area_black').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+            //     var is_open_area_black = $(this).val();
+            //     if(is_open_area_black==2) //不等于2都关闭
+            //     {
+            //         $("#area_black_to_url_show").show();
+            //     }
+            //     else
+            //     {
+            //         $("#area_black_to_url_show").hide();
+            //     }
+            // });
+            
+            
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createWebUrl('sys_config', array('act' => 'index'));}";
+                            }, 2000);
+
+
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+                    }
+                }
+            });
+        });
+    });
+
+
+    $(window).scroll(function () {
+        $(".edui-editor-toolbarbox").each(function () {
+            var zIndex = parseInt($(this).css('z-index')) || -1;
+            if(zIndex > 0){
+                $(this).addClass('edui-editor-toolbarbox2');
+            }else{
+                $(this).removeClass('edui-editor-toolbarbox2');
+            }
+        })
+    });
+
+    //光标处插入指定文本内容
+    function insertAtCursor(text, obj) {
+        var myField = document.getElementById(text);
+        var myValue = obj.innerHTML;
+        if (document.selection) {
+            //IE support
+            myField.focus();
+            sel = document.selection.createRange();
+            sel.text = myValue;
+            sel.select();
+        } else if (myField.selectionStart || myField.selectionStart == '0') {
+            //MOZILLA/NETSCAPE support
+            var startPos = myField.selectionStart;
+            var endPos = myField.selectionEnd;
+            var beforeValue = myField.value.substring(0, startPos);
+            var afterValue = myField.value.substring(endPos, myField.value.length);
+
+            myField.value = beforeValue + myValue + afterValue;
+
+            myField.selectionStart = startPos + myValue.length;
+            myField.selectionEnd = startPos + myValue.length;
+            myField.focus();
+        } else {
+            myField.value += myValue;
+            myField.focus();
+        }
+    }
+
+    $(function(){
+        // @ 给窗口加滚动条事件
+        $(window).scroll(function(){
+            // 获得窗口滚动上去的距离
+            var ling = $(document).scrollTop();
+            // 在标题栏显示滚动的距离
+            //document.title = $('#2F').offset().top;
+            // 如果滚动距离大于1534的时候让滚动框出来
+            if(ling>90){
+                $('#rightbox').show();
+            }
+            if(90<ling && ling< ($('#2F').offset().top-100)){
+                // 让第一层的数字隐藏，文字显示，让其他兄弟元素的li数字显示，文字隐藏
+                $('#rightbox ul li').eq(0).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(0).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#3F').offset().top-100)){
+                $('#rightbox ul li').eq(1).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(1).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#4F').offset().top-100)){
+                $('#rightbox ul li').eq(2).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(2).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#5F').offset().top-100)){
+                $('#rightbox ul li').eq(3).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(3).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#6F').offset().top-100)){
+                $('#rightbox ul li').eq(4).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(4).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#7F').offset().top-100)){
+                $('#rightbox ul li').eq(5).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(5).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#8F').offset().top-100)){
+                $('#rightbox ul li').eq(6).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(6).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#9F').offset().top-100)){
+                $('#rightbox ul li').eq(7).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(7).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#10F').offset().top-100)){
+                $('#rightbox ul li').eq(8).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(8).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#11F').offset().top-100)){
+                $('#rightbox ul li').eq(9).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(9).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#12F').offset().top-100)){
+                $('#rightbox ul li').eq(10).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(10).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            } else if(ling<($('#13F').offset().top-100)){
+                $('#rightbox ul li').eq(11).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(11).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            } else if(ling<($('#14F').offset().top-100)){
+                $('#rightbox ul li').eq(12).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(12).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#15F').offset().top-100)){
+                $('#rightbox ul li').eq(13).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(13).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            } else if(ling<($('#16F').offset().top-100)){
+                $('#rightbox ul li').eq(14).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(14).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }
+            if(ling<90){
+                $('#rightbox').hide();
+            }
+        })
+
+    })
+
+    $(function(){
+        $('#rightbox ul li').hover(function(){
+            $(this).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+        },function(){
+            $(this).find('.num').css({'display':'block','background':'white','color':'#666'}).siblings('.word').hide().css({'display':'none','background':'','color':''});
+        })
+    })
+
+    function showEwmDialog() {
+        require(["jquery", "util"], function(){
+            var footer = '<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+            var modalobj = util.dialog('扫码获取OPENID','<div class=link-modal><div style=width:300px;margin:auto;position:relative;text-align:center;><img src={php echo $this->createWebUrl('sys_test', array('act' => 'openidQrPreview'));}><p>请用需要绑定用户的微信浏览器打开！</p></div></div>',footer,{containerName:'emw-container'});
+            modalobj.modal({'keyboard': true});
+            modalobj.find('.modal-body').css({'overflow-y':'auto' });
+            modalobj.modal('show');
+        });
+    }
+
+    function addWeixinTemplate(tid){
+        //询问框
+        layer.open({
+            content: '你确定要'+(tid==0?'批量':'')+'添加模板吗？'
+            , btn: ['确定', '取消']
+            , yes: function (index) {
+                $.ajax({
+                    type: "post",
+                    dataType:'json',
+                    url: "{php echo $this->createWebUrl('sys_config', array('act' => 'addWeixinTemplate'));}",
+                    data: {"tid": tid},
+                    beforeSend:function(){
+                        layer.open({
+                            type: 2
+                            , content: '数据请求中'
+                            , time: 999 //999秒后自动关闭
+                            , shadeClose: false
+                        });
+                    },
+                    success: function (data, status) {
+                        if (data.status == 1) {
+                            if(tid == 0){
+                                for(var i=0;i<data.priTemplateList.length;i++){
+                                    var item = data.priTemplateList[i];
+                                    $("#"+item['name']).val(item['priTmplId']);
+                                }
+                            }else{
+                                $("#"+data.name).val(data.priTmplId);
+                            }
+                            Command: toastr["success"](data.msg, "成功提示");
+                        }
+                        else {
+                            Command: toastr["error"](data.msg, "错误提示");
+                        }
+                    },
+                    complete:function(){
+                        layer.closeAll();
+                    },
+                });
+                layer.close(index);
+            }
+        });
+    }
+    function delWeixinTemplate(){
+        //询问框
+        layer.open({
+            content: '你确定要清空所有模板吗？'
+            , btn: ['确定', '取消']
+            , yes: function (index) {
+                $.ajax({
+                    type: "post",
+                    dataType:'json',
+                    url: "{php echo $this->createWebUrl('sys_config', array('act' => 'delWeixinTemplate'));}",
+                    beforeSend:function(){
+                        layer.open({
+                            type: 2
+                            , content: '数据请求中'
+                            , time: 999 //999秒后自动关闭
+                            , shadeClose: false
+                        });
+                    },
+                    success: function (data, status) {
+                        if (data.status == 1) {
+                            Command: toastr["success"](data.msg, "成功提示");
+                            $("#weixinTemplate_box input").val("");
+                        }
+                        else {
+                            Command: toastr["error"](data.msg, "错误提示");
+                        }
+                    },
+                    complete:function(){
+                        layer.closeAll();
+                    },
+                });
+                layer.close(index);
+            }
+        });
+    }
+</script>
+</body>
+</html>

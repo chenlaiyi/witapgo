@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'user/common/header'}
+<body class="bgf2">
+<!--查看物流-->
+<section class="bgfff">
+    <figure class="logis">
+        <section class="losis_info"><img src="{php echo tomedia($model['product_thumb'])}"  alt=""/><i>1件商品</i></section>
+        <figcaption class="font28">物流状态：<span class="main_green" id="statusName">未知</span></figcaption>
+        <p class="c9 font28">物流公司：{$model['fedex_name']}</p>
+        <p class="c9 font28">订单编号：{$model['fedex_number']}</p>
+    </figure>
+</section>
+<section class=" mt24 rel f-yahei bgfff">
+    <ul class="order-state" id="content">
+        <li class="on">
+            <section class="lc"><i></i><em></em></section>
+            <section class="jd">
+                <P  class="font28">查询中，请稍等……</P>
+            </section>
+        </li>
+    </ul>
+</section>
+<script type="text/javascript">
+    function getOrderTraces() {
+        $.ajax({
+            type: "post",
+            url: "{php echo $this->createMobileUrl('user.order_logistics', array('act' => 'getOrderTraces','store_id'=>$store_id));}",
+            data: {
+                "code": '{$model['fedex_code']}',
+                "number": '{$model['fedex_number']}',
+                "mobile": '{$model['mobile']}'
+            },
+            dataType:'json',
+            success: function (result) {
+                if (result.status === 1) {
+                    var jsonData = JSON.parse(result.tracesData);
+                    var statusName = "未知";
+                    if(jsonData['State']==2){
+                        statusName = "在途中";
+                    }else if(jsonData['State']==3){
+                        statusName = "签收";
+                    }else if(jsonData['State']==4){
+                        statusName = "问题件";
+                    }
+                    $("#statusName").text(statusName);
+                    var expressHtml = "";
+                    if(jsonData['Success']){
+                        $.each(jsonData['Traces'],function (i,item) {
+                            expressHtml+="<li class='"+(i==(jsonData['Traces'].length -1)?"on":"")+"'><div class='lc'><i></i><em></em></div><div class='jd none'><p class='font28 lh20'>"+(item['AcceptStation'])+"</p><time class='font28'>"+(item['AcceptTime'])+"</time></div></li>";
+                        })
+                    }else{
+                        expressHtml="<li class='on'><div class='lc'><i></i><em></em></div><div class='jd none'><p class='font28 lh20'>获取物流信息失败，请稍后重试！</p></div></li>";
+                    }
+                    $("#content").html(expressHtml);
+                } else {
+                    layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                }
+            }
+        });
+    }
+    getOrderTraces();
+</script>
+</body>
+</html>

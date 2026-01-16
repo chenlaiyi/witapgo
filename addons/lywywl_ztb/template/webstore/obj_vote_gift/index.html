@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>{$title} - {$actModel['title']}</h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a></li>
+                <li class="active">活动管理</li>
+                <li class="active">{$title}</li>
+                <li class="active">礼物打赏</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            {if !empty($actModel)}
+                            <li><a href="{php echo $this->createWebAppUrl('obj_activity', array('act' => 'index'));}">返回活动</a></li>
+                            {/if}
+                            <li class="active"><a href="">数据列表</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchKey" class="col-sm-1 control-label">用户信息</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="SearchKey" placeholder="OPENID" value="">
+                                            </div>
+                                            {if !empty($actModel)}
+                                            <label class="control-label col-sm-1" for="SearchPlayer">隶属选手</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchPlayer">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $playerList $player}
+                                                    <option value="{$player['id']}" {if $player_id==$player['id']} selected {/if}>{$player['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                            {else}
+                                            <div class="col-sm-3" style="display: none;">
+                                                <select class="form-control select2" id="SearchPlayer">
+                                                    <option value="" selected="selected">请选择</option>
+                                                </select>
+                                            </div>
+                                            {/if}
+                                            <label class="control-label col-sm-1" for="SearchTime">打赏时间</label>
+                                            <div class="col-sm-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control pull-right" id="SearchTime"
+                                                           placeholder="开始时间 - 结束时间" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {if ($objModel['gift_id'] > 0) }
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label class="control-label col-sm-1" for="SearchGift">打赏礼物</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchGift">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $giftList $gift}
+                                                    <option value="{$gift['id']}">{$gift['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        {/if}
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索
+                                            </button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置检索</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="box">
+                                <table class="table table-hover">
+                                    <tr>
+                                        <th style="text-align: center;">打赏次数</th>
+                                        <th style="text-align: center;">打赏礼物</th>
+                                        <th style="text-align: center;">支付金额</th>
+                                        <th style="text-align: center;">结算金额</th>
+                                        <th style="text-align: center;">增加票数</th>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">{$counttotal} 次</td>
+                                        <td align="center">{$numtotal} 件</td>
+                                        <td align="center">{$paymoneytotal} 元</td>
+                                        <td align="center">{$endmoneytotal} 元</td>
+                                        <td align="center">{$votetotal} 票</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div id="box" class="table-responsive">
+                                <div id="toolbar" class="btn-group">
+                                    <button id="btn_exportdata" type="button" class="btn btn-info">
+                                        <span class="fa fa-download" aria-hidden="true"></span>&nbsp;导出数据
+                                    </button>
+                                </div>
+                                <table id="tb_bandlist" class="table text-nowrap" data-reorderable-columns="true"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script>
+    $(function () {
+        SelectNav("我创建的活动");
+
+        require(["daterangepicker"], function () {
+            //时间搜索
+            $('#SearchTime').daterangepicker({
+                format: "YYYY/MM/DD"
+            });
+        });
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            myrequire(['bootstrap-table-zh-cn', 'bootstrap-table-editable', 'bootstrap-table-fixed-columns'], function () {
+                $(".select2").select2();
+                //1.初始化Table
+                var oTable = new TableInit();
+                oTable.Init();
+                //2.初始化Button的点击事件
+                var oButtonInit = new ButtonInit();
+                oButtonInit.Init();
+            });
+        });
+
+    });
+
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#tb_bandlist').bootstrapTable({
+                url: "{php echo $this->createWebAppUrl('obj_vote_gift', array('act' => 'getJsonList','aid' => $aid));}",         //请求后台的URL（*）
+                method: 'get',                      //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: true,                    //是否启用排序
+                sortName: "id",                   //排序字段
+                sortOrder: "desc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: false,                //是否启用点击选中行
+                height: 575,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                fixedColumns: true,                    //冻结列开启关闭
+                fixedNumber: 1,                        //冻结列数量
+                onLoadError: function () {  //加载失败时执行
+                    Command: toastr["error"]("对不起，网络繁忙，请稍后再试！", "错误提示");
+                },
+                columns: [{
+                    checkbox: true
+                }, {
+                    field: 'id',
+                    title: '编号',
+                    titleTooltip: '当前信息的唯一编号，数据主键',
+                    sortable: true
+                }, {
+                    field: 'player_id',
+                    title: '选手名称',
+                    titleTooltip: '获票选手的名称',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return row.player_name;
+                    }
+                },{
+                    field: 'pay_number',
+                    title: '订单编号',
+                    titleTooltip: '赠送礼物订单的编号',
+                    sortable: true,
+                },{
+                    field: 'name',
+                    title: '礼物名称',
+                    titleTooltip: '打赏选手礼物的名称',
+                    sortable: true,
+                },{
+                    field: 'icon_url',
+                    title: '礼物图标',
+                    titleTooltip: '背景特效图片列表',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return "<img height='35' width='35'  src='"+ value +"'>" ;
+                    }
+                }, {
+                    field: 'paymoney',
+                    title: '支付金额',
+                    titleTooltip: '购买赠送礼物所需要支付的金额',
+                    sortable: true,
+                }, {
+                    field: 'endmoney',
+                    title: '结算金额',
+                    titleTooltip: '购买赠送礼物结算给商家金额',
+                    sortable: true,
+                }, {
+                    field: 'vote',
+                    title: '增加票数',
+                    titleTooltip: '购买赠送礼物等值于多少票',
+                    sortable: true,
+                }, {
+                    field: 'num',
+                    title: '赠送数量',
+                    titleTooltip: '打赏礼物数量',
+                    sortable: true,
+                }, {
+                    field: 'nickname',
+                    title: '微信昵称',
+                    titleTooltip: '注册用户的微信昵称',
+                    sortable: true,
+                }, {
+                    field: 'headurl',
+                    title: '微信头像',
+                    titleTooltip: '注册用户的微信昵称',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return " <img height='30' width='30' src='"+ value +"' alt='"+ row.nickname +"'>"
+                    }
+                }, {
+                    field: 'openid',
+                    title: 'OPENID',
+                    titleTooltip: '注册用户对于微信公众号的唯一身份标识',
+                    sortable: true,
+                }, {
+                    field: 'createtime',
+                    title: '打赏时间',
+                    titleTooltip: '创建信息的时间',
+                    sortable: true,
+                }]
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                //search: params.search,
+                pageSize: params.limit,  //每页大小
+                page: params.offset / params.limit + 1,//页码
+                sortOrder: params.order,//排序
+                sortName: params.sort,//排序字段
+                openid: $("#SearchKey").val(), //关键词
+                player_id: $("#SearchPlayer").val(), //卡券商家
+                gift_id: $("#SearchGift").val(), //卡券商家
+                timer: $("#SearchTime").val() //信息状态
+            };
+            return temp;
+        };
+        return oTableInit;
+    };
+
+    //加载成功时执行
+    $('#tb_bandlist').on('load-success.bs.table column-switch.bs.table', function (data) {
+        $('#tb_bandlist').bootstrapTable('resetView');
+    });
+
+    var ButtonInit = function () {
+        var oInit = new Object();
+        var postdata = {};
+
+        oInit.Init = function () {
+            //查询操作
+            $("#btn_query").click(function () {
+                $("#tb_bandlist").bootstrapTable('refresh');
+            });
+            //导出数据
+            $("#btn_exportdata").click(function(){
+                var openid=$("#SearchKey").val();
+                var player_id=$("#SearchPlayer").val();
+                var timer= $("#SearchTime").val();
+
+                //询问框
+                layer.open({
+                    content: '您确定要导出记录到Excel吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        layer.close(index);
+                        window.location.href = "{php echo $this->createWebAppUrl('obj_vote_gift', array('act' => 'exportData','aid' => $aid));}&openid="+ openid +"&player_id="+ player_id +"&timer="+ timer +"";
+                    }
+                });
+            });
+        };
+        return oInit;
+    };
+</script>
+</body>
+</html>

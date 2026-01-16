@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li class="layui-this">
+						<a href="{php echo webUrl('refund', ['id'=>$id])}">退款</a>
+					</li>
+					<li>
+						<a href="{php echo webUrl('orderList')}">返回</a>
+					</li>
+				</ul>
+			</div>
+
+			<form class="layui-form fixed" action="" method="post" enctype="multipart/form-data" id="data-form">
+				<input type="hidden" name="id" value="{$order['id']}">
+				<!-- 订单号或ID -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">订单号或ID</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" value="{php echo empty($order['sn']) ? $order['id'] : $order['sn']}" readonly>
+					</div>
+				</div>
+				<!-- 退回方式 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">退回方式</label>
+					<div class="layui-input-block">
+						<input type="radio" name="refund_type" value="0" title="余额" checked>
+						<input type="radio" name="refund_type" value="1" title="微信">
+					</div>
+				</div>
+
+				<!-- 退回金额 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">退回金额</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" lay-verify="required" name="money" value="{$order['paid_money']}">
+						<div class="layui-form-mid layui-word-aux">最多{$order['paid_money']}元</div>
+					</div>
+				</div>
+
+				<!-- 退回余额的金额 -->
+				<!-- <div class="layui-form-item">
+					<label class="layui-form-label">退回余额的金额</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" lay-verify="required" name="balance" value="{$logBalance}">
+						<div class="layui-form-mid layui-word-aux">最多{$logBalance}元</div>
+					</div>
+				</div> -->
+				<!-- 退回微信的金额 -->
+				<!-- <div class="layui-form-item">
+					<label class="layui-form-label">退回微信的金额</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" lay-verify="required" name="money" value="{$order['paid_money']}">
+						<div class="layui-form-mid layui-word-aux">最多{$order['paid_money']}元</div>
+					</div>
+				</div> -->
+
+				<div class="layui-tab-content" id="data-submit">
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="save">保存</button>
+							<a href="{php echo webUrl('orderList')}" class="layui-btn layui-btn-primary">取消</a>
+							<input type="hidden" name="token" value="{$_W['token']}" />
+						</div>
+					</div>
+				</div>
+			</form>
+			<script>
+				layui.use('form', function(){
+					var form = layui.form;
+
+					form.on('submit(save)', function(data){
+						let subType = data.elem.dataset.type;
+						layer.confirm("确定要退款吗", {
+							offset: '20%',
+							btn: ["再想想", "退款"],
+							scrollbar: false,
+							closeBtn: 0,
+							success: function (layero, index) {
+								this.enterEsc = function (event) {
+									if (event.keyCode === 13) {
+										fun_save()
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+									if (event.keyCode === 27) {
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+								};
+								$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+							}
+							, end: function(){
+								$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+							}
+						}, function (i) {
+						   layer.close(i);
+						}, function (i) {
+							fun_save()
+						});
+
+						// 退款
+						function fun_save()
+						{
+							let $url = "{php echo webUrl('refund')}";
+
+							$.ajax({
+								type: "POST",
+								url: $url,
+								dataType: 'json',
+								data: data.field,
+								success: function (rs) {
+									if (rs && rs.code.toString() === '0') {
+										layer.msg('退款成功' , {
+											offset: '20%',
+											time: 500
+										}, function () {
+											window.location.href = "{php echo webUrl('orderList')}";
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+										});
+									}
+								},
+								error: function () {
+									layer.msg('保存过程发生错误，请与管理员联系', {
+										offset: '20%',
+									});
+								}
+							});
+						}
+						return false;
+					});
+				});
+			</script>
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

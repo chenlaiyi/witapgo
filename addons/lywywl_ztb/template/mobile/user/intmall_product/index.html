@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'user/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<script>
+    wx.ready(function () {
+        wx.showMenuItems({
+            menuList: ["menuItem:share:timeline", "menuItem:share:appMessage"]
+        });
+
+        var title = "{$_share['title']}";
+        var desc = "{$_share['desc']}";
+        var url = "{$_share['link']}";
+        var link = url;
+        var imgUrl = "{$_share['imgUrl']}";
+
+        if (wx.onMenuShareTimeline) {
+            //转发到朋友圈
+            wx.onMenuShareTimeline({
+                title: title,
+                desc: desc,
+                link: link,
+                imgUrl: imgUrl,
+                success: function () {
+                    layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+                },
+                cancel: function () {
+                    layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                }
+            });
+            //转发给朋友
+            wx.onMenuShareAppMessage({
+                title: title,
+                desc: desc,
+                link: link,
+                imgUrl: imgUrl,
+                type: 'link',
+                dataUrl: '',
+                success: function () {
+                    layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+                },
+                cancel: function () {
+                    layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                }
+            });
+            wx.onMenuShareQQ({
+                title: title, // 分享标题
+                desc: desc, // 分享描述
+                link: link, // 分享链接
+                imgUrl: imgUrl, // 分享图标
+                success: function () {
+                    layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+                },
+                cancel: function () {
+                    layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                }
+            });
+            wx.onMenuShareWeibo({
+                title: title, // 分享标题
+                desc: desc, // 分享描述
+                link: link, // 分享链接
+                imgUrl: imgUrl, // 分享图标
+                success: function () {
+                    layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+                },
+                cancel: function () {
+                    layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                }
+            });
+        }
+        else{
+            //新版发送朋友圈
+            wx.updateTimelineShareData({
+                title: title, // 分享标题
+                link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                imgUrl: imgUrl, // 分享图标
+            }, function(res) {
+                layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+            });
+
+            wx.updateAppMessageShareData({
+                title: title, // 分享标题
+                desc: desc, // 分享描述
+                link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                imgUrl: imgUrl, // 分享图标
+            }, function(res) {
+                layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+            });
+        }
+    });
+</script>
+<body>
+<nav class="goods_nav">
+    <section class="goods_nav_fixed">
+        <ul>
+            {loop $classList $info}
+            <li>
+                <section><a href="{php echo $this->createMobileUrl('user.intmall_product',array('act'=>'index','store_id'=>$store_id,'cid'=>$info['id'],'mycanbuy'=>$mycanbuy))}" class="{if $info['id']==$cid}current{/if}">{$info['name']}</a></section>
+            </li>
+            {/loop}
+        </ul>
+    </section>
+</nav>
+<section class="exchange" id="ContentList">
+    <ul class="exchange_list clearfix" id="LoadLists">
+
+    </ul>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li>
+        <a href="{php echo $this->createMobileUrl('user.intmall_product',array('act'=>'detail','store_id'=>$store_id));}&id=<%= rows[i].id %>">
+        <section class="exchange_pro_img"><img src="<%= rows[i].thumb_url %>" alt=""/></section>
+        <section class="exchange_pro_info">
+            <h2 class="fn"><%= rows[i].title %></h2>
+            <p class="score"><%= rows[i].score %>积分<%if(rows[i].paymoney>0){%>+<%= rows[i].paymoney %>元<%}%></p>
+            <del class="org_price">市场价<%= rows[i].money %>元</del> <span class="exchange_btn"></span> </section>
+        </a>
+    </li>
+    <% } %>
+</script>
+<script>
+    $(function () {
+        var page = 0;
+        var pageSize = 10;
+
+        $('#ContentList').dropload({
+            scrollArea : window,
+            domUp : {
+                domClass   : 'dropload-up',
+                domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+            },
+            domDown : {
+                domClass   : 'dropload-down',
+                domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+            },
+            loadUpFn : function(me){
+                $.ajax({
+                    type: 'GET',
+                    url: "{php echo $this->createMobileUrl('user.intmall_product', array('act' => 'getJsonList','store_id' => $store_id,'cid' => $cid,'mycanbuy' => $mycanbuy));}",
+                    data:{
+                        "page":1,
+                        "pageSize":pageSize,
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        var html = template("listtpl", data);
+                        $('#LoadLists').html(html);
+                        // 每次数据加载完，必须重置
+                        me.resetload();
+                        // 重置页数，重新获取loadDownFn的数据
+                        page = 1;
+                        delCount = 0;
+                        // 解锁loadDownFn里锁定的情况
+                        me.unlock();
+                        me.noData(false);
+
+                        //积分产品图片宽高控制
+                        $(".exchange_list li .exchange_pro_img").height($(".exchange_list li .exchange_pro_img").width());
+                    },
+                    error: function(xhr, type){
+                        layer.open({
+                            content: '系统错误，稍后重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            loadDownFn : function(me){
+                page++;
+                // 拼接HTML
+                var result = '';
+                $.ajax({
+                    type: 'GET',
+                    url: "{php echo $this->createMobileUrl('user.intmall_product', array('act' => 'getJsonList','store_id' => $store_id,'cid' => $cid,'mycanbuy' => $mycanbuy));}",
+                    data:{
+                        "page":page,
+                        "pageSize":pageSize,
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        var arrLen = data.rows.length;
+                        if(arrLen > 0){
+                            var html = template("listtpl", data);
+                            // 如果没有数据
+                        }else{
+                            // 锁定
+                            me.lock();
+                            // 无数据
+                            me.noData();
+                        }
+
+                        // 插入数据到页面，放到最后面
+                        $('#LoadLists').append(html);
+                        // 每次数据插入，必须重置
+                        me.resetload();
+
+                        //积分产品图片宽高控制
+                        $(".exchange_list li .exchange_pro_img").height($(".exchange_list li .exchange_pro_img").width());
+                    },
+                    error: function(xhr, type){
+                        layer.open({
+                            content: '系统错误，稍后重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            threshold : 50
+        });
+    });
+</script>
+{template 'user/common/footer'}
+<script type="text/javascript">
+    //设置底部菜单选中
+    SelectNav("{if $mycanbuy==1}我能兑换{else}兑换商品{/if}");
+    //积分商品列表页定位层高度
+    $(".goods_nav").height($(".goods_nav .goods_nav_fixed").height());
+</script>
+</body>
+</html>

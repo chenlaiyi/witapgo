@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>佣金记录列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+</head>
+<style>
+.layui-table-cell, .layui-table-tool-panel li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}.common-service {
+    position: relative;
+    overflow: hidden;
+}
+.common-service .main {
+    width: auto;
+    height: auto;
+    overflow: hidden;
+}
+.fl {
+    float: left;
+}
+.common-service .rt-txt .pay-list {
+    overflow: hidden;
+    padding: 0;
+}
+.common-service .rt-txt .pay-list li {
+    width: 134px;
+    height: 68px;
+    text-align: center;
+    line-height: 68px;
+    border-radius: 5px;
+    float: left;
+    margin-right: 20px;
+    color: #999;
+    border: 2px solid #E6EAEB;
+    cursor: pointer;
+    position: relative;
+}
+.common-service .rt-txt .pay-list li .year {
+    font-size: 18px;
+    padding: 12px 0 5px;
+}
+.common-service .rt-txt .pay-list li div {
+    line-height: 20px;
+}
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">下线团队</div>
+                <div class="layui-card-body">
+                	<div class="demoTable" style="margin-bottom:10px;display: flex;">
+                        <div class="common-service">
+                            <div class="main">
+                                <div class="fl rt-txt">
+                                    <ul class="pay-list">
+
+              							<li class="price_year " style="margin-right:8px;">
+                                            <div class="year" style="font-size:13px">看视频<br>
+                                                <p style="font-size: 13px;margin-top:5px;">{$type1}</p></div>
+                                        </li>
+
+										{if $system['digital_open'] == 1}
+                                        <li class="price_year " style="margin-right:8px;">
+                                            <div class="year" style="font-size:13px">购买VIP<br>
+                                                <p style="font-size: 13px;margin-top:5px;">{$type2}</p></div>
+                                        </li>
+                                        
+                                        <li class="price_year " style="margin-right:8px;">
+                                            <div class="year" style="font-size:13px">购买数字商品<br>
+                                                <p style="font-size: 13px;margin-top:5px;">{$type3}</p></div>
+                                        </li>
+										{/if}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+			    	<table class="layui-hide" id="userList" lay-filter="userList"></table>	
+			    	<script type="text/html" id="userList-operate">
+        				<a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="logList">收益明细</a>
+        			</script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table'], function(){
+        var table = layui.table
+            ,admin = layui.admin;
+        table.render({
+            elem: '#userList'
+            ,url:"{:siteUrl('admin/brokerage/offline_list',array('pid'=>$pid),'web')}"
+            ,cols: [[
+                {field:'nickname', title: '用户昵称',templet:function(d){
+                 	return "<img style='max-width:25px;' src='"+d.avatar+"'></img>"+d.nickname;
+                }}
+
+                ,{field:'brokerageMoney', title: '总收益', sort: true}
+
+                ,{field:'createtime', title: '添加时间', sort: true ,templet:function(d){
+
+                	return layui.util.toDateString(d.createtime*1000, "yyyy-MM-dd HH:mm");
+
+                }}
+                ,{align:'center', title: '操作', toolbar: '#userList-operate'}
+            ]]
+            ,page: true
+        });
+        table.on('tool(userList)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'logList'){
+            	layer.open({
+                    title : '<i class="fa fa-plus"></i>&nbsp;'+data.nickname+'收益记录',
+                    type:2,
+                    skin : 'layui-layer-rim',
+                    area: ['80%', '70%'],
+                    content : "{:siteUrl('admin/brokerage/log_list',array('pid'=>$pid),'web')}&uid="+data.id,
+                    success: function (layero, index) {
+                    	
+                    }
+                });
+            } 
+        });
+        var $ = layui.$, active = {
+           reload: function(){
+               var demoReload = $('#userNickName');
+               table.reload('userList', {
+                 page: {
+                   curr: 1 
+                 }
+                 ,where: {
+                   'nickname': demoReload.val()
+                 }
+               });
+             }
+       };
+       $('.demoTable .layui-btn').on('click', function(){
+           var type = $(this).data('type');
+           active[type] ? active[type].call(this) : '';
+       });
+    });
+</script>
+</body>
+</html>

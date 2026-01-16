@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'user/common/header'}
+<link rel="stylesheet" type="text/css" href="{__MOBILE_USER_CSS__}/swiper.min.css">
+<script type="text/javascript" src="{__MOBILE_USER_JS__}/jquery.flexslider-min.js"></script>
+<script type="text/javascript" src="{__MOBILE_USER_JS__}/swiper.jquery.min.js"></script>
+<script>
+    wx.ready(function () {
+        wx.showMenuItems({
+            menuList: ["menuItem:share:timeline", "menuItem:share:appMessage"]
+        });
+
+        var title = "{$_share['title']}";
+        var desc = "{$_share['desc']}";
+        var url = "{$_share['link']}";
+        var link = url;
+        var imgUrl = "{$_share['imgUrl']}";
+
+        if (wx.onMenuShareTimeline) {
+            //转发到朋友圈
+            wx.onMenuShareTimeline({
+                title: title,
+                desc: desc,
+                link: link,
+                imgUrl: imgUrl,
+                success: function () {
+                    layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+                },
+                cancel: function () {
+                    layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                }
+            });
+            //转发给朋友
+            wx.onMenuShareAppMessage({
+                title: title,
+                desc: desc,
+                link: link,
+                imgUrl: imgUrl,
+                type: 'link',
+                dataUrl: '',
+                success: function () {
+                    layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+                },
+                cancel: function () {
+                    layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                }
+            });
+            wx.onMenuShareQQ({
+                title: title, // 分享标题
+                desc: desc, // 分享描述
+                link: link, // 分享链接
+                imgUrl: imgUrl, // 分享图标
+                success: function () {
+                    layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+                },
+                cancel: function () {
+                    layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                }
+            });
+            wx.onMenuShareWeibo({
+                title: title, // 分享标题
+                desc: desc, // 分享描述
+                link: link, // 分享链接
+                imgUrl: imgUrl, // 分享图标
+                success: function () {
+                    layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+                },
+                cancel: function () {
+                    layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                }
+            });
+        }
+        else{
+            //新版发送朋友圈
+            wx.updateTimelineShareData({
+                title: title, // 分享标题
+                link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                imgUrl: imgUrl, // 分享图标
+            }, function(res) {
+                layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+            });
+
+            wx.updateAppMessageShareData({
+                title: title, // 分享标题
+                desc: desc, // 分享描述
+                link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                imgUrl: imgUrl, // 分享图标
+            }, function(res) {
+                layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+            });
+        }
+    });
+</script>
+<body>
+<!--banner切换-->
+<div class="block_home_slider">
+    <div id="home_slider" class="flexslider">
+        <ul class="slides">
+            {loop $model['photos_url'] $info}
+            <li>
+                <div class="slide"><img src="{php echo tomedia($info)}" alt=""/> </div>
+            </li>
+            {/loop}
+        </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#home_slider').flexslider({
+            animation : 'slide',
+            controlNav : true,
+            directionNav : true,
+            animationLoop : true,
+            slideshow : true,
+            slideshowSpeed : 3000,
+            useCSS : false,
+            autoPlay:true,
+        });
+    });
+</script>
+<!--中心区域-->
+<div class="bg_fff pro_text">
+    <p class="price c9 font22">
+        <span class="now_price">{$model['score']}</span>积分
+        {if $model['paymoney']>0}
+        <span class="plus">+</span><span class="now_price">{$model['paymoney']}</span>元
+        {/if}
+        <del>市场价：{$model['money']}</del>
+    </p>
+    <h2>{$model['title']}</h2>
+    <p class="pro_attr lh20 mt5 c9">
+        <span class="tl">剩余{$model['surplus_num']}件</span>
+        <span class="tc">已兑{$model['exchange_num']}笔</span>
+        <span class="tr">浏览{$model['click_num']}</span>
+    </p>
+</div>
+<div class="gray_txt">
+    <strong class="fn"><span class="line"></span><span class="line_bg"><i></i>商品详情</span></strong>
+</div>
+<div class="pro_pic">
+    {php echo htmlspecialchars_decode($model['content'])}
+</div>
+<!--浮动-->
+<div class="goods_detail_fixed"></div>
+<div class="pro_fix">
+    <ul>
+        <li>
+            <a href="tel:{$tel}"><span class="kefu"></span><p class="c6">客服</p></a>
+        </li>
+        <li id="collect">
+            {if $isCollect}
+            <span class="collect already"></span>
+            <p class="c6">已收藏</p>
+            {else}
+            <span class="collect"></span>
+            <p class="c6">收藏</p>
+            {/if}
+        </li>
+        <li id="exchange" class="duihuan">
+            <a href="javascript:void(0);">立即兑换</a>
+        </li>
+    </ul>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("#collect").click(function(){
+            var id = "{$model['id']}";
+            $.ajax({
+                url: "{php echo $this->createMobileUrl('user.intmall_product',array('act'=>'collect','store_id'=>$store_id))}",
+                type: "post",
+                dataType: "json",
+                data: {id:id},
+                success: function (result) {
+                    if (result.status === 1) {
+                        if(result.type === 0){
+                            $("#collect span").addClass("already");
+                            $("#collect p").text("已收藏");
+                        }else{
+                            $("#collect span").removeClass("already");
+                            $("#collect p").text("收藏");
+                        }
+                        layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                        return true;
+
+                    } else {
+                        layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                        return false;
+                    }
+                }
+            });
+        })
+
+        $("#exchange").click(function(){
+            var id = "{$model['id']}";
+            $.ajax({
+                url: "{php echo $this->createMobileUrl('user.intmall_product',array('act'=>'exchange','store_id'=>$store_id))}",
+                type: "post",
+                dataType: "json",
+                data: {id:id},
+                success: function (result) {
+                    if (result.status === 1) {
+                        window.location.href="{php echo $this->createMobileUrl('user.order_intmall',array('act'=>'submit','store_id'=>$store_id,'pid'=>$model['id']))}";
+                        return true;
+                    } else {
+                        layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                        return false;
+                    }
+                }
+            });
+        })
+    })
+</script>
+</body>
+</html>

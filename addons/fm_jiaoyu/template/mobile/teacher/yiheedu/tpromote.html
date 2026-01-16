@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="no">
+<meta name="format-detection" content="telephone=no">
+<title>{$school['title']}</title>
+<link rel="stylesheet" type="text/css" href="{MODULE_URL}public/mobile/css/new_yab1.css?v=1?v=1111" />
+{php echo register_jssdks();}
+<script type="text/javascript" src="{MODULE_URL}public/mobile/js/jquery-1.11.3.min.js?v=4.8"></script>
+<style> 
+.main {margin: 10px 10px;box-shadow: 0 1px 9px #dcdcdc;background: #FFF;padding: 0;border-radius: 10px;padding-bottom: 10px;}
+.audit_statusNew, .audit_statusPass {width: 50px;height: 20px;position: absolute;top: 0;right: 0;font-size: 11px;display: -webkit-box;display: -moz-box; display: -ms-flexbox;display: -webkit-flex;display: flex;-webkit-box-align: center;-moz-box-align: center;-ms-flex-align: center;-webkit-align-items: center;align-items: center; -webkit-box-pack: center;-moz-box-pack: center;-ms-flex-pack: center;-webkit-justify-content: center;justify-content: center;border-top-right-radius: 10px;border-bottom-left-radius: 10px;} 
+.audit_statusPass {background-color: #ddd;color: white;} 
+.audit_statusNew {background-color: #ff9f22;color: white;} 
+.aui-course-button { padding-top: 10px; text-align: right;border-top: 1px solid #f0f0f2;}
+.aui-course-button button { border-radius: 3px; font-size: 12px; padding: 5px 14px; position: relative;    margin-right: 10px; }
+.wiat_but{color:#444;background:#fff;border: 1px solid #f0f0f2;}
+.family{text-align: center;width: 100%;} .family img{width: 60%;} .popContentBox {position: absolute;width: 88%;margin-left: 6%;max-height: 90%;top: 43%;transform: translateY(-50%);-webkit-transform: translateY(-50%);-moz-transform: translateY(-50%);-ms-transform: translateY(-50%); -o-transform: translateY(-50%);z-index: 101;background-color: white;border-radius: 10px;}
+</style>
+</head>
+<body>
+<div class="listContent">
+{if $list}
+    {loop $list $row}
+        <li class="main" time="{$row['id']}" id="{$row['id']}" style="display: block;">
+            <div class="tongzhi">
+                <span class="tongzhiTitle">{$row['name']}</span>
+                {if TIMESTAMP > $row['start'] && $row['end'] < TIMESTAMP}
+                    <div class="audit_statusPass">结束</div>
+                {/if}
+                {if TIMESTAMP > $row['start'] && $row['end'] > TIMESTAMP}
+                    <div class="audit_statusNew">进行中</div>
+                {/if}
+                {if TIMESTAMP < $row['start'] && $row['end'] > TIMESTAMP}
+                    <div class="audit_statusNew">未开始</div>
+                {/if}
+            </div>
+            <div class="cutting"></div>
+            <div class="notifyTopBox" style="margin-bottom: 10px;">
+                <div class="notifyTopLeft">
+                    <img src="{php echo tomedia($row['thumb'])}" class="teacherImgError" />
+                </div>
+                <div class="notifyTopRight">
+                    <div class="notifyTopRightTopBox">
+                        {if $row['kc_type'] == 1}<div class="xxkc">线上课</div>{else}<div class="xskc">线下课</div>{/if}
+                    </div>
+                    <p class="notifyCreateTime">有效期&nbsp;{php echo date('Y-m-d',$row['start'])}至{php echo date('Y-m-d',$row['end'])}</p>
+                </div>
+            </div>
+            <div class="aui-course-button">
+                {if $row['promote_level']}
+                {if TIMESTAMP < $row['end']}<button class="wiat_but mb_marsk" onclick="get_kc_share(`{$row['id']}`,'tz');">拓展海报</button>{/if}
+                {/if}
+                {if TIMESTAMP < $row['end']}<button class="wiat_but mb_marsk" onclick="get_kc_share(`{$row['id']}`,'kc');">课程海报</button>{/if}
+                <button class="wiat_but mb_marsk" onclick="gotoinfo(`{$row['id']}`,`{$row['kc_id']}`,`{$pu_id}`)">详情</button>
+            </div>
+        </li>
+    {/loop}
+{/if}	
+</div>
+<!--邀请卡弹框-->
+<div class="popUpBox" style="display: none">
+	<div class="trackMatte"></div>
+	<div class="popContentBox">
+		<div class="poptitle">
+		生成推广卡
+		<p class="notifyCreateTime">长按保存您的邀请卡，邀请好友一起推广</p>
+		</div>
+		<div class="sectionContBox">
+			<div class="family" id="family">
+			</div>
+			<div class="btnBox">
+				<div class="btnPass" onclick="refrash_pop();">刷新</div>
+				<div class="btnCancel">关闭</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{php include $this->template('newfooter');} 
+</body>
+</html>
+<script type="text/javascript">
+ 
+function gotoinfo(relation_id,kc_id,myuserid){
+    location.href = "{php echo $this->createMobileUrl('tpromoteinfo', array('schoolid' => $schoolid))}&kc_id="+kc_id+'&myuserid='+myuserid+'&relation_id='+relation_id
+}
+
+var relation_id = 0;
+var sharetype = '';
+    //打开分享卡
+    function get_kc_share(id,type){
+        relation_id = id
+        sharetype = type
+        $('.popUpBox').slideDown(200);
+        $('#share_id').val(id)
+        $('#family').empty()
+        $('#family').append("<div class='conent_load'></div>");//加载动画
+        $.ajax({
+        	url: "{php echo $this->createMobileUrl('kcajax', array('op' => 'get_kc_share'))}",
+        	type: "post",
+        	dataType: "json",
+        	data: {
+        		id:id,
+        		type:type,
+        		schoolid:"{$schoolid}"
+            },
+        	success: function (data) {
+                $('#family').empty()
+                let picurl = decodeURIComponent(data.poster)
+                let contet = '<img onclick="wxImageShow(this);" src="'+picurl+'" />';
+                $('#family').append(contet)
+        	},
+            error: function (jqXHR, textStatus, errorThrown){
+                // let NewJson = JSON.stringify(jqXHR)
+                // alert(NewJson)
+                console.log(jqXHR)
+                console.log(textStatus)
+                console.log(errorThrown)
+                
+            }
+        });
+    }
+    $('.btnCancel').click(function() {
+        $('.popUpBox').hide();
+        $('html,body').removeClass('popNoscroll');
+    });
+
+    $(".trackMatte").on("click",function(){
+        e = window.event;
+        e.stopPropagation();
+        e.preventDefault();
+        $('.popUpBox').slideUp(200);
+        $('html,body').removeClass('popNoscroll');
+    })
+    //刷新海报
+    function refrash_pop(){
+        $('#family').empty()
+        let loadcont = "<div class='conent_load'></div>";
+        $('#family').append(loadcont);//加载动画
+        $.ajax({
+            url: "{php echo $this->createMobileUrl('kcajax', array('op' => 'get_kc_share'))}",
+            type: "post",
+            dataType: "json",
+            data: {
+                id:relation_id,
+                type:sharetype,
+        		schoolid:"{$schoolid}"
+            },
+            success: function (data) {
+                $('#family').empty()
+                let picurl = decodeURIComponent(data.poster)
+                let contet = '<img onclick="wxImageShow(this);" src="'+picurl+'" />';
+                $('#family').append(contet)
+            }
+        });
+    }
+    function wxImageShow(elm){
+        var srcList = new Array();
+        var pic = $(elm).attr("src")
+        srcList.push(pic);
+        WeixinApi.imagePreview(pic, srcList);
+    }
+    var WeixinApi = (function () {
+        return {
+            imagePreview    :imagePreview
+        }; 
+        "use strict";
+        function imagePreview(curSrc,srcList) {
+            if(!curSrc || !srcList || srcList.length == 0) {
+                return;
+            }
+            WeixinJSBridge.invoke('imagePreview', {
+                'current' : curSrc,
+                'urls' : srcList
+            });
+        }
+        return {
+            version         :"2.5",
+            imagePreview    :imagePreview
+        };
+    })();
+
+</script>

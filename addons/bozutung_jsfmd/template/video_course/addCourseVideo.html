@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li class="layui-this">
+						<a href="{php echo webUrl('addCourseVideo', ['vcid'=>$_GPC['vcid']])}">添加课程视频</a>
+					</li>
+					<li>
+						<a href="{php echo webUrl('courseVideoList', ['vcid'=>$_GPC['vcid']])}">返回</a>
+					</li>
+				</ul>
+			</div>
+
+			<form class="layui-form fixed" action="" method="post" enctype="multipart/form-data" id="data-form">
+				<!-- 标题 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">标题</label>
+					<div class="layui-input-block">
+						<input type="text" name="title_val" lay-verify="required" class="layui-input">
+					</div>
+				</div>
+				<!-- 主讲人 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">主讲人</label>
+					<div class="layui-input-block">
+						<input type="text" name="speaker" lay-verify="required" class="layui-input">
+					</div>
+				</div>
+				<!-- 免费观看时长 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">免费观看时长</label>
+					<div class="layui-input-block">
+						<input type="number" name="free_time" min="1" oninput="if(value.length>8)value=value.slice(0,8)"
+							   class="layui-input">
+						<div class="layui-form-mid layui-word-aux">单位：秒</div>
+					</div>
+				</div>
+				<!-- 视频时长 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">视频时长</label>
+					<div class="layui-input-block">
+						<input type="number" name="time_count" min="1" oninput="if(value.length>8)value=value.slice(0,8)"
+							   class="layui-input">
+						<div class="layui-form-mid layui-word-aux">单位：分钟</div>
+					</div>
+				</div>
+				<!-- 封面 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">封面</label>
+					<div class="layui-input-block">
+						{php echo slwl_tpl_form_field_image('cover');}
+						<div class="layui-form-mid layui-word-aux">推荐尺寸：165 x 96，或同比例</div>
+					</div>
+				</div>
+				<!-- 视频 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">视频</label>
+					<div class="layui-input-block">
+						{php echo slwl_tpl_form_field_video('url');}
+					</div>
+				</div>
+
+				<div class="layui-tab-content fixed" id="data-submit">
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="addVideoCourse">保存</button>
+							<input type="hidden" name="token" value="{$_W['token']}" />
+						</div>
+					</div>
+				</div>
+			</form>
+			<script>
+				layui.use('form', function(){
+					var form = layui.form;
+
+					form.on('submit(addVideoCourse)', function(data){
+						let url = "{php echo webUrl('addCourseVideo', ['vcid'=>$_GPC['vcid']])}";
+						var $obj = $(this);
+
+						if (!$obj.hasClass('lock')) {
+							$obj.addClass('lock'); // 不能再点击
+
+							$.ajax({
+								type: "POST",
+								url: url,
+								dataType: 'json',
+								data: data.field,
+								success: function (rs) {
+									if (rs && rs.code.toString() === '0') {
+										layer.msg('保存成功' , {
+											time: 500
+										}, function () {
+											window.location.href = "{php echo webUrl('courseVideoList', ['vcid'=>$_GPC['vcid']])}";
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+										});
+									}
+									$obj.removeClass('lock');
+								},
+								error: function () {
+									layer.msg('保存过程发生错误，请与管理员联系', {
+										offset: '20%',
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						}
+
+						return false;
+					});
+				});
+			</script>
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

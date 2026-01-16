@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>上传模板资源文件</title>
+    <script type="text/javascript" src="{MODULE_URL}resource/web/js/jQuery-2.1.4.min.js"></script>
+</head>
+<body>
+<div style="padding: 5px;">
+    <span>文件版本：</span><span>{$edition}</span>
+</div>
+<div style="padding: 5px;">
+    <span>文件总数：</span><span id="num">0/0/0</span>
+</div>
+<div style="padding: 5px;">
+    <span style="float: left;">上传进度：</span>
+    <span id="progress" style="border: 1px solid #ccc;width: 200px;height: 20px;display: block;float: left;">
+        <span style="width: 0px;height: 20px;display: block;background-color: green;"></span>
+    </span>
+    <span id="percent">0%</span>
+</div>
+<div style="padding: 5px;">
+    <span>上传用时：</span><span id="time" data-num="0">0时0分0秒</span>
+</div>
+<div style="clear: both;"></div>
+<div style="padding: 5px;">
+    <button id="upload" style="cursor: pointer;border: none;padding: 5px 10px;color: #fff;background-color: red;border-radius: 5px;">开始上传</button>
+    <button id="again" style="cursor: pointer;border: none;padding: 5px 10px;color: #fff;background-color: red;border-radius: 5px;display: none;">重新上传</button>
+    <img id="loading" style="vertical-align: middle;display: none;" src="data:image/gif;base64,R0lGODlhEAAQAKIAAP///9bW1szMzL29vXt7e3Nzc2ZmZv4BAiH/C05FVFNDQVBFMi4wAwEAAAAh+QQFBwAHACwAAAAAEAAQAAADPAi6QRQrymJMkcwFatuLXOFt1bWEYBmNq6awGDCicUhjIYzBwTBAmc9CQBSkLJGiYKZi+EgdV60ZCwIjCQAh+QQFBwAHACwAAAYABgAIAAADE3gz1/LCwaYYbYTQYkxpnEdlRwIAIfkEBQcABwAsAAACAAYACAAAAxN4OqMnUKgoVzuEuGJMUZznZE4CACH5BAUHAAcALAIAAAAIAAYAAAMUeKozqyKKQ8iRohhTTjsa91DWkwAAIfkEBQcABwAsBgAAAAgABgAAAxR4RNddxhR3oDxjtHWEF9QHUtmRAAAh+QQFBwAHACwKAAIABgAIAAADFHhE12WmOCjbaviMgYUXzQc225EAACH5BAUHAAcALAoABgAGAAgAAAMTeEqkV8YUBaVjagwnulDel21KAgAh+QQFBwAHACwGAAoACAAGAAADFHiqRKvFmHLGOHGKLU47XPdYz5EAADs=">
+</div>
+<div style="padding: 5px;">
+    <span>正在上传：</span><span id="file"></span>
+</div>
+<div style="display: none;">
+    <ul id="reslist">
+        {loop $filenames $item}
+        <li data-status="0">{php echo strstr($item,'/resource')}</li>
+        {/loop}
+    </ul>
+</div>
+<div style="padding: 5px;color: #ff0000;display: none;">
+    <span>上传失败</span>
+    <ul id="errorlist">
+    </ul>
+</div>
+<script>
+    $(function(){
+        var total = $("#reslist li").length;
+        var success_num = 0;
+        var error_num = 0;
+        var is_time = false;
+
+        $("#num").text(total+"/"+success_num+"/"+error_num);
+
+        $("#upload").click(function(){
+            is_time = true;
+            timer();
+            $("#upload").attr("disabled","disabled").text("正在上传…");
+            uploadRes();
+        });
+
+        $("#again").click(function(){
+            is_time = true;
+            timer();
+            $("#again").attr("disabled","disabled").text("正在上传…");
+            uploadAgain();
+        });
+
+        function uploadRes(){
+            var li = $("#reslist li[data-status='0']");
+            if(li.length == 0){
+                is_time = false;
+                if(error_num == 0){
+                    $("#upload").text("上传完成");
+                    alert("上传完成");
+                }else{
+                    $("#upload").hide();
+                    $("#again").show();
+                    $("#errorlist").parent().show();
+                    alert("重新上传");
+                }
+            }else{
+                var path = li.eq(0).text();
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "{php echo $this->createWebUrl('upload_resource', array('act' => 'upload'));}",
+                    timeout: 10000,
+                    data: {path: path},
+                    beforeSend: function(){
+                        $("#loading").show();
+                        $("#file").text(path);
+                    },
+                    success: function (data) {
+                        if (data.status == 1) {
+                            success_num++;
+                            $("#num").text(total+"/"+success_num+"/"+error_num);
+                            $("#percent").text(((success_num*100)/total).toFixed(1)+"%");
+                            $("#progress span").css({"width":$("#percent").text()});
+                            li.eq(0).attr('data-status','1');
+                        } else {
+                            error_num++;
+                            $("#errorlist").prepend("<li data-status='0'>"+path+"</li>");
+                            $("#errorlist").parent().show();
+                            li.eq(0).attr('data-status','-1');
+                        }
+                        setTimeout(uploadRes,10);
+                    },
+                    error: function(){
+                        error_num++;
+                        $("#errorlist").prepend("<li data-status='0'>"+path+"</li>");
+                        $("#errorlist").parent().show();
+                        li.eq(0).attr('data-status','-1');
+                        setTimeout(uploadRes,10);
+                    },
+                    complete:function () {
+                        if(status == 'timeout'){
+                            error_num++;
+                            $("#errorlist").prepend("<li data-status='0'>"+path+"</li>");
+                            $("#errorlist").parent().show();
+                            li.eq(0).attr('data-status','-1');
+                            setTimeout(uploadRes,10);
+                        }
+                        $("#loading").hide();
+                    }
+                });
+            }
+        }
+
+        function uploadAgain(){
+            var li = $("#errorlist li[data-status='0']");
+            if(li.length == 0){
+                is_time = false;
+                if(error_num == 0){
+                    $("#again").text("上传完成");
+                    $("#errorlist").parent().hide();
+                    alert("上传完成");
+                }else{
+                    $("#again").removeAttr("disabled").text("重新上传");
+                    $("#errorlist li[data-status='-1']").attr('data-status','0');
+                    alert("重新上传");
+                }
+            }else{
+                var path = li.eq(0).text();
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "{php echo $this->createWebUrl('upload_resource', array('act' => 'upload'));}",
+                    timeout: 10000,
+                    data: {path: path},
+                    beforeSend: function(){
+                        $("#loading").show();
+                        $("#file").text(path);
+                    },
+                    success: function (data) {
+                        if (data.status == 1) {
+                            success_num++;
+                            error_num--;
+                            $("#num").text(total+"/"+success_num+"/"+error_num);
+                            $("#percent").text(((success_num*100)/total).toFixed(1)+"%");
+                            $("#progress span").css({"width":$("#percent").text()});
+                            li.eq(0).attr('data-status','1');
+                            li.eq(0).remove();
+                        } else {
+                            li.eq(0).attr('data-status','-1');
+                        }
+                        setTimeout(uploadAgain,10);
+                    },
+                    error: function(){
+                        alert("请求错误，请重试！");
+                    },
+                    complete:function (XMLHttpRequest,status) {
+                        if(status == 'timeout'){
+                            li.eq(0).attr('data-status','-1');
+                            setTimeout(uploadAgain,10);
+                        }
+                        $("#loading").hide();
+                    }
+                });
+            }
+        }
+
+        function timer(){
+            var num = $("#time").data("num");
+            num++;
+            var s = "";
+            if (num < 1 * 60) {
+                s = "0时0分" + num + "秒";
+            } else if (num < 1 * 60 * 60) {
+                s = "0时" + parseInt(num / 60) + "分" + num % 60 + "秒";
+            } else {
+                s = parseInt(num / (60 * 60)) + "时" + parseInt((num % (60 * 60)) / 60) + "分" + (num % (60 * 60)) % 60 + "秒";
+            }
+            $("#time").data("num",num).text(s);
+            if(is_time){
+                setTimeout(timer,1000);
+            }
+        }
+    })
+</script>
+</body>
+</html>

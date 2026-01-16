@@ -1,0 +1,1 @@
+<?php if(!defined('IN_IA')) {exit('Access Denied');}if(!defined('TAPGO_TT_VERSION')) {define('TAPGO_TT_VERSION', '1.0.0');}if(!defined('TAPGO_TT_RELEASE')) {define('TAPGO_TT_RELEASE', '20241110145118');}

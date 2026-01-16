@@ -1,0 +1,8 @@
+<section class="pd24">
+    <h2 class="font34 fn">{$model['title']}</h2>
+    <p class=" font28 mt10"><a href="javascript:;">{$config['name']}</a><time class="c9 ml20">{php echo date('Y-m-d H:i:s', $model['createtime'])}</time></p>
+    <p class="mt24 font28 c6"> {php echo htmlspecialchars_decode($model['content'])}</p>
+    <br>
+    <br>
+</section>
+<section class="buttonFloat"><a href="javascript:;" class="db font32 yellowBtn" style="background: #FFD112;" onclick="closeWindows();">返回</a></section>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{$school['title']}</title>
+<head>
+<meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0" />
+<meta name="apple-mobile-web-app-capable" content="no" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="HandheldFriendly" content="true" />
+<link href="{MODULE_URL}public/mobile/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{MODULE_URL}public/mobile/css/weixin.css">
+<link type="text/css" rel="stylesheet" href="{OSSURL}public/mobile/css/mGrzxTeacher.css?v=4.8" />
+<link type="text/css" rel="stylesheet" href="{OSSURL}public/mobile/css/pageContent.css?v=4.80120" />
+<link type="text/css" rel="stylesheet" href="{OSSURL}public/mobile/css/greenStyle.css?v=4.80120" />
+<link href="{$_W['siteroot']}web/resource/css/font-awesome.min.css" rel="stylesheet">
+<script type="text/javascript" src="{MODULE_URL}public/mobile/js/jquery-1.11.3.min.js?v=4.9"></script>
+<link rel="stylesheet" type="text/css" href="{OSSURL}public/mobile/css/new_yab1.css?v=1?v=1111" />
+{php echo register_jssdks();}
+{php include $this->template('port');}
+<style>
+    .btn-danger {
+        background-color: #ff6c60;
+        border-color: #ff6c60;
+        color: #FFFFFF;
+        border-radius: 25px;
+        padding:3px 10px
+    }
+    .savePage{display: inline-block;padding:2px 10px;font-size: 14px;border-color: #41c9c0;}
+    .cancelPage{padding:3px 10px;font-size: 14px;}
+    .BoxConName{width:100px;text-align: right;}
+    .BoxConName~div{width: calc(100% - 100px);}
+    .app-header { height: 70px; background: url(../web/resource/images/app/iphone_head.png) center center no-repeat; }
+    button.show_yulan_img{display: none;}
+    .SpLi{position: relative;}
+    .SpLi.InEdit:after{ position: absolute; content: ''; height: 100%; width: 100%; top:0; left: 0; background-color: rgba(236,236,236,0.49); }
+
+    .SwitchKcItem{ transition: all 0.15s; width:calc(100% - 10px);border-radius: 5px;height: 35px;line-height: 35px;display: flex;align-items: center;padding:0 5px;position: relative; }
+    .SwitchKcItem:hover{ background-color: #f1f1f1; transition: all 0.15s; }
+    .SwitchKcItem:after{ content:''; position: absolute; width: 90%; margin-left: 5%; height: 1px; background-color: #f7f7f7; bottom: 0; }
+    .KcItem-KmName{height: 20px;line-height: 19px;border:1px solid black;border-radius: 5px ;padding:0 5px;margin-right: 5px;}
+
+    .LineTxtBox{text-align: center;position: relative;height: 20px;line-height: 20px;}
+    .LineTxtBox span{   transform: translate(-50%,-50%); background-color: white; position: absolute; top: 50%; left: 50%; z-index: 2;padding:0 10px}
+    .LineTxtBox .line{    content: ''; transform: translate(-50%,-50%); background-color: #bfbfbf; position: absolute; top: 50%; left: 50%; height: 0.5px; width: 100%; z-index: 1;}
+
+    .SpLi-Kc-km{ font-size: 12px;font-weight: lighter;padding:2px 3px;border-radius: 5px;border:1px solid black;margin-right: 3px; border-color: #428bca; color: #428bca;}
+    .SpLi-Kc-Box{width: 90%; border: 1px solid #8a8a8a; border-radius: 10px; min-height: 100px; margin-left: 5%; padding: 0px 8px;margin-top: 10px; position:relative;background-color: white;}
+    #EditBox .edui-editor.edui-default{height: 410px;
+    overflow-y: auto;position: inherit;}
+    #EditBox #edui1_toolbarbox{position: absolute;top:-80px;border-left:1px solid #EEE;left:0 }
+    /* #EditBox #edui1_toolbarbox{position: absolute !important;top:0 !important;width: 100% !important;left: 0 !important;} */
+    #edui1_toolbarboxouter{border-bottom: none;}
+    #edui1_toolbarboxouter{border-right:1px solid #EEE;border-top:1px solid #EEE;}
+    #edui1_bottombar{position: absolute;bottom: -23px;width: 100%;border:1px solid #EEE;border-top:none;left:0}
+    #edui1_bottombar *{border:none}
+    .SpLi.HighNoC:after{ position: absolute; content: ''; height: 100%; width: 100%; top:0; left: 0;box-shadow: inset 0 0 5px 1px #ff0101; }
+
+    /**排名盒子**/
+    .pm_box{ width: 100%; height: 70px; padding: 10px; padding-top: 18px; box-shadow: 0px 3px 3px 3px #f7f4f4; } .pm_box_left{ width: 16%; float: left; } .pm_box_left .pm_box_header{ width: 100%; margin-left: 10%; } .pm_box_left .pm_box_header img{ width: 40px; border-radius: 40px; } .pm_box_center_top{ font-size: 11px; } .pm_box_center_bot{ font-size: 11px; color: #a29f9f; margin-top: 7px; } .pm_box_center{ width: 55%; float: left; } .pm_box_right{ width: 25%; float: right; } .pm_box_right .pm_box_right_btn{ width: 80%; height: 33px; background-color: #64b7fb; text-align: center; line-height: 33px; font-size: 15px; color: #fff; border-radius: 5px; }
+</style>
+<style>
+input[type="radio"] + label::before {
+        content: "\a0"; /*不换行空格*/
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 18px;
+        width: 14px;
+        height: 14px;
+        margin-right: 4px;
+        border-radius: 50%;
+        border: 1px solid #01cd78;
+        line-height: 1; 
+    }
+    input[type="radio"]:checked + label::before {
+        background-color: #01cd78;
+        background-clip: content-box;
+        padding: 2px;
+    }
+    input[type="checkbox"] + label::before {
+        content: "\a0"; /*不换行空格*/
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 18px;
+        width: 14px;
+        height: 14px;
+        margin-right: 4px;
+        border-radius: 2px;
+        border: 1px solid #01cd78;
+        line-height: 1; 
+    }
+    input[type="checkbox"]:checked + label::before {
+        background-color: #01cd78;
+        background-clip: content-box;
+        padding: 2px;
+    }
+    
+    input[type="radio"],input[type="checkbox"] {
+        position: absolute;
+        clip: rect(0, 0, 0, 0);
+    }
+    .inputClass{
+        display: block;
+        width: 100%;
+        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-left: 20px;
+    }
+    .jbs {
+        margin:0 auto;
+        background-size:60px 60px;
+        background-image:linear-gradient(135deg,red 0%,red 25%,white 25%,white 50%,red 50%,red 75%,white 75%,white 100%);
+        animation:move 1s linear infinite;
+    }
+    @keyframes move {
+        0% {
+        }100% {
+            background-position:60px 0;
+        }
+    }
+    </style>
+    
+</head>
+<body style="overflow-x:hidden">
+    <div style="background-color: white;">
+        {if !$_GPC['fxzopenid']}
+        <div class="pm_box">
+            <div class="pm_box_left mb_marsk">
+                <div class="pm_box_header">
+                    <img src="{php echo $fans['headimgurl']}" />
+                </div>
+            </div>
+            <div class="pm_box_center mb_marsk">
+                <div class="pm_box_center_top">已有 <span class="bluefont">{$myclicknum}</span> 点击</div>
+                <div class="pm_box_center_bot"> {if $diff > 0}再邀请{$diff}人就可以领取礼包{else}现在可以个人中心领取礼包了{/if}</div>
+            </div>
+            <div class="pm_box_right mb_marsk">
+                <div class="pm_box_right_btn" onclick="goyaoqing()">去邀请</div>
+            </div>
+        </div>
+        {/if}
+        <div style="height: 100%;width: 100%;">
+            {loop $content $row}
+                {if $row['type'] == 1}
+                <li class="SpLi" tagid="{$row['tagid']}" type="{$row['type']}" style="min-height: 40px;" >
+                    <img class="NoC" style="width:100%;display:block" src="{$row['imgurl']}">
+                </li>
+                {/if}
+                {if $row['type'] == 2}
+                    <li class="SpLi" tagid="{$row['tagid']}" type="{$row['type']}" style="min-height: 40px;padding:5px;background-color:{$row['BgColor']}" >
+                    <div style="width:100%">{php echo htmlspecialchars_decode($row['textcontent']) }</div>
+                </li>
+                {/if}
+                {if $row['type'] == 3}
+                    {loop $row['kclist'] $item}
+                    <li class="SpLi" tagid="{$row['tagid']}" type="{$row['type']}" style="min-height: 40px;padding:5px;background-color:{$row['BgColor']}" >
+                        <div data-container-id="{$item['id']}" class="SpLi-Kc-Box" style="border-color: {$row['BgColor']};">
+                            <div style=" position:absolute; width: 70%;">
+                                <div style="width:100%">
+                                    <h4 style="display: flex;margin:9px 0">
+                                        <span class="SpLi-Kc-km">{$item['km']}</span> <span> {$item['name']}</span>
+                                    </h4>
+                                </div>
+                                <div style="width:100%;font-size:12px;margin-bottom: 2px;">
+                                    <span> {$item['startdate']}-{$item['enddate']}</span>
+                                </div>
+                                <div style="width:100%;display:flex;background-color: transparent;">
+                                    {loop $item['buystu'] $v}
+                                    <img src="{if $v}{$v}{else}{php echo tomedia($school['spic'])}{/if}" style="width:30px;height:30px;border-radius:50%;margin-right:5px;"> 
+                                    {/loop}
+                                </div>
+                            </div>
+                            <div style="margin-top:30px;float:right;">
+                                <a class="btn-danger" href="{php echo $this->createMobileUrl('kcinfo', array('schoolid' => $schoolid, 'id' => $item['id']), true)}">立即学习</a>
+                                <span style="color:#8a8a8a;display: block;text-align: center;margin-top:2px">已有{$item['buynum']}人在读</span>
+                            </div>
+                        </div>
+                    </li>
+                    {/loop}
+                {/if}
+                {if $row['type'] == 4}
+                    <li class="SpLi" tagid="{$row['tagid']}" type="{$row['type']}" style="min-height: 40px;"  >
+                        <div style="width:100%;">
+                            <video style="height: 30vh;width: 100%;background-color: black;" data-fix="{$row['video_fix']}"  controls="controls" x-webkit-airplay="true" x5-playsinline="true" webkit-playsinline="true" playsinline="true" >
+                                <source src="{$row['videourl']}" > 
+                            </video>
+                        </div>
+                    </li>
+                {/if}
+                {if $row['type'] == 5}
+                <li class="SpLi" tagid="{$row['tagid']}" type="{$row['type']}" style="min-height: 40px;{if $row['BgColor']}background-color:{$row['BgColor']}{else} background:url('{$row['imgurl']}') no-repeat  center; background-size:cover; background-attachment:fixed;{/if}"  >
+                        <form style="padding: 10px;" action="javascript:return false;" id="form">
+                            {if $row['construction'] == 'up_and_down'}
+                                {loop $row['formData'] $key $item}
+                                    <div>
+                                        <label style="font-size: 18px;">{$item['title']}</label>
+                                        <input type="hidden" name="{$item['type']}{$key}title" value="{$item['title']}">
+                                    </div>
+                                    <div style=" display: flex; flex-wrap: wrap;">
+                                        {if $item['type'] == 'text'}
+                                        <input type="text" class="inputClass" name="{$item['type']}{$key}" placeholder="请输入内容">
+                                        {/if}
+                                        {if $item['type'] == 'radio'}
+                                            {loop $item['data'] $item2}
+                                            <label class="radio-inline" style="font-size:16px;margin-right: 4px;">
+                                                <input type="radio" name="{$item['type']}{$key}" id="{$item2}" value="{$item2}"> 
+                                                <label for="{$item2}">{$item2}</label>
+                                            </label>
+                                            {/loop}
+                                        {/if}
+                                        {if $item['type'] == 'checkbox'}
+                                            {loop $item['data'] $item2}
+                                            <label class="checkbox-inline" style="font-size:16px;margin-left: 0px; width: 25%;">
+                                                <input type="checkbox" name="{$item['type']}{$key}[]" id="{$item2}" value="{$item2}"> 
+                                                <label for="{$item2}">{$item2}</label>
+                                            </label>
+                                            {/loop}
+                                        {/if}
+                                    </div>
+                                {/loop}
+                            {else}
+                                {loop $row['formData'] $key $item}
+                                    <div style="display: flex;line-height: 30px; padding: 1px; align-items: center;">
+                                        {if $item['type'] == 'text'}
+                                            <div style="font-size: 14px;margin-right: 10px;width: 10%;">{$item['title']}:</div>
+                                            <input type="hidden" name="{$item['type']}{$key}title" value="{$item['title']}">
+                                            <div style="width: 80%;">
+                                                <input type="text" class="inputClass" name="{$item['type']}{$key}" placeholder="请输入内容">
+                                            </div>
+                                        {/if}
+                                    </div>
+                                    <div style="display: flex;line-height: 30px; padding: 1px; align-items: center;">
+                                        {if $item['type'] == 'radio'}
+                                            <div style="font-size: 14px;margin-right: 10px;width: 10%;">{$item['title']}:</div>
+                                            <input type="hidden" name="{$item['type']}{$key}title" value="{$item['title']}">
+                                            {loop $item['data'] $item2}
+                                                <div>
+                                                    <input type="radio" name="{$item['type']}{$key}" id="{$item2}" value="{$item2}"> 
+                                                    <label for="{$item2}" style="font-size:16px;margin-right: 10px;">{$item2}</label>
+                                                </div>
+                                            {/loop}
+                                        {/if}
+                                    </div>
+                                    <div style="display: flex;line-height: 30px; padding: 1px; align-items: center;">
+                                        {if $item['type'] == 'checkbox'}
+                                            <div style="font-size: 14px;margin-right: 10px;width: 10%;">{$item['title']}:</div>
+                                            <div>
+                                                <input type="hidden" name="{$item['type']}{$key}title" value="{$item['title']}">
+                                                {loop $item['data'] $item2}
+                                                    <input type="checkbox" name="{$item['type']}{$key}[]" id="{$item2}" value="{$item2}"> 
+                                                    <label for="{$item2}" style="font-size:16px;margin-right: 10px;">{$item2}</label>
+                                                {/loop}
+                                            </div>
+                                        {/if}
+                                    </div>
+                                {/loop}
+                            {/if}
+                            <input type="hidden" name="id" value="{$_GPC['id']}"> 
+                                <button type="submit" id="submit" class="btn btn-default" style="width: 100%;margin-top: 10px; " >提交</button>
+                        </form> 
+                    </li>
+                {/if}
+                {if $row['type'] == 6}
+                    <li class="SpLi" tagid="{$row['tagid']}" type="{$row['type']}" style="min-height: 30px;padding:5px;text-align: center;font-size: 16px;">
+                    <div style="width:100%;font-weight: bold;" class="jbs">{$row['title']}</div>
+                </li>
+                {/if}
+            {/loop}
+        </div>
+	</div>
+</body>
+
+<div class="popUpBox" style="display: none">
+    <div class="trackMatte">
+        <img src="{MODULE_URL}public/mobile/img/yindao.png" style="width: 100%;margin-top:20%">
+        <span style=" font-size: 16px; color: #fff; display: block; text-align: center;">点击右上角按钮进行分享</span>
+    </div>
+</div>  
+
+<script>  
+// TODO:
+function goyaoqing(){
+    $(".popUpBox").show();
+}
+$('.popUpBox').on('click',function(){
+    $(".popUpBox").hide();
+})
+$("#submit").on('click',function(){
+    {if $hasform}
+        jTips('您已提交,请勿重复提交,请等待通知结果!');
+        return false;
+    {/if}
+
+    var formData = $("#form").serialize()
+    $.ajax({
+        url: "{php echo $this->createMobileUrl('shareajax', array('op' => 'addForm','schoolid'=>$schoolid,'weid'=>$weid,'openid'=>$openid), true)}",
+        type: "post",
+        dataType: "json",
+        data:formData,
+        success: function (res) {
+            jTips(res.msg);
+            location.reload()
+        }
+    });
+})
+
+$(function(){
+    if($("video").length > 0){
+        if(Number($("video").attr('data-fix')) === 1){
+            let eventPositionTop =  $("video").parents(".SpLi").position().top //元素相对定位
+            $(window).on('scroll',function() {
+                const sct = $(window).scrollTop()
+                if(sct >= eventPositionTop){
+                    $("video").css({
+                        // 'position':'fixed',
+                        'top':0,
+                        'z-index':9
+                    })
+                }else {
+                    $("video").css('position','relative')
+                }
+            })
+        }
+    }
+})
+
+
+/**************************链接分享******************************/
+wx.ready(function () {
+	sharedata = {
+		title: "{$sharetitle}",
+		desc: "{$sharedesc}",
+		link: "{$links}",
+		imgUrl: "{$shareimgUrl}",
+		openid: "{$openid}",
+		success: function(){
+            //分享成功后续增加记录等操作
+            $.ajax({
+                url: "{php echo $this->createMobileUrl('shareajax', array('op' => 'addShareRecord','schoolid'=>$schoolid,'weid'=>$weid), true)}",
+                type: "post",
+                dataType: "json",
+                data:{id:`{$_GPC['id']}`,type:`{$_GPC['type']}`,'fxzopenid':`{$openid}`},
+                success: function (res) {
+                    console.log(res)
+                    jTips(res.msg);
+                },
+                error: function (jqXHR, textStatus, errorThrown){
+                    console.log(jqXHR)
+                    console.log(textStatus)
+                    console.log(errorThrown)
+                }
+            });
+		},
+		cancel: function(){
+		}
+	};	
+	wx.onMenuShareAppMessage(sharedata);
+	wx.onMenuShareTimeline(sharedata);
+});
+var WeixinApi = (function () {
+	return {
+        ready:wxJsBridgeReady,
+    }; 
+    function wxJsBridgeReady(readyCallback) {
+        if (readyCallback && typeof readyCallback == 'function') {
+            var Api = this;
+            var wxReadyFunc = function () {
+                readyCallback(Api);
+            };
+            if (typeof window.WeixinJSBridge == "undefined"){
+                if (document.addEventListener) {
+                    document.addEventListener('WeixinJSBridgeReady', wxReadyFunc, false);
+                } else if (document.attachEvent) {
+                    document.attachEvent('WeixinJSBridgeReady', wxReadyFunc);
+                    document.attachEvent('onWeixinJSBridgeReady', wxReadyFunc);
+                }
+            }else{
+                wxReadyFunc();
+            }
+        }
+    }
+    return {
+        version:"2.5",
+        ready:wxJsBridgeReady,
+    };
+})();
+/**************************链接分享******************************/
+
+</script>
+</html>

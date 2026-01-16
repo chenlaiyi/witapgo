@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name = "format-detection" content ="telephone=no">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>{$activity['title']}</title>
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_TMP_CSS__}/base.css">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_TMP__}/tmp5/css/index.css">
+    <link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+    <!-- 移动端适配 -->
+    <script>
+        var html = document.querySelector('html');
+        changeRem();
+        window.addEventListener('resize', changeRem);
+        function changeRem() {
+            var width = html.getBoundingClientRect().width;
+            html.style.fontSize = width / 10 + 'px';
+        }
+    </script>
+    <script src="{__MOBILE_TMP_JS__}/jquery-2.1.4.min.js"></script>
+    <script src="{__MOBILE_TMP_JS__}/jquery.flexslider-min.js"></script>
+    <script src="{__MOBILE_TMP_JS__}/jquery.SuperSlide.2.1.1.js"></script>
+    <script src="{__PLUGIN__}/layer/mobile/2.0/layer.js"></script>
+    <script src="{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script>
+        // jssdk config 对象
+        jssdkconfig = {php echo json_encode($_W['account']['jssdkconfig']);} || {};
+        // 是否启用调试
+        jssdkconfig.debug = false;
+        jssdkconfig.jsApiList = [
+            'checkJsApi',
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'getLocation',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'hideMenuItems'
+        ];
+        wx.config(jssdkconfig);
+        wx.error(function (res) {
+            layer.open({ content: '对不起，微信JSSDK信息验证失败！', skin: 'msg', time: 2 });
+        });
+        wx.ready(function () {
+            wx.hideMenuItems({
+                menuList: ["menuItem:share:timeline", "menuItem:share:appMessage", "menuItem:share:qq", "menuItem:share:weiboApp", "menuItem:share:facebook", "menuItem:share:QZone",  "menuItem:openWithQQBrowser", "menuItem:openWithSafari", "menuItem:share:email"] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮
+            });
+        });
+    </script>
+</head>
+<body class="bgfff">
+<!--商家信息-->
+<section class="verfMerchant">
+    <section class="logo"><img src="{php echo tomedia($store['logo_url'])}"><span class="verticalAlign"></span></section>
+    <h2>{$store['name']}</h2>
+    <h4><span>{$store['prize']}</span></h4>
+    <section class="verfDetail clearfix"> <img src="{php echo tomedia($activity['pic_url'])}"> <span>{$activity['title']}</span> </section>
+</section>
+<!--中奖用户-->
+<section class="prizeUser">
+    <h3>中奖用户</h3>
+    <ul>
+        {loop iunserializer($store['writeoff_content']) $index $data}
+        <li><img src="{php echo tomedia($data['headurl'])}" class="headPic">
+            <h4>{$data['nickname']}</h4>
+            <p>抽奖码：{$data['writecode']}</p>
+            {if $data['writeoff_status']==0}
+            <span class="itemState red" data-index="{$index}">待核销</span>
+            {else}
+            <span class="itemState" data-index="{$index}">已核销</span>
+            {/if}
+        </li>
+        <li id="winerbox{$index}" style="display: none;">
+            {if $object['is_register']==1}
+            <h3>个人信息</h3>
+            {loop iunserializer($data['register_data']) $info}
+            <section class="verfItem"><span>{$info['Explain']}：</span>
+                <section>{$info['Value']}</section>
+            </section>
+            {/loop}
+            {else}
+            <p class="tc"><img src="{php echo tomedia($data['headurl'])}" style="width: 1.28rem;height: 1.28rem;border-radius: 50%;"></p>
+            <p class="prizeCode myCode mb15 tc"><span>{$data['nickname']}</span></p>
+            <p class="tc" style="font-size: 0.37333rem;">您可以通过用户出示的微信信息进行核销</p>
+            {/if}
+            <section class="verfItem btn">
+                {if $data['writeoff_status']==0}
+                <button class="btnVerf WriteOff" data-index="{$index}">确认核销</button>
+                {else}
+                <button class="btnVerf disabled" disabled="disabled">核销时间：{php echo  date('Y-m-d H:i:s', $data['writeoff_time'])}</button>
+                {/if}
+            </section>
+        </li>
+        {/loop}
+    </ul>
+</section>
+<section class="h40"></section>
+<!--弹窗-->
+<section class="popupVerf" style=" display:none">
+    <!--核销-->
+    <section class="verfBox">
+        <section class="verfBd">
+
+        </section>
+        <img src="{__MOBILE_TMP_IMG__}/close.png" class="close_popup"></section>
+</section>
+<script>
+    $(document).ready(function (e) {
+        //核销信息
+        $(".itemState").click(function (e) {
+            $(".verfBd").empty();
+            var index = $(this).data("index");
+            $(".verfBd").html($("#winerbox" + index).html());
+            $(".popupVerf").show();
+            $(".verfBox").css("margin-top", ($(window).height() - $(".verfBox").height()) / 2 + "px");
+        });
+        //关闭
+        $(".btnVerf,.close_popup").click(function (e) {
+            $(".popupVerf").hide();
+        });
+
+        //修改核销状态
+        $(".verfBd").delegate(".WriteOff", "click", function () {
+            var index = $(this).data("index");
+            $.ajax({
+                url: "{php echo $this->createMobileUrl('obj_fish', array('act' => 'writeOff','token' => $token));}",
+                type: "post",
+                dataType: "json",
+                data: {
+                    "fish_store_id": "{$store['id']}",
+                    "index_id": index
+                },
+                success: function (result) {
+                    if (result.status === 1) {
+                        layer.open({content: '恭喜您，奖品核销成功！', skin: 'msg', time: 2});
+                        $(".popupVerf").hide();
+                        $("#winerbox" + index + " button").html('核销时间：' + result.writeofftime);
+                        $("#winerbox" + index + " button").addClass("disabled").attr("disabled", true);
+                        $("#winerbox" + index + "").prev().children("span").removeClass("red").html("已核销");
+                    } else {
+                        layer.open({content: result.msg, skin: 'msg', time: 2});
+                        return;
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">系统</li>
+                <li class="active">控制面板</li>
+            </ol>
+        </section>
+        <section class="content">
+            <div class="row">
+                {if $warring==="waitError"}
+                <div class="col-lg-12">
+                    <div class="alert alert-info alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4>
+                            <i class="icon fa fa-comments"></i> 您使用的系统还未授权，请联系客服索取授权码，感谢您对我们工作的支持！
+                        </h4>
+                        <code>系统提示您：</code> 系统检测到您的系统还未授权，稳定更新即刻源码www.jikym.cn
+                    </div>
+                </div>
+                {/if}
+                {if $warring==="pirateError"}
+                <div class="col-lg-12">
+                    <div class="alert alert-danger alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4>
+                            <i class="icon fa fa-comments"></i> 您当时使用的系统为未授权系统，稳定更新即刻源码www.jikym.cn
+                        </h4>
+                        <code>系统提示您：</code> 系统检测到您的系统还未授权，请尽快联系客服购买正版系统！除了通过官方渠道购买系统，其他途径购买、下载的系统一律为盗版，盗版系统不但不能提供及时稳定的更新服务，还经常被植入各种后门在互联网上传播，望用户谨防上当受骗，切记！切记！切记！
+                    </div>
+                </div>
+                {/if}
+                {if $warring==="statusError"}
+                <div class="col-lg-12">
+                    <div class="alert alert-danger alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4>
+                            <i class="icon fa fa-comments"></i> 您使用的系统已被禁止操作，稳定更新即刻源码www.jikym.cn
+                        </h4>
+                        <code>系统提示您：</code> 系统检测到您的系统最近存在违规操作，现已被锁定并禁止操作行为，请联系官方客服核实并整改问题。除了通过官方渠道购买系统，其他途径购买、下载的系统一律为盗版，盗版系统不但不能提供及时稳定的更新服务，还经常被植入各种后门在互联网上传播，望用户谨防上当受骗，切记！切记！切记！
+                    </div>
+                </div>
+                {/if}
+                {if $warring==="paraError" || $warring==="fileError"}
+                <div class="col-lg-12">
+                    <div class="alert alert-danger alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4>
+                            <i class="icon fa fa-comments"></i> 请不要试图篡改系统授权文件，并尊重我们的劳动成果，谢谢您！
+                        </h4>
+                        <code>系统提示您：</code> 系统检测到您的系统授权文件被篡改,请不要试图破解篡改本系统。除了通过官方渠道购买系统，其他途径购买、下载的系统一律为盗版，盗版系统不但不能提供及时稳定的更新服务，还经常被植入各种后门在互联网上传播，望用户谨防上当受骗，切记！切记！切记！
+                    </div>
+                </div>
+                {/if}
+                {if $warring==="renewError"}
+                <div class="col-lg-12">
+                    <div class="alert alert-warning alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4>
+                            <i class="icon fa fa-comments"></i> 您的系统授权已到期，请尽快联系官方客服续费！
+                        </h4>
+                        <code>系统提示您：</code> 系统检测到您的系统授权已到期，请您尽快联系官方客服续费，感谢您对助推客一如既往的支持。除了通过官方渠道购买系统，其他途径购买、下载的系统一律为盗版，盗版系统不但不能提供及时稳定的更新服务，还经常被植入各种后门在互联网上传播，望用户谨防上当受骗，切记！切记！切记！
+                    </div>
+                </div>
+                {/if}
+                {if $warring==="networkError"}
+                <div class="col-lg-12">
+                    <div class="alert alert-warning alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4>
+                            <i class="icon fa fa-comments"></i> 对不起，服务器开了个小差，客官稍等我们马上回来！
+                        </h4>
+                        <code>系统提示您：</code> 服务器遇到未知错误，我们的“攻城狮”正在全力抢修，请您稍等片刻我们马上回来。除了通过官方渠道购买系统，其他途径购买、下载的系统一律为盗版，盗版系统不但不能提供及时稳定的更新服务，还经常被植入各种后门在互联网上传播，望用户谨防上当受骗，切记！切记！切记！
+                    </div>
+                </div>
+                {/if}
+
+                <div class="col-lg-2 col-xs-6">
+                    <div class="small-box bg-green">
+                        <div class="inner">
+                            <h3>{$storeTotal} 家</h3>
+                            <p>平台商家</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-home"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-aqua">
+                        <div class="inner">
+                            <h3>{$userTotal} 人</h3>
+                            <p>会员用户</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-users"></i>
+                        </div>
+                    </div>
+                </div><!-- ./col -->
+                <div class="col-lg-2 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-yellow">
+                        <div class="inner">
+                            <h3>{$objTotal} 场</h3>
+                            <p>创建活动</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-star"></i>
+                        </div>
+                    </div>
+                </div><!-- ./col -->
+                <div class="col-lg-2 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-teal">
+                        <div class="inner">
+                            <h3>{$buyTotal} 次</h3>
+                            <p>累计购买</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-magnet"></i>
+                        </div>
+                    </div>
+                </div><!-- ./col -->
+                <div class="col-lg-2 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-purple">
+                        <div class="inner">
+                            <h3>{$drawTotal} 个</h3>
+                            <p>送出奖品</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-gift"></i>
+                        </div>
+                    </div>
+                </div><!-- ./col -->
+                <div class="col-lg-2 col-xs-6">
+                    <!-- small box -->
+                    <div class="small-box bg-red">
+                        <div class="inner">
+                            <h3>{$clickTotal} 次</h3>
+                            <p>活动曝光</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-eye"></i>
+                        </div>
+                    </div>
+                </div><!-- ./col -->
+            </div><!-- /.row -->
+
+            <div class="box">
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs pull-right">
+                        <li><a href="#data_30day" id="data_30day_btn" data-toggle="tab">30日</a></li>
+                        <li><a href="#data_7day" id="data_7day_btn" data-toggle="tab">7日</a></li>
+                        <li><a href="#data_1day" id="data_1day_btn"  data-toggle="tab">今日</a></li>
+                        <li class="active"><a href="#data_total" id="data_total_btn" data-toggle="tab">汇总</a></li>
+                        <li class="pull-left header"><i class="fa fa-database"></i> 系统数据统计 &nbsp;&nbsp;</li>
+                    </ul>
+                    <div class="tab-content no-padding">
+                        <div class="tab-pane active" id="data_total" style="position: relative;padding: 10px 0px 10px 0px;;">
+                            <table class="table" style="text-align: center;">
+                                <tr>
+                                    <th class="tc">商家账户总额</th>
+                                    <th class="tc">商家短信总量</th>
+                                    <th class="tc">商家累计充值</th>
+                                    <th class="tc">商家累计提现</th>
+                                    <th class="tc">商家账户续费</th>
+                                    <th class="tc">用户账户总额</th>
+                                    <th class="tc">用户账户积分</th>
+                                    <th class="tc">用户累计提现</th>
+                                </tr>
+                                <tr>
+                                    <td>{$storeMoney} 元</td>
+                                    <td>{$storeSms} 条</td>
+                                    <td>{$storeRechargeMoney} 元</td>
+                                    <td>{$storeRefundMoney} 元</td>
+                                    <td>{$storeRenewMoney} 元</td>
+                                    <td>{$userMoney} 元</td>
+                                    <td>{$userScore} 积分</td>
+                                    <td>{$userRefundMoney} 元</td>
+                                </tr>
+                                <tr>
+                                    <th class="tc">累计送出余额</th>
+                                    <th class="tc">累计送出现金</th>
+                                    <th class="tc">累计送出积分</th>
+                                    <th class="tc">累计送出卡券</th>
+                                    <th class="tc">累计送出商品</th>
+                                    <th class="tc">累计购买支付</th>
+                                    <th class="tc">累计商城支付</th>
+                                    <th class="tc">累计余额抵扣</th>
+                                </tr>
+                                <tr>
+                                    <td>{$drawSys} 元</td>
+                                    <td>{$drawWallet} 元</td>
+                                    <td>{$drawScore} 积分</td>
+                                    <td>{$drawCard} 张</td>
+                                    <td>{$drawProduct} 个</td>
+                                    <td>{$JoinPayMoney} 元</td>
+                                    <td>{$ShopPayMoney} 元</td>
+                                    <td>{$myPayMoney} 元</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="tab-pane" id="data_1day" style="position: relative;padding: 10px 0px 10px 0px;;">
+                            <div class='load-down'><div class='load-load'><span class='loading'></span>统计数据加载中...</div></div>
+                        </div>
+                        <div class="tab-pane" id="data_7day" style="position: relative;padding: 10px 0px 10px 0px;;">
+                            <div class='load-down'><div class='load-load'><span class='loading'></span>统计数据加载中...</div></div>
+                        </div>
+                        <div class="tab-pane" id="data_30day" style="position: relative;padding: 10px 0px 10px 0px;;">
+                            <div class='load-down'><div class='load-load'><span class='loading'></span>统计数据加载中...</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {if $_W['role']=='founder'}
+            <div class="row">
+                <section class="col-lg-5 connectedSortable">
+                    <div class="nav-tabs-custom">
+                        <!-- Tabs within a box -->
+                        <ul class="nav nav-tabs pull-right">
+                            <li><a href="#auth_set" data-toggle="tab">授权</a></li>
+                            <li class="active"><a href="#auth_show" data-toggle="tab">信息</a></li>
+                            <li class="pull-left header"><i class="fa fa-inbox"></i> 系统授权信息</li>
+                        </ul>
+                        <div class="tab-content no-padding">
+                            <div class="tab-pane active" id="auth_show" style="position: relative; height: 340px;">
+                                <div class="box-body">
+                                    {if empty($warring) || $warring === "renewError" || $warring === "statusError"}
+                                    <table class="table table-striped table_auth">
+                                        <tbody>
+                                        <tr>
+                                            <td><i class="fa fa-caret-right"></i></td>
+                                            <td>系统域名信息：</td>
+                                            <td class="pull-right">{php echo explode(",", $authData['Domain'])[0] }</td>
+                                        </tr>
+                                        <tr>
+                                            <td height="35"><i class="fa fa-caret-right"></i></td>
+                                            <td>内网IP地址：</td>
+                                            <td class="pull-right">{php echo $authData['IP'] }</td>
+                                        </tr>
+                                        {if $authData['CustomerTypes'] == 1}
+                                        <tr>
+                                            <td height="35"><i class="fa fa-caret-right"></i></td>
+                                            <td>授权微信公众号：</td>
+                                            <td class="pull-right">{php echo $_W['account']['key']}</td>
+                                        </tr>
+                                        <tr>
+                                            <td height="35"><i class="fa fa-caret-right"></i></td>
+                                            <td>系统授权状态：</td>
+                                            <td class="pull-right"><small class="label pull-right bg-green">已授权</small></td>
+                                        </tr>
+                                        {else}
+                                        <tr>
+                                            <td height="35"><i class="fa fa-caret-right"></i></td>
+                                            <td>授权微信公众号：</td>
+                                            <td class="pull-right">{php echo $authData['WxAppID'] }</td>
+                                        </tr>
+                                        <tr>
+                                            <td height="35"><i class="fa fa-caret-right"></i></td>
+                                            <td>系统授权状态：</td>
+                                            <td class="pull-right"><i class="fa fa-male"></i> {$authFile[2]} <i class="fa fa-phone"></i> {$authFile[3]} &nbsp;<small class="label pull-right bg-green">已授权</small></td>
+                                        </tr>
+                                        {/if}
+                                        <tr>
+                                            <td height="35"><i class="fa fa-caret-right"></i></td>
+                                            <td>系统授权码：</td>
+                                            <td class="pull-right">{$authFile[1]}</td>
+                                        </tr>
+                                        <tr>
+                                            <td height="35"><i class="fa fa-caret-right"></i></td>
+                                            <td>服务生效时间：</td>
+                                            <td class="pull-right">{php echo $authData['StartTime'] }</td>
+                                        </tr>
+                                        <tr>
+                                            <td height="35"><i class="fa fa-caret-right"></i></td>
+                                            <td>服务到期时间：</td>
+                                            <td class="pull-right">终身有效</td>
+                                        </tr>
+                                        <tr>
+                                            <td height="35"><i class="fa fa-caret-right"></i></td>
+                                            <td>当前系统类型：</td>
+                                            <td class="pull-right">{php echo $authData['CustomerTypes'] == 2 ? "5商家体验版":'平台自营版' }</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    {else}
+                                    <table class="table table-striped">
+                                        <tbody>
+                                        <tr>
+                                            <td height="40"><i class="fa fa-caret-right"></i></td>
+                                            <td>系统域名信息：</td>
+                                            <td class="pull-right">{php echo $_SERVER['HTTP_HOST']}</td>
+                                        </tr>
+                                        <tr>
+                                            <td height="40"><i class="fa fa-caret-right"></i></td>
+                                            <td>内网IP地址：</td>
+                                            <td class="pull-right">{php echo $_SERVER['SERVER_ADDR']}</td>
+                                        </tr>
+                                        <tr>
+                                            <td height="40"><i class="fa fa-caret-right"></i></td>
+                                            <td>授权微信公众号：</td>
+                                            <td class="pull-right">{php echo $_W['account']['key']}</td>
+                                        </tr>
+                                        <tr>
+                                            <td height="40"><i class="fa fa-caret-right"></i></td>
+                                            <td>系统授权状态：</td>
+                                            <td class="pull-right">盗版有风险，请谨慎使用! &nbsp;<small class="label pull-right bg-red">待授权</small></td>
+                                        </tr>
+                                        <tr>
+                                            <td height="40"><i class="fa fa-caret-right"></i></td>
+                                            <td>系统授权码：</td>
+                                            <td class="pull-right">########-####-####-####-############</td>
+                                        </tr>
+                                        <tr>
+                                            <td height="40"><i class="fa fa-caret-right"></i></td>
+                                            <td>服务生效时间：</td>
+                                            <td class="pull-right">yyyy-mm-dd hh:mm:ss.sss</td>
+                                        </tr>
+                                        <tr>
+                                            <td height="40"><i class="fa fa-caret-right"></i></td>
+                                            <td>服务到期时间：</td>
+                                            <td class="pull-right">yyyy-mm-dd hh:mm:ss.sss</td>
+                                        </tr>
+                                        <tr>
+                                            <td height="40"><i class="fa fa-caret-right"></i></td>
+                                            <td>剩余服务时间：</td>
+                                            <td class="pull-right">0 天</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    {/if}
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="auth_set" style="position: relative; height: 340px;">
+                                <div class="box-body">
+                                    <div class="form-group">
+                                        <label>服务器信息：（域名）{php echo $_SERVER['HTTP_HOST']} （内网IP）{php echo $_SERVER['SERVER_ADDR']}</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="wxAppID">微信公众号APPID：</label>
+                                        <input type="text" class="form-control" id="wxAppID" placeholder="请输入微信公众号APPID" value="{$authFile[4]}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="authCode">正版授权码：</label>
+                                        <input type="text" class="form-control" id="authCode" placeholder="请输入官方正版授权码" value="{$authFile[1]}">
+                                        <p class="help-block">请联系客服索取授权码，保护好您的授权码，避免泄漏</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="userName">管理员联系方式：</label>
+                                        <div class="row">
+                                            <div class="col-xs-4">
+                                                <input type="text" class="form-control" id="userName" placeholder="请输入真实姓名" value="{$authFile[2]}">
+                                            </div>
+                                            <div class="col-xs-8">
+                                                <input type="text" class="form-control" id="userTel" placeholder="请输入移动电话" value="{$authFile[3]}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" id="SaveAuthBtn" class="btn btn-primary">验证授权</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="col-lg-7 connectedSortable">
+                    <div class="nav-tabs-custom">
+                        <!-- Tabs within a box -->
+                        <ul class="nav nav-tabs pull-right">
+                            <li><a href="#reissue_list" id="reissue_list_btn"  data-toggle="tab">红包补发<span class="label label-warning" style="position: absolute;top: 2px;right: 2px;text-align: center;font-size: 9px;padding: 2px 3px;line-height: .9;">{$reissueTotal}</span></a></li>
+                            <li><a href="#userrefund_list" id="userrefund_list_btn"  data-toggle="tab">用户提现<span class="label label-warning" style="position: absolute;top: 2px;right: 2px;text-align: center;font-size: 9px;padding: 2px 3px;line-height: .9;">{$userRefundTotal}</span></a></li>
+                            <li><a href="#storerefund_list" id="storerefund_list_btn" data-toggle="tab">商家提现<span class="label label-warning" style="position: absolute;top: 2px;right: 2px;text-align: center;font-size: 9px;padding: 2px 3px;line-height: .9;">{$storeRefundTotal}</span></a></li>
+                            <li><a href="#complain_list" id="complain_list_btn" data-toggle="tab">活动投诉<span class="label label-warning" style="position: absolute;top: 2px;right: 2px;text-align: center;font-size: 9px;padding: 2px 3px;line-height: .9;">{$complainTotal}</span></a></li>
+                            <li><a href="#invest_list" id="invest_list_btn" data-toggle="tab">招商咨询<span class="label label-warning" style="position: absolute;top: 2px;right: 2px;text-align: center;font-size: 9px;padding: 2px 3px;line-height: .9;">{$investTotal}</span></a></li>
+                            <li class="active"><a href="#user_list" data-toggle="tab">新进会员</a></li>
+                            <li class="pull-left header"><i class="fa fa-fire"></i> 待办事项</li>
+                        </ul>
+                        <div class="tab-content no-padding">
+                            <!-- 新进会员 -->
+                            <div class="tab-pane active" id="user_list" style="position: relative; height: 340px;">
+                                <div class="box-body no-padding">
+                                    <div class="direct-chat-messages" style="height: 330px;">
+                                        <ul class="users-list clearfix">
+                                            {loop $userList $user}
+                                            <li style="min-height: 110px; height: auto;">
+                                                <div style="font-size: 0;">
+                                                    <img src="{php echo tomedia($user['headurl'])}" alt="{$user['nickname']}" style="max-height: 100%;">
+                                                    <span class="verticalAlign" style=" display: inline-block; width: 1px; height: 100%; vertical-align:middle; margin-left: -1px;"></span>
+                                                </div>
+                                                <a class="users-list-name" href="{php echo $this->createWebUrl('user_account', array('act' => 'index'));}&openid={$user['openid']}">{$user['nickname']}</a>
+                                            <span class="users-list-date">
+                                                {if $user['sex']==0}
+                                                <span class="badge bg-gray">未知</span>
+                                                {/if}
+                                                {if $user['sex']==1}
+                                                <span class="badge bg-blue">男士</span>
+                                                {/if}
+                                                {if $user['sex']==2}
+                                                <span class="badge bg-red">女士</span>
+                                                {/if}
+                                            </span>
+                                            </li>
+                                            {/loop}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 招商咨询 -->
+                            <div class="tab-pane" id="invest_list" style="position: relative; height: 340px;">
+                                <div class="box-body">
+                                    <table class="table table-striped" id="investtable">
+                                        <tbody>
+                                        <tr>
+                                            <th>状态</th>
+                                            <th>提交用户</th>
+                                            <th>姓名</th>
+                                            <th>联系电话</th>
+                                            <th>提交时间</th>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class='load-down' id="invest_list_load"><div class='load-load'><span class='loading'></span>数据信息加载中...</div></div>
+                                </div>
+                            </div>
+                            <!-- 用户投诉 -->
+                            <div class="tab-pane" id="complain_list" style="position: relative; height: 340px;">
+                                <div class="box-body">
+                                    <table class="table table-striped" id="complaintable">
+                                        <tbody>
+                                        <tr>
+                                            <th>状态</th>
+                                            <th>提交用户</th>
+                                            <th>昵称</th>
+                                            <th>联系电话</th>
+                                            <th>提交时间</th>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class='load-down' id="complain_list_load"><div class='load-load'><span class='loading'></span>数据信息加载中...</div></div>
+                                </div>
+                            </div>
+                            <!-- 商家提现 -->
+                            <div class="tab-pane" id="storerefund_list" style="position: relative; height: 340px;">
+                                <div class="box-body">
+                                    <table class="table table-striped" id="storerefundtable">
+                                        <tbody>
+                                        <tr>
+                                            <th>状态</th>
+                                            <th>商家名称</th>
+                                            <th>绑定账户</th>
+                                            <th>提现金额</th>
+                                            <th>申请时间</th>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class='load-down' id="storerefund_list_load"><div class='load-load'><span class='loading'></span>数据信息加载中...</div></div>
+                                </div>
+                            </div>
+                            <!-- 用户提现 -->
+                            <div class="tab-pane" id="userrefund_list" style="position: relative; height: 340px;">
+                                <div class="box-body">
+                                    <table class="table table-striped" id="userrefundtable">
+                                        <tbody>
+                                        <tr>
+                                            <th>状态</th>
+                                            <th>用户昵称</th>
+                                            <th>提现会员</th>
+                                            <th>金额</th>
+                                            <th>申请时间</th>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class='load-down' id="userrefund_list_load"><div class='load-load'><span class='loading'></span>数据信息加载中...</div></div>
+                                </div>
+                            </div>
+                            <!-- 红包补发 -->
+                            <div class="tab-pane" id="reissue_list" style="position: relative; height: 340px;">
+                                <div class="box-body">
+                                    <table class="table table-striped" id="reissuetable">
+                                        <tbody>
+                                        <tr>
+                                            <th>类型</th>
+                                            <th>用户昵称</th>
+                                            <th>补发会员</th>
+                                            <th>金额</th>
+                                            <th>申请时间</th>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class='load-down' id="reissue_list_load"><div class='load-load'><span class='loading'></span>数据信息加载中...</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            {/if}
+
+            <div class="row">
+                <!-- Left col -->
+                <div class="col-md-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs pull-right">
+                            <li><a href="#card_chart" id="card_chart_btn" data-toggle="tab">订单趋势</a></li>
+                            <li><a href="#money_chart" id="money_chart_btn" data-toggle="tab">资金趋势</a></li>
+                            <li><a href="#join_chart" id="join_chart_btn"  data-toggle="tab">活动趋势</a></li>
+                            <li class="active"><a href="#user_chart" id="user_chart_btn" data-toggle="tab">用户增长</a></li>
+                            <li class="pull-left header"><i class="fa fa-bar-chart"></i> 系统趋势统计 &nbsp;&nbsp;
+                                <div class="box-tools pull-right" data-toggle="tooltip" title="" data-original-title="Status">
+                                    <div class="btn-group" data-toggle="btn-toggle">
+                                        <button type="button" class="btn btn-default btn-sm active" style="padding: 2px 12px;" id="time_month"> 月</button>
+                                        <button type="button" class="btn btn-default btn-sm" style="padding: 2px 12px;" id="time_day"> 天</button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="tab-content no-padding">
+                            <div class="tab-pane active" id="user_chart" style="position: relative; height: 300px;">
+                                <div class="box-body">
+                                    <div class="chart" id="userChartBox">
+                                        <canvas id="userChart" style="height:260px"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane" id="join_chart"  style="position: relative; height: 300px;">
+                                <div class="box-body">
+                                    <div class="chart" id="joinChartBox">
+                                        <canvas id="joinChart" style="height:260px"></canvas>
+                                    </div>
+                                    <div class="text-center"><i class="fa fa-square text-aqua"></i> 活动  <i class="fa fa-square text-green"></i> 转发 <i class="fa fa-square text-red"></i> 奖品 <i class="fa fa-square text-yellow"></i> 购买 </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane" id="money_chart"  style="position: relative; height: 300px;">
+                                <div class="box-body">
+                                    <div class="chart" id="moneyChartBox">
+                                        <canvas id="moneyChart" style="height:260px"></canvas>
+                                    </div>
+                                    <div class="text-center">
+                                        <i class="fa fa-square text-green"></i> 用户支付  <i class="fa fa-square text-red"></i> 用户提现 <i class="fa fa-square text-aqua"></i> 商家充值 <i class="fa fa-square text-light-blue"></i> 商家提现
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane" id="card_chart"  style="position: relative; height: 300px;">
+                                <div class="box-body">
+                                    <div class="chart" id="cardChartBox">
+                                        <canvas id="cardChart" style="height:260px"></canvas>
+                                    </div>
+                                    <div class="text-center"><i class="fa fa-square text-blue"></i> 活动订单  <i class="fa fa-square text-yellow"></i> 商城订单</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script id="investtpl" type="text/html">
+    <%for(i = 0; i < rows.length; i ++) {%>
+    <tr>
+        <td>
+            <%if(rows[i]["status"]=='0') {%>
+            <span class="label bg-red">未联系</span>
+            <%}%>
+            <%if(rows[i]["status"]=='1') {%>
+            <span class="label bg-green">已联系</span>
+            <%}%>
+        </td>
+        <td><%=rows[i]["openid"]%></td>
+        <td><%=rows[i]["username"]%></td>
+        <td><%=rows[i]["mobile"]%></td>
+        <td><%=rows[i]["createtime"]%></td>
+    </tr>
+    <%}%>
+    <tr>
+        <td colspan="5" align="center"><button class="btn btn-default" onclick="javascript:window.location.href='{php echo $this->createWebUrl('sys_invest');}'"> <i class="fa fa-file-text-o"></i> 查看更多数据</button></td>
+    </tr>
+</script>
+<script id="complaintpl" type="text/html">
+    <%for(i = 0; i < rows.length; i ++) {%>
+    <tr>
+        <td>
+            <%if(rows[i]["status"]=='0') {%>
+            <span class="label bg-red">未处理</span>
+            <%}%>
+            <%if(rows[i]["status"]=='1') {%>
+            <span class="label bg-green">已处理</span>
+            <%}%>
+        </td>
+        <td><%=rows[i]["openid"]%></td>
+        <td><%=rows[i]["nickname"]%></td>
+        <td><%=rows[i]["mobile"]%></td>
+        <td><%=rows[i]["createtime"]%></td>
+    </tr>
+    <%}%>
+    <tr>
+        <td colspan="5" align="center"><button class="btn btn-default" onclick="javascript:window.location.href='{php echo $this->createWebUrl('sys_complain');}'"> <i class="fa fa-file-text-o"></i> 查看更多数据</button></td>
+    </tr>
+</script>
+<script id="storerefundtpl" type="text/html">
+    <%for(i = 0; i < rows.length; i ++) {%>
+    <tr>
+        <td>
+            <%if(rows[i]["status"]=='0') {%>
+            <span class="label bg-red">待处理</span>
+            <%}%>
+            <%if(rows[i]["status"]=='1') {%>
+            <span class="label bg-yellow">已处理</span>
+            <%}%>
+            <%if(rows[i]["status"]=='2') {%>
+            <span class="label bg-red">已驳回</span>
+            <%}%>
+        </td>
+        <td><%=rows[i]["store_id"]%></td>
+        <td><%=rows[i]["openid"]%></td>
+        <td><%=rows[i]["money"]%></td>
+        <td><%=rows[i]["createtime"]%></td>
+    </tr>
+    <%}%>
+    <tr>
+        <td colspan="5" align="center"><button class="btn btn-default" onclick="javascript:window.location.href='{php echo $this->createWebUrl('store_refund');}'"> <i class="fa fa-file-text-o"></i> 查看更多数据</button></td>
+    </tr>
+</script>
+<script id="userrefundtpl" type="text/html">
+    <%for(i = 0; i < rows.length; i ++) {%>
+    <tr>
+        <td>
+            <%if(rows[i]["status"]=='0') {%>
+            <span class="label bg-yellow">等待处理</span>
+            <%}%>
+            <%if(rows[i]["status"]=='1') {%>
+            <span class="label bg-green">返款成功</span>
+            <%}%>
+            <%if(rows[i]["status"]=='2') {%>
+            <span class="label bg-red">系统驳回</span>
+            <%}%>
+        </td>
+        <td><%=rows[i]["nickname"]%></td>
+        <td><%=rows[i]["openid"]%></td>
+        <td><%=rows[i]["money"]%></td>
+        <td><%=rows[i]["createtime"]%></td>
+    </tr>
+    <%}%>
+    <tr>
+        <td colspan="5" align="center"><button class="btn btn-default" onclick="javascript:window.location.href='{php echo $this->createWebUrl('user_refund');}'"> <i class="fa fa-file-text-o"></i> 查看更多数据</button></td>
+    </tr>
+</script>
+<script id="reissuetpl" type="text/html">
+    <%for(i = 0; i < rows.length; i ++) {%>
+    <tr>
+        <td>
+            <%if(rows[i]["types"]=='1') {%>
+            <span class="label bg-green">微信红包</span>
+            <%}%>
+            <%if(rows[i]["types"]=='2') {%>
+            <span class="label bg-orange">账户余额</span>
+            <%}%>
+            <%if(rows[i]["types"]=='3') {%>
+            <span class="label bg-orange">业务返利</span>
+            <%}%>
+        </td>
+        <td><%=rows[i]["nickname"]%></td>
+        <td><%=rows[i]["openid"]%></td>
+        <td><%=rows[i]["money"]%></td>
+        <td><%=rows[i]["createtime"]%></td>
+    </tr>
+    <%}%>
+    <tr>
+        <td colspan="5" align="center"><button class="btn btn-default" onclick="javascript:window.location.href='{php echo $this->createWebUrl('sys_reissue');}'"> <i class="fa fa-file-text-o"></i> 查看更多数据</button></td>
+    </tr>
+</script>
+</body>
+</html>
+
+<script>
+    $(function () {
+        //设置选中导航
+        SelectNav("控制面板");
+
+        //初始值设置
+        var is_post_invest = false;
+        var is_post_complain = false;
+        var is_post_storerefund = false;
+        var is_post_userrefund = false;
+        var is_post_reissue = false;
+
+        var chart_time = "month";
+        var active_chart = "userChart";
+
+        //验证授权信息
+        $("#SaveAuthBtn").click(function () {
+            var wxAppID = $("#wxAppID").val();//获取微信公众号
+            var authCode = $("#authCode").val();//获取授权码
+            var userName = $("#userName").val();//获取管理姓名
+            var userTel = $("#userTel").val();//获取管理电话
+            if(authCode=="" || userName=="" || userTel=="")
+            {
+                Command: toastr["warning"]("请完善信息授权信息后验证授权！", "操作提示");
+                return;
+            }
+            var myreg = /^[1][3,4,5,6,7,8][0-9]{9}$/;
+            if (!myreg.test(userTel)) {
+                Command: toastr["warning"]("请输入有效联系电话，以便我们和您取得联系！", "操作提示");
+                return;
+            }
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: "{php echo $this->createWebUrl('home', array('act' => 'checkAuth'));}",
+                data: {
+                    "wxAppID":wxAppID,
+                    "authCode": authCode,
+                    "userName": userName,
+                    "userTel": userTel
+                },
+                success: function (data) {
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 2000);
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+                    }
+                }
+            });
+        });
+
+        //按月统计
+        $("#time_month").click(function () {
+            chart_time = "month";
+            if (active_chart=="userChart")
+            {
+                LoadUserChartFunction(chart_time);
+            }
+            if (active_chart=="joinChart")
+            {
+                LoadJoinChartFunction(chart_time);
+            }
+            if (active_chart=="moneyChart")
+            {
+                LoadMoneyChartFunction(chart_time);
+            }
+            if (active_chart=="cardChart")
+            {
+                LoadCardChartFunction(chart_time);
+            }
+        });
+        //按日统计
+        $("#time_day").click(function () {
+            chart_time = "day";
+            if (active_chart=="userChart")
+            {
+                LoadUserChartFunction(chart_time);
+            }
+            if (active_chart=="joinChart")
+            {
+                LoadJoinChartFunction(chart_time);
+            }
+            if (active_chart=="moneyChart")
+            {
+                LoadMoneyChartFunction(chart_time);
+            }
+            if (active_chart=="cardChart")
+            {
+                LoadCardChartFunction(chart_time);
+            }
+        });
+
+        LoadUserChartFunction(chart_time);//默认加载用户Chart
+
+        //点击会员
+        $("#user_chart_btn").click(function () {
+            active_chart = "userChart";
+            LoadUserChartFunction(chart_time);
+        });
+
+        //点击参与
+        $("#join_chart_btn").click(function () {
+            active_chart = "joinChart";
+            LoadJoinChartFunction(chart_time);
+        });
+
+        //点击资金
+        $("#money_chart_btn").click(function () {
+            active_chart = "moneyChart";
+            LoadMoneyChartFunction(chart_time);
+        });
+
+        //点击订单
+        $("#card_chart_btn").click(function () {
+            active_chart = "cardChart";
+            LoadCardChartFunction(chart_time);
+        });
+
+        //点击今日统计
+        $("#data_1day_btn").click(function () {
+            LoadDataFunction(1);
+        });
+
+        //点击7日统计
+        $("#data_7day_btn").click(function () {
+            LoadDataFunction(7);
+        });
+
+        //点击30日统计
+        $("#data_30day_btn").click(function () {
+            LoadDataFunction(30);
+        });
+
+        //记载模板
+        myrequire([ 'arttemplate'], function (template) {
+
+            //获取招商咨询
+            $("#invest_list_btn").click(function () {
+                if (!is_post_invest) //判断有没有请求过
+                {
+                    $.ajax({
+                        type: "get",
+                        url: "{php echo $this->createWebUrl('sys_invest', array('act' => 'getJsonList'));}",
+                        data: {'page':1,'pageSize':6,'sortName':'id','sortOrder':'desc'},
+                        dataType:'json',
+                        success: function (data) {
+                            $("#invest_list_load").hide();
+                            var html = template("investtpl",data);
+                            $("#investtable tbody").append(html);
+                            is_post_invest = true;
+                        }
+                    });
+                }
+            });
+
+            //获取投诉信息
+            $("#complain_list_btn").click(function () {
+                if (!is_post_complain) //判断有没有请求过
+                {
+                    $.ajax({
+                        type: "get",
+                        url: "{php echo $this->createWebUrl('sys_complain', array('act' => 'getJsonList'));}",
+                        data: {'page':1,'pageSize':6,'sortName':'id','sortOrder':'desc'},
+                        dataType:'json',
+                        success: function (data) {
+                            $("#complain_list_load").hide();
+                            var html = template("complaintpl",data);
+                            $("#complaintable tbody").append(html);
+                            is_post_complain = true;
+                        }
+                    });
+                }
+            });
+
+            //获取商家提现
+            $("#storerefund_list_btn").click(function () {
+                if (!is_post_storerefund) //判断有没有请求过
+                {
+                    $.ajax({
+                        type: "get",
+                        url: "{php echo $this->createWebUrl('store_refund', array('act' => 'getJsonList'));}",
+                        data: {'page':1,'pageSize':6,'sortName':'id','sortOrder':'desc'},
+                        dataType:'json',
+                        success: function (data) {
+                            $("#storerefund_list_load").hide();
+                            var html = template("storerefundtpl",data);
+                            $("#storerefundtable tbody").append(html);
+                            is_post_storerefund = true;
+                        }
+                    });
+                }
+            });
+
+            //获取用户提现
+            $("#userrefund_list_btn").click(function () {
+                if (!is_post_userrefund) //判断有没有请求过
+                {
+                    $.ajax({
+                        type: "get",
+                        url: "{php echo $this->createWebUrl('user_refund', array('act' => 'getJsonList'));}",
+                        data: {'page':1,'pageSize':6,'sortName':'id','sortOrder':'desc'},
+                        dataType:'json',
+                        success: function (data) {
+                            $("#userrefund_list_load").hide();
+                            var html = template("userrefundtpl",data);
+                            $("#userrefundtable tbody").append(html);
+                            is_post_userrefund = true;
+                        }
+                    });
+                }
+            });
+
+            //获取红包补发
+            $("#reissue_list_btn").click(function () {
+                if (!is_post_reissue) //判断有没有请求过
+                {
+                    $.ajax({
+                        type: "get",
+                        url: "{php echo $this->createWebUrl('sys_reissue', array('act' => 'getJsonList'));}",
+                        data: {'page':1,'pageSize':6,'sortName':'id','sortOrder':'desc'},
+                        dataType:'json',
+                        success: function (data) {
+                            $("#reissue_list_load").hide();
+                            var html = template("reissuetpl",data);
+                            $("#reissuetable tbody").append(html);
+                            is_post_reissue = true;
+                        }
+                    });
+                }
+            });
+
+        });
+    });
+
+    function LoadUserChartFunction(chart_time)
+    {
+        myrequire(['chartjs'], function () {
+            $("#userChart").remove();
+            $('#userChartBox').append('<canvas id="userChart" style="height:260px"></canvas>');
+            //获取会员增长趋势
+            $.ajax({
+                type: "post",
+                dataType:'json',
+                url: "{php echo $this->createWebUrl('home', array('act' => 'getUserChart'));}",
+                data: {'chart_time':chart_time},
+                success: function (data) {
+                    var userChartCanvas = $("#userChart").get(0).getContext("2d");
+                    var userChart = new Chart(userChartCanvas);
+
+                    var userChartData = {
+                        labels: data.labels,
+                        datasets: [
+                            {
+                                label: "会员数量",
+                                fillColor: "rgba(0,192,239, 0.8)",
+                                strokeColor: "rgba(0,115,183, 0.8)",
+                                pointColor: "rgba(0,192,239, 0.8)",
+                                pointStrokeColor: "#00c0ef",
+                                pointHighlightFill: "#fff",
+                                pointHighlightStroke: "rgba(0,192,239,0.8)",
+                                data: data.data
+                            }
+                        ]
+                    };
+
+                    var userChartOptions = {
+                        showScale: true,
+                        scaleShowGridLines: false,
+                        scaleGridLineColor: "rgba(0,0,0,.05)",
+                        scaleGridLineWidth: 1,
+                        scaleShowHorizontalLines: true,
+                        scaleShowVerticalLines: true,
+                        bezierCurve: true,
+                        bezierCurveTension: 0.3,
+                        pointDot: false,
+                        pointDotRadius: 4,
+                        pointDotStrokeWidth: 1,
+                        pointHitDetectionRadius: 20,
+                        datasetStroke: true,
+                        datasetStrokeWidth: 2,
+                        datasetFill: true,
+                        legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>",
+                        maintainAspectRatio: true,
+                        responsive: true
+                    };
+
+                    userChart.Line(userChartData, userChartOptions);
+                }
+            });
+        });
+    }
+
+    function LoadJoinChartFunction(chart_time)
+    {
+        myrequire(['chartjs'], function () {
+            $("#joinChart").remove();
+            $('#joinChartBox').append('<canvas id="joinChart" style="height:260px"></canvas>');
+            //获取活动参与趋势
+            $.ajax({
+                type: "post",
+                dataType:'json',
+                url: "{php echo $this->createWebUrl('home', array('act' => 'getJoinChart'));}",
+                data: {'chart_time':chart_time},
+                success: function (data) {
+                    var joinChartCanvas = $("#joinChart").get(0).getContext("2d");
+                    var joinChart = new Chart(joinChartCanvas);
+
+                    var joinChartData = {
+                        labels: data.labels,
+                        datasets: [
+                            {
+                                label: "活动数量",
+                                fillColor: "rgba(0,192,239, 0.8)",
+                                strokeColor: "rgba(0,192,239, 0.8)",
+                                pointColor: "rgba(0,192,239, 0.8)",
+                                pointStrokeColor: "#00c0ef",
+                                pointHighlightFill: "#fff",
+                                pointHighlightStroke: "rgba(0,192,239,0.8)",
+                                data: data.dataAct
+                            },
+                            {
+                                label: "转发数量",
+                                fillColor: "rgba(0,166,90, 0.8)",
+                                strokeColor: "rgba(0,166,90, 0.8)",
+                                pointColor: "rgba(0,166,90, 0.8)",
+                                pointStrokeColor: "#00a65a",
+                                pointHighlightFill: "#fff",
+                                pointHighlightStroke: "rgba(0,166,90,0.8)",
+                                data: data.dataShare
+                            },
+                            {
+                                label: "奖品数量",
+                                fillColor: "rgba(221,75,57, 0.8)",
+                                strokeColor: "rgba(221,75,57, 0.8)",
+                                pointColor: "rgba(221,75,57, 0.8)",
+                                pointStrokeColor: "#dd4b39",
+                                pointHighlightFill: "#fff",
+                                pointHighlightStroke: "rgba(221,75,57,0.8)",
+                                data: data.dataDraw
+                            },
+                            {
+                                label: "购买数量",
+                                fillColor: "rgba(243,156,18, 0.8)",
+                                strokeColor: "rgba(243,156,18, 0.8)",
+                                pointColor: "rgba(243,156,18, 0.8)",
+                                pointStrokeColor: "#f39c12",
+                                pointHighlightFill: "#fff",
+                                pointHighlightStroke: "rgba(243,156,18,0.8)",
+                                data: data.dataPay
+                            }
+                        ]
+                    };
+
+                    var joinChartOptions = {
+                        showScale: true,
+                        scaleShowGridLines: false,
+                        scaleGridLineColor: "rgba(0,0,0,.05)",
+                        scaleGridLineWidth: 1,
+                        scaleShowHorizontalLines: true,
+                        scaleShowVerticalLines: true,
+                        bezierCurve: true,
+                        bezierCurveTension: 0.3,
+                        pointDot: false,
+                        pointDotRadius: 4,
+                        pointDotStrokeWidth: 1,
+                        pointHitDetectionRadius: 20,
+                        datasetStroke: true,
+                        datasetStrokeWidth: 2,
+                        datasetFill: true,
+                        legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>",
+                        maintainAspectRatio: true,
+                        responsive: true
+                    };
+
+                    joinChart.Line(joinChartData, joinChartOptions);
+                }
+            });
+        });
+    }
+
+    function LoadMoneyChartFunction(chart_time)
+    {
+        myrequire(['chartjs'], function () {
+            $("#moneyChart").remove();
+            $('#moneyChartBox').append('<canvas id="moneyChart" style="height:260px"></canvas>');
+            //获取活动参与趋势
+            $.ajax({
+                type: "post",
+                dataType:'json',
+                url: "{php echo $this->createWebUrl('home', array('act' => 'getMoneyChart'));}",
+                data: {'chart_time':chart_time},
+                success: function (data) {
+                    var moneyChartCanvas = $("#moneyChart").get(0).getContext("2d");
+                    var moneyChart = new Chart(moneyChartCanvas);
+
+                    var moneyChartData = {
+                        labels: data.labels,
+                        datasets: [
+                            {
+                                label: "商家充值",
+                                fillColor: "rgba(0,192,239, 0.8)",
+                                strokeColor: "rgba(0,192,239, 0.8)",
+                                pointColor: "rgba(0,192,239, 0.8)",
+                                pointStrokeColor: "#00c0ef",
+                                pointHighlightFill: "#fff",
+                                pointHighlightStroke: "rgba(0,192,239,0.8)",
+                                data: data.dataStoreRecharge
+                            },
+                            {
+                                label: "商家提现",
+                                fillColor: "rgba(60,141,188, 0.8)",
+                                strokeColor: "rgba(60,141,188, 0.8)",
+                                pointColor: "rgba(60,141,188, 0.8)",
+                                pointStrokeColor: "#3c8dbc",
+                                pointHighlightFill: "#fff",
+                                pointHighlightStroke: "rgba(60,141,188,0.8)",
+                                data: data.dataStoreRefund
+                            },
+                            {
+                                label: "用户支付",
+                                fillColor: "rgba(0,166,90, 0.8)",
+                                strokeColor: "rgba(0,166,90, 0.8)",
+                                pointColor: "rgba(0,166,90, 0.8)",
+                                pointStrokeColor: "#00a65a",
+                                pointHighlightFill: "#fff",
+                                pointHighlightStroke: "rgba(0,166,90,0.8)",
+                                data: data.dataUserPay
+                            },
+                            {
+                                label: "用户提现",
+                                fillColor: "rgba(221,75,57, 0.8)",
+                                strokeColor: "rgba(221,75,57, 0.8)",
+                                pointColor: "rgba(221,75,57, 0.8)",
+                                pointStrokeColor: "#dd4b39",
+                                pointHighlightFill: "#fff",
+                                pointHighlightStroke: "rgba(221,75,57,0.8)",
+                                data: data.dataUserRefund
+                            }
+                        ]
+                    };
+
+                    var moneyChartOptions = {
+                        showScale: true,
+                        scaleShowGridLines: false,
+                        scaleGridLineColor: "rgba(0,0,0,.05)",
+                        scaleGridLineWidth: 1,
+                        scaleShowHorizontalLines: true,
+                        scaleShowVerticalLines: true,
+                        bezierCurve: true,
+                        bezierCurveTension: 0.3,
+                        pointDot: false,
+                        pointDotRadius: 4,
+                        pointDotStrokeWidth: 1,
+                        pointHitDetectionRadius: 20,
+                        datasetStroke: true,
+                        datasetStrokeWidth: 2,
+                        datasetFill: true,
+                        legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>",
+                        maintainAspectRatio: true,
+                        responsive: true
+                    };
+
+                    moneyChart.Line(moneyChartData, moneyChartOptions);
+                }
+            });
+
+        });
+    }
+
+    function LoadCardChartFunction(chart_time)
+    {
+        myrequire(['chartjs'], function () {
+            $("#cardChart").remove();
+            $('#cardChartBox').append('<canvas id="cardChart" style="height:260px"></canvas>');
+            //获取活动参与趋势
+            $.ajax({
+                type: "post",
+                url: "{php echo $this->createWebUrl('home', array('act' => 'getCardChart'));}",
+                data: {'chart_time':chart_time},
+                dataType:'json',
+                success: function (data) {
+                    var cardChartCanvas = $("#cardChart").get(0).getContext("2d");
+                    var cardChart = new Chart(cardChartCanvas);
+
+                    var cardChartData = {
+                        labels: data.labels,
+                        datasets: [
+                            {
+                                label: "活动订单",
+                                fillColor: "rgba(0,115,183, 0.8)",
+                                strokeColor: "rgba(0,115,183, 0.8)",
+                                pointColor: "rgba(0,115,183, 0.8)",
+                                pointStrokeColor: "#0073b7",
+                                pointHighlightFill: "#fff",
+                                pointHighlightStroke: "rgba(0,115,183,0.8)",
+                                data: data.dataObj
+                            },
+                            {
+                                label: "商城订单",
+                                fillColor: "rgba(243,156,18, 0.8)",
+                                strokeColor: "rgba(243,156,18, 0.8)",
+                                pointColor: "rgba(243,156,18, 0.8)",
+                                pointStrokeColor: "#f39c12",
+                                pointHighlightFill: "#fff",
+                                pointHighlightStroke: "rgba(243,156,18,0.8)",
+                                data: data.dataShop
+                            }
+                        ]
+                    };
+
+                    var cardChartOptions = {
+                        showScale: true,
+                        scaleShowGridLines: false,
+                        scaleGridLineColor: "rgba(0,0,0,.05)",
+                        scaleGridLineWidth: 1,
+                        scaleShowHorizontalLines: true,
+                        scaleShowVerticalLines: true,
+                        bezierCurve: true,
+                        bezierCurveTension: 0.3,
+                        pointDot: false,
+                        pointDotRadius: 4,
+                        pointDotStrokeWidth: 1,
+                        pointHitDetectionRadius: 20,
+                        datasetStroke: true,
+                        datasetStrokeWidth: 2,
+                        datasetFill: true,
+                        legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>",
+                        maintainAspectRatio: true,
+                        responsive: true
+                    };
+
+                    cardChart.Line(cardChartData, cardChartOptions);
+                }
+            });
+
+        });
+    }
+
+    function LoadDataFunction(day)
+    {
+        $.ajax({
+            type: "post",
+            url: "{php echo $this->createWebUrl('home', array('act' => 'getReportForms'));}",
+            data: {'day':day},
+            dataType:'html',
+            success: function (data) {
+                $("#data_"+ day +"day").html(data);
+            }
+        });
+    }
+</script>

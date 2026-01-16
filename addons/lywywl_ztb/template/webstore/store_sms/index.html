@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">资金管理</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="">短信充值</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <label class="control-label col-sm-1" for="SearchTime">充值时间</label>
+                                            <div class="col-sm-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control pull-right" id="SearchTime"
+                                                           placeholder="开始时间 - 结束时间" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索
+                                            </button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置检索</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="box">
+                                <table class="table table-hover">
+                                    <tbody><tr>
+                                        <th>剩余短信数</th>
+                                    </tr>
+                                    <tr>
+                                        <td>{$store['sms']}</td>
+                                    </tr>
+                                    </tbody></table>
+                            </div>
+                            <div id="box" class="table-responsive">
+                                <div id="toolbar" class="btn-group">
+                                    <button id="btn_add" type="button" class="btn btn-info">
+                                        <span class="fa fa-credit-card" aria-hidden="true"></span>&nbsp;充值
+                                    </button>
+                                </div>
+                                <table id="tb_bandlist" class="table text-nowrap" data-reorderable-columns="true" ></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script id="rechargetpl" type="text/html">
+    <table class="table table-hover">
+        <tr>
+            <th width="20%" style="vertical-align: middle;">账户余额</th>
+            <td width="80%">
+                <div class="input-group col-sm-8">
+                    <input type="text" class="form-control" id="balance" value="{$store['money']}" disabled=""><span class="input-group-addon">元</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">短信价格</th>
+            <td width="80%">
+                <div class="input-group col-sm-8">
+                    <input type="text" class="form-control" id="smsPrice" value="{$config['sms_price']}" disabled=""><span class="input-group-addon">元/条</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">短信条数</th>
+            <td width="80%">
+                <div class="input-group col-sm-8">
+                    <input type="number" class="form-control" id="smsNum" placeholder="请输入短信条数" onkeyup="if(isNaN(this.value)){this.value='0';}">
+                    <span class="input-group-addon">条</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">所需金额</th>
+            <td width="80%" style="vertical-align: middle;">
+                <div class="input-group col-sm-8">
+                                <span class="help-block pull-left">
+                                    <strong class="text-danger" id="smsAmount">￥0.00</strong>
+                                    <code style="display:none">余额不足，点击<a href="{php echo $this->createWebAppUrl('store_recharge');}">充值</a></code>
+                                </span>
+                </div>
+            </td>
+        </tr>
+    </table>
+</script>
+<script>
+    $(function () {
+        SelectNav("商家短信充值");
+
+        require(["daterangepicker"], function () {
+            //时间搜索
+            $('#SearchTime').daterangepicker({
+                format: "YYYY/MM/DD"
+            });
+        });
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            myrequire(['bootstrap-table-zh-cn', 'bootstrap-table-editable','bootstrap-table-fixed-columns'], function () {
+                $(".select2").select2();
+                //1.初始化Table
+                var oTable = new TableInit();
+                oTable.Init();
+                //2.初始化Button的点击事件
+                var oButtonInit = new ButtonInit();
+                oButtonInit.Init();
+            });
+        });
+    });
+
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#tb_bandlist').bootstrapTable({
+                url: "{php echo $this->createWebAppUrl('store_sms', array('act' => 'getJsonList'));}",         //请求后台的URL（*）
+                method: 'get',                      //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: true,                    //是否启用排序
+                sortName: "id",                   //排序字段
+                sortOrder: "desc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: false,                //是否启用点击选中行
+                height: 575,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                fixedColumns: true,                    //冻结列开启关闭
+                fixedNumber: 1,                        //冻结列数量
+                onLoadError: function () {  //加载失败时执行
+                    Command: toastr["error"]("对不起，网络繁忙，请稍后再试！", "错误提示");
+                },
+                columns: [
+                    {
+                    field: 'id',
+                    title: '编号',
+                    titleTooltip: '当前信息的唯一编号，数据主键',
+                    sortable: true
+                }, {
+                    field: 'money',
+                    title: '充值金额',
+                    titleTooltip: '支付金额',
+                    sortable: true,
+                },  {
+                    field: 'note',
+                    title: '备注信息',
+                    titleTooltip: '备注信息',
+                    sortable: true
+                },  {
+                    field: 'createtime',
+                    title: '充值时间',
+                    titleTooltip: '创建用户的时间',
+                    sortable: true,
+                }]
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                //search: params.search,
+                pageSize: params.limit,  //每页大小
+                page: params.offset / params.limit + 1,//页码
+                sortOrder: params.order,//排序
+                sortName: params.sort,//排序字段
+                key: $("#SearchKey").val(), //关键词
+                timer: $("#SearchTime").val() //信息状态
+            };
+            return temp;
+        };
+        return oTableInit;
+    };
+
+    window.operateEvents = {
+    };
+
+    var ButtonInit = function () {
+        var oInit = new Object();
+        var postdata = {};
+
+        oInit.Init = function () {
+            //查询操作
+            $("#btn_query").click(function () {
+                $("#tb_bandlist").bootstrapTable('refresh');
+            });
+            $("#btn_add").click(function(){
+                myrequire([ 'arttemplate'], function (template) {
+                    var data = {id:1};
+                    var html = template("rechargetpl",data);
+                    var footer = '<button type="button" class="btn btn-primary" id="btn_recharge" value="正常">提交</button><button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                    var modalobj = util.dialog('短信充值',html,footer,{containerName:'user-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+
+                    //短信条数操作
+                    $('#smsNum').bind('input propertychange', function () {
+                        if ($(this).val() == "") {
+                            $(this).val(0);
+                        }
+                        var balance = parseFloat($('#balance').val());
+                        var smsPrice = parseFloat($('#smsPrice').val());
+                        var smsAmount = parseFloat(parseInt($(this).val()) * smsPrice).toFixed(2);
+                        if (smsAmount > balance) {
+                            $('#smsAmount').html("￥" + smsAmount);
+                            $('#smsAmount').next().show();
+                        } else {
+                            $('#smsAmount').html("￥" + smsAmount);
+                            $('#smsAmount').next().hide();
+                        }
+                    });
+                    //充值操作
+                    $('#btn_recharge').bind('click', function () {
+                        var smsNum = $("#smsNum").val();
+                        if (smsNum == "" || smsNum == "0") {
+                            layer.open({
+                                content: '请输入要充值的短信条数！',
+                                btn: '确定'
+                            });
+
+                            return false;
+                        }
+
+                        modalobj.modal('hide');
+                        $.ajax({
+                            type: "post",
+                            url: "{php echo $this->createWebAppUrl('store_sms',array('act'=>'recharge'));}",
+                            data: {
+                                smsNum: smsNum
+                            },
+                            async: false,
+                            dataType: "json",
+                            success: function(data) {
+                                if (data.status == 1) {
+                                    Command: toastr["success"](data.msg, "成功提示");
+                                    setTimeout(function() {
+                                        location.href = location.href;
+                                    },2000);
+                                } else {
+                                    Command: toastr["error"](data.msg, "错误提示");
+                                }
+                            }
+                        });
+
+                    });
+                });
+            });
+        };
+        return oInit;
+    };
+
+</script>
+</body>
+</html>

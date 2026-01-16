@@ -1,0 +1,79 @@
+<footer class="main-footer">
+    <div class="pull-right hidden-xs">
+        <b> 技术支持：{php echo $config['power']}</b>
+    </div>
+    Powered by <b>{php echo $config['name']}</b> V1.2.5  © 2014-{php echo date('Y')}  {if !empty($_W['setting']['copyright']['icp'])}备案号：<a href="http://www.miitbeian.gov.cn" target="_blank">{$_W['setting']['copyright']['icp']}</a>{/if}
+</footer>
+<!-- 帮助中心 -->
+{php include $this->template('common/service')}
+
+{if isMobile()}
+<style>
+    /*手机浏览器弹窗 不在限制最小宽度*/
+    .we7-modal-dialog, .modal-dialog {
+        min-width:auto !important;
+    }
+</style>
+{/if}
+
+{if $_W['store']['endtime'] < TIMESTAMP && $_GPC['do'] != "store_renew" && strtolower($_SERVER['REQUEST_METHOD']) == "get"}
+<!-- 是否到期判断 -->
+<script>
+    layer.open({
+        type: 1
+        ,content: '<a href="{php echo $this->createWebAppUrl('store_renew');}"><img src="{__WEBAPP_IMG__}/renew.png" width="320" height="415" /></a>'
+        ,style: 'position:fixed; padding:10px;top:50%; margin-top:-207px; left:50%;margin-left:-160px; border:none;background-color: transparent;'
+        ,shadeClose: false
+    });
+</script>
+{else}
+<!-- 是否绑定OPENID判断 -->
+{if empty($_W['store']['openid'])}
+<script>
+    layer.open({
+        type: 1
+        ,content: '<div style="text-align: center;"><img src="{php echo $this->createWebAppUrl('store_account', array('act' => 'openidQrPreview'));}" width="300" height="300" /><br>请扫描上方二维码绑定您的微信账号<br/>绑定成功后刷新当前页面<br/>账户资金提现将直接转入您的微信钱包</div>'
+        ,style: 'position:fixed; padding:10px;top:50%; margin-top:-175px; left:50%;margin-left:-150px; border:none;'
+        ,shadeClose: false
+    });
+    //定时检查用户是否扫码绑定
+    setInterval(function() {
+        setTimeout(function() {
+            $.ajax({
+                type: "post",
+                dataType:'json',
+                url: "{php echo $this->createWebAppUrl('home', array('act' => 'getOpenidStatus'));}",
+                data: {},
+                success: function (data) {
+                    if (data.status == 1) {
+                        window.location.reload();
+                    }
+                }
+            });
+        },0)
+    },1000)
+</script>
+{else}
+<!-- 是否关注公众号 -->
+{if $is_follow}
+<script>
+    layer.open({
+        type: 1
+        ,content: '<div style="text-align: center;"><img src="{php echo tomedia($config['wx_qrcode'])}" width="300" height="300" /><br>为保证平台消息能及时推送给您<br/>请关注官方公众号<br/>关注公众号后，请刷新页面</div>'
+        ,style: 'position:fixed; padding:10px;top:50%; margin-top:-175px; left:50%;margin-left:-150px; border:none;'
+        ,shadeClose: false
+    });
+</script>
+{else}
+{if $_GPC['do'] == 'home' && $isShowExpireTips}
+<script>
+    //信息框
+    layer.open({
+        content: "欢迎您成为{$config['name']}平台会员，您的账户截止<span style='color:red'>{php echo date('Y-m-d H:i:s', $_W['store']['endtime'])}</span>到期，为避免对您活动造成影响请及时续费。"
+        ,btn: '我知道了'
+    });
+</script>
+{/if}
+{/if}
+{/if}
+{/if}

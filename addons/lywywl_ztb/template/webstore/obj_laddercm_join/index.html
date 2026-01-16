@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title} - {$objModel['title']}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">活动管理</li>
+                <li class="active">{$title}</li>
+                <li class="active">参与用户</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebAppUrl('obj_activity', array('act' => 'index'));}">返回活动</a></li>
+                            <li class="active"><a href="">参与用户</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchKey" class="col-sm-1 control-label">用户信息</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="SearchKey"
+                                                       placeholder="OPENID/微信昵称">
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchTime">参与时间</label>
+                                            <div class="col-sm-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control pull-right timer" id="SearchTime"
+                                                           placeholder="开始时间 - 结束时间" readonly>
+                                                </div>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchStatus">支付状态</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchStatus">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="1">未下单</option>
+                                                    <option value="2">未支付</option>
+                                                    <option value="3">已支付</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <label class="control-label col-sm-1" for="SearchLeader">团身份</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchLeader">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="0">团员</option>
+                                                    <option value="1">团长</option>
+                                                </select>
+                                            </div>
+                                            <label for="SearchName" class="col-sm-1 control-label">参与信息</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="SearchName"
+                                                       placeholder="用户登记的姓名/电话">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索
+                                            </button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置检索</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="box" class="table-responsive">
+                                <div id="toolbar" class="btn-group">
+                                    <button id="btn_exportdata" type="button" class="btn btn-info">
+                                        <span class="fa fa-download" aria-hidden="true"></span>&nbsp;导出数据
+                                    </button>
+                                </div>
+                                <table id="tb_bandlist" class="table text-nowrap" data-reorderable-columns="true" ></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script id="datatpl" type="text/html">
+    <form class="form-horizontal" name="form_content" id="form_content" method="post">
+        <div class=link-modal>
+            <div class="form-group">
+                <label for="bogus_joins" class="col-sm-2 control-label">伪造参团人数</label>
+                <div class="col-sm-10">
+                    <input class="form-control"  maxlength="10" id="bogus_joins" maxlength="10" placeholder="请输入伪造邀请参团人数！" type="text" value="<%=bogus_joins%>"  onkeyup="if(isNaN(this.value)){this.value='0';}"/>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0px;">
+                <label for="bogus_money" class="col-sm-2 control-label">伪造返利金额</label>
+                <div class="col-sm-10">
+                    <input class="form-control"  id="bogus_money" maxlength="10" step="0.01" placeholder="请输入伪造返利金额！" type="text" value="<%=bogus_money%>" onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}" onblur = "this.value=FloatMoney(this.value)"/>
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<script id="exchangetpl" type="text/html">
+    <form class="form-horizontal" name="form_exchange" id="form_exchange" method="post">
+        <div class=link-modal>
+            <div class="form-group">
+                <label for="bogus_joins" class="col-sm-2 control-label">当前身份</label>
+                <div class="col-sm-10" style="margin-top:8px;">
+                    <span class="text-danger">
+                        <%=(is_heads==1?'团长':'团员')%>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="bogus_joins" class="col-sm-2 control-label">更改类型</label>
+                <div class="col-sm-10">
+                    <select name="model[exchange_type]" class="form-control select2" id="exchange_type" style = "width: 100%;" onChange="exchange();">
+                        <option value="0" selected>请选择</option>
+                        <option value="1" <%=(is_heads==0?'disabled="disabled"':'')%> >降为团员</option>
+                        <option value="2" <%=(is_heads==1?'disabled="disabled"':'')%> >升为团长</option>
+                        <option value="3" <%=(is_heads==1?'disabled="disabled"':'')%> >加入其他团</option>
+                        <option value="4" <%=(is_heads==1?'disabled="disabled"':'')%> >独立成团</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" id="jointeam" style="display:none;">
+                <label for="bogus_joins" class="col-sm-2 control-label">加入团队</label>
+                <div class="col-sm-10" style="height:180px;overflow:auto">
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                        <tr>
+                            <th>团长</th>
+                            <th>人数</th>
+                            <th>选择</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {if $GroupList}
+                        {loop $GroupList  $Group}
+                        <tr>
+                            <td><img src="{$Group['headurl']}" width="30" height="30"> {$Group['nickname']}</td>
+                            <td>{$Group['join_num']}</td>
+                            <td><input class="button" type="radio" value="{$Group['pid']}" name="ckpid" ></td>
+                        </tr>
+                        {/loop}
+                        {else}
+                        <tr>
+                            <td colspan="3">暂无可以加入的团</td>
+                        </tr>
+                        {/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<script>
+    $(function () {
+        SelectNav("我创建的活动");
+
+        require(["daterangepicker"], function () {
+            //时间搜索
+            $('.timer').daterangepicker({
+                format: "YYYY/MM/DD"
+            });
+        });
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            myrequire(['bootstrap-table-zh-cn', 'bootstrap-table-editable','bootstrap-table-fixed-columns'], function () {
+                $(".select2").select2();
+                //1.初始化Table
+                var oTable = new TableInit();
+                oTable.Init();
+                //2.初始化Button的点击事件
+                var oButtonInit = new ButtonInit();
+                oButtonInit.Init();
+            });
+        });
+
+    });
+
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#tb_bandlist').bootstrapTable({
+                url: "{php echo $this->createWebAppUrl('obj_laddercm_join', array('act' => 'getJsonList','aid' => $aid,'join_pid' => $join_pid));}",          //请求后台的URL（*）
+                method: 'get',                      //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: true,                    //是否启用排序
+                sortName: "id",                   //排序字段
+                sortOrder: "desc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: false,                //是否启用点击选中行
+                height: 575,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                fixedColumns: true,                    //冻结列开启关闭
+                fixedNumber: 1,                        //冻结列数量
+                onLoadError: function () {  //加载失败时执行
+                    Command: toastr["error"]("对不起，网络繁忙，请稍后再试！", "错误提示");
+                },
+                columns: [ {
+                    field: 'id',
+                    title: '编号',
+                    titleTooltip: '当前信息的唯一编号，数据主键',
+                    sortable: true
+                },  {
+                    field: 'nickname',
+                    title: '微信昵称',
+                    titleTooltip: '注册用户的微信昵称',
+                    sortable: true,
+                }, {
+                    field: 'headurl',
+                    title: '微信头像',
+                    titleTooltip: '注册用户的微信昵称',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return " <img height='30' width='30' src='"+ value +"' alt='"+ row.nickname +"'>"
+                    }
+                }, {
+                    field: 'openid',
+                    title: 'OPENID',
+                    titleTooltip: '注册用户对于微信公众号的唯一身份标识',
+                    sortable: true,
+                },{
+                    field: 'invite_id',
+                    title: '邀请人',
+                    titleTooltip: '邀请参团的用户',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.invite_id){
+                            return " <img height='30' width='30' src='"+ row.invite_headurl +"' alt='"+ row.invite_nickname +"'>"+row.invite_nickname+"("+row.invite_openid+")";
+                        }else{
+                            return "-";
+                        }
+                    }
+                },{
+                    field: 'is_pay',
+                    title: '支付状态',
+                    titleTooltip: '注册用户对于当前活动的支付状态',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value == 1) {
+                            return "<span class='label bg-yellow'>未下单</span>";
+                        }else if(value == 2)  {
+                            return "<span class='label bg-red'>未支付</span>";
+                        }else {
+                            return "<span class='label bg-green'>已支付</span>";
+                        }
+                    }
+                }, {
+                    field: 'pid',
+                    title: '团长',
+                    titleTooltip: '组织拼团的用户',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return row.pid?" <img height='30' width='30' src='"+ row.pid_headurl +"' alt='"+ row.pid_nickname +"'>"+row.pid_nickname+"("+row.pid_openid+")":"-";
+                    }
+                }, {
+                    field: 'is_heads',
+                    title: '是否团长',
+                    titleTooltip: '是否拼团的组织者',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value == 0) {
+                            return "<span class='label bg-blue'>否</span>";
+                        } {
+                            return "<span class='label bg-red'>是</span>";
+                        }
+                    }
+                }, {
+                    field: 'group_num',
+                    title: '当前成团人数',
+                    titleTooltip: '此人参团的成团人数',
+                    sortable: true,
+                },{
+                    field: 'front_money',
+                    title: '参团定金',
+                    titleTooltip: '参团支付的定金',
+                    sortable: true,
+                }, {
+                    field: 'pay_number',
+                    title: '定金支付单号',
+                    titleTooltip: '参团支付的订单编号',
+                    sortable: true,
+                }, {
+                    field: 'joins',
+                    title: '邀请参团人数',
+                    titleTooltip: '邀请参团的人数',
+                    sortable: true,
+                }, {
+                    field: 'bogus_joins',
+                    title: '伪造参团人数',
+                    titleTooltip: '伪造邀请参团人数',
+                    sortable: true,
+                }, {
+                    field: 'money',
+                    title: '累计佣金',
+                    titleTooltip: '用户邀请成交获取佣金',
+                    sortable: true,
+                }, {
+                    field: 'bogus_money',
+                    title: '伪造佣金',
+                    titleTooltip: '伪造邀请佣金',
+                    sortable: true,
+                }, {
+                    field: 'register_data',
+                    title: '登记信息',
+                    titleTooltip: '用户参与活动填写的登记信息',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        var retrunString = "";
+                        for(var i=0,l=value.length;i<l;i++){
+                            retrunString = retrunString +  value[i]['Explain'] +"：" +  value[i]['Value'] +"  ";
+                        }
+                        return retrunString;
+                    }
+                }, {
+                    field: 'createtime',
+                    title: '参与时间',
+                    titleTooltip: '创建信息的时间',
+                    sortable: true,
+                },{
+                    field: 'action',
+                    title: '操作',
+                    titleTooltip: '点击下方按钮对信息进行操作',
+                    width: 60,
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                //search: params.search,
+                pageSize: params.limit,  //每页大小
+                page: params.offset / params.limit + 1,//页码
+                sortOrder: params.order,//排序
+                sortName: params.sort,//排序字段
+                openid: $("#SearchKey").val(), //关键词
+                invite_id : '{$invite_id}',
+                status: $("#SearchStatus").val(),
+                timer: $("#SearchTime").val(),
+                is_heads:$("#SearchLeader").val(),
+                searchname:$("#SearchName").val(),
+            };
+            return temp;
+        };
+        return oTableInit;
+    };
+
+    function operateFormatter(value, row, index) {
+        if(row.joins>0)
+        {
+            if(row.qrcode_url.length>0) {
+                return [
+                    '<a target="_blank" class="btn btn-danger btn-xs" href="' +  row.qrcode_url + '" title="二维码">',
+                    '<i class="glyphicon glyphicon-qrcode"></i> 二维码',
+                    '</a>',
+                    ' <button class="invite btn btn-success btn-xs" href="javascript:void(0)" title="邀请">',
+                    '<i class="fa fa-star"></i>邀请',
+                    '</button>  ',
+                    ' <button class="draw btn btn-info btn-xs" href="javascript:void(0)" title="返利">',
+                    '<i class="fa fa-gift"></i>返利',
+                    '</button>  ',
+                    ' <button class="bogus btn btn-warning btn-xs" href="javascript:void(0)" title="伪造">',
+                    '<i class="fa fa-thumbs-up"></i>伪造',
+                    '</button>  ',
+                    ' <button class="join btn btn-primary btn-xs" href="javascript:void(0)" title="团成员">',
+                    '<i class="fa fa-tty"></i>团成员',
+                    '</button>  ',
+                    '{php echo $join_pid>0?" <button class=\"exchange btn btn-warning btn-xs\" href=\"javascript:void(0)\" title=\"调整\"><i class=\"fa fa-exchange\"></i>调整":""}'
+                ].join('');
+            }
+            else
+            {
+                return [
+                    '<button target="_blank" class="disabled btn btn-danger btn-xs" title="二维码">',
+                    '<i class="glyphicon glyphicon-qrcode"></i> 二维码',
+                    '</button>',
+                    ' <button class="invite btn btn-success btn-xs" href="javascript:void(0)" title="邀请">',
+                    '<i class="fa fa-star"></i>邀请',
+                    '</button>  ',
+                    ' <button class="draw btn btn-info btn-xs" href="javascript:void(0)" title="返利">',
+                    '<i class="fa fa-gift"></i>返利',
+                    '</button>  ',
+                    ' <button class="bogus btn btn-warning btn-xs" href="javascript:void(0)" title="伪造">',
+                    '<i class="fa fa-thumbs-up"></i>伪造',
+                    '</button>  ',
+                    ' <button class="join btn btn-primary btn-xs" href="javascript:void(0)" title="团成员">',
+                    '<i class="fa fa-tty"></i>团成员',
+                    '</button>  ',
+                    '{php echo $join_pid>0?" <button class=\"exchange btn btn-warning btn-xs\" href=\"javascript:void(0)\" title=\"调整\"><i class=\"fa fa-exchange\"></i>调整":""}'
+                ].join('');
+            }
+        }
+        else
+        {
+            if(row.qrcode_url.length>0) {
+                return [
+                    '<a target="_blank" class="btn btn-danger btn-xs" href="' +  row.qrcode_url + '" title="二维码">',
+                    '<i class="glyphicon glyphicon-qrcode"></i> 二维码',
+                    '</a>',
+                    ' <button class="disabled btn btn-success btn-xs" href="javascript:void(0)" title="邀请">',
+                    '<i class="fa fa-star"></i>邀请',
+                    '</button>  ',
+                    ' <button class="disabled btn btn-info btn-xs" href="javascript:void(0)" title="返利">',
+                    '<i class="fa fa-gift"></i>返利',
+                    '</button>  ',
+                    ' <button class="bogus btn btn-warning btn-xs" href="javascript:void(0)" title="伪造">',
+                    '<i class="fa fa-thumbs-up"></i>伪造',
+                    '</button>  ',
+                    ' <button class="join btn btn-primary btn-xs" href="javascript:void(0)" title="团成员">',
+                    '<i class="fa fa-tty"></i>团成员',
+                    '</button>  ',
+                    '{php echo $join_pid>0?" <button class=\"exchange btn btn-warning btn-xs\" href=\"javascript:void(0)\" title=\"调整\"><i class=\"fa fa-exchange\"></i>调整":""}'
+                ].join('');
+            }
+            else
+            {
+                return [
+                    '<button target="_blank" class="disabled btn btn-danger btn-xs" title="二维码">',
+                    '<i class="glyphicon glyphicon-qrcode"></i> 二维码',
+                    '</button>',
+                    ' <button class="disabled btn btn-success btn-xs" href="javascript:void(0)" title="邀请">',
+                    '<i class="fa fa-star"></i>邀请',
+                    '</button>  ',
+                    ' <button class="disabled btn btn-info btn-xs" href="javascript:void(0)" title="返利">',
+                    '<i class="fa fa-gift"></i>返利',
+                    '</button>  ',
+                    ' <button class="bogus btn btn-warning btn-xs" href="javascript:void(0)" title="伪造">',
+                    '<i class="fa fa-thumbs-up"></i>伪造',
+                    '</button>  ',
+                    ' <button class="join btn btn-primary btn-xs" href="javascript:void(0)" title="团成员">',
+                    '<i class="fa fa-tty"></i>团成员',
+                    '</button>  ',
+                    '{php echo $join_pid>0?" <button class=\"exchange btn btn-warning btn-xs\" href=\"javascript:void(0)\" title=\"调整\"><i class=\"fa fa-exchange\"></i>调整":""}'
+                ].join('');
+            }
+        }
+    }
+    window.operateEvents = {
+        'click .invite': function (e, value, row, index) {
+            var editurl = "{php echo $this->createWebAppUrl('obj_laddercm_join', array('act' => 'index','aid' => $aid));}&invite_id=$";
+            window.location.href = editurl.replace('$', row.id);
+        },
+        'click .draw': function (e, value, row, index) {
+            var editurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index','aid' => $aid));}&openid=$";
+            window.location.href = editurl.replace('$', row.openid);
+        },
+        'click .bogus': function (e, value, row, index) {
+            myrequire([ 'arttemplate'], function (template) {
+                var dataHtml = template("datatpl", row);
+                require(["jquery", "util"], function(){
+                    var footer = '<button type="button" class="btn btn-default" data-dismiss="modal" id="bogusBtn" data-id="'+ row.id +'">确定</button> <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                    var modalobj = util.dialog('数据伪造操作',dataHtml ,footer,{containerName:'fedex-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+            });
+        },
+        'click .exchange': function (e, value, row, index) {
+            myrequire([ 'arttemplate'], function (template) {
+                var dataHtml = template("exchangetpl", row);
+                require(["jquery", "util"], function(){
+                    var footer = '<button type="button" class="btn btn-default" data-dismiss="modal" id="exchangeBtn" data-jid="'+ row.id +'">确定</button> <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                    var modalobj = util.dialog('身份调整',dataHtml ,footer,{containerName:'fedex-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+            });
+        },
+        'click .join': function (e, value, row, index) {
+            var editurl = "{php echo $this->createWebAppUrl('obj_laddercm_join', array('act' => 'index','aid' => $aid));}&join_pid="+ row.pid;
+            window.location.href = editurl;
+        },
+    };
+
+    //加载成功时执行
+    $('#tb_bandlist').on('load-success.bs.table column-switch.bs.table', function (data) {
+        $('#tb_bandlist').bootstrapTable('resetView');
+    });
+
+    var ButtonInit = function () {
+        var oInit = new Object();
+        var postdata = {};
+
+        oInit.Init = function () {
+            //查询操作
+            $("#btn_query").click(function () {
+                $("#tb_bandlist").bootstrapTable('refresh');
+            });
+            //导出数据
+            $("#btn_exportdata").click(function(){
+                var openid=$("#SearchKey").val();
+                var timer= $("#SearchTime").val();
+                var status= $("#SearchStatus").val();
+
+                //询问框
+                layer.open({
+                    content: '您确定要导出记录到Excel吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        layer.close(index);
+                        window.location.href = "{php echo $this->createWebAppUrl('obj_laddercm_join', array('act' => 'exportData','aid' => $aid,'invite_id' => $invite_id));}&openid="+ openid +"&timer="+ timer +"&status="+status;
+                    }
+                });
+            });
+            //身份调整
+            $(document).delegate("#exchangeBtn", "click", function() {
+                var sel=$("#exchange_type").val();
+                if(sel==1){
+                    //询问框
+                    layer.open({
+                        content: '您确定把团长调整成团员？'
+                        , btn: ['确定', '取消']
+                        , yes: function (index) {
+                            layer.close(index);
+                            var id = $('#exchangeBtn').data("jid");
+                            $.ajax({
+                                type: "post",
+                                url: "{php echo $this->createWebAppUrl('obj_laddercm_join', array('act' => 'downleader','aid' => $aid));}",
+                                data: {
+                                    id: id,
+                                },
+                                dataType:'json',
+                                success: function (data, status) {
+                                    if (data.status == 1) {
+                                        Command: toastr["success"](data.msg, "成功提示");
+                                        $("#tb_bandlist").bootstrapTable('refresh');
+                                    }
+                                    else {
+                                        Command: toastr["error"](data.msg, "错误提示");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }else if(sel==2){
+                    //询问框
+                    layer.open({
+                        content: '您确定把团员调整成团长？'
+                        , btn: ['确定', '取消']
+                        , yes: function (index) {
+                            layer.close(index);
+                            var id = $('#exchangeBtn').data("jid");
+                            $.ajax({
+                                type: "post",
+                                url: "{php echo $this->createWebAppUrl('obj_laddercm_join', array('act' => 'upleader','aid' => $aid));}",
+                                data: {
+                                    id: id,
+                                },
+                                dataType:'json',
+                                success: function (data, status) {
+                                    if (data.status == 1) {
+                                        Command: toastr["success"](data.msg, "成功提示");
+                                        $("#tb_bandlist").bootstrapTable('refresh');
+                                    }
+                                    else {
+                                        Command: toastr["error"](data.msg, "错误提示");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }else if(sel==3){
+                    let pid=$('input:radio[name=ckpid]:checked').val();
+                    if(pid>0){
+                        //询问框
+                        layer.open({
+                            content: '您确定加入此团吗？'
+                            , btn: ['确定', '取消']
+                            , yes: function (index) {
+                                layer.close(index);
+                                var id = $('#exchangeBtn').data("jid");
+                                $.ajax({
+                                    type: "post",
+                                    url: "{php echo $this->createWebAppUrl('obj_laddercm_join', array('act' => 'joinleader','aid' => $aid));}",
+                                    data: {
+                                        id: id,
+                                        pid:pid,
+                                    },
+                                    dataType:'json',
+                                    success: function (data, status) {
+                                        if (data.status == 1) {
+                                            Command: toastr["success"](data.msg, "成功提示");
+                                            $("#tb_bandlist").bootstrapTable('refresh');
+                                        }
+                                        else {
+                                            Command: toastr["error"](data.msg, "错误提示");
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }else{
+                        alert('请选择要加入的团');
+                    }
+
+                }else if(sel==4){
+                    //询问框
+                    layer.open({
+                        content: '您确定独立成团吗？'
+                        , btn: ['确定', '取消']
+                        , yes: function (index) {
+                            layer.close(index);
+                            var id = $('#exchangeBtn').data("jid");
+                            $.ajax({
+                                type: "post",
+                                url: "{php echo $this->createWebAppUrl('obj_laddercm_join', array('act' => 'myleader','aid' => $aid));}",
+                                data: {
+                                    id: id,
+                                },
+                                dataType:'json',
+                                success: function (data, status) {
+                                    if (data.status == 1) {
+                                        Command: toastr["success"](data.msg, "成功提示");
+                                        $("#tb_bandlist").bootstrapTable('refresh');
+                                    }
+                                    else {
+                                        Command: toastr["error"](data.msg, "错误提示");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+            //排行榜伪造数据
+            $(document).delegate("#bogusBtn", "click", function() {
+                var bogus_joins=$("#bogus_joins").val();
+                var bogus_money=$("#bogus_money").val();
+                var id = $(this).data("id");
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createWebAppUrl('obj_laddercm_join', array('act' => 'bogus','aid' => $aid));}",
+                    data: {
+                        id: id,
+                        bogus_joins: bogus_joins,
+                        bogus_money: bogus_money
+                    },
+                    dataType:'json',
+                    success: function (data, status) {
+                        if (data.status == 1) {
+                            Command: toastr["success"](data.msg, "成功提示");
+                            $("#tb_bandlist").bootstrapTable('refresh');
+                        }
+                        else {
+                            Command: toastr["error"](data.msg, "错误提示");
+                        }
+                    }
+                });
+            });
+        };
+        return oInit;
+    };
+    function exchange() {
+        var sel=$('#exchange_type').val();
+        if (sel != 3) {
+            $('#jointeam').hide();
+        } else {
+            $('#jointeam').show();
+        }
+    }
+</script>
+</body>
+</html>

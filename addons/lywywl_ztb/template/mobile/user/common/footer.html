@@ -1,0 +1,34 @@
+<!--底部导航-->
+<footer class="clearfix">
+    <section>
+        <ul>
+            <li>
+                <a href="{php echo $this->createMobileUrl('user.intmall_home',array('act'=>'index','store_id'=>$store_id))}"><img src="{__MOBILE_USER_IMG__}/home.png?v=20191101" alt=""/>
+                <h4 class="fn">积分商城</h4></a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('user.intmall_product',array('act'=>'index','store_id'=>$store_id))}"><img src="{__MOBILE_USER_IMG__}/goods.png?v=20191101" alt=""/>
+                <h4 class="fn">兑换商品</h4></a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('user.intmall_product',array('act'=>'index','store_id'=>$store_id,'mycanbuy'=>1))}"><img src="{__MOBILE_USER_IMG__}/exchange.png?v=20191101" alt=""/>
+                <h4 class="fn">我能兑换</h4></a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('user.user_member',array('act'=>'index','store_id'=>$store_id))}"><img src="{__MOBILE_USER_IMG__}/center.png?v=20191101" alt=""/>
+                <h4 class="fn">个人中心</h4></a>
+            </li>
+        </ul>
+    </section>
+</footer>
+<script>
+    //设置底部菜单选中
+    function SelectNav(name) {
+        $("footer section ul li").each(function () {
+            if($(this).find("h4").text() == name){
+                $(this).addClass("active");
+                $(this).find("img").attr("src",$(this).find("img").attr("src").replace(".png","_on.png"));
+            }
+        })
+    }
+</script>

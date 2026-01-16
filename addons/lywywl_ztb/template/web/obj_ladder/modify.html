@@ -1,0 +1,2371 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div id="rightbox">
+    <ul>
+        <li>
+            <a class="num" href="#1F" style="display:none">信息</a>
+            <a class="word" href="#1F" style="display:block">活动信息</a>
+        </li>
+        <li>
+            <a class="num" href="#2F">分享</a>
+            <a class="word" href="#2F">分享设置</a>
+        </li>
+        <li>
+            <a class="num" href="#3F">限制</a>
+            <a class="word" href="#3F">参与限制</a>
+        </li>
+        <li>
+            <a class="num" href="#4F">伪造</a>
+            <a class="word" href="#4F">数据伪造</a>
+        </li>
+        <li>
+            <a class="num" href="#5F">栏目</a>
+            <a class="word" href="#5F">栏目设置</a>
+        </li>
+        <li style="display: {if $config['sms_obj']!=1}none{/if};">
+            <a class="num" href="#6F">通知</a>
+            <a class="word" href="#6F">通知设置</a>
+        </li>
+        <li>
+            <a class="num" href="#7F">样式</a>
+            <a class="word" href="#7F">样式设置</a>
+        </li>
+        <li>
+            <a class="num" href="#8F">广告</a>
+            <a class="word" href="#8F">广告设置</a>
+        </li>
+        <li>
+            <a class="num" href="#9F">海报</a>
+            <a class="word" href="#9F">分享海报</a>
+        </li>
+        <li class="last">
+            <a class="num" href="javascript:window.scrollTo(0,0);">TOP</a>
+            <a class="word" href="javascript:window.scrollTo(0,0);">返回顶部</a>
+        </li>
+    </ul>
+</div>
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">活动</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebUrl('obj_ladder', array('act' => 'index'));}">活动列表</a>
+                            </li>
+                            <li class="active"><a href="#">{if !empty($model['id'])}编辑{else}创建{/if}活动</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content" id="form_content" method="post">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> {if !empty($model['id'])}编辑{else}创建{/if}活动信息<a name="1F" id="1F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="title" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>拼团活动名称</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="title" maxlength="200"
+                                                       name="model[title]" nullmsg="请输入拼团活动名称！" placeholder="请输入拼团活动名称"
+                                                       type="text" value="{$model['title']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 活动名称作为区分活动的标识，将作为标题显示在浏览器标题栏</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">活动封面图片</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('model[pic_url]',$model['pic_url']);}
+                                                <span class="help-block">
+                                                <p><strong class="text-danger">提示：</strong> 请上传活动封面图片,将展示在活动列表和用户参与记录中;建议尺寸200*200px</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="status2" class="col-sm-2 control-label">当前活动状态</label>
+                                            <div class="col-sm-10">
+                                                <input data-off-text="关闭" data-on-text="开启" data-size="mini" id="status"
+                                                       type="checkbox" value="true" {if $model['status']==1}checked{/if}/>
+                                                <input id="status2" name="model[status]" type="hidden"
+                                                       value="{$model['status']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 选择活动开启/关闭状态，关闭活动后用户将无法参与活动</p>
+                                            </div>
+                                        </div>
+                                        {if $plug_ladder}
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>开启阶梯返利 </label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[or_open_ladder]" class="flat-blue or_open_ladder" value="0" {if $model['or_open_ladder'] == 0}checked{/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[or_open_ladder]" class="flat-blue or_open_ladder" value="1" {if $model['or_open_ladder'] == 1}checked{/if}> 开启
+                                                </label>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请根据实际情况选择是否开启阶梯返利，<code>开启阶梯返利后可以选择完成邀请多少用户能进行返利。</code></p>
+                                            </div>
+                                        </div>
+                                        <div class="ladder-box">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">阶梯返利规则 </label>
+                                                <div class="col-sm-10">
+                                                    <label>
+                                                        <input type="radio" name="model[or_open_unfixed]" class="flat-blue or_open_unfixed" value="0" {if empty($model['or_open_unfixed'])}checked{/if}> 固定人数返利
+                                                    </label>&nbsp;&nbsp;&nbsp;
+                                                    <label>
+                                                        <input type="radio" name="model[or_open_unfixed]" class="flat-blue or_open_unfixed" value="1" {if !empty($model['or_open_unfixed'])}checked{/if}> 阶梯人数返利
+                                                    </label>&nbsp;&nbsp;&nbsp;
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 固定人数返利：<code>比如设置[5]，则用户每成功邀请5个人，就会将对应的奖品返利给用户。</code> 阶梯人数返利:<code>用户会根据奖品设置的人数，每达到要求就会返回对应的奖品。</code></p>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ladder_fixed_num" class="col-sm-2 control-label">固定返利人数</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" id="ladder_fixed_num"
+                                                           name="model[ladder_fixed_num]" placeholder="请输入返利人数"
+                                                           type="text" value="{$model['ladder_fixed_num']}"/>
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 添加固定邀请人数，<code>如:10，则按照每成功邀请10人就会有返利。</code></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/if}
+                                        {if $plug_rebate2}
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动返利模式</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[or_open_rebate2]" class="flat-blue or_open_rebate2" value="0" {if $model['or_open_rebate2']==0}
+                                                    checked {/if}> 一级返利
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[or_open_rebate2]" class="flat-blue or_open_rebate2" value="1" {if $model['or_open_rebate2']==1}
+                                                    checked {/if}> 二级返利
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请根据实际情况选择返利模式，<code>一级：A分享B B购买A获得返利；二级：A分享B购买 B分享C购买 A和B获得返利；二级按照首次购买绑定关系</code>。</p>
+                                            </div>
+                                        </div>
+                                        {/if}
+                                        {if $plug_rebate2 || $plug_ladder}
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>返利节点设置 </label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[rebate_node]" class="flat-blue or_open_rebate2" value="0" {if $model['rebate_node']==0}
+                                                    checked {/if}> 支付定金后返利
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[rebate_node]" class="flat-blue or_open_rebate2" value="1" {if $model['rebate_node']==1}
+                                                    checked {/if}> 成团后返利
+                                                </label>&nbsp;&nbsp;
+                                            </div>
+                                        </div>
+                                        {/if}
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>是否物流发货</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[is_fedex]" id="is_fedex0" class="flat-blue obj_is_fedex" value="0" {if $model['is_fedex']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[is_fedex]" id="is_fedex1" class="flat-blue obj_is_fedex" value="1" {if $model['is_fedex']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启后用户购买后提示填写物流地址在线发货，商家需邮寄商品。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="cost_price" class="col-sm-2 control-label"><span class="text-red">(*)</span>商品原始价格</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="cost_price"
+                                                           maxlength="10" name="model[cost_price]"
+                                                           placeholder="请输入商品原始价格"
+                                                           onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                           onblur = "this.value=FloatMoney(this.value)"
+                                                           step="0.01" min="0"
+                                                           type="number" value="{$model['cost_price']}"/>
+                                                    <span class="input-group-addon">元</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 填写商品原始的价格</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="front_money" class="col-sm-2 control-label"><span class="text-red">(*)</span>拼团支付定金</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="front_money"
+                                                           maxlength="10" name="model[front_money]"
+                                                           placeholder="请输入拼团支付定金"
+                                                           onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                           onblur = "this.value=FloatMoney(this.value)"
+                                                           step="0.01" min="0"
+                                                           type="number" value="{$model['front_money']}"/>
+                                                    <span class="input-group-addon">元</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 填写拼团需要支付的定金,0表示不需要支付定金即可参与拼团</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="heads_discount" class="col-sm-2 control-label"><span class="text-red">(*)</span>团长购买折扣</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="heads_discount"
+                                                           maxlength="10" name="model[heads_discount]"
+                                                           placeholder="请输入团长购买折扣"
+                                                           onkeyup = "if(isNaN(this.value)){this.value='10.00';}else{this.value}"
+                                                           onblur = "this.value=FloatMoney(this.value)"
+                                                           step="0.1" min="0"
+                                                           type="number" value="{$model['heads_discount']}"/>
+                                                    <span class="input-group-addon">折</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 填写拼团成功后团长购买享受的折扣，如8折则需支付当前阶梯价格的80%</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>拼团阶梯价格</label>
+                                            <div class="col-sm-10">
+                                                <div class="box">
+                                                    <div class="box-header">
+                                                        <div class="box-tools pull-right">
+                                                            <input type="button" id="addladderfieldbtn"
+                                                                   class="btn btn-sm btn-info" value="添加字段" style="margin-bottom: 10px;" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        <table class="table table-striped" id="addladderfieldtable">
+                                                            <tr>
+                                                                <th>拼团人数</th>
+                                                                <th>成团后需再支付（元/人）</th>
+                                                                <th>操作</th>
+                                                            </tr>
+                                                            {loop $model['ladder_price'] $index $item}
+                                                            <tr class="addladderfield">
+                                                                <td>
+                                                                    <input class="form-control"
+                                                                           name="model[ladder_price][{$index}][num]"  placeholder="请输入拼团人数" value="{$item['num']}"
+                                                                           datatype="n" onkeyup = "if(isNaN(this.value)){this.value='0';}"
+                                                                           step="1" min="0"
+                                                                           type="number" />
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control"}
+                                                                           name="model[ladder_price][{$index}][price]"  placeholder="请输入成团后需再支付的价格" value="{$item['price']}"
+                                                                           datatype="/^\d+(\.\d+)?$/" onkeyup = "if(isNaN(this.value)){this.value='0';}"
+                                                                           step="0.01" min="0"
+                                                                           type="number"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="button" class="btn btn-sm btn-danger pull-right delladderfielditem" value="删除价格" style="margin-right:10px" />
+                                                                </td>
+                                                            </tr>
+                                                            {/loop}
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="open_num" class="col-sm-2 control-label"><span class="text-red">(*)</span>拼团可开团数</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="n" id="open_num"
+                                                       maxlength="10"
+                                                       name="model[open_num]" nullmsg="请输入拼团可开团数！"
+                                                       placeholder="请输入拼团可开团数"
+                                                       type="number"
+                                                       onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                       value="{$model['open_num']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>请输入拼团活动可开团的次数！</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动内容/活动介绍
+                                            </label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_ueditor('model[content]',$model['content']);}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="title" class="col-sm-2 control-label">活动咨询电话</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="tel" maxlength="200" name="model[tel]" placeholder="请输入活动咨询电话" type="text" value="{$model['tel']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>如不填写活动咨询电话，默认使用系统客服电话或商家联系电话</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 活动分享设置<a name="2F" id="2F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="share_title" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>活动分享标题</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="share_title" maxlength="200"
+                                                       name="model[share_title]" placeholder="请输入活动分享标题"
+                                                       type="text" value="{$model['share_title']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 填写<code onclick="insertAtCursor('share_title',this);">{##NICKNAME##}</code>系统会自动替换为分享用户的昵称。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">活动分享图标</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('model[share_thumb]',$model['share_thumb']);}
+                                                <span class="help-block">
+                                            <p><strong class="text-danger">提示：</strong> 分享图片可不设置 不设置将用分享者头像</p>
+                                        </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="share_desc" class="col-sm-2 control-label"><span class="text-red">(*)</span>活动分享描述</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows = "3" name="model[share_desc]" id="share_desc" class="form-control" placeholder = "请输入活动分享描述..." maxlength="200">{$model['share_desc']}</textarea>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>   填写<code onclick="insertAtCursor('share_desc',this);">{##NICKNAME##}</code>系统会自动替换为分享用户的昵称,活动分享描述请不要将内容换行，系统将自动过滤到换行符。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 活动参与限制<a name="3F" id="3F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>开始结束时间</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_daterange('model[interim][startendtime]',$model['startendtime'],true)}
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请选择抽奖活动的开始和结束时间，活动只有在启动时间内有效。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>是否购买登记</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[buy_is_register]" id="buy_is_register1" class="flat-blue buy_is_register" value="1" {if $model['buy_is_register']==1} checked {/if}> 登记购买
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[buy_is_register]" id="buy_is_register0" class="flat-blue buy_is_register" value="0" {if $model['buy_is_register']==0} checked {/if}> 无需登记
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请选择用户购买支付是否需要登记个人信息。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group"  id="buy_register_field_box" style="display: {if $model['buy_is_register'] == 0} none {/if};">
+                                            <label class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>购买登记字段</label>
+                                            <div class="col-sm-10">
+                                                <div class="box">
+                                                    <div class="box-header">
+                                                        <h3 class="box-title">用户登记信息所有为必填字段，“字段”必须为英文，且保证唯一性。</h3>
+                                                        <div class="box-tools pull-right">
+                                                            <input type="button" id="addregfieldbtn"
+                                                                   class="btn btn-sm btn-info" value="添加字段" style="margin-bottom: 10px;" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        <table class="table table-striped" id="addregfieldtable">
+                                                            <tr>
+                                                                <th>字段类型</th>
+                                                                <th>名称</th>
+                                                                <th>字段(必须英文)</th>
+                                                                <th>提示信息/配置项</th>
+                                                                <th>操作</th>
+                                                            </tr>
+                                                            {if !empty($model['id'])}
+                                                            {loop $model['buy_register_field'] $index $item}
+                                                            <tr class="addfield">
+                                                                <td>
+                                                                    <select name="model[buy_register_field][{$index}][Type]" class="form-control select2" style = "width: 100%;">
+                                                                        <option value="text" {if $item['Type']=='text'} selected {/if}>文本字段</option>
+                                                                        <option value="number" {php echo $index<2?"disabled":""} {if $item['Type']=='number'} selected {/if}>数字字段</option>
+                                                                        <option value="radio" {php echo $index<2?"disabled":""} {if $item['Type']=='radio'} selected {/if}>单选按钮</option>
+                                                                        <option value="checkbox" {php echo $index<2?"disabled":""} {if $item['Type']=='checkbox'} selected {/if}>复选按钮</option>
+                                                                        <option value="select" {php echo $index<2?"disabled":""} {if $item['Type']=='select'} selected {/if}>下拉列表</option>
+                                                                        <option value="textarea" {php echo $index<2?"disabled":""} {if $item['Type']=='textarea'} selected {/if}>文本域</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" 
+                                                                    name="model[buy_register_field][{$index}][Explain]"  placeholder="请输入名称" value="{$item['Explain']}"
+                                                                    type="text" />
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" {php echo $index<2?"readonly":""}
+                                                                    name="model[buy_register_field][{$index}][Name]"  placeholder="请输入字段(仅支持英文)" onkeyup="value=value.replace(/[^a-zA-Z]/g,'')" value="{$item['Name']}"
+                                                                    type="text"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" 
+                                                                    name="model[buy_register_field][{$index}][Tips]"  placeholder="请输入提示信息/配置项" value="{$item['Tips']}"
+                                                                    type="text"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="button" class="btn btn-sm btn-danger pull-right {php echo $index<2?"disabled":"delfielditem"}" value="删除字段" style="margin-right:10px" />
+                                                                </td>
+                                                            </tr>
+                                                            {if $item['Name']=="Mobile" && $config['sms_obj']==1}
+                                                            <tr class="issmsckfield">
+                                                                <td>
+                                                                    <div style="line-height: 34px;">
+                                                                        <label>
+                                                                            <input class="flat-blue" type="checkbox" name="model[buy_register_field][{$index}][IsSmsCk]" {php echo $item['IsSmsCk']==1?"checked":""} value="1"/> 短信验证
+                                                                        </label>
+                                                                    </div>
+                                                                </td>
+                                                                <td colspan="3"><div style="line-height: 34px;">选择短信验证后，用户提交登记信息时需要发送短信验证码，填写正确后才能提交。</div></td>
+                                                                <td></td>
+                                                            </tr>
+                                                            {/if}
+                                                            {/loop}
+                                                            {else}
+                                                            <tr class="addfield">
+                                                                <td>
+                                                                    <select name="model[buy_register_field][0][Type]" class="form-control select2" style = "width: 100%;">
+                                                                        <option value="text" selected>文本字段</option>
+                                                                        <option value="number" disabled>数字字段</option>
+                                                                        <option value="radio" disabled>单选按钮</option>
+                                                                        <option value="checkbox" disabled>复选按钮</option>
+                                                                        <option value="select" disabled>下拉列表</option>
+                                                                        <option value="textarea" disabled>文本域</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control"
+                                                                           name="model[buy_register_field][0][Explain]"  placeholder="请输入名称" value="您的称呼"
+                                                                           type="text"  />
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control"
+                                                                           name="model[buy_register_field][0][Name]"  placeholder="请输入字段(仅支持英文)" onkeyup="value=value.replace(/[^a-zA-Z]/g,'')" value="Name"
+                                                                           type="text" readonly/>
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control"
+                                                                           name="model[buy_register_field][0][Tips]"  placeholder="请输入提示信息/配置项" value="请输入您的称呼"
+                                                                           type="text" />
+                                                                </td>
+                                                                <td>
+                                                                    <input type="button" class="btn btn-sm btn-danger pull-right disabled" value="删除字段" style="margin-right:10px" />
+                                                                </td>
+                                                            </tr>
+                                                            <tr class="addfield">
+                                                                <td>
+                                                                    <select name="model[buy_register_field][1][Type]" class="form-control select2" style = "width: 100%;">
+                                                                        <option value="text" selected>文本字段</option>
+                                                                        <option value="number" disabled>数字字段</option>
+                                                                        <option value="radio" disabled>单选按钮</option>
+                                                                        <option value="checkbox" disabled>复选按钮</option>
+                                                                        <option value="select" disabled>下拉列表</option>
+                                                                        <option value="textarea" disabled>文本域</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" 
+                                                                           name="model[buy_register_field][1][Explain]"  placeholder="请输入名称" value="手机号码"
+                                                                           type="text" />
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" readonly
+                                                                           name="model[buy_register_field][1][Name]"  placeholder="请输入字段(仅支持英文)" onkeyup="value=value.replace(/[^a-zA-Z]/g,'')" value="Mobile"
+                                                                           type="text" />
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" 
+                                                                           name="model[buy_register_field][1][Tips]"  placeholder="请输入提示信息/配置项" value="请输入您的手机号码"
+                                                                           type="text"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="button" class="btn btn-sm btn-danger pull-right disabled" value="删除字段" style="margin-right:10px" />
+                                                                </td>
+                                                            </tr>
+                                                            {if $config['sms_obj']==1}
+                                                            <tr class="issmsckfield">
+                                                                <td>
+                                                                    <div style="line-height: 34px;">
+                                                                        <label>
+                                                                            <input class="flat-blue" type="checkbox" name="model[buy_register_field][1][IsSmsCk]" value="1"/> 短信验证
+                                                                        </label>
+                                                                    </div>
+                                                                </td>
+                                                                <td colspan="3"><div style="line-height: 34px;">选择短信验证后，用户提交登记信息时需要发送短信验证码，填写正确后才能提交。</div></td>
+                                                                <td></td>
+                                                            </tr>
+                                                            {/if}
+                                                            {/if}
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 添加所有字段信息为必填字段，请按照要求填写，<code>为保证准确获取用户手机号码 手机号码字段名请使用“Mobile”</code>，如不清楚请咨询在线客服。
+                                                    <br>具体设置如下：
+                                                    <br>文本字段：适用于用户填写文本内容信息，例如：名称，标题，电话，传真等信息
+                                                    <br>数字字段：适用于用户填写数字内容信息，例如：年龄，数量等信息
+                                                    <br>单选按钮：适用于用户单选内容信息，例如：性别 ，请填写至“提示信息/配置项”格式如下：男,女
+                                                    <br>复选按钮：适用于用户多选内容信息，例如：爱好 ，请填写至“提示信息/配置项”格式如下：音乐,足球,画画
+                                                    <br>下拉列表：适用于用户多选项单选内容信息，例如：行业 ，请填写至“提示信息/配置项”格式如下：教育行业,餐饮行业,医疗行业
+                                                    <br>文本域：适用于用户较多用户信息填充，例如：备注，个人简介等信息
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>是否参与登记</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[join_is_register]" id="join_is_register1" class="flat-blue join_is_register" value="1" {if $model['join_is_register']==1} checked {/if}> 参与登记
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[join_is_register]" id="join_is_register0" class="flat-blue join_is_register" value="0" {if $model['join_is_register']==0} checked {/if}> 无需登记
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请选择用户参与活动是否需要登记个人信息。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="join_register_field_box" style="display: {if $model['join_is_register'] == 0} none{/if};">
+                                            <label class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>参与登记字段</label>
+                                            <div class="col-sm-10">
+                                                <div class="box">
+                                                    <div class="box-header">
+                                                        <h3 class="box-title">用户登记信息所有为必填字段，“字段”必须为英文，且保证唯一性。</h3>
+                                                        <div class="box-tools pull-right">
+                                                            <input type="button" id="addjoinfieldbtn"
+                                                                   class="btn btn-sm btn-info" value="添加字段" style="margin-bottom: 10px;" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        <table class="table table-striped" id="addjoinfieldtable">
+                                                            <tr>
+                                                                <th>字段类型</th>
+                                                                <th>名称</th>
+                                                                <th>字段(必须英文)</th>
+                                                                <th>提示信息/配置项</th>
+                                                                <th>操作</th>
+                                                            </tr>
+                                                            {if !empty($model['id'])}
+                                                            {loop $model['join_register_field'] $index $item}
+                                                            <tr class="addjfield">
+                                                                <td>
+                                                                    <select name="model[join_register_field][{$index}][Type]" class="form-control select2" style = "width: 100%;">
+                                                                        <option value="text" {if $item['Type']=='text'} selected {/if}>文本字段</option>
+                                                                        <option value="number" {php echo $index<2?"disabled":""} {if $item['Type']=='number'} selected {/if}>数字字段</option>
+                                                                        <option value="radio" {php echo $index<2?"disabled":""} {if $item['Type']=='radio'} selected {/if}>单选按钮</option>
+                                                                        <option value="checkbox" {php echo $index<2?"disabled":""} {if $item['Type']=='checkbox'} selected {/if}>复选按钮</option>
+                                                                        <option value="select" {php echo $index<2?"disabled":""} {if $item['Type']=='select'} selected {/if}>下拉列表</option>
+                                                                        <option value="textarea" {php echo $index<2?"disabled":""} {if $item['Type']=='textarea'} selected {/if}>文本域</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control"
+                                                                    name="model[join_register_field][{$index}][Explain]"  placeholder="请输入名称" value="{$item['Explain']}"
+                                                                    type="text" />
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" {php echo $index<2?"readonly":""}
+                                                                    name="model[join_register_field][{$index}][Name]"  placeholder="请输入字段(仅支持英文)" onkeyup="value=value.replace(/[^a-zA-Z]/g,'')" value="{$item['Name']}"
+                                                                    type="text"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" 
+                                                                    name="model[join_register_field][{$index}][Tips]"  placeholder="请输入提示信息/配置项" value="{$item['Tips']}"
+                                                                    type="text"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="button" class="btn btn-sm btn-danger pull-right {php echo $index<2?"disabled":"deljfielditem"}" value="删除字段" style="margin-right:10px" />
+                                                                </td>
+                                                            </tr>
+                                                            {if $item['Name']=="Mobile" && $config['sms_obj']==1}
+                                                            <tr class="issmsckfield">
+                                                                <td>
+                                                                    <div style="line-height: 34px;">
+                                                                        <label>
+                                                                            <input class="flat-blue" type="checkbox" name="model[join_register_field][{$index}][IsSmsCk]" {php echo $item['IsSmsCk']==1?"checked":""} value="1"/> 短信验证
+                                                                        </label>
+                                                                    </div>
+                                                                </td>
+                                                                <td colspan="3"><div style="line-height: 34px;">选择短信验证后，用户提交登记信息时需要发送短信验证码，填写正确后才能提交。</div></td>
+                                                                <td></td>
+                                                            </tr>
+                                                            {/if}
+                                                            {/loop}
+                                                            {else}
+                                                            <tr class="addjfield">
+                                                                <td>
+                                                                    <select name="model[join_register_field][0][Type]" class="form-control select2" style = "width: 100%;">
+                                                                        <option value="text" selected>文本字段</option>
+                                                                        <option value="number" disabled>数字字段</option>
+                                                                        <option value="radio" disabled>单选按钮</option>
+                                                                        <option value="checkbox" disabled>复选按钮</option>
+                                                                        <option value="select" disabled>下拉列表</option>
+                                                                        <option value="textarea" disabled>文本域</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control"
+                                                                           name="model[join_register_field][0][Explain]"  placeholder="请输入名称" value="您的称呼"
+                                                                           type="text"  />
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control"
+                                                                           name="model[join_register_field][0][Name]"  placeholder="请输入字段(仅支持英文)" onkeyup="value=value.replace(/[^a-zA-Z]/g,'')" value="Name"
+                                                                           type="text" readonly/>
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control"
+                                                                           name="model[join_register_field][0][Tips]"  placeholder="请输入提示信息/配置项" value="请输入您的称呼"
+                                                                           type="text" />
+                                                                </td>
+                                                                <td>
+                                                                    <input type="button" class="btn btn-sm btn-danger pull-right disabled" value="删除字段" style="margin-right:10px" />
+                                                                </td>
+                                                            </tr>
+                                                            <tr class="addjfield">
+                                                                <td>
+                                                                    <select name="model[join_register_field][1][Type]"  class="form-control select2" style = "width: 100%;">
+                                                                        <option value="text" selected>文本字段</option>
+                                                                        <option value="number" disabled>数字字段</option>
+                                                                        <option value="radio" disabled>单选按钮</option>
+                                                                        <option value="checkbox" disabled>复选按钮</option>
+                                                                        <option value="select" disabled>下拉列表</option>
+                                                                        <option value="textarea" disabled>文本域</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" 
+                                                                           name="model[join_register_field][1][Explain]"  placeholder="请输入名称" value="手机号码"
+                                                                           type="text" />
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" readonly
+                                                                           name="model[join_register_field][1][Name]"  placeholder="请输入字段(仅支持英文)" onkeyup="value=value.replace(/[^a-zA-Z]/g,'')" value="Mobile"
+                                                                           type="text" />
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" 
+                                                                           name="model[join_register_field][1][Tips]"  placeholder="请输入提示信息/配置项" value="请输入您的手机号码"
+                                                                           type="text"/>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="button" class="btn btn-sm btn-danger pull-right disabled" value="删除字段" style="margin-right:10px" />
+                                                                </td>
+                                                            </tr>
+                                                            {if $config['sms_obj']==1}
+                                                            <tr class="issmsckfield">
+                                                                <td>
+                                                                    <div style="line-height: 34px;">
+                                                                        <label>
+                                                                            <input class="flat-blue" type="checkbox" name="model[join_register_field][1][IsSmsCk]" value="1"/> 短信验证
+                                                                        </label>
+                                                                    </div>
+                                                                </td>
+                                                                <td colspan="3"><div style="line-height: 34px;">选择短信验证后，用户提交登记信息时需要发送短信验证码，填写正确后才能提交。</div></td>
+                                                                <td></td>
+                                                            </tr>
+                                                            {/if}
+                                                            {/if}
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 添加所有字段信息为必填字段，请按照要求填写，<code>为保证准确获取用户手机号码 手机号码字段名请使用“Mobile”</code>，如不清楚请咨询在线客服。
+                                                    <br>具体设置如下：
+                                                    <br>文本字段：适用于用户填写文本内容信息，例如：名称，标题，电话，传真等信息
+                                                    <br>数字字段：适用于用户填写数字内容信息，例如：年龄，数量等信息
+                                                    <br>单选按钮：适用于用户单选内容信息，例如：性别 ，请填写至“提示信息/配置项”格式如下：男,女
+                                                    <br>复选按钮：适用于用户多选内容信息，例如：爱好 ，请填写至“提示信息/配置项”格式如下：音乐,足球,画画
+                                                    <br>下拉列表：适用于用户多选项单选内容信息，例如：行业 ，请填写至“提示信息/配置项”格式如下：教育行业,餐饮行业,医疗行业
+                                                    <br>文本域：适用于用户较多用户信息填充，例如：备注，个人简介等信息
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="area_limit" class="col-sm-2 control-label">活动区域限制</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="area_limit" maxlength="255"
+                                                       name="model[area_limit]"  placeholder="请输入允许参与活动的区域名称！"
+                                                       type="text" value="{$model['area_limit']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请填写允许参与活动的区域名称，例如：北京,上海,湖南,海南,海口等等,不要加省，市，县。多个地区用","分割。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 活动数据伪造<a name="4F" id="4F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="bogus_click_num" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>伪造曝光人数
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="n" id="bogus_click_num"
+                                                       maxlength="10"
+                                                       name="model[bogus_click_num]" nullmsg="请输入伪造曝光人数！"
+                                                       placeholder="请输入伪造曝光人数"
+                                                       type="number"
+                                                       onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                       value="{$model['bogus_click_num']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>请输入伪造曝光人数 0表示不伪造 展示人数=伪造人数+实际人数</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="bogus_repost_num" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>伪造转发人数
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="n" id="bogus_repost_num"
+                                                       maxlength="10"
+                                                       name="model[bogus_repost_num]" nullmsg="请输入伪造转发人数！"
+                                                       placeholder="请输入伪造转发人数"
+                                                       type="number"
+                                                       onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                       value="{$model['bogus_repost_num']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>请输入伪造转发人数 0表示不伪造 展示转发人数=伪造人数+实际人数</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="bogus_buy_num" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>伪造购买人数
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="n" id="bogus_buy_num"
+                                                       maxlength="10"
+                                                       name="model[bogus_buy_num]" nullmsg="请输入伪造购买人数！"
+                                                       placeholder="请输入伪造购买人数"
+                                                       type="number"
+                                                       onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                       value="{$model['bogus_buy_num']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>请输入伪造购买人数 0表示不伪造 展示销量=伪造销量+实际销量</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>伪造购买限制</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[bogus_buy_gender]" id="bogus_buy_gender0" class="flat-blue bogus_buy_gender" value="0" {if $model['bogus_buy_gender']==0} checked {/if}> 不限
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[bogus_buy_gender]" id="bogus_buy_gender1" class="flat-blue bogus_buy_gender" value="1" {if $model['bogus_buy_gender']==1} checked {/if}> 男士
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[bogus_buy_gender]" id="bogus_buy_gender2" class="flat-blue bogus_buy_gender" value="2" {if $model['bogus_buy_gender']==2} checked {/if}> 女士
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请根据实际活动场景选择伪造限制，限制后系统将抽取指定性别的用户。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="bogus_join_num" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>伪造参与人数
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="n" id="bogus_join_num"
+                                                       maxlength="10"
+                                                       name="model[bogus_join_num]" nullmsg="请输入伪造参与人数！"
+                                                       placeholder="请输入伪造参与人数"
+                                                       type="number"
+                                                       onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                       value="{$model['bogus_join_num']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>请输入伪造参与人数 0表示不伪造 展示参与人数=伪造人数+实际人数</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>伪造参与限制</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[bogus_join_gender]" id="bogus_join_gender0" class="flat-blue bogus_join_gender" value="0" {if $model['bogus_join_gender']==0} checked {/if}> 不限
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[bogus_join_gender]" id="bogus_join_gender1" class="flat-blue bogus_join_gender" value="1" {if $model['bogus_join_gender']==1} checked {/if}> 男士
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[bogus_join_gender]" id="bogus_join_gender2" class="flat-blue bogus_join_gender" value="2" {if $model['bogus_join_gender']==2} checked {/if}> 女士
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请根据实际活动场景选择伪造限制，限制后系统将抽取指定性别的用户。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 活动栏目设置<a name="5F" id="5F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>展示排行榜</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[is_show_ranking]" class="flat-blue" value="0" {if $model['is_show_ranking']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[is_show_ranking]" class="flat-blue" value="1" {if $model['is_show_ranking']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启后界面中将展示10位邀请成交最多的用户。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>展示门店位置</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[is_show_map]" class="flat-blue" value="0" {if $model['is_show_map']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[is_show_map]" class="flat-blue" value="1" {if $model['is_show_map']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启后活动界面中将展活动门店地址位置信息。</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>展示购买记录</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[is_show_buylog]" id="is_show_buylog0" class="flat-blue is_show_buylog" value="0" {if $model['is_show_buylog']==0} checked {/if}> 全展示
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[is_show_buylog]" id="is_show_buylog1" class="flat-blue is_show_buylog" value="1" {if $model['is_show_buylog']==1} checked {/if}> 仅头像
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[is_show_buylog]" id="is_show_buylog2" class="flat-blue is_show_buylog" value="2" {if $model['is_show_buylog']==2} checked {/if}> 不展示
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请根据实际活动场景选择伪造展示方式，活动进行中可随时更改</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>展示链接邀请人关系</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[is_show_join_title]" class="flat-blue" value="0" {if $model['is_show_join_title']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[is_show_join_title]" class="flat-blue" value="1" {if $model['is_show_join_title']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启后活动界面中将展示邀请关系（仅显示该链接邀请人，非绑定邀请关系人）</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="box" style="display: {if $config['sms_obj']!=1}none{/if};">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 购买通知设置{if $config['sms_obj']==1}<a name="6F" id="6F"></a>{/if}</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>购买短信提醒</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[buy_is_sms]" id="buy_is_sms0" class="flat-blue buy_is_sms" value="0" {if $model['buy_is_sms']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[buy_is_sms]" id="buy_is_sms1" class="flat-blue buy_is_sms" value="1" {if $model['buy_is_sms']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启前请确保账户短信数量充足，短信不足将造成短信发送失败。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="buy_sms_tmp_box" style="display: {if $model['buy_is_sms'] == 0} none{/if};">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>购买短信模板</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="buy_sms_tmp" maxlength="200"
+                                                       name="model[buy_sms_tmp]"  placeholder="请输入购买短信模板！"
+                                                       type="text" value="{$model['buy_sms_tmp']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>   请根据实际活动需求创建短信模板，系统提供标签将会在发送过程中自动替换。<code onclick="insertAtCursor('buy_sms_tmp',this);">{{NICKNAME}}</code>微信昵称 <code onclick="insertAtCursor('buy_sms_tmp',this);">{{OBJ}}</code>活动名称 <code onclick="insertAtCursor('buy_sms_tmp',this);">{{WRITEOFFCODE}}</code>核销码</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>返利短信提醒</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[draw_is_sms]" id="draw_is_sms0" class="flat-blue draw_is_sms" value="0" {if $model['draw_is_sms']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[draw_is_sms]" id="draw_is_sms1" class="flat-blue draw_is_sms" value="1" {if $model['draw_is_sms']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启前请确保账户短信数量充足，短信不足将造成短信发送失败。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="draw_sms_tmp_box" style="display: {if $model['draw_is_sms'] == 0} none{/if};">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>中奖短信模板</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="draw_sms_tmp" maxlength="200"
+                                                       name="model[draw_sms_tmp]"  placeholder="请输入中奖短信模板！"
+                                                       type="text" value="{$model['draw_sms_tmp']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>   请根据实际活动需求创建短信模板，系统提供标签将会在发送过程中自动替换。<code onclick="insertAtCursor('draw_sms_tmp',this);">{{PRIZE}}</code>奖品名称 <code onclick="insertAtCursor('draw_sms_tmp',this);">{{NICKNAME}}</code>微信昵称 <code onclick="insertAtCursor('draw_sms_tmp',this);">{{OBJ}}</code>活动名称 <code onclick="insertAtCursor('draw_sms_tmp',this);">{{WRITEOFFCODE}}</code>核销码</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 活动样式设置<a name="7F" id="7F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>选择活动模板</label>
+                                            <div class="col-sm-10">
+                                                <select id="tmp_id" name="model[tmp_id]" class="form-control select2" style = "width: 100%;" datatype = "*" nullmsg = "请选择抽奖活动模板！">
+                                                    {loop $objTmpList $tmp}
+                                                    <option value="{$tmp['id']}" data-src="{$tmp['thumb_url']}" {if $tmp['id'] == $model['tmp_id']} selected="selected"{/if}>{$tmp['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                                <div class="input-group" style="margin-top:.5em;">
+                                                    <img id="tmp_id_cover" src="./resource/images/nopic.jpg" class="img-responsive img-thumbnail" width="150">
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请您根据活动场景和个人喜好选择活动模板，也可自定义上传模板项目。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>页面头图模式</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[banner_types]" id="banner_types0" class="flat-blue banner_types" value="0" {if $model['banner_types']==0} checked {/if}> 多图轮播
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[banner_types]" id="banner_types1" class="flat-blue banner_types" value="1" {if $model['banner_types']==1} checked {/if}> 单张头图
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请根据实际需求选择头部图片模式，多图轮播：指定区域内多张图片轮播，{if strpos($tmpModel['resource'],'tmpc') === false }
+                         {if ((int)str_replace("tmp","",$tmpModel['resource']))>91}
+                            建议宽度750 高度不限
+                         {else}
+                            图片建议大小640*360；
+                         {/if}
+                        {else}
+                            图片建议大小640*360；
+                        {/if}；单张头图：可自定义整个头部，图片可自适应展示。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="banner_types0_box" style="display: {if $model['banner_types'] == 1} none{/if};">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>页面头图图片</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_multi_image('model[multi_banner_url]',$model['multi_banner_url']);}
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="banner_types1_box"  style="display: {if $model['banner_types'] == 0} none{/if};">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>页面头图图片</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('model[banner_url]',$model['banner_url']);}
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display: none;">
+                                            <label class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>活动背景颜色</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_color('model[bg_color]',$model['bg_color']);}
+                                                <br>
+                                                <p><strong class="text-danger">提示：</strong> 活动自定义内容留空则此项无效，填写自定义内容后请选择背景颜色</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动门店地址</label>
+                                            <div class="col-sm-10">
+                                                <div class="box">
+                                                    <div class="box-header">
+                                                        <h3 class="box-title">创建门店所有信息都为必填信息，请按照要求认真填写。</h3>
+                                                        <div class="box-tools pull-right">
+                                                            <input type="button" id="addmapbtn"
+                                                                   class="btn btn-sm btn-info" value="添加门店" style="margin-bottom: 10px;" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="box-body">
+                                                        <table class="table table-striped" id="addmaptable">
+                                                            <tr>
+                                                                <th>门店名称</th>
+                                                                <th>经纬度</th>
+                                                                <th>详细地址</th>
+                                                                <th>联系电话</th>
+                                                                <th>操作</th>
+                                                            </tr>
+                                                            {if !empty($model['id'])}
+                                                            {loop $model['store_map_list'] $index $item}
+                                                            <tr class="addmap">
+                                                                <td>
+                                                                    <input class="form-control" name="model[store_map_list][{$index}][name]"  placeholder="请输入门店名称" value="{$item['name']}"  type="text" />
+                                                                </td>
+                                                                <td>
+                                                                    <div class="row row-fix">
+                                                                        <div class="col-xs-4 col-sm-4">
+                                                                            <input type="text" name="model[store_map_list][{$index}][lng]" value="{$item['lng']}" placeholder="地理经度"  class="form-control" />
+                                                                        </div>
+                                                                        <div class="col-xs-4 col-sm-4">
+                                                                            <input type="text" name="model[store_map_list][{$index}][lat]" value="{$item['lat']}" placeholder="地理纬度"  class="form-control" />
+                                                                        </div>
+                                                                        <div class="col-xs-4 col-sm-4">
+                                                                            <button onclick="showCoordinate(this);" class="btn btn-default" type="button">选择坐标</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" name="model[store_map_list][{$index}][address]" value="{$item['address']}" placeholder="请输入门店位置" type="text" />
+                                                                </td>
+                                                                <td>
+                                                                    <input class="form-control" name="model[store_map_list][{$index}][tel]" value="{$item['tel']}" placeholder="请输入联系电话" type="text" />
+                                                                </td>
+                                                                <td>
+                                                                    <input type="button" class="btn btn-sm btn-danger pull-right delmapitem" value="删除门店" style="margin-right:10px" />
+                                                                </td>
+                                                            </tr>
+                                                            {/loop}
+                                                            {/if}
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动背景特效</label>
+                                            <div class="col-sm-5">
+                                                <select class="form-control select2" style="width: 100%;" id="effect_class" name="model[interim][effect_class]" >
+                                                    <option value="0" selected="selected">无特效</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <select class="form-control select2" style="width: 100%;" id="effect_id" name="model[effect_id]">
+                                                    <option value="0" selected="selected">无特效</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>背景音乐模板</label>
+                                            <div class="col-sm-5">
+                                                <select class="form-control select2" style="width: 100%;" id="audio_class" name="model[interim][audio_class]" >
+                                                    <option value="0" selected="selected">请选择</option>
+                                                </select>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请您根据活动场景选择背景音乐模板，也可自定义上传背景音乐。</p>
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <select class="form-control select2" style="width: 100%;" id="audio_id" name="model[audio_id]">
+                                                    <option value="0" selected="selected">请选择</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动背景音乐</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_audio('model[audio_url]',$model['audio_url']);}
+                                                <span class="help-block">
+                                                        <p><strong class="text-danger">提示：</strong> 请您根据活动场景和个人喜好上传背景音乐，关闭背景音乐请留空。</p>
+                                                    </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 活动广告设置<a name="8F" id="8F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>开屏广告开关</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" value="0" name="model[is_show_ads]" id="is_show_ads0"
+                                                           class="flat-blue is_show_ads" {if $model['is_show_ads']==0} checked
+                                                    {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="1" name="model[is_show_ads]" id="is_show_ads1"
+                                                           class="flat-blue is_show_ads" {if $model['is_show_ads']==1} checked
+                                                    {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <span class="help-block">
+                                                        <p><strong class="text-danger">提示：</strong> 开启后用户首次进入首页会弹出开屏广告，为提升用户体验关闭后再次进入将不再展示。</p>
+                                                    </span>
+                                            </div>
+                                        </div>
+                                        <div id="ads_open_box" style="display: {if $model['is_show_ads'] != 1} none{/if};">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span class="text-red">(*)</span>开屏广告图片</label>
+                                                <div class="col-sm-10">
+                                                    {php echo tpl_form_field_image('model[ads_url]',$model['ads_url']);}
+                                                    <span class="help-block">
+                                                        <p><strong class="text-danger">提示：</strong> 请按根据情况上传图片 建议尺寸518*740</p>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ads_link" class="col-sm-2 control-label">广告链接地址</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" id="ads_link" maxlength="250"
+                                                           name="model[ads_link]"  placeholder="请输入广告链接地址"
+                                                           type="text" value="{$model['ads_link']}"/>
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 请输入完整链接地址，以http://或https://开头，例如：http://www.baidu.com/</p>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="show_ads_time" class="col-sm-2 control-label">
+                                                    <span class="text-red">(*)</span>广告展示时间
+                                                </label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control"  datatype="n" id="show_ads_time" name="model[show_ads_time]" onKeyUp="if(isNaN(this.value)) this.value='0';" placeholder="请输入广告展示时间" type="number" value="{$model['show_ads_time']}">
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 请输入开屏广告展示时间，开启后广告时间必填且大于零，单位：秒</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {if ($plug_appad && $plug_appad_act==1)}
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>劫流广告开关</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" value="0" name="model[is_open_appad]" id="is_open_appad0"
+                                                           class="flat-blue is_open_appad" {if $model['is_open_appad']==0} checked
+                                                    {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="1" name="model[is_open_appad]" id="is_open_appad1"
+                                                           class="flat-blue is_open_appad" {if $model['is_open_appad']==1} checked
+                                                    {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <span class="help-block">
+                                                        <p><strong class="text-danger">提示：</strong> 开启后用户访问活动点击页面任意位置，再访问第三方常用APP（抖音、快手、火山、淘宝等）后将弹出设定的口令广告。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div id="appad_open_box" style="display: {if $model['is_open_appad'] != 1} none{/if};">
+                                            <div class="form-group">
+                                                <label for="appad_password" class="col-sm-2 control-label"><span class="text-red">(*)</span>广告劫流口令</label>
+                                                <div class="col-sm-10">
+                                                    <textarea rows = "3" name="model[appad_password]" id="appad_password" class="form-control" placeholder = "请输入劫流口令,多个口令请用“*”分割...">{$model['appad_password']}</textarea>
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 支持多个平台口令同时存在，例如：抖音（找到您的广告视频 -> 点击右侧分享 -> 点击复制链接 -> 内容粘贴至此处）；淘宝（找到您的商家门店 -> 点击右上角分享 -> 点击复制链接 -> 内容粘贴至此处）；其他第三方平台以此类推；</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/if}
+
+                                    </div>
+                                </div>
+
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 分享海报设置<a name="9F" id="9F"></a></h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>海报背景图片</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group ">
+                                                    <input type="text" name="model[qr_url]" value="{$model['qr_url']}" class="form-control" autocomplete="off">
+                                                    <span class="input-group-btn">
+                                                        <button class="btn btn-default" type="button" onclick="showQrDialog(this);">选择图片</button>
+                                                    </span>
+                                                </div>
+                                                <script type="text/javascript">
+                                                    function showQrDialog(elm, opts, options) {
+                                                        require(["util"], function(util){
+                                                            var btn = $(elm);
+                                                            var ipt = btn.parent().prev();
+                                                            var val = ipt.val();
+                                                            var img = $("#qr_bg");
+                                                            options = {'global':false,'class_extra':'','direct':true,'multiple':false,'fileSizeLimit':5120000};
+                                                            util.image(val, function(url){
+                                                                if(url.url){
+                                                                    if(img.length > 0){
+                                                                        img.get(0).src = url.url;
+                                                                    }
+                                                                    ipt.val(url.attachment);
+                                                                    ipt.attr("filename",url.filename);
+                                                                    ipt.attr("url",url.url);
+                                                                }
+                                                                if(url.media_id){
+                                                                    if(img.length > 0){
+                                                                        img.get(0).src = "";
+                                                                    }
+                                                                    ipt.val(url.media_id);
+                                                                }
+                                                            }, options);
+                                                        });
+                                                    }
+                                                </script>
+                                                <span class="help-block">
+                                                        <p><strong class="text-danger">提示：</strong> 请保证图片的宽度为640px/高度不限,如图片大于或小于要求宽度系统将自动缩放图片</p>
+                                                    </span>
+                                            </div>
+                                        </div>
+                                        <link href="{__PLUGIN__}/poster/jquery.contextMenu.css" rel="stylesheet">
+                                        <link href="{__PLUGIN__}/poster/poster.css" rel="stylesheet">
+                                        <div class="form-group">
+                                            <label for="show_ads_time" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>海报元素设计
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <table style='width:100%;'>
+                                                    <tr>
+                                                        <td style='width:320px;padding:10px;background:#ecf0f5;' valign='top'>
+                                                            <div id='poster'>
+                                                                <img src="{php echo tomedia($model['qr_url'])}" id="qr_bg" class='bg' />
+                                                                {if !empty($model['qr_content'])}
+                                                                {loop $model['qr_content'] $key $d}
+                                                                <div class="drag" type="{$d['type']}" index="{php echo $key+1}" style="zindex:{php echo $key+1};left:{$d['left']};top:{$d['top']};width:{$d['width']};height:{$d['height']}" src="{$d['src']}" size="{$d['size']}" color="{$d['color']}">
+                                                                    {if $d['type']=='qr'}
+                                                                    <img src="../addons/lywywl_ztb/resource/plugin/poster/qr.png" />
+                                                                    {elseif $d['type']=='head'}
+                                                                    <img src="../addons/lywywl_ztb/resource/plugin/poster/head.png" />
+                                                                    {elseif $d['type']=='nickname'}
+                                                                    <div class=text style="font-size:{$d['size']};color:{$d['color']}">微信昵称</div>
+                                                                    {/if}
+                                                                    <div class="rRightDown"> </div>
+                                                                    <div class="rLeftDown"> </div>
+                                                                    <div class="rRightUp"> </div>
+                                                                    <div class="rLeftUp"> </div>
+                                                                    <div class="rRight"> </div>
+                                                                    <div class="rLeft"> </div>
+                                                                    <div class="rUp"> </div>
+                                                                    <div class="rDown"></div>
+                                                                </div>
+                                                                {/loop}
+                                                                {/if}
+                                                            </div>
+
+                                                        </td>
+                                                        <td valign='top' style='padding:0px 10px 10px 10px;'>
+                                                            <div class='panel panel-default' style="border-radius: 0px;">
+                                                                <div class='panel-body'>
+                                                                    <div class="form-group" id="poster_btn">
+                                                                        <label class="col-xs-12 col-sm-3 col-md-2 control-label" style="font-weight: 500;font-size: 16px; line-height: 30px;">海报元素</label>
+                                                                        <div class="col-sm-9 col-xs-12">
+                                                                            <button class='btn btn-default btn-com' type='button' data-type='head'>微信头像</button>
+                                                                            <button class='btn btn-default btn-com' type='button' data-type='nickname'>微信昵称</button>
+                                                                            <button class='btn btn-default btn-com' type='button' data-type='qr'>专属二维码</button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div id='qrset' style='display:none'>
+                                                                        <div class="form-group">
+                                                                            <label class="col-md-2 control-label">距顶边距</label>
+                                                                            <div class="col-md-1 control-label" id="box_top"></div>
+                                                                            <label class="col-md-2 control-label">距左边距</label>
+                                                                            <div class="col-md-1 control-label" id="box_left"></div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="col-md-2 control-label">区域宽度</label>
+                                                                            <div class="col-md-1 control-label" id="box_width"></div>
+                                                                            <label class="col-md-2 control-label">区域高度</label>
+                                                                            <div class="col-md-1 control-label" id="box_height"></div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div id='nameset' style='display:none'>
+                                                                        <div class="form-group">
+                                                                            <label class="col-xs-12 col-sm-3 col-md-2 control-label">字体颜色</label>
+                                                                            <div class="col-sm-9 col-xs-12">
+                                                                                {php echo tpl_form_field_color('color')}
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="col-xs-12 col-sm-3 col-md-2 control-label">字体大小</label>
+                                                                            <div class="col-sm-4">
+                                                                                <div class='input-group'>
+                                                                                    <input type="text" id="namesize" class="form-control" placeholder="例如: 14,16" />
+                                                                                    <div class='input-group-addon'>px</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <a name="10F" id="10F"></a>
+                                                <input type="hidden"  name="model[token]" value="{$model['token']}"/>
+                                                <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+                                                <input id="qr_content" name="model[qr_content]" type="hidden" value=""/>
+                                                <input type="hidden" name="token" value="{$_W['token']}"/>
+                                                <input type="hidden" name="submit" value="submit"/>
+                                                <input type="hidden"  name="model[check_status]" value="{$model['check_status']}"/>
+                                                <button type="submit" class="btn btn-primary" id="SubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script id="regfieldtpl" type="text/html">
+    <tr class="addfield">
+        <td>
+            <select name="model[buy_register_field][<%=count%>][Type]" class="form-control select2" style = "width: 100%;">
+                <option value="text" selected>文本字段</option>
+                <option value="number">数字字段</option>
+                <option value="radio">单选按钮</option>
+                <option value="checkbox">复选按钮</option>
+                <option value="select">下拉列表</option>
+                <option value="textarea">文本域</option>
+            </select>
+        </td>
+        <td>
+            <input class="form-control"
+                   name="model[buy_register_field][<%=count%>][Explain]"  placeholder="请输入名称"
+                   type="text"/>
+        </td>
+        <td>
+            <input class="form-control"
+                   name="model[buy_register_field][<%=count%>][Name]"  placeholder="请输入字段(仅支持英文)" onkeyup="value=value.replace(/[^a-zA-Z]/g,'')"
+                   type="text"/>
+        </td>
+        <td>
+            <input class="form-control"
+                   name="model[buy_register_field][<%=count%>][Tips]"  placeholder="请输入提示信息"
+                   type="text"/>
+        </td>
+        <td>
+            <input type="button" class="btn btn-sm btn-danger pull-right delfielditem" value="删除字段" style="margin-right:10px" />
+        </td>
+    </tr>
+</script>
+<script id="regjfieldtpl" type="text/html">
+    <tr class="addjfield">
+        <td>
+            <select name="model[join_register_field][<%=count%>][Type]" class="form-control select2" style = "width: 100%;">
+                <option value="text" selected>文本字段</option>
+                <option value="number">数字字段</option>
+                <option value="radio">单选按钮</option>
+                <option value="checkbox">复选按钮</option>
+                <option value="select">下拉列表</option>
+                <option value="textarea">文本域</option>
+            </select>
+        </td>
+        <td>
+            <input class="form-control"
+                   name="model[join_register_field][<%=count%>][Explain]"  placeholder="请输入名称"
+                   type="text"/>
+        </td>
+        <td>
+            <input class="form-control"
+                   name="model[join_register_field][<%=count%>][Name]"  placeholder="请输入字段(仅支持英文)" onkeyup="value=value.replace(/[^a-zA-Z]/g,'')"
+                   type="text"/>
+        </td>
+        <td>
+            <input class="form-control"
+                   name="model[join_register_field][<%=count%>][Tips]"  placeholder="请输入提示信息"
+                   type="text"/>
+        </td>
+        <td>
+            <input type="button" class="btn btn-sm btn-danger pull-right deljfielditem" value="删除字段" style="margin-right:10px" />
+        </td>
+    </tr>
+</script>
+<script id="maptpl" type="text/html">
+    <tr class="addmap">
+        <td>
+            <input class="form-control" name="model[store_map_list][<%= count %>][name]"  placeholder="请输入门店名称" type="text" />
+        </td>
+        <td>
+            <div class="row row-fix">
+                <div class="col-xs-4 col-sm-4">
+                    <input type="text" name="model[store_map_list][<%= count %>][lng]" value="" placeholder="地理经度"  class="form-control" />
+                </div>
+                <div class="col-xs-4 col-sm-4">
+                    <input type="text" name="model[store_map_list][<%= count %>][lat]" value="" placeholder="地理纬度"  class="form-control" />
+                </div>
+                <div class="col-xs-4 col-sm-4">
+                    <button onclick="showCoordinate(this);" class="btn btn-default" type="button">选择坐标</button>
+                </div>
+            </div>
+        </td>
+        <td>
+            <input class="form-control" name="model[store_map_list][<%= count %>][address]"  placeholder="请输入门店位置" type="text" />
+        </td>
+        <td>
+            <input class="form-control" name="model[store_map_list][<%= count %>][tel]"  placeholder="请输入联系电话" type="text" />
+        </td>
+        <td>
+            <input type="button" class="btn btn-sm btn-danger pull-right delmapitem" value="删除门店" style="margin-right:10px" />
+        </td>
+    </tr>
+</script>
+<script id="ladderfieldtpl" type="text/html">
+    <tr class="addladderfield">
+        <td>
+            <input class="form-control"
+                   name="model[ladder_price][<%=count%>][num]"  placeholder="请输入拼团人数"
+                   datatype="n" onkeyup = "if(isNaN(this.value)){this.value='0';}"
+                   step="1" min="0"
+                   type="number"/>
+        </td>
+        <td>
+            <input class="form-control"
+                   name="model[ladder_price][<%=count%>][price]"  placeholder="请输入成团后需再支付的价格"
+                   datatype="/^\d+(\.\d+)?$/" onkeyup = "if(isNaN(this.value)){this.value='0';}"
+                   step="0.01" min="0"
+                   type="number"/>
+        </td>
+        <td>
+            <input type="button" class="btn btn-sm btn-danger pull-right delladderfielditem" value="删除字段" style="margin-right:10px" />
+        </td>
+    </tr>
+</script>
+<script>
+    function bindEvents(obj) {
+        var index = obj.attr('index');
+        var rs = new Resize(obj, {
+            Max: true,
+            mxContainer: "#poster"
+        });
+        rs.Set($(".rRightDown", obj), "right-down");
+        rs.Set($(".rLeftDown", obj), "left-down");
+        rs.Set($(".rRightUp", obj), "right-up");
+        rs.Set($(".rLeftUp", obj), "left-up");
+        rs.Set($(".rRight", obj), "right");
+        rs.Set($(".rLeft", obj), "left");
+        rs.Set($(".rUp", obj), "up");
+        rs.Set($(".rDown", obj), "down");
+        rs.Scale = true;
+        var type = obj.attr('type');
+        if(type == 'nickname') {
+            rs.Scale = false;
+        }
+        new Drag(obj, {
+            Limit: true,
+            mxContainer: "#poster"
+        });
+        $('.drag .remove').unbind('click').click(function() {
+            $(this).parent().remove();
+        })
+
+        $.contextMenu({
+            selector: '.drag[index=' + index + ']',
+            callback: function(key, options) {
+                var index = parseInt($(this).attr('zindex'));
+
+                if(key == 'next') {
+                    var nextdiv = $(this).next('.drag');
+                    if(nextdiv.length > 0) {
+                        nextdiv.insertBefore($(this));
+                    }
+                } else if(key == 'prev') {
+                    var prevdiv = $(this).prev('.drag');
+                    if(prevdiv.length > 0) {
+                        $(this).insertBefore(prevdiv);
+                    }
+                } else if(key == 'last') {
+                    var len = $('.drag').length;
+                    if(index >= len - 1) {
+                        return;
+                    }
+                    var last = $('#poster .drag:last');
+                    if(last.length > 0) {
+                        $(this).insertAfter(last);
+                    }
+                } else if(key == 'first') {
+                    var index = $(this).index();
+                    if(index <= 1) {
+                        return;
+                    }
+                    var first = $('#poster .drag:first');
+                    if(first.length > 0) {
+                        $(this).insertBefore(first);
+                    }
+                } else if(key == 'delete') {
+                    $(this).remove();
+                }
+                var n = 1;
+                $('.drag').each(function() {
+                    $(this).css("z-index", n);
+                    n++;
+                })
+            },
+            items: {
+                "next": {
+                    name: "调整到上层"
+                },
+                "prev": {
+                    name: "调整到下层"
+                },
+                "last": {
+                    name: "调整到最顶层"
+                },
+                "first": {
+                    name: "调整到最低层"
+                },
+                "delete": {
+                    name: "删除元素"
+                }
+            }
+        });
+        obj.unbind('click').click(function() {
+            bind($(this));
+        })
+
+    }
+    var imgsettimer = 0;
+    var nametimer = 0;
+    var bgtimer = 0;
+
+    function clearTimers() {
+        clearInterval(imgsettimer);
+        clearInterval(nametimer);
+        clearInterval(bgtimer);
+    }
+
+    function getImgUrl(val) {
+
+        if(val.indexOf('http://') == -1) {
+            val = "{$imgroot}" + val;
+        }
+        return val;
+    }
+
+    function bind(obj) {
+        var imgset = $('#imgset'),
+            nameset = $("#nameset"),
+            qrset = $('#qrset');
+        imgset.hide(), nameset.hide(), qrset.show();
+        clearTimers();
+        var type = obj.attr('type');
+        var box_left_size = parseInt(obj.css('left'));
+        var box_top_size = parseInt(obj.css('top'));
+        var box_width_size = parseInt(obj.css('width'));
+        var box_height_size = parseInt(obj.css('height'));
+        $('#box_left').html(box_left_size*2+'px');
+        $('#box_top').html(box_top_size*2+'px');
+        $('#box_width').html(box_width_size*2+'px');
+        $('#box_height').html(box_height_size*2+'px');
+        if(type == 'img') {
+            imgset.show();
+            var src = obj.attr('src');
+            var input = imgset.find('input');
+            var img = imgset.find('img');
+            if(typeof(src) != 'undefined' && src != '') {
+                input.val(src);
+                img.attr('src', getImgUrl(src));
+            }
+
+        } else if(type == 'nickname') {
+
+            nameset.show();
+            var color = obj.attr('color') || "#000";
+            var size = obj.attr('size') || "16";
+            var input = nameset.find('input:first');
+            var namesize = nameset.find('#namesize');
+            var picker = nameset.find('.sp-preview-inner');
+            input.val(color);
+            namesize.val(size.replace("px", ""));
+            picker.css({
+                'background-color': color,
+                'font-size': size
+            });
+
+            nametimer = setInterval(function() {
+                obj.attr('color', input.val()).find('.text').css('color', input.val());
+                obj.attr('size', namesize.val() + "px").find('.text').css('font-size', namesize.val() + "px");
+            }, 10);
+
+        } else if(type == 'qr') {
+            qrset.show();
+            var size = obj.attr('size') || "3";
+            var sel = qrset.find('#qrsize');
+            sel.val(size);
+            sel.unbind('change').change(function() {
+                obj.attr('size', sel.val())
+            });
+        }
+    }
+
+    $(function() {
+
+        $('.drag').each(function() {
+            bindEvents($(this));
+        });
+
+        $('.btn-com').click(function() {
+
+            var imgset = $('#imgset'),
+                nameset = $("#nameset"),
+                qrset = $('#qrset');
+            imgset.hide(), nameset.hide(), qrset.hide();
+            clearTimers();
+
+            if($('#poster img').length <= 0) {
+                //alert('请选择背景图片!');
+                //return;
+            }
+            var type = $(this).data('type');
+            var img = "";
+            if(type == 'qr') {
+                img = '<img src="../addons/lywywl_ztb/resource/plugin/poster/qr.png" />';
+            } else if(type == 'head') {
+                img = '<img src="../addons/lywywl_ztb/resource/plugin/poster/head.png" />';
+            } else if(type == 'nickname') {
+                img = '<div class=text>微信昵称</div>';
+            }
+            var index = $('#poster .drag').length + 1;
+            var obj = $('<div class="drag" type="' + type + '" index="' + index + '" style="z-index:' + index + ';left: 0px;top: 0px;">' + img + '<div class="rRightDown"> </div><div class="rLeftDown"> </div><div class="rRightUp"> </div><div class="rLeftUp"> </div><div class="rRight"> </div><div class="rLeft"> </div><div class="rUp"> </div><div class="rDown"></div></div>');
+
+            $('#poster').append(obj);
+
+            bindEvents(obj);
+
+        });
+
+        $('.drag').click(function() {
+            bind($(this));
+        })
+
+        //初始化返利模式选项
+        var plug_types = $(".or_open_ladder:checked").val();
+        if(plug_types == 1){
+            $('.ladder-box').show();
+            var ladder_num_types = $(".or_open_unfixed:checked").val();
+            if(ladder_num_types == 0)
+            {
+                $("#ladder_fixed_num").parents('.form-group').show();
+            }
+            else
+            {
+                $("#ladder_fixed_num").parents('.form-group').hide();
+            }
+        }else{
+            $('.ladder-box').hide();
+        }
+    });
+
+    function randomString(len) {
+    　　len = len || 16;
+    　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz';   
+    　　var maxPos = $chars.length;
+    　　var str = '';
+    　　for (i = 0; i < len; i++) {
+            str += $chars.charAt(Math.floor(Math.random() * maxPos));
+    　　}
+    　　return str;
+    }
+    $(function () {
+        //设置选中导航
+        SelectNav("阶梯拼团");
+
+        myrequire(['select2', 'bootstrap-switch', 'validform', 'icheck', 'bootstrap-slider'], function () {
+            myrequire([ 'arttemplate'], function (template) {
+                //添加登记字段选项
+                $("#addregfieldbtn").click(function () {
+                    var fieldcount	= $(".addfield").length;
+                    var obj = {};
+                    obj.count = fieldcount;
+                    var html = template("regfieldtpl",obj);
+                    $("#addregfieldtable").append(html);
+                    $(".select2").select2();
+                    $("input[name='model[buy_register_field]["+fieldcount+"][Name]']").val(randomString(8));
+                });
+
+                //添加登记字段选项
+                $("#addjoinfieldbtn").click(function () {
+                    var fieldcount	= $(".addjfield").length;
+                    var obj = {};
+                    obj.count = fieldcount;
+                    var html = template("regjfieldtpl",obj);
+                    $("#addjoinfieldtable").append(html);
+                    $(".select2").select2();
+                    $("input[name='model[join_register_field]["+fieldcount+"][Name]']").val(randomString(8));
+                });
+
+                //开启多门店添加门店信息
+                $("#addmapbtn").click(function () {
+                    var mapcount	= $(".addmap").length;
+                    var obj = {};
+                    obj.count = mapcount;
+                    var html = template("maptpl",obj);
+                    $("#addmaptable").append(html);
+                });
+
+                //添加拼团价格选项
+                $("#addladderfieldbtn").click(function () {
+                    var fieldcount	= $(".addladderfield").length;
+                    var obj = {};
+                    obj.count = fieldcount;
+                    var html = template("ladderfieldtpl",obj);
+                    $("#addladderfieldtable").append(html);
+                });
+            });
+
+            //初始化select2控件
+            $(".select2").select2();
+
+            //初始化icheck控件radio
+            $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+                checkboxClass: 'icheckbox_flat-blue',
+                radioClass: 'iradio_flat-blue'
+            });
+
+            //绑定更改状态操作
+            $('#status').bootstrapSwitch({
+                onSwitchChange: function (event, state) {
+                    var status = state ? 1 : 0;
+                    $("#status2").val(status);
+                }
+            });
+
+            //选择是否短信提醒选项卡
+            $('.buy_is_sms').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                if(obj_types==0)
+                {
+                    $("#buy_sms_tmp_box").hide();
+                }
+                else
+                {
+                    $("#buy_sms_tmp_box").show();
+                }
+            });
+
+            //选择是否短信提醒选项卡
+            $('.draw_is_sms').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                if(obj_types==0)
+                {
+                    $("#draw_sms_tmp_box").hide();
+                }
+                else
+                {
+                    $("#draw_sms_tmp_box").show();
+                }
+            });
+
+            //选择是否轮播头图选项卡
+            $('.banner_types').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                if(obj_types==0)
+                {
+                    $("#banner_types0_box").show();
+                    $("#banner_types1_box").hide();
+                }
+                else
+                {
+                    $("#banner_types0_box").hide();
+                    $("#banner_types1_box").show();
+                }
+            });
+
+            //选择是否信息登记选项卡
+            $('.buy_is_register').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                if(obj_types==0)
+                {
+                    $("#buy_register_field_box").hide();
+                }
+                else
+                {
+                    $("#buy_register_field_box").show();
+                }
+            });
+
+            //选择是否信息登记选项卡
+            $('.join_is_register').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                if(obj_types==0)
+                {
+                    $("#join_register_field_box").hide();
+                }
+                else
+                {
+                    $("#join_register_field_box").show();
+                }
+            });
+
+            //选择是否开启广告选项卡
+            $('.is_show_ads').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                if(obj_types==0)
+                {
+                    $("#ads_open_box").hide();
+                }
+                else
+                {
+                    $("#ads_open_box").show();
+                }
+            });
+
+            //选择是否开启劫流广告
+            $('.is_open_appad').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                if(obj_types==0)
+                {
+                    $("#appad_open_box").hide();
+                }
+                else
+                {
+                    $("#appad_open_box").show();
+                }
+            });
+
+            //选择哪种阶梯邀请方式
+            $(".or_open_ladder").on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                if(obj_types == 1)
+                {
+                    $(".ladder-box").show();
+                    var ladder_num_types = $(".or_open_unfixed:checked").val();
+                    if(ladder_num_types == 0)
+                    {
+                        $("#ladder_fixed_num").parents('.form-group').show();
+                    }
+                    else
+                    {
+                        $("#ladder_fixed_num").parents('.form-group').hide();
+                    }
+                }
+                else
+                {
+                    $(".ladder-box").hide();
+                }
+            });
+
+            //选择哪种阶梯邀请方式
+            $('.or_open_unfixed').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                if(obj_types==0)
+                {
+                    $("#ladder_fixed_num").parents('.form-group').show();
+                }
+                else
+                {
+                    $("#ladder_fixed_num").parents('.form-group').hide();
+                }
+            });
+
+            //选择红包模板
+            $("#tmp_id").change(function () {
+                $("#tmp_id_cover").attr("src", "{MODULE_URL}"+$(this).find("option:selected").data("src"));
+            }).trigger("change");
+
+            //删除信息登记字段
+            $(document).delegate(".delfielditem", "click", function() {
+                var list = $(this).parent().parent().parent();
+                $(this).parent().parent().remove();
+                list.children(".addfield").each(function (index) {
+                    $(this).find(".form-control").each(function () {
+                        var inputName = $(this).attr("name");
+                        $(this).attr("name", inputName.replace(/\[([\d]+)\]/g, "[" + index + "]"));
+                    });
+                });
+            });
+
+            //删除信息登记字段
+            $(document).delegate(".deljfielditem", "click", function() {
+                var list = $(this).parent().parent().parent();
+                $(this).parent().parent().remove();
+                list.children(".addjfield").each(function (index) {
+                    $(this).find(".form-control").each(function () {
+                        var inputName = $(this).attr("name");
+                        $(this).attr("name", inputName.replace(/\[([\d]+)\]/g, "[" + index + "]"));
+                    });
+                });
+            });
+
+            //删除多门店信息
+            $(document).delegate(".delmapitem", "click", function() {
+                var list = $(this).parent().parent().parent();
+                $(this).parent().parent().remove();
+                list.children(".addmap").each(function (index) {
+                    $(this).find(".form-control").each(function () {
+                        var inputName = $(this).attr("name");
+                        $(this).attr("name", inputName.replace(/\[([\d]+)\]/g, "[" + index + "]"));
+                    });
+                });
+            });
+
+            //删除拼团价格字段
+            $(document).delegate(".delladderfielditem", "click", function() {
+                var list = $(this).parent().parent().parent();
+                $(this).parent().parent().remove();
+                list.children(".addladderfield").each(function (index) {
+                    $(this).find(".form-control").each(function () {
+                        var inputName = $(this).attr("name");
+                        $(this).attr("name", inputName.replace(/\[([\d]+)\]/g, "[" + index + "]"));
+                    });
+                });
+            });
+
+            //选择背景音乐模板
+            $("#audio_id").change(function () {
+                if($(this).val()!="0")
+                {
+                    var audioUrl = $(this).find("option:selected").data("src");
+                    if(audioUrl.indexOf("resource/template/audio") != -1)
+                    {
+                        $('input[name="model[audio_url]"]').val("{MODULE_URL}"+$(this).find("option:selected").data("src"));
+                    }
+                    else
+                    {
+                        $('input[name="model[audio_url]"]').val($(this).find("option:selected").data("src"));
+                    }
+                }
+            }).trigger("change");
+
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    //获取海报数据
+                    var data = [];
+                    $('.drag').each(function() {
+                        var obj = $(this);
+                        var type = obj.attr('type');
+                        var left = obj.css('left'),
+                            top = obj.css('top');
+                        var d = {
+                            left: left,
+                            top: top,
+                            type: obj.attr('type'),
+                            width: obj.css('width'),
+                            height: obj.css('height')
+                        };
+                        if(type == 'nickname' ) {
+                            d.size = obj.attr('size');
+                            d.color = obj.attr('color');
+                        } else if(type == 'qr') {
+                            d.size = obj.attr('size');
+                        }
+                        data.push(d);
+                    });
+                    $('#qr_content').val(JSON.stringify(data));
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createWebUrl('obj_ladder', array('act' => 'index'));}";
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+                    }
+                }
+            });
+
+            //获取背景特效
+            GetEffectClass();
+            $('#effect_class').val({php echo empty($effect['class_id']) ? 0 : $effect['class_id']});
+            $("#effect_class").select2("val", {php echo empty($effect['class_id']) ? 0 : $effect['class_id']});
+            GetEffect();
+            $('#effect_id').val({$model['effect_id']});
+            $("#effect_id").select2("val", {$model['effect_id']});
+
+            $("#effect_class").change(function () {GetEffect() });
+
+            //获取背景音乐
+            GetAudioClass();
+            $('#audio_class').val({php echo empty($audio['class_id']) ? 0 : $audio['class_id']});
+            $("#audio_class").select2("val", {php echo empty($audio['class_id']) ? 0 : $audio['class_id']});
+            GetAudio();
+            $('#audio_id').val({$model['audio_id']});
+            $("#audio_id").select2("val", {$model['audio_id']});
+
+            $("#audio_class").change(function () {GetAudio() });
+            $("#audio_id").change(function () {setAudioPlayer() });
+        });
+
+    });
+
+    $(window).scroll(function () {
+        $(".edui-editor-toolbarbox").each(function () {
+            var zIndex = parseInt($(this).css('z-index')) || -1;
+            if(zIndex > 0){
+                $(this).addClass('edui-editor-toolbarbox2');
+            }else{
+                $(this).removeClass('edui-editor-toolbarbox2');
+            }
+        })
+    });
+    //光标处插入指定文本内容
+    function insertAtCursor(text, obj) {
+        var myField = document.getElementById(text);
+        var myValue = obj.innerHTML;
+        if (document.selection) {
+            //IE support
+            myField.focus();
+            sel = document.selection.createRange();
+            sel.text = myValue;
+            sel.select();
+        } else if (myField.selectionStart || myField.selectionStart == '0') {
+            //MOZILLA/NETSCAPE support
+            var startPos = myField.selectionStart;
+            var endPos = myField.selectionEnd;
+            var beforeValue = myField.value.substring(0, startPos);
+            var afterValue = myField.value.substring(endPos, myField.value.length);
+
+            myField.value = beforeValue + myValue + afterValue;
+
+            myField.selectionStart = startPos + myValue.length;
+            myField.selectionEnd = startPos + myValue.length;
+            myField.focus();
+        } else {
+            myField.value += myValue;
+            myField.focus();
+        }
+    }
+
+    $(function(){
+        // @ 给窗口加滚动条事件
+        $(window).scroll(function(){
+            // 获得窗口滚动上去的距离
+            var ling = $(document).scrollTop();
+            // 在标题栏显示滚动的距离
+            //document.title = $('#2F').offset().top;
+            // 如果滚动距离大于1534的时候让滚动框出来
+            if(ling>90){
+                $('#rightbox').show();
+            }
+            if(90<ling && ling< ($('#2F').offset().top-100)){
+                // 让第一层的数字隐藏，文字显示，让其他兄弟元素的li数字显示，文字隐藏
+                $('#rightbox ul li').eq(0).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(0).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#3F').offset().top-100)){
+                $('#rightbox ul li').eq(1).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(1).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#4F').offset().top-100)){
+                $('#rightbox ul li').eq(2).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(2).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#5F').offset().top-100)){
+                $('#rightbox ul li').eq(3).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(3).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }
+            /*{if $config['sms_obj']==1}*/
+            else if(ling<($('#6F').offset().top-100)){
+                $('#rightbox ul li').eq(4).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(4).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }
+            else if(ling<($('#7F').offset().top-100)){
+                $('#rightbox ul li').eq(5).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(5).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }
+            /*{else}*/
+            else if(ling<($('#7F').offset().top-100)){
+                $('#rightbox ul li').eq(5).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(5).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }
+            /*{/if}*/
+            else if(ling<($('#8F').offset().top-100)){
+                $('#rightbox ul li').eq(6).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(6).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#9F').offset().top-100)){
+                $('#rightbox ul li').eq(7).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(7).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }else if(ling<($('#10F').offset().top-100)){
+                $('#rightbox ul li').eq(8).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+                $('#rightbox ul li').eq(8).siblings('li').find('.num').css('display','block').siblings('.word').hide();
+            }
+            if(ling<90){
+                $('#rightbox').hide();
+            }
+        })
+    })
+
+    $(function(){
+        $('#rightbox ul li').hover(function(){
+            $(this).find('.num').hide().siblings('.word').css({'display':'block','background':'#00c0ef','color':'white','width':'60px','right':'2px','position':'fixed'});
+        },function(){
+            $(this).find('.num').css({'display':'block','background':'white','color':'#666'}).siblings('.word').hide().css({'display':'none','background':'','color':''});
+        })
+    })
+
+    function GetEffectClass() {
+        $.ajaxSetup({ cache: false });
+        $("#effect_class").empty(); //清空模板SELECT控件
+        $.ajax({
+            type: "GET",
+            url: "{php echo $this->createWebUrl('sys_effect_class',array('act'=>'getSelect'));}",
+            data: {  },
+            async: false,
+            dataType: "json",
+            success: function (data) {
+                $("<option></option>").val("0").text("无特效").appendTo($("#effect_class"));
+                $.each(data, function (i, item) {
+                    $("<option></option>").val(item["id"]).text(item["name"]).appendTo($("#effect_class"));
+                });
+                $("#effect_class").select2("val", "0");
+                GetEffect();
+            }
+        });
+    }
+
+    function GetEffect() {
+        $.ajaxSetup({ cache: false });
+        $("#effect_id").empty(); //清空模板SELECT控件
+        if( $("#effect_class").val() > 0)
+        {
+            $.ajax({
+                type: "GET",
+                url: "{php echo $this->createWebUrl('sys_effect',array('act'=>'getSelect'));}",
+                data: { class_id: $("#effect_class").val() },
+                async: false,
+                dataType: "json",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        $("<option></option>").val(item["id"]).text(item["name"]).appendTo($("#effect_id"));
+                    });
+                }
+            });
+            $("#effect_id").select2("val", $("#effect_id").val());
+        }else
+        {
+            $("<option></option>").val("0").text("无特效").appendTo($("#effect_id"));
+            $("#effect_id").select2("val", "0");
+        }
+    }
+
+    function GetAudioClass() {
+        $.ajaxSetup({ cache: false });
+        $("#audio_class").empty(); //清空模板SELECT控件
+        $.ajax({
+            type: "GET",
+            url: "{php echo $this->createWebUrl('sys_audio_class',array('act'=>'getSelect'));}",
+            data: {  },
+            async: false,
+            dataType: "json",
+            success: function (data) {
+                $("<option></option>").val("0").text("请选择").appendTo($("#audio_class"));
+                $.each(data, function (i, item) {
+                    $("<option></option>").val(item["id"]).text(item["name"]).appendTo($("#audio_class"));
+                });
+                $("#audio_class").select2("val", "0");
+                GetAudio();
+            }
+        });
+    }
+
+    function GetAudio() {
+        $.ajaxSetup({ cache: false });
+        $("#audio_id").empty(); //清空模板SELECT控件
+        if( $("#audio_class").val() > 0)
+        {
+            $.ajax({
+                type: "GET",
+                url: "{php echo $this->createWebUrl('sys_audio',array('act'=>'getSelect'));}",
+                data: { class_id: $("#audio_class").val() },
+                async: false,
+                dataType: "json",
+                success: function (data) {
+                    $("<option></option>").val("0").text("请选择").appendTo($("#audio_id"));
+                    $.each(data, function (i, item) {
+                        $("<option></option>").val(item["id"]).data('src',item["audiourl"]).text(item["name"]).appendTo($("#audio_id"));
+                    });
+                }
+            });
+            $("#audio_id").select2("val", $("#audio_id").val());
+        }else
+        {
+            $("<option></option>").val("0").text("请选择").appendTo($("#audio_id"));
+            $("#audio_id").select2("val", "0");
+        }
+    }
+</script>
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=F51571495f717ff1194de02366bb8da9&s=1"></script>
+<script type="text/javascript">
+    function showCoordinate(elm) {
+        require(["util"], function(util){
+            require(["map"], function(){
+
+                //百度地图API提供Geocoder类进行地址解析，您可以通过Geocoder.getPoint()方法来将一段地址描述转换为一个坐标。
+                function addressToPoint(address) {
+                    var LocalSearch = new BMap.LocalSearch(map, {
+                        renderOptions: { map: map }
+                    });
+                    LocalSearch.search(address);
+                    LocalSearch.setSearchCompleteCallback(function () {
+                        var point = LocalSearch.getResults().getPoi(0).point;
+                        LocalSearch.clearResults();
+                        map.panTo(point); // 将地图的中心点更改为给定的点
+                        marker.setPosition(point); // 设置标注的地理坐标
+                        marker.setAnimation(BMAP_ANIMATION_BOUNCE); // 设置标注动画效果
+                        setTimeout(function () {
+                            marker.setAnimation(null);
+                        }, 3600); // 动画持续时间
+                    });
+                }
+
+                var defaultValue = {};
+                defaultValue.lng = parseFloat($(elm).parent().prev().prev().find(":text").val());
+                defaultValue.lat = parseFloat($(elm).parent().prev().find(":text").val());
+
+                defaultValue || (defaultValue = {});
+                defaultValue.lng || (defaultValue.lng = 116.403851);
+                defaultValue.lat || (defaultValue.lat = 39.915177);
+                var point = new BMap.Point(defaultValue.lng, defaultValue.lat) /*2、创建点坐标*/
+                var geocoder = new BMap.Geocoder /*创建地址解析器实例*/
+                var $mapDialog = $("#map-dialog");
+
+                if (0 == $mapDialog.length) {
+                    ($mapDialog = util.dialog("请选择地点", '<div class="form-group"><div class="input-group"><input type="text" class="form-control" placeholder="请输入地址来直接查找相关位置"><div class="input-group-btn"><button class="btn btn-default"><i class="icon-search"></i> 搜索</button></div></div></div><div id="map-container" style="height:400px;"></div>', '<button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-primary">确认</button>', {
+                        containerName: "map-dialog"
+                    })).find(".modal-dialog").css("width", "80%");
+                    $mapDialog.modal({
+                        keyboard: false
+                    });
+                    map = util.map.instance = new BMap.Map("map-container"); // 1、创建地图实例
+                    map.centerAndZoom(point, 12); // 3、地图初始化，设置中心坐标点及地图级别
+                    map.enableScrollWheelZoom(); // 4、其它，鼠标滚轮控制缩放
+                    map.enableDragging(); // 启用地图拖拽，默认启用
+                    map.enableContinuousZoom(); // 启用连续缩放效果，默认禁用
+                    map.addControl(new BMap.NavigationControl); // 添加导航控件
+                    map.addControl(new BMap.OverviewMapControl); // 添加缩略图控件
+                    marker = util.map.marker = new BMap.Marker(point); // 创建一个图像标注实例。point参数指定了图像标注所在的地理位置
+                    marker.setLabel(new BMap.Label("请您移动此标记，选择您的坐标！", {
+                        offset: new BMap.Size(10, -20)
+                    })); // //把label设置到maker上
+                    map.addOverlay(marker); // 添加自定义覆盖物
+                    marker.enableDragging(); //开启标注拖拽功能
+                    // 添加拖拽事件监听函数
+                    marker.addEventListener("dragend", function (e) {
+                        var point = marker.getPosition(); // 返回标注的地理坐标
+                        // 拖拽标签由坐标地址转换为文本地址
+                        geocoder.getLocation(point, function (geocoderResult) {
+                            $mapDialog.find(".input-group :text").val(geocoderResult.address)
+                        })
+                    });
+                    // 回车由文本地址解析坐标
+                    $mapDialog.find(".input-group :text").keydown(function (e) {
+                        13 == e.keyCode && addressToPoint($(this).val())
+                    });
+                    // 点击按钮由文本地址解析坐标
+                    $mapDialog.find(".input-group button").click(function () {
+                        addressToPoint($(this).parent().prev().val())
+                    });
+                }
+
+                // 在模态框完全展示出来做一些动作
+                // http://www.runoob.com/bootstrap/bootstrap-modal-plugin.html
+                $mapDialog.off("shown.bs.modal");
+                $mapDialog.on("shown.bs.modal", function () {
+                    marker.setPosition(point); // 设置标注的地理坐标
+                    map.panTo(marker.getPosition()); // 将地图的中心点更改为给定的点
+                });
+
+                $mapDialog.find("button.btn-primary").off("click");
+                $mapDialog.find("button.btn-primary").on("click", function () {
+                    var e = util.map.marker.getPosition();
+                    geocoder.getLocation(e, function (i) {
+                        var result = {
+                            lng: e.lng,
+                            lat: e.lat,
+                            label: i.address
+                        };
+                        $(elm).parent().prev().prev().find(":text").val(result.lng);
+                        $(elm).parent().prev().find(":text").val(result.lat);
+                    })
+                    $mapDialog.modal("hide");
+                });
+                $mapDialog.modal("show");
+            });
+        });
+    }
+</script>
+<!-- 重置日期选择器样式 -->
+<link href="{__CSS__}/reset/daterange.css?v=1.0.0" rel="stylesheet">
+</body>
+</html>

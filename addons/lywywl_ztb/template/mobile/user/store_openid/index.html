@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+{template 'user/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+<link href="{MODULE_URL}resource/mobile/plugin/css/common.min.css?v=20170802" rel="stylesheet">
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/util.js"></script>
+<script src="{MODULE_URL}resource/mobile/plugin/js/require.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js//lib/mui.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/common.js"></script>
+<body class="bgf2">
+<form action="{php echo $this->createMobileUrl('user.store_openid',array('store_id'=>$store_id));}" id="user_form" method="post">
+<!--中心区域-->
+    <section class="toux tc"><img src="{$userinfo['headimgurl']}"  alt="{$userinfo['nickname']}"/><h2 class="font32 fn tc">{$userinfo['nickname']}</h2></section>
+    <section class="pd24" style="padding-top: 0px;">
+        <section class="openid font32 tc">OPENID：{$userinfo['openid']}</section>
+        <h2 class="font32 fn tc pd24">请输入商户信息</h2>
+        <ul class="openid_info">
+            <li><input class="regInput font32" type="tel" name="mobile" id="mobile" maxlength="11" placeholder="请输入手机号码" datatype="m" nullmsg="请输入手机号码！" errormsg="请输入正确的手机号码！"></li>
+            <li><input class="regInput font32" type="password" name="password" id="password" maxlength="16" placeholder="请输入登录密码" datatype="*6-16" nullmsg="请输入密码！" errormsg="密码范围在6~16位之间！"></li>
+            {if $isShowStorePwd }
+            <li><input class="regInput font32" type="password" name="storepwd" id="storepwd" maxlength="6" placeholder="请输入商户安全密码" datatype="*6-6" nullmsg="请输入商户安全密码！" errormsg="请输入6位商户安全密码！"></li>
+            {/if}
+        </ul>
+        <section class="h24"></section>
+        <button type="submit" class="Button" id="SubmitBtn">切换</button>
+    </section>
+</form>
+<script>
+    $(function () {
+        require(['{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js'], function () {
+            //为formContent 添加验证事件
+            $("#user_form").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                                , style: 'bottom:0;'
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if(data.status == 1){
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        setTimeout(function () {
+                            window.location.href = "{php echo $this->createMobileUrl('store.store_member',array('act'=>'index'));}";
+                        }, 2000);
+                    }else{
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+        });
+    });
+
+
+</script>
+</body>
+</html>

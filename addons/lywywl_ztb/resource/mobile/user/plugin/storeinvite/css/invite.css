@@ -1,0 +1,48 @@
+﻿/*--头像部分---*/
+.source{ background:url(../images/suyuanBg.jpg) no-repeat; width:100%;  background-size:100%; display:block; position:relative;}
+.source .trace_info{ padding-top:1.3333rem; color:#333; position:relative; padding-left:1.6rem; left:0.32rem}
+.source .trace_info img{ width:1.4rem; height:1.4rem; border:2px solid #fff;border-radius: 50%; display:inline-block; position:absolute; left:0 }
+.source .trace_info p img{ width:0.33rem; height:0.33rem; border:0; position:static; left:auto; margin-right:0.065rem}
+.trace_bg h2{color: #2f8def;text-align: center;font-size: 0.5067rem;height: 0.8rem; line-height:0.8rem; padding-top:0.32rem}
+.trace_bg h2 span::after{ content:''; width:30px; height:1px; background:#2f8def; position:absolute; top:50%; right:0; margin-right:-40px; margin-top:1px}
+.trace_bg h2 span::before{ content:''; width:30px; height:1px; background:#2f8def; position:absolute; top:50%; left:0; margin-left:-40px; margin-top:1px}
+.source .exclusive_link{ background:#fff; box-shadow:0 0.06rem 0.06rem rgb(108,43,0,0.05); border-radius:0.4rem; color:#7f2100; padding:0.08rem 0.32rem; display:inline-block; margin-top:0.1333rem; font-size:0.32rem; margin-left:0.13rem}
+.source .attation{ color:#7f2100; }
+
+/*业务分用*/
+.recordRet li h2{ overflow:hidden}
+.recordRet li{ line-height:0.8rem; background:#fff; border-bottom:1px solid #e4e4e4}
+.recordRet li em img{ width:0.56rem; position:relative; top:0.12rem; margin-left:0.13rem}
+.retail_user_info img{ display:inline-block; margin-right:0.133rem; width:0.68rem; height:0.68rem; border-radius:50%; vertical-align: middle; }
+.cf69{ color:#f69802}
+.sourceTitle{height:0.9rem; line-height:0.9rem; color:#e95a52; font-size:0.4rem; text-align:center}
+.sourceTitle span{ display:inline-block; position:relative; }
+.sourceTitle span:before{ content:''; position:absolute; background:url(../images/titL.png) no-repeat; background-size:100%; width:1.25rem; height:0.2rem; left:-2rem; top:0.38rem  }
+.sourceTitle span:after{ content:''; position:absolute; background:url(../images/titR.png) no-repeat; background-size:100%; width:1.25rem; height:0.2rem; right:-2rem; top:0.38rem}
+
+/*一级、二级列表*/
+.operation a.user,.operation a.exclusive{ width:33.3%; box-sizing: border-box; float:left; display: inline-block;color:#666; padding:0; min-height:inherit; text-align:center; }
+.operation a.user span{ background: url(../images/user.png) no-repeat left  0.426rem; padding-left:0.667rem;background-size: 0.4rem; display:inline-block;vertical-align:middle;}
+.operation a.exclusive span{ background: url(../images/exclusive.png) no-repeat left  0.426rem; padding-left:0.667rem;   background-size: 0.4rem; display:inline-block;vertical-align:middle;}
+.staff_info span img{ display:inline-block; vertical-align:middle; width:0.4rem; height:0.4rem; margin-right:0.1333rem;}
+.tabContainer ul.tabHd.tabHd50{ border-radius: 0.32rem 0.32rem 0 0;}
+.mystaff li{ background:#fff; margin-bottom:0.32rem;}
+.staff_info{position:relative; padding:0.32rem 0.32rem 0.32rem 1.95rem; min-height:1.33rem; }
+.operation{ border-top:1px solid #e2e2e2; height:1.307rem; line-height:1.307rem; overflow:hidden;}
+.mystaff li p{ margin-top:0.13rem; font-size:0.32rem; color:#999; line-height:0.32rem;}
+.mystaff li img.tx{ display:block; width:1.34rem; height:1.34rem; border-radius:50%; position:absolute; left:0.32rem; top:0.32rem;}
+.mystaff li:last-child{ margin-bottom:0}
+
+/*分享链接*/
+.pcOWap{ padding:0 0.62rem; height:0.8rem; line-height:0.8rem; background:#ffd213; border-radius:0 0.6rem 0.6rem 0; font-size:0.42rem; margin-top:0.2rem; display:inline-block}
+.recordRet li{ line-height:0.8rem; background:#fff; border-bottom:1px solid #e4e4e4}
+.ewmRetail img{ width:46%}
+.obj_preview ul { text-align: center; margin-top:0.4rem}
+.obj_preview li{ width:90%; display:inline-block; font-size:0.3733333333333333rem; text-align:center; margin-top:0.4rem;}
+.obj_preview .copybtn{ background:#ebebeb; display:inline-block; margin-bottom:0.13rem; padding: 0 0.4rem; border-radius:0.6rem; width:auto!important; height:auto!important; color:#000;    margin: 0.32rem auto;line-height: 1.067rem;    font-size: 0.373rem;}
+.obj_preview .copyimg{height:0.6rem;line-height:0.6rem; display:inline-block; vertical-align:middle; margin-right:0.1333rem}
+.copytxt{word-wrap:break-word;word-break:break-all;text-align:justify; border:1px dashed #000; padding:0.13rem 0.32rem; border-radius:0.13rem; margin-top:0.3rem; line-height:0.8rem}
+.ewmRetail .billEwm img{ width:60%}
+
+
+

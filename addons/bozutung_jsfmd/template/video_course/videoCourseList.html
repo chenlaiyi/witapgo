@@ -1,0 +1,144 @@
+<div>
+	<a href="{php echo webUrl('addVideoCourse')}" class="layui-btn">添加视频课程</a>
+</div>
+<div class="layui-form">
+	<table class="layui-table">
+		<thead>
+		<tr>
+			<th>ID</th>
+			<th>信息</th>
+			<th>价格</th>
+			<th>类别</th>
+			<th>封面</th>
+			<th>状态</th>
+			<th>操作</th>
+		</tr>
+		</thead>
+		<tbody>
+		{loop $list $index $item}
+		<tr>
+			<td style="max-width: 30px">{$item['id']}</td>
+			<td>
+				标题：{$item['name']}<br>
+				主讲：{$item['speaker']}
+			</td>
+			<td>￥{php echo bcdiv($item['price'], 100, 2)}</td>
+			<td>{$item['category']}</td>
+			<td>
+				<div class="box-table-img">
+					<img src="{php echo tomedia($item['cover'])}" data-url="{php echo tomedia($item['cover'])}" >
+				</div>
+			</td>
+			<td>{$item['enabled_format']}</td>
+			<td class="td-button">
+				<a href="{php echo webUrl('editVideoCourse', array('id' => $item['id']))}"
+					class="layui-btn layui-btn-sm">编辑</a>
+				<a href="{php echo webUrl('courseVideoList', array('vcid' => $item['id']))}"
+					class="layui-btn layui-btn-sm">视频列表</a>
+				<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger btn-del"
+					data-id="{$item['id']}">删除</a>
+			</td>
+		</tr>
+		{/loop}
+		</tbody>
+	</table>
+	<div class="pager">
+		{$pager}
+	</div>
+</div>
+<script>
+	layui.use(['laypage', 'layer'], function(){
+		var laypage = layui.laypage;
+		var layer = layui.layer;
+
+		// 分页
+		laypage.render({
+			elem: $('.pager')
+			,limit: '{php echo $pageSize; }'
+			,count: '{php echo $total; }'
+			,theme: '#1E9FFF'
+			,curr:  '{php echo $pageIndex; }'
+			,hash: '{php echo $pageIndex; }'
+			,jump: function (obj, first) {
+				if (first != true) {
+					var currentPage = obj.curr; //获取点击的页码
+					window.location.href = "{php echo webUrl('courseList', ['action'=>'video'])}&page=" + currentPage;
+				}
+			}
+		});
+		$('.pager').show();
+
+		// 删除
+		$(document).on('click', '.btn-del', function () {
+			$obj = $(this);
+			$del_id = $obj.data('id');
+			layer.confirm("确定要删除吗", {
+				offset: '20%',
+				btn: ["再想想", "删除"],
+				scrollbar: false,
+				closeBtn: 0,
+				success: function (layero, index) {
+					this.enterEsc = function (event) {
+						if (event.keyCode === 13) {
+							fun_del();
+							layer.close(index);
+							return false; //阻止系统默认回车事件
+						}
+						if (event.keyCode === 27) {
+							layer.close(index);
+							return false; //阻止系统默认回车事件
+						}
+					};
+					$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+				}
+				, end: function(){
+					$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+				}
+			}, function (i) {
+				layer.close(i);
+			}, function (i) {
+				fun_del();
+			});
+
+			// 删除事件
+			function fun_del()
+			{
+				let $url = "{php echo webUrl('delVideoCourse')}";
+
+				$.ajax({
+					type: "POST",
+					url: $url,
+					dataType: 'json',
+					data: {
+						id: $del_id
+					},
+					success: function (rs) {
+						if (rs && rs.code.toString() === '0') {
+							layer.msg("成功", {
+								time: 500
+							},
+							function () {
+								$obj.closest('tr').fadeOut(200, function () {
+									$obj.remove();
+								});
+							});
+						} else {
+							layer.msg(rs.msg, {
+								offset: '20%',
+								shift: 6,
+							});
+							$obj.removeClass('lock');
+						}
+					},
+					error: function () {
+						layer.msg("保存过程发生错误，请与管理员联系" , {
+							offset: '20%',
+							shift: 6,
+						});
+						$obj.removeClass('lock');
+					}
+				});
+			}
+		});
+	});
+</script>

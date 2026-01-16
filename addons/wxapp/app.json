@@ -1,0 +1,25 @@
+{
+  "pages": [
+    "fm_jiaoyu/pages/index/index",
+    "fm_jiaoyu/pages/detail/detail",
+    "fm_jiaoyu/pages/payment/payment",
+    "fm_jiaoyu/pages/order/order",
+    "fm_jiaoyu/pages/home/home",
+    "fm_jiaoyu/pages/list/list"
+  ],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示",
+      "provider": "string"
+    }
+  },
+
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8",
+    "enablePullDownRefresh": true
+  },
+  "sitemapLocation": "sitemap.json"
+}

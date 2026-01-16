@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">商户</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="">商家列表</a></li>
+                            <li><a href="{php echo $this->createWebUrl('store_account', array('act' => 'modify','cid' => $cid));}">创建商家</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchKey" class="col-sm-1 control-label">商家名称</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="SearchKey"
+                                                       placeholder="商家名称/手机号码">
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchStatus">商家状态</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchStatus">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="1">启用</option>
+                                                    <option value="0">禁用</option>
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchTime">创建时间</label>
+                                            <div class="col-sm-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control pull-right" id="SearchTime"
+                                                           placeholder="开始时间 - 结束时间" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <label class="control-label col-sm-1" for="SearchServiceStatus">服务状态</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchServiceStatus">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="2">未服务（新注册）</option>
+                                                    <option value="1">已到期</option>
+                                                    <option value="0">服务中</option>
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchIndustry">所属行业</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchIndustry">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $industryList $value}
+                                                    <option value="{$value['id']}">{$value['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                            {if $rategroup}
+                                            <label class="control-label col-sm-1" for="SearchRateGroup">所属费率组</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchRateGroup">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="0" >系统默认费率</option>
+                                                    {loop $rate_groupList $value}
+                                                    <option value="{$value['id']}">{$value['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                            {/if}
+                                        </div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索
+                                            </button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置检索</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="box" class="table-responsive">
+                                <div id="toolbar" class="btn-group">
+                                    <button id="btn_add" type="button" class="btn btn-info">
+                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;创建
+                                    </button>
+                                    <button id="btn_delete" type="button" class="btn btn-danger">
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;删除
+                                    </button>
+                                    
+                                    {if $_W['role']=='founder'}
+                                    <button id="btn_export" type="button" class="btn btn-success">
+                                        <span class="fa fa-download" aria-hidden="true"></span>&nbsp;导出
+                                    </button>
+                                    {/if}
+
+                                </div>
+                                <table id="tb_bandlist" class="table text-nowrap" data-reorderable-columns="true" ></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script id="moneytpl" type="text/html">
+    <table class="table table-hover">
+        <tr>
+            <th width="20%" style="vertical-align: middle;">变动类型</th>
+            <td width="80%">
+                <div class="input-group col-sm-12">
+                    <label>
+                        <input type="radio" name="money_types" id="money_types0" class="flat-blue" value="0" checked> 手动充值
+                    </label>&nbsp;&nbsp;
+                    <label>
+                        <input type="radio" name="money_types" id="money_types1" class="flat-blue" value="1"> 手动扣费
+                    </label>&nbsp;&nbsp;
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">账户余额</th>
+            <td width="80%">
+                <div class="input-group col-sm-12">
+                    <code><%= money %></code> 元
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">变动金额</th>
+            <td width="80%">
+                <div class="input-group col-sm-12">
+                    <input class="form-control" id="money" maxlength="10" name="money" placeholder="请输入商家资金变动金额"
+                           onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                           onblur = "this.value=FloatMoney(this.value)"
+                           step="0.01" min="0"
+                           type="number" value="0.00"/>
+                    <span class="input-group-addon">元</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">备注信息</th>
+            <td width="80%">
+                <div class="input-group col-sm-12">
+                    <textarea class="form-control" id="note" name="note"> </textarea> 
+                    <span class="input-group-addon">元</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+</script>
+<script id="rechargetpl" type="text/html">
+    <table class="table table-hover">
+        <tr>
+            <th width="20%" style="vertical-align: middle;">续费商家</th>
+            <td width="80%">
+                <div class="input-group col-sm-12">
+                    <%= name %>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">可创建活动数</th>
+            <td width="80%">
+                <div class="input-group col-sm-12">
+                    <%= create_num==-1?'无限':create_num %>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">到期时间</th>
+            <td width="80%">
+                <div class="input-group col-sm-12">
+                    <%= endtime %>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">续费天数</th>
+            <td width="80%">
+                <div class="input-group col-sm-12">
+                    <input type="number" class="form-control" id="days" placeholder="请输入续费天数" onkeyup="if(isNaN(this.value)){this.value='0';}">
+                    <span class="input-group-addon">天</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">活动数量</th>
+            <td width="80%">
+                <div class="input-group col-sm-12">
+                    <input type="number" class="form-control" id="create_num" placeholder="请输入活动数量，-1为不限次数" onkeyup="if(isNaN(this.value)){this.value='0';}">
+                </div>
+            </td>
+        </tr>
+    </table>
+</script>
+<script id="passwordtpl" type="text/html">
+    <table class="table table-hover">
+        <tr>
+            <th width="20%" style="vertical-align: middle;">商家名称</th>
+            <td width="80%">
+                <div class="input-group col-sm-12">
+                    <%= name %>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">重置密码</th>
+            <td width="80%">
+                <div class="input-group col-sm-12">
+                    <input type="password" class="form-control" id="password" placeholder="请输入重置密码">
+                </div>
+            </td>
+        </tr>
+    </table>
+</script>
+
+<script>
+    $(function () {
+        //设置选中导航
+        SelectNav("平台商家");
+
+        require(["daterangepicker"], function () {
+            //时间搜索
+            $('#SearchTime').daterangepicker({
+                format: "YYYY/MM/DD"
+            });
+        });
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            myrequire(['bootstrap-table-zh-cn', 'bootstrap-table-editable','bootstrap-table-fixed-columns'], function () {
+                $(".select2").select2();
+                //1.初始化Table
+                var oTable = new TableInit();
+                oTable.Init();
+                //2.初始化Button的点击事件
+                var oButtonInit = new ButtonInit();
+                oButtonInit.Init();
+            });
+        });
+    });
+
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#tb_bandlist').bootstrapTable({
+                url: "{php echo $this->createWebUrl('store_account', array('act' => 'getJsonList'));}",         //请求后台的URL（*）
+                method: 'get',                      //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: true,                    //是否启用排序
+                sortName: "id",                   //排序字段
+                sortOrder: "desc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: false,                //是否启用点击选中行
+                height: 575,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                fixedColumns: true,                    //冻结列开启关闭
+                fixedNumber: 1,                        //冻结列数量
+                onLoadError: function () {  //加载失败时执行
+                    Command: toastr["error"]("对不起，网络繁忙，请稍后再试！", "错误提示");
+                },
+                columns: [{
+                    checkbox: true
+                }, {
+                    field: 'id',
+                    title: '编号',
+                    titleTooltip: '当前信息的唯一编号，数据主键',
+                    sortable: true
+                }, {
+                    field: 'name',
+                    title: '商家名称',
+                    titleTooltip: '商家名称',
+                    sortable: true,
+                },{
+                    field: 'industry_id',
+                    title: '所属行业',
+                    titleTooltip: '所属行业',
+                    sortable: true
+                },{
+                    field: 'city',
+                    title: '所在地区',
+                    titleTooltip: '所在地区',
+                },{
+                    field: 'mobile',
+                    title: '手机号码',
+                    titleTooltip: '手机号码',
+                    sortable: true
+                }, {
+                    field: 'money',
+                    title: '余额',
+                    titleTooltip: '账户余额',
+                    sortable: true,
+                }, {
+                    field: 'sms',
+                    title: '短信',
+                    titleTooltip: '账户短信',
+                    sortable: true,
+                }, {
+                    field: 'create_num',
+                    title: '活动数',
+                    titleTooltip: '账户可创建活动数',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value == -1) {
+                            return "不限";
+                        }else {
+                            return value;
+                        }
+                    }
+                }, {
+                    field: 'endtime',
+                    title: '到期时间',
+                    titleTooltip: '到期时间',
+                    sortable: true,
+                },{
+                    field: 'status',
+                    title: '商家状态',
+                    titleTooltip: '商家状态',
+                    sortable: true,
+                    formatter: statusFormatter
+                },{
+                    field: 'is_vip',
+                    title: 'VIP',
+                    titleTooltip: 'VIP',
+                    sortable: true,
+                    formatter: vipFormatter
+                },{
+                    field: 'is_show_power',
+                    title: '活动版权',
+                    titleTooltip: '活动版权',
+                    sortable: true,
+                    formatter: powerFormatter
+                },
+                    /*{if $plug_storeinvite}*/
+                    {
+                    field: 'is_invite',
+                    title: '商家分销',
+                    titleTooltip: '商家分销',
+                    sortable: true,
+                    formatter: inviteFormatter
+                    },
+                    /*{/if}*/
+                    /*{if $plug_home}*/
+                    {
+                        field: 'is_home_rec',
+                        title: '聚合推荐',
+                        titleTooltip: '聚合首页推荐商家',
+                        sortable: true,
+                        formatter: homeFormatter
+                    },
+                    /*{/if}*/
+                    
+                    /*{if $plug_bigscreen}*/
+                    {
+                        field: 'is_show_bigscreen',
+                        title: '数据投屏',
+                        titleTooltip: '是否开启数据投屏',
+                        sortable: true,
+                        formatter: bigscreenFormatter
+                    },
+                    /*{/if}*/
+                {
+                    field: 'createtime',
+                    title: '创建时间',
+                    titleTooltip: '创建信息的时间',
+                    sortable: true,
+                },  {
+                    field: 'action',
+                    title: '操作',
+                    titleTooltip: '点击下方按钮对信息进行操作',
+                    width: 120,
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                //search: params.search,
+                pageSize: params.limit,  //每页大小
+                page: params.offset / params.limit + 1,//页码
+                sortOrder: params.order,//排序
+                sortName: params.sort,//排序字段
+                key: $("#SearchKey").val(), //关键词
+                status: $("#SearchStatus").val(), //信息状态
+                service_status: $("#SearchServiceStatus").val(),
+                industry_id: $("#SearchIndustry").val(),
+                timer: $("#SearchTime").val(), //信息状态
+                rategroup_id: $("#SearchRateGroup").val()//费率分组
+            };
+            return temp;
+        };
+        return oTableInit;
+    };
+
+    function operateFormatter(value, row, index) {
+        return [
+            {if $isAllowRecharge && $isAllowReNew}
+            '<button class="modify btn btn-success btn-xs" href="javascript:void(0)" title="账户">',
+            '<i class="fa fa-edit"></i>账户',
+            '</button>  ',
+            '<button class="activity btn btn-info btn-xs" href="javascript:void(0)" title="活动">',
+            '<i class="fa fa-star"></i> 活动',
+            '</button>  ',
+            {/if}
+            '<button class="config btn bg-purple btn-xs" href="javascript:void(0)" title="设置">',
+            '<i class="fa fa-cog"></i> 设置',
+            '</button>  ',
+            {if $isAllowRecharge}
+            '<button class="money btn btn-primary btn-xs" href="javascript:void(0)" title="资金">',
+            '<i class="fa fa-paypal"></i> 资金',
+            '</button>  ',
+            {/if}
+            {if $isAllowReNew}
+            '<button class="renew btn btn-warning btn-xs" href="javascript:void(0)" title="续费">',
+            '<i class="fa fa-credit-card"></i> 续费',
+            '</button>  ',
+            {/if}
+            '<button class="password btn btn-info btn-xs" href="javascript:void(0)" title="密码">',
+            '<i class="fa fa-key"></i> 密码',
+            '</button>  ',
+            '<button class="remove btn btn-danger btn-xs" href="javascript:void(0)" title="删除">',
+            '<i class="glyphicon glyphicon-remove"></i>删除',
+            '</button>',
+        ].join('');
+    }
+    window.operateEvents = {
+        {if $isAllowRecharge && $isAllowReNew}
+        'click .modify': function (e, value, row, index) {
+            var editurl = "{php echo $this->createWebUrl('store_account', array('act' => 'modify'));}&id=$";
+            window.location.href = editurl.replace('$', row.id);
+        },
+        {/if}
+        'click .config': function (e, value, row, index) {
+            var editurl = "{php echo $this->createWebUrl('store_account', array('act' => 'config'));}&id=$";
+            window.location.href = editurl.replace('$', row.id);
+        },
+        {if $isAllowRecharge}
+        'click .money': function (e, value, row, index) {
+            myrequire([ 'arttemplate','icheck'], function (template) {
+                var html = template("moneytpl",row);
+                var footer = '<button type="button" class="btn btn-primary" id="btn_money" value="提交">提交</button><button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                var modalobj = util.dialog('资金变动',html,footer,{containerName:'user-container'});
+                modalobj.modal({'keyboard': true});
+                modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                modalobj.modal('show');
+
+                //初始化icheck控件radio
+                $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+                    checkboxClass: 'icheckbox_flat-blue',
+                    radioClass: 'iradio_flat-blue'
+                });
+
+                //资金操作
+                $('#btn_money').bind('click', function () {
+                    var money_types = $(':radio[name="money_types"]:checked').val();
+                    var money = $("#money").val();
+                    var notes = $("#note").val();
+                    if (money == "" || money == "0" || money == "0.00") {
+                        Command: toastr["warning"]("对不起，请输入变动的金额！", "验证提示");
+                        return false;
+                    }
+                    modalobj.modal('hide');
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebUrl('store_account',array('act'=>'changeMoney'));}",
+                        data: {
+                            id: row.id,
+                            money: money,
+                            types:money_types,
+                            note: notes
+                        },
+                        async: false,
+                        dataType: "json",
+                        success: function(data) {
+                            if (data.status == 1) {
+                                Command: toastr["success"](data.msg, "成功提示");
+                                setTimeout(function() {
+                                    location.href = location.href;
+                                },2000);
+                            } else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+
+                });
+            });
+        },
+        {/if}
+            {if $isAllowReNew}
+        'click .renew': function (e, value, row, index) {
+            myrequire([ 'arttemplate'], function (template) {
+                var html = template("rechargetpl",row);
+                var footer = '<button type="button" class="btn btn-primary" id="btn_recharge" value="正常">提交</button><button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                var modalobj = util.dialog('商家续费',html,footer,{containerName:'user-container'});
+                modalobj.modal({'keyboard': true});
+                modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                modalobj.modal('show');
+
+                //充值操作
+                $('#btn_recharge').bind('click', function () {
+                    var days = $("#days").val();
+                    if (days == "" || days == "0") {
+                        Command: toastr["warning"]("对不起，请输入要续费的天数！", "验证提示");
+                        return false;
+                    }
+                    var create_num = $("#create_num").val();
+                    if(create_num == ""){
+                        Command: toastr["warning"]("对不起，请输入要续费的活动数量！", "验证提示");
+                        return false;
+                    }
+
+                    modalobj.modal('hide');
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebUrl('store_account',array('act'=>'renew'));}",
+                        data: {
+                            id: row.id,
+                            days: days,
+                            create_num: create_num
+                        },
+                        async: false,
+                        dataType: "json",
+                        success: function(data) {
+                            if (data.status == 1) {
+                                Command: toastr["success"](data.msg, "成功提示");
+                                setTimeout(function() {
+                                    location.href = location.href;
+                                },2000);
+                            } else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+
+                });
+            });
+        },
+            {/if}
+        'click .password': function (e, value, row, index) {
+            myrequire([ 'arttemplate'], function (template) {
+                var html = template("passwordtpl",row);
+                var footer = '<button type="button" class="btn btn-primary" id="btn_password" value="正常">提交</button><button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                var modalobj = util.dialog('重置密码',html,footer,{containerName:'user-container'});
+                modalobj.modal({'keyboard': true});
+                modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                modalobj.modal('show');
+                //充值操作
+                $('#btn_password').bind('click', function () {
+                    var password = $("#password").val();
+                    if (password == "") {
+                        Command: toastr["warning"]("对不起，请输入要重置的密码！", "验证提示");
+                        return false;
+                    }
+                    modalobj.modal('hide');
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebUrl('store_account',array('act'=>'password'));}",
+                        data: {
+                            id: row.id,
+                            password: password
+                        },
+                        async: false,
+                        dataType: "json",
+                        success: function(data) {
+                            if (data.status == 1) {
+                                Command: toastr["success"](data.msg, "成功提示");
+                                setTimeout(function() {
+                                    location.href = location.href;
+                                },2000);
+                            } else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+
+                });
+            });
+        },
+        'click .remove': function (e, value, row, index) {
+            //询问框
+            layer.open({
+                content: (row.money >0 ?"用户当前余额为:<code>"+row.money+"</code>,并且关联数据也将被清除，您仍然确定要删除吗？":"关联数据也将被清除，你确定要删除吗？")
+                , btn: ['确定', '取消']
+                , yes: function (index) {
+                    $.ajax({
+                        type: "post",
+                        dataType: "json",
+                        url: "{php echo $this->createWebUrl('store_account', array('act' => 'del'));}",
+                        data: {
+                            id: row.id
+                        },
+                        success: function (data) {
+                            if (data.status == 1) {
+                                Command: toastr["success"](data.msg, "成功提示");
+                                $("#tb_bandlist").bootstrapTable('refresh');
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                    layer.close(index);
+                }
+            });
+        },
+        'click .activity': function (e, value, row, index) {
+        var editurl = "{php echo $this->createWebUrl('obj_activity');}&store_id=$";
+        window.location.href = editurl.replace('$', row.id);
+        },
+    };
+
+    function statusFormatter(value, row, index) {
+        return [
+            '<input name="status"   rowid="' + row.id + '" type="checkbox" data-size="mini" data-on-text="开启" data-off-text="关闭" ' + (row.status == 1 ? "checked" : "") + ' />'
+        ].join('');
+    }
+    function vipFormatter(value, row, index) {
+        return [
+            '<input name="vip"   rowid="' + row.id + '" type="checkbox" data-size="mini" data-on-text="VIP" data-off-text="普通" ' + (row.is_vip == 1 ? "checked" : "") + ' />'
+        ].join('');
+    }
+    function powerFormatter(value, row, index) {
+        return [
+            '<input name="power"   rowid="' + row.id + '" type="checkbox" data-size="mini" data-on-text="展示" data-off-text="隐藏" ' + (row.is_show_power == 1 ? "checked" : "") + ' />'
+        ].join('');
+    }
+    /*{if $plug_storeinvite}*/
+    function inviteFormatter(value, row, index) {
+        return [
+            '<input name="invite"   rowid="' + row.id + '" type="checkbox" data-size="mini" data-on-text="开启" data-off-text="关闭" ' + (row.is_invite == 1 ? "checked" : "") + ' />'
+        ].join('');
+    }
+    /*{/if}*/
+    /*{if $plug_home}*/
+    function homeFormatter(value, row, index) {
+        return [
+            '<input name="home"   rowid="' + row.id + '" type="checkbox" data-size="mini" data-on-text="推荐" data-off-text="关闭" ' + (row.is_home_rec == 1 ? "checked" : "") + ' />'
+        ].join('');
+    }
+    /*{/if}*/
+    
+    /*{if $plug_bigscreen}*/
+    function bigscreenFormatter(value, row, index) {
+        return [
+            '<input name="bigscreen"   rowid="' + row.id + '" type="checkbox" data-size="mini" data-on-text="开启" data-off-text="关闭" ' + (row.is_show_bigscreen == 1 ? "checked" : "") + ' />'
+        ].join('');
+    }
+    /*{/if}*/
+
+    //加载成功时执行
+    $('#tb_bandlist').on('load-success.bs.table column-switch.bs.table', function (data) {
+        $('#tb_bandlist').bootstrapTable('resetView');
+        //绑定更改状态操作
+        $(':checkbox[name="status"]').bootstrapSwitch({
+            onSwitchChange: function (event, state) {
+                var status = state ? 1 : 0;
+                var rowId = parseInt($(this).attr("rowid"));
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "{php echo $this->createWebUrl('store_account', array('act' => 'setStatus'));}",
+                    data: {
+                        "id": rowId,
+                        "status": status
+                    },
+                    success: function (jsonData, status) {
+                        if (jsonData.status == 1) {
+                            Command: toastr["success"](jsonData.msg, "成功提示");
+                        }
+                        else {
+                            Command: toastr["error"](jsonData.msg, "错误提示");
+                        }
+                    }
+                });
+            }
+        });
+        $(':checkbox[name="vip"]').bootstrapSwitch({
+            onSwitchChange: function (event, state) {
+                var status = state ? 1 : 0;
+                var rowId = parseInt($(this).attr("rowid"));
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "{php echo $this->createWebUrl('store_account', array('act' => 'setVIP'));}",
+                    data: {
+                        "id": rowId,
+                        "is_vip": status
+                    },
+                    success: function (jsonData, status) {
+                        if (jsonData.status == 1) {
+                            Command: toastr["success"](jsonData.msg, "成功提示");
+                        }
+                        else {
+                            Command: toastr["error"](jsonData.msg, "错误提示");
+                        }
+                    }
+                });
+            }
+        });
+        $(':checkbox[name="power"]').bootstrapSwitch({
+            onSwitchChange: function (event, state) {
+                var status = state ? 1 : 0;
+                var rowId = parseInt($(this).attr("rowid"));
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "{php echo $this->createWebUrl('store_account', array('act' => 'setPower'));}",
+                    data: {
+                        "id": rowId,
+                        "is_show_power": status
+                    },
+                    success: function (jsonData, status) {
+                        if (jsonData.status == 1) {
+                            Command: toastr["success"](jsonData.msg, "成功提示");
+                        }
+                        else {
+                            Command: toastr["error"](jsonData.msg, "错误提示");
+                        }
+                    }
+                });
+            }
+        });
+        /*{if $plug_storeinvite}*/
+        $(':checkbox[name="invite"]').bootstrapSwitch({
+            onSwitchChange: function (event, state) {
+                var status = state ? 1 : 0;
+                var rowId = parseInt($(this).attr("rowid"));
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "{php echo $this->createWebUrl('store_account', array('act' => 'setInvite'));}",
+                    data: {
+                        "id": rowId,
+                        "is_invite_init": status
+                    },
+                    success: function (jsonData, status) {
+                        if (jsonData.status == 1) {
+                            Command: toastr["success"](jsonData.msg, "成功提示");
+                        }
+                        else {
+                            Command: toastr["error"](jsonData.msg, "错误提示");
+                        }
+                    }
+                });
+            }
+        });
+        /* {/if} */
+        /*{if $plug_home}*/
+        $(':checkbox[name="home"]').bootstrapSwitch({
+            onSwitchChange: function (event, state) {
+                var status = state ? 1 : 0;
+                var rowId = parseInt($(this).attr("rowid"));
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "{php echo $this->createWebUrl('store_account', array('act' => 'setHomeRec'));}",
+                    data: {
+                        "id": rowId,
+                        "is_rec": status
+                    },
+                    success: function (jsonData, status) {
+                        if (jsonData.status == 1) {
+                            Command: toastr["success"](jsonData.msg, "成功提示");
+                        }
+                        else {
+                            Command: toastr["error"](jsonData.msg, "错误提示");
+                        }
+                    }
+                });
+            }
+        });
+        /* {/if} */
+        
+        /*{if $plug_bigscreen}*/
+        $(':checkbox[name="bigscreen"]').bootstrapSwitch({
+            onSwitchChange: function (event, state) {
+                var status = state ? 1 : 0;
+                var rowId = parseInt($(this).attr("rowid"));
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "{php echo $this->createWebUrl('store_account', array('act' => 'setBigscreen'));}",
+                    data: {
+                        "id": rowId,
+                        "is_bigscreen": status
+                    },
+                    success: function (jsonData, status) {
+                        if (jsonData.status == 1) {
+                            Command: toastr["success"](jsonData.msg, "成功提示");
+                        }
+                        else {
+                            Command: toastr["error"](jsonData.msg, "错误提示");
+                        }
+                    }
+                });
+            }
+        });
+        /* {/if} */
+    });
+
+    var ButtonInit = function () {
+        var oInit = new Object();
+        var postdata = {};
+
+        oInit.Init = function () {
+            $("#btn_delete").click(function () {
+                var arrselections = $("#tb_bandlist").bootstrapTable('getSelections');
+                if (arrselections.length <= 0) {
+                    Command: toastr["warning"]("请选择需要操作的数据！", "选择提示");
+                    return;
+                }
+                var ids = '';
+                for (var i = 0; i < arrselections.length; i++) {
+                    ids += arrselections[i].id + ",";
+                }
+                ids = ids.substr(0, ids.length - 1);
+
+                //询问框
+                layer.open({
+                    content: '关联数据也将被清除，你确定要删除吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        $.ajax({
+                            type: "post",
+                            dataType: "json",
+                            url: "{php echo $this->createWebUrl('store_account', array('act' => 'delList'));}",
+                            data: {"ids": ids},
+                            success: function (data, status) {
+                                if (data.status == 1) {
+                                    Command: toastr["success"](data.msg, "成功提示");
+                                    $("#tb_bandlist").bootstrapTable('refresh');
+                                }
+                                else {
+                                    Command: toastr["error"](data.msg, "错误提示");
+                                }
+                            }
+                        });
+                        layer.close(index);
+                    }
+                });
+            });
+            //查询操作
+            $("#btn_query").click(function () {
+                $("#tb_bandlist").bootstrapTable('refresh');
+            });
+            //创建操作
+            $("#btn_add").click(function () {
+                window.location.href = "{php echo $this->createWebUrl('store_account', array('act' => 'modify'));}";
+            });
+            
+            //导出操作
+            $("#btn_export").click(function(){
+                var key = $("#SearchKey").val();
+                var status = $("#SearchStatus").val();
+                var timer = $("#SearchTime").val();
+                var service_status = $("#SearchServiceStatus").val();
+                var industry_id = $("#SearchIndustry").val();
+                var rategroup_id = $("#SearchRateGroup").val();
+                
+                //询问框
+                layer.open({
+                    content: '您确定要导出记录到Excel吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        layer.close(index);
+                        window.location.href = "{php echo $this->createWebUrl('store_account', array('act' => 'exportData'));}&key="+ 
+                        key +"&service_status="+ service_status +"&status="+ status +"&timer="+ timer +"&industry_id="+industry_id;
+                    }
+                });
+            });
+        };
+        return oInit;
+    };
+
+</script>
+</body>
+</html>

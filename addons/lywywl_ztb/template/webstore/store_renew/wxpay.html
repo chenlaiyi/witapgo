@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">资金管理</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebAppUrl('store_renew');}">续费记录</a></li>
+                            <li><a href="{php echo $this->createWebAppUrl('store_renew',array('act'=>'setmeal'));}">购买套餐</a></li>
+                            <li class="active"><a href="">微信支付</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="row text-center box-body">
+                                <div class="row">
+                                    <div class="col-sm-4 col-md-1">
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-3">
+                                        <div class="color-palette-set">
+                                            <div class="callout callout-info"><span>1.购买下单</span></div>
+                                        </div>
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-3">
+                                        <div class="color-palette-set">
+                                            <div class="callout callout-warning"><span><strong>2.在线支付</strong></span></div>
+                                        </div>
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-3">
+                                        <div class="color-palette-set">
+                                            <div class="callout callout-success"><span>2.续费成功</span></div>
+                                        </div>
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-1">
+                                    </div><!-- /.col -->
+                                </div>
+                            </div>
+                            <div class="row text-center"><h4>微信扫码支付</h4></div>
+                            <div class="row text-center">
+                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <td align="center"><img src="{php echo $this->createWebAppUrl('store_renew', array('act' => 'wxpayQrPreview','codeUrl'=>$result['code_url']))}" width="260" height="260"></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center"><img src="{__WEBAPP_IMG__}/WxPayWord.png" width="260" height="86"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="row text-center">
+                                请在20分钟内完成支付，超时系统将从新生成订单编号从新发起请求。
+                            </div>
+                            <div class="row text-center">
+                                <div class="btn-group" style="margin-top: 10px;">
+                                    <button id="btn_start" type="button" class="btn btn-info" onclick="WxPaySuccess();">
+                                        <span class="fa fa-home" aria-hidden="true"></span>&nbsp;支付完成
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script>
+    $(function () {
+        SelectNav("商家账户续费");
+    });
+
+    //循环执行，每隔1秒钟执行一次
+    window.setInterval(function(){
+        GetWxPayState();
+    }, 1000);
+
+    function GetWxPayState() {
+        $.ajaxSetup({ cache: false });
+        $.ajax({
+            type: "GET",
+            url: "{php echo $this->createWebAppUrl('store_renew',array('act'=>'getWxPayState'));}",
+            data: {
+                id: "{$payinfo['id']}"
+            },
+            async: false,
+            dataType: "text",
+            success: function (data) {
+            if(data!="NOPAY")
+            {
+                location.href="{php echo $this->createWebAppUrl('store_renew',array('act'=>'success'));}&paynumber="+data;
+            }
+        }
+    });
+    }
+
+    function WxPaySuccess() {
+        $.ajaxSetup({ cache: false });
+        $.ajax({
+            type: "GET",
+            url: "{php echo $this->createWebAppUrl('store_renew',array('act'=>'wxPaySuccess'));}",
+            data: {
+                id: "{$payinfo['id']}"
+            },
+            async: false,
+            dataType: "json",
+            success: function (data) {
+            if(data.status == 1)
+            {
+                location.href="{php echo $this->createWebAppUrl('store_renew',array('act'=>'success'));}&paynumber="+data.paynumber;
+            }
+            else
+            {
+                layer.open({
+                    content: data.msg
+                    , skin: 'msg'
+                    , time: 2 //2秒后自动关闭
+                });
+            }
+        }
+    });
+    }
+</script>
+</body>
+</html>

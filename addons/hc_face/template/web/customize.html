@@ -1,0 +1,1692 @@
+{template 'common/header'}
+<link rel="stylesheet" href="../addons/hc_face/template/web/layui/css/layui.css"  media="all">
+<style>
+    .set_div{
+        display: none;
+    }
+    .help-block{
+        color: red !important;
+    }
+    .nav-border{
+        border: 1px solid #e2d5d5;
+        margin: 10px;
+        padding: 10px;
+    }
+    .input-control{
+        height:34px;
+        line-height: 34px;
+        border-radius: 0;
+        box-shadow: 0 0 0;
+        text-shadow: 0 0 0;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+    }
+    .contain{
+        margin-top: 10px;
+    }
+    #imgss{
+        width: 150px;
+    }
+</style>
+<ul class="nav nav-tabs" id="snav">
+    <li class="active"><a>底部导航</a></li>
+    <li><a>新用户首页</a></li>
+    <li><a>老用户首页</a></li>
+    <li><a>面相/手相报告</a></li>
+    <li><a>面相报告</a></li>
+    <li><a>手相报告</a></li>
+    <li><a>面相报告详情</a></li>
+    <li><a>手相报告详情</a></li>
+    <li><a>排行</a></li>
+    <li><a>查看更多</a></li>
+    <li><a>购买报告</a></li>
+    <li><a>分销</a></li>
+    <li><a>测面相</a></li>
+    <li><a>测手相</a></li>
+    <li><a>提现</a></li>
+    <li><a>收益</a></li>
+    <li><a>我的团队</a></li>
+    <li><a>解锁报告</a></li>
+    <li><a>查看报告</a></li>
+    <li><a>恢复默认</a></li>
+</ul>
+<script>
+    $('#snav li').click(function(){
+        $('#snav li').removeClass('active');
+        $(this).addClass('active');
+        $('.set_div').hide();
+        $('.set_div').eq($(this).index()).show();
+    });
+</script>
+<div class="panel-body">
+<form class="form-horizontal" id="form1" method="post" action="" enctype="multipart/form-data">
+    <div class="panel panel-default set_div" style="display: block;">
+        <div class="panel-heading">底部导航</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">中间图标：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[img_bottom_plus])}
+                        {php echo tpl_form_field_image('customize[img_bottom_plus]','../addons/hc_face/template/mobile/images/publish.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[img_bottom_plus]',$customize[img_bottom_plus])}
+                    {/if}
+                    <div class="help-block">建议尺寸：196 × 196</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">左侧文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[text_bottom_left]' value="{if empty($customize[text_bottom_left])}查看更多{else}{$customize[text_bottom_left]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">左侧图标：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[img_bottom_left])}
+                        {php echo tpl_form_field_image('customize[img_bottom_left]','../addons/hc_face/template/mobile/images/index.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[img_bottom_left]',$customize[img_bottom_left])}
+                    {/if}
+                    <div class="help-block">建议尺寸：44 × 44</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">右侧文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[text_bottom_right]' value="{if empty($customize[text_bottom_right])}购买报告{else}{$customize[text_bottom_right]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">右侧图标：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[img_bottom_right])}
+                        {php echo tpl_form_field_image('customize[img_bottom_right]','../addons/hc_face/template/mobile/images/my.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[img_bottom_right]',$customize[img_bottom_right])}
+                    {/if}
+                    <div class="help-block">建议尺寸：44 × 44</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">测面相图标：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[img_bottom_face])}
+                        {php echo tpl_form_field_image('customize[img_bottom_face]','../addons/hc_face/template/mobile/images/nav_icon1.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[img_bottom_face]',$customize[img_bottom_face])}
+                    {/if}
+                    <div class="help-block">建议尺寸：138 × 138</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">测手相图标：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[img_bottom_hand])}
+                        {php echo tpl_form_field_image('customize[img_bottom_hand]','../addons/hc_face/template/mobile/images/nav_icon2.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[img_bottom_hand]',$customize[img_bottom_hand])}
+                    {/if}
+                    <div class="help-block">建议尺寸：138 × 138</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">删除报告图标：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[img_bottom_delete])}
+                        {php echo tpl_form_field_image('customize[img_bottom_delete]','../addons/hc_face/template/mobile/images/del.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[img_bottom_delete]',$customize[img_bottom_delete])}
+                    {/if}
+                    <div class="help-block">建议尺寸：144 × 144</div>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">新用户首页</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][img_bg])}
+                        {php echo tpl_form_field_image('customize[page_index_first][img_bg]','../addons/hc_face/template/mobile/images/bg.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][img_bg]',$customize[page_index_first][img_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：750 × 1239</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[测面相]按钮选中状态背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][face][img_top_btn_face_selected])}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_top_btn_face_selected]','../addons/hc_face/template/mobile/images/tab_sel1.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_top_btn_face_selected]',$customize[page_index_first][face][img_top_btn_face_selected])}
+                    {/if}
+                    <div class="help-block">建议尺寸：259 × 77</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[测面相]按钮未选中状态背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][face][img_top_btn_face_normal])}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_top_btn_face_normal]','../addons/hc_face/template/mobile/images/tab1.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_top_btn_face_normal]',$customize[page_index_first][face][img_top_btn_face_normal])}
+                    {/if}
+                    <div class="help-block">建议尺寸：240 × 60</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[测面相]中间背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][face][img_middle_bg])}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_middle_bg]','../addons/hc_face/template/mobile/images/first.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_middle_bg]',$customize[page_index_first][face][img_middle_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：680 × 760</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[面相学]图标文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_index_first][face][text_middle_face]' value="{if empty($customize[page_index_first][face][text_middle_face])}面相学{else}{$customize[page_index_first][face][text_middle_face]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[面相学]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][face][img_middle_icon_face])}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_middle_icon_face]','../addons/hc_face/template/mobile/images/firsticon1.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_middle_icon_face]',$customize[page_index_first][face][img_middle_icon_face],'',array('extras'=>array('image'=>'style="background-color:#e4e4e4"')))}
+                    {/if}
+                    <div class="help-block">建议尺寸：125 × 126</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[人工智能]图标文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_index_first][face][text_middle_ai]' value="{if empty($customize[page_index_first][face][text_middle_ai])}人工智能{else}{$customize[page_index_first][face][text_middle_ai]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[人工智能]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][face][img_middle_icon_ai])}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_middle_icon_ai]','../addons/hc_face/template/mobile/images/firsticon2.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_middle_icon_ai]',$customize[page_index_first][face][img_middle_icon_ai],'',array('extras'=>array('image'=>'style="background-color:#e4e4e4"')))}
+                    {/if}
+                    <div class="help-block">建议尺寸：125 × 126</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[人脸定位]图标文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_index_first][face][text_middle_locate]' value="{if empty($customize[page_index_first][face][text_middle_locate])}人脸定位{else}{$customize[page_index_first][face][text_middle_locate]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[人脸定位]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][face][img_middle_icon_locate])}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_middle_icon_locate]','../addons/hc_face/template/mobile/images/firsticon3.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_middle_icon_locate]',$customize[page_index_first][face][img_middle_icon_locate],'',array('extras'=>array('image'=>'style="background-color:#e4e4e4"')))}
+                    {/if}
+                    <div class="help-block">建议尺寸：125 × 126</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[底部按钮]文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_index_first][face][text_bottom_btn]' value="{if empty($customize[page_index_first][face][text_bottom_btn])}获取面相报告{else}{$customize[page_index_first][face][text_bottom_btn]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[底部按钮]背景</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][face][img_bottom_btn_bg])}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_bottom_btn_bg]','../addons/hc_face/template/mobile/images/btn.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_bottom_btn_bg]',$customize[page_index_first][face][img_bottom_btn_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：572 × 101</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[底部按钮]小图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][face][img_bottom_btn_icon])}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_bottom_btn_icon]','../addons/hc_face/template/mobile/images/hand.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][face][img_bottom_btn_icon]',$customize[page_index_first][face][img_bottom_btn_icon],'',array('extras'=>array('image'=>'style="background-color:#e4e4e4"')))}
+                    {/if}
+                    <div class="help-block">建议尺寸：42 × 38</div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-heading">测手相</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[测手相]按钮选中状态背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][hand][img_top_btn_hand_selected])}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_top_btn_hand_selected]','../addons/hc_face/template/mobile/images/tab_sel2.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_top_btn_hand_selected]',$customize[page_index_first][hand][img_top_btn_hand_selected])}
+                    {/if}
+                    <div class="help-block">建议尺寸：259 × 77</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[测手相]按钮未选中状态背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][hand][img_top_btn_hand_normal])}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_top_btn_hand_normal]','../addons/hc_face/template/mobile/images/tab2.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_top_btn_hand_normal]',$customize[page_index_first][hand][img_top_btn_hand_normal])}
+                    {/if}
+                    <div class="help-block">建议尺寸：240 × 60</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[测手相]中间背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][hand][img_middle_bg])}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_middle_bg]','../addons/hc_face/template/mobile/images/first11.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_middle_bg]',$customize[page_index_first][hand][img_middle_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：647 × 663</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[手相学]图标文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_index_first][hand][text_middle_hand]' value="{if empty($customize[page_index_first][hand][text_middle_hand])}手相学{else}{$customize[page_index_first][hand][text_middle_hand]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[手相学]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][hand][img_middle_icon_hand])}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_middle_icon_hand]','../addons/hc_face/template/mobile/images/firsticon11.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_middle_icon_hand]',$customize[page_index_first][hand][img_middle_icon_hand],'',array('extras'=>array('image'=>'style="background-color:#e4e4e4"')))}
+                    {/if}
+                    <div class="help-block">建议尺寸：84 × 73</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[人工智能]图标文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_index_first][hand][text_middle_ai]' value="{if empty($customize[page_index_first][hand][text_middle_ai])}人工智能{else}{$customize[page_index_first][hand][text_middle_ai]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[人工智能]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][hand][img_middle_icon_ai])}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_middle_icon_ai]','../addons/hc_face/template/mobile/images/firsticon12.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_middle_icon_ai]',$customize[page_index_first][hand][img_middle_icon_ai],'',array('extras'=>array('image'=>'style="background-color:#e4e4e4"')))}
+                    {/if}
+
+                    <div class="help-block">建议尺寸：84 × 73</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[手定位]图标文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_index_first][hand][text_middle_locate]' value="{if empty($customize[page_index_first][hand][text_middle_locate])}手定位{else}{$customize[page_index_first][hand][text_middle_locate]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[手定位]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][hand][img_middle_icon_locate])}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_middle_icon_locate]','../addons/hc_face/template/mobile/images/firsticon13.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_middle_icon_locate]',$customize[page_index_first][hand][img_middle_icon_locate],'',array('extras'=>array('image'=>'style="background-color:#e4e4e4"')))}
+                    {/if}
+                    <div class="help-block">建议尺寸：84 × 73</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[底部按钮]文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_index_first][hand][text_bottom_btn]' value="{if empty($customize[page_index_first][hand][text_bottom_btn])}获取手相报告{else}{$customize[page_index_first][hand][text_bottom_btn]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[底部按钮]背景</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][hand][img_bottom_btn_bg])}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_bottom_btn_bg]','../addons/hc_face/template/mobile/images/btn13.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_bottom_btn_bg]',$customize[page_index_first][hand][img_bottom_btn_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：549 × 106</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[底部按钮]小图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_first][hand][img_bottom_btn_icon])}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_bottom_btn_icon]','../addons/hc_face/template/mobile/images/hand.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_first][hand][img_bottom_btn_icon]',$customize[page_index_first][hand][img_bottom_btn_icon],'',array('extras'=>array('image'=>'style="background-color:#e4e4e4"')))}
+                    {/if}
+                    <div class="help-block">建议尺寸：42 × 38</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">老用户首页</div>
+        <div class="panel-body">
+            <!-- <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[面相/手相报告]文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_index_old][text_middle_report_title]' value="{$customize[page_index_old][text_middle_report_title]}">
+                </div>
+            </div> -->
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[面相/手相报告]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_old][img_middle_report])}
+                        {php echo tpl_form_field_image('customize[page_index_old][img_middle_report]','../addons/hc_face/template/mobile/images/icon1.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_old][img_middle_report]',$customize[page_index_old][img_middle_report],'',array('extras'=>array('image'=>'style="background-color:#e4e4e4"')))}
+                    {/if}
+                    <div class="help-block">建议尺寸：137 × 88</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[面相/手相报告]背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_old][img_middle_report_bg])}
+                        {php echo tpl_form_field_image('customize[page_index_old][img_middle_report_bg]','../addons/hc_face/template/mobile/images/nav.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_old][img_middle_report_bg]',$customize[page_index_old][img_middle_report_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：622 × 129</div>
+                </div>
+            </div>
+            <!-- <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[面相/手相排行]文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_index_old][text_middle_sort_title]' value="{$customize[page_index_old][text_middle_sort_title]}">
+                </div>
+            </div> -->
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[面相/手相排行]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_old][img_middle_sort])}
+                        {php echo tpl_form_field_image('customize[page_index_old][img_middle_sort]','../addons/hc_face/template/mobile/images/icon2.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_old][img_middle_sort]',$customize[page_index_old][img_middle_sort],'',array('extras'=>array('image'=>'style="background-color:#e4e4e4"')))}
+                    {/if}
+                    <div class="help-block">建议尺寸：137 × 88</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[面相/手相排行]背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_old][img_middle_sort_bg])}
+                        {php echo tpl_form_field_image('customize[page_index_old][img_middle_sort_bg]','../addons/hc_face/template/mobile/images/nav.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_old][img_middle_sort_bg]',$customize[page_index_old][img_middle_sort_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：622 × 129</div>
+                </div>
+            </div>
+            <!-- <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[分享]文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_index_old][text_middle_share_title]' value="{$customize[page_index_old][text_middle_share_title]}">
+                </div>
+            </div> -->
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[分享]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_old][img_middle_share])}
+                        {php echo tpl_form_field_image('customize[page_index_old][img_middle_share]','../addons/hc_face/template/mobile/images/icon3.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_old][img_middle_share]',$customize[page_index_old][img_middle_share],'',array('extras'=>array('image'=>'style="background-color:#e4e4e4"')))}
+                    {/if}
+                    <div class="help-block">建议尺寸：137 × 88</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[分享]背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_index_old][img_middle_share_bg])}
+                        {php echo tpl_form_field_image('customize[page_index_old][img_middle_share_bg]','../addons/hc_face/template/mobile/images/nav.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_index_old][img_middle_share_bg]',$customize[page_index_old][img_middle_share_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：622 × 129</div>
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">面相/手相报告页面</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">顶部背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_report][img_top_bg])}
+                        {php echo tpl_form_field_image('customize[page_report][img_top_bg]','../addons/hc_face/template/mobile/images/myBg.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_report][img_top_bg]',$customize[page_report][img_top_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：750 × 436</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">我的面相报告</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">顶部背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_report_face][img_top_bg])}
+                        {php echo tpl_form_field_image('customize[page_report_face][img_top_bg]','../addons/hc_face/template/mobile/images/myBg.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_report_face][img_top_bg]',$customize[page_report_face][img_top_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：750 × 436</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">我的手相报告</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">顶部背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_report_hand][img_top_bg])}
+                        {php echo tpl_form_field_image('customize[page_report_hand][img_top_bg]','../addons/hc_face/template/mobile/images/myBg.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_report_hand][img_top_bg]',$customize[page_report_hand][img_top_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：750 × 436</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">面相报告详情页</div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">背景图片：</label>
+            <div class="col-sm-9">
+                {if empty($customize[page_report_face_detail][img_bg])}
+                    {php echo tpl_form_field_image('customize[page_report_face_detail][img_bg]','../addons/hc_face/template/mobile/images/bg.png')}
+                {else}
+                    {php echo tpl_form_field_image('customize[page_report_face_detail][img_bg]',$customize[page_report_face_detail][img_bg])}
+                {/if}
+                <div class="help-block">建议尺寸：750 × 1239</div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">顶部标题背景图片：</label>
+            <div class="col-sm-9">
+                {if empty($customize[page_report_face_detail][img_title_bg])}
+                    {php echo tpl_form_field_image('customize[page_report_face_detail][img_title_bg]','../addons/hc_face/template/mobile/images/title.png')}
+                {else}
+                    {php echo tpl_form_field_image('customize[page_report_face_detail][img_title_bg]',$customize[page_report_face_detail][img_title_bg])}
+                {/if}
+                <div class="help-block">建议尺寸：659 × 81</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[概述、评分、解析]标题背景图片：</label>
+            <div class="col-sm-9">
+                {if empty($customize[page_report_face_detail][img_content_title_bg])}
+                    {php echo tpl_form_field_image('customize[page_report_face_detail][img_content_title_bg]','../addons/hc_face/template/mobile/images/content_title.png')}
+                {else}
+                    {php echo tpl_form_field_image('customize[page_report_face_detail][img_content_title_bg]',$customize[page_report_face_detail][img_content_title_bg])}
+                {/if}
+                <div class="help-block">建议尺寸：306 × 81</div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[概述、评分、解析]内容背景色：</label>
+            <div class="col-sm-9">
+                <input type='color' name="customize[page_report_face_detail][color_content_bg]" value="{if empty($customize[page_report_face_detail][color_content_bg])}#2B057C{else}{$customize[page_report_face_detail][color_content_bg]}{/if}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[保存我的海报]文字：</label>
+            <div class="col-sm-9">
+                <input class='form-control' name='customize[page_report_face_detail][text_btn_save]' value="{if empty($customize[page_report_face_detail][text_btn_save])}保存我的面相海报{else}{$customize[page_report_face_detail][text_btn_save]}{/if}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[保存我的海报]背景图片</label>
+            <div class="col-sm-9">
+                {if empty($customize[page_report_face_detail][img_btn_save])}
+                    {php echo tpl_form_field_image('customize[page_report_face_detail][img_btn_save]','../addons/hc_face/template/mobile/images/btn1.png')}
+                {else}
+                    {php echo tpl_form_field_image('customize[page_report_face_detail][img_btn_save]',$customize[page_report_face_detail][img_btn_save])}
+                {/if}
+                <div class="help-block">建议尺寸：572 × 101</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[返回我的首页]文字：</label>
+            <div class="col-sm-9">
+                <input class='form-control' name='customize[page_report_face_detail][text_btn_backtoindex]' value="{if empty($customize[page_report_face_detail][text_btn_backtoindex])}返回我的面相首页{else}{$customize[page_report_face_detail][text_btn_backtoindex]}{/if}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[返回我的首页]背景图片</label>
+            <div class="col-sm-9">
+                {if empty($customize[page_report_face_detail][img_btn_backtoindex])}
+                    {php echo tpl_form_field_image('customize[page_report_face_detail][img_btn_backtoindex]','../addons/hc_face/template/mobile/images/btn2.png')}
+                {else}
+                    {php echo tpl_form_field_image('customize[page_report_face_detail][img_btn_backtoindex]',$customize[page_report_face_detail][img_btn_backtoindex])}
+                {/if}
+                <div class="help-block">建议尺寸：572 × 101</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[事业报告]背景图片</label>
+            <div class="col-sm-9">
+                {if empty($customize[page_report_face_detail][img_report_cause])}
+                    {php echo tpl_form_field_image('customize[page_report_face_detail][img_report_cause]','../addons/hc_face/template/mobile/images/buy_icon2.png')}
+                {else}
+                    {php echo tpl_form_field_image('customize[page_report_face_detail][img_report_cause]',$customize[page_report_face_detail][img_report_cause])}
+                {/if}
+                <div class="help-block">建议尺寸：676 × 240</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[情感报告]背景图片</label>
+            <div class="col-sm-9">
+                {if empty($customize[page_report_face_detail][img_report_love])}
+                    {php echo tpl_form_field_image('customize[page_report_face_detail][img_report_love]','../addons/hc_face/template/mobile/images/buy_icon3.png')}
+                {else}
+                    {php echo tpl_form_field_image('customize[page_report_face_detail][img_report_love]',$customize[page_report_face_detail][img_report_love])}
+                {/if}
+                <div class="help-block">建议尺寸：676 × 240</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">指向头像的线条颜色：</label>
+            <div class="col-sm-9">
+                <input type='color' name="customize[page_report_face_detail][color_line_avatar]" value="{if empty($customize[page_report_face_detail][color_line_avatar])}#401C95{else}{$customize[page_report_face_detail][color_line_avatar]}{/if}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[得分柱条]背景色：</label>
+            <div class="col-sm-9">
+                <input type='color' name="customize[page_report_face_detail][color_score_bg]" value="{if empty($customize[page_report_face_detail][color_score_bg])}#000215{else}{$customize[page_report_face_detail][color_score_bg]}{/if}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[得分柱条]前景色：</label>
+            <div class="col-sm-9">
+                <input type='color' name="customize[page_report_face_detail][color_score_fg]" value="{if empty($customize[page_report_face_detail][color_score_fg])}#5E24EE{else}{$customize[page_report_face_detail][color_score_fg]}{/if}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[眼相解析]简述背景色：</label>
+            <div class="col-sm-9">
+                <input type='color' name="customize[page_report_face_detail][color_eye_desc_bg]" value="{if empty($customize[page_report_face_detail][color_eye_desc_bg])}#7241EB{else}{$customize[page_report_face_detail][color_eye_desc_bg]}{/if}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[嘴相解析]简述背景色：</label>
+            <div class="col-sm-9">
+                <input type='color' name="customize[page_report_face_detail][color_mouth_desc_bg]" value="{if empty($customize[page_report_face_detail][color_mouth_desc_bg])}#7241EB{else}{$customize[page_report_face_detail][color_mouth_desc_bg]}{/if}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[鼻相解析]简述背景色：</label>
+            <div class="col-sm-9">
+                <input type='color' name="customize[page_report_face_detail][color_nose_desc_bg]" value="{if empty($customize[page_report_face_detail][color_nose_desc_bg])}#7241EB{else}{$customize[page_report_face_detail][color_nose_desc_bg]}{/if}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[解锁鼻相]按钮背景色：</label>
+            <div class="col-sm-9">
+                <input type='color' name="customize[page_report_face_detail][color_unlock_nose_bg]" value="{if empty($customize[page_report_face_detail][color_unlock_nose_bg])}#7432FF{else}{$customize[page_report_face_detail][color_unlock_nose_bg]}{/if}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[五行属性]背景色：</label>
+            <div class="col-sm-9">
+                <input type='color' name="customize[page_report_face_detail][color_destiny_property_bg]" value="{if empty($customize[page_report_face_detail][color_destiny_property_bg])}#3F1D94{else}{$customize[page_report_face_detail][color_destiny_property_bg]}{/if}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[运程报告]标题颜色：</label>
+            <div class="col-sm-9">
+                <input type='color' name="customize[page_report_face_detail][color_destiny_report_title]" value="{if empty($customize[page_report_face_detail][color_destiny_report_title])}#3E1C8F{else}{$customize[page_report_face_detail][color_destiny_report_title]}{/if}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 col-md-2 control-label">[解锁报告]按钮背景色：</label>
+            <div class="col-sm-9">
+                <input type='color' name="customize[page_report_face_detail][color_unlock_report_bg]" value="{if empty($customize[page_report_face_detail][color_unlock_report_bg])}#8C00BD{else}{$customize[page_report_face_detail][color_unlock_report_bg]}{/if}">
+            </div>
+        </div>
+        
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">手相报告详情页</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_report_hand_detail][img_bg])}
+                        {php echo tpl_form_field_image('customize[page_report_hand_detail][img_bg]','../addons/hc_face/template/mobile/images/bg.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_report_hand_detail][img_bg]',$customize[page_report_hand_detail][img_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：750 × 1239</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">手相背景转圈的图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_report_hand_detail][img_hand_rotate])}
+                        {php echo tpl_form_field_image('customize[page_report_hand_detail][img_hand_rotate]','../addons/hc_face/template/mobile/images/hand_roate1.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_report_hand_detail][img_hand_rotate]',$customize[page_report_hand_detail][img_hand_rotate])}
+                    {/if}
+                    <div class="help-block">建议尺寸：418 × 425</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">顶部标题背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_report_hand_detail][img_title_bg])}
+                        {php echo tpl_form_field_image('customize[page_report_hand_detail][img_title_bg]','../addons/hc_face/template/mobile/images/title1.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_report_hand_detail][img_title_bg]',$customize[page_report_hand_detail][img_title_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：659 × 81</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[分析]标题背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_report_hand_detail][img_content_title_bg])}
+                        {php echo tpl_form_field_image('customize[page_report_hand_detail][img_content_title_bg]','../addons/hc_face/template/mobile/images/content_title1.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_report_hand_detail][img_content_title_bg]',$customize[page_report_hand_detail][img_content_title_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：331 × 81</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[分析]内容背景色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_report_hand_detail][color_content_bg]" value="{if empty($customize[page_report_hand_detail][color_content_bg])}#011053{else}{$customize[page_report_hand_detail][color_content_bg]}{/if}">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[1元解锁]背景图片</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_report_hand_detail][img_btn_unlock])}
+                        {php echo tpl_form_field_image('customize[page_report_hand_detail][img_btn_unlock]','../addons/hc_face/template/mobile/images/unLockbtn.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_report_hand_detail][img_btn_unlock]',$customize[page_report_hand_detail][img_btn_unlock])}
+                    {/if}
+                    <div class="help-block">建议尺寸：466 × 89</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[返回我的首页]文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_report_hand_detail][text_btn_backtoindex]' value="{if empty($customize[page_report_hand_detail][text_btn_backtoindex])}返回我的手相首页{else}{$customize[page_report_hand_detail][text_btn_backtoindex]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[返回我的首页]背景图片</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_report_hand_detail][img_btn_backtoindex])}
+                        {php echo tpl_form_field_image('customize[page_report_hand_detail][img_btn_backtoindex]','../addons/hc_face/template/mobile/images/hand_btn12.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_report_hand_detail][img_btn_backtoindex]',$customize[page_report_hand_detail][img_btn_backtoindex])}
+                    {/if}
+                    <div class="help-block">建议尺寸：549 × 106</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">评分字体颜色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_report_hand_detail][color_score_word]" value="{if empty($customize[page_report_hand_detail][color_score_word])}#5E24EE{else}{$customize[page_report_hand_detail][color_score_word]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[得分柱条]背景色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_report_hand_detail][color_score_bg]" value="{if empty($customize[page_report_hand_detail][color_score_bg])}#5E24EE{else}{$customize[page_report_hand_detail][color_score_bg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[得分柱条]前景色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_report_hand_detail][color_score_fg]" value="{if empty($customize[page_report_hand_detail][color_score_fg])}#5E24EE{else}{$customize[page_report_hand_detail][color_score_fg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[掌纹分析]小标题颜色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_report_hand_detail][color_analysis_hand_title]" value="{if empty($customize[page_report_hand_detail][color_analysis_hand_title])}#004FE6{else}{$customize[page_report_hand_detail][color_analysis_hand_title]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[掌纹分析]分割线颜色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_report_hand_detail][color_analysis_hand_line]" value="{if empty($customize[page_report_hand_detail][color_analysis_hand_line])}#002788{else}{$customize[page_report_hand_detail][color_analysis_hand_line]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[指相分析]小标题颜色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_report_hand_detail][color_analysis_finger_title]" value="{if empty($customize[page_report_hand_detail][color_analysis_finger_title])}#004FE6{else}{$customize[page_report_hand_detail][color_analysis_finger_title]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[指相分析]分割线颜色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_report_hand_detail][color_analysis_finger_line]" value="{if empty($customize[page_report_hand_detail][color_analysis_finger_line])}#002788{else}{$customize[page_report_hand_detail][color_analysis_finger_line]}{/if}">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">排行</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">顶部大背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_sort][img_top_bg])}
+                        {php echo tpl_form_field_image('customize[page_sort][img_top_bg]','../addons/hc_face/template/mobile/images/myBg.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_sort][img_top_bg]',$customize[page_sort][img_top_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：750 × 436</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">顶部小背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_sort][img_top_title_bg])}
+                        {php echo tpl_form_field_image('customize[page_sort][img_top_title_bg]','../addons/hc_face/template/mobile/images/rank_bg.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_sort][img_top_title_bg]',$customize[page_sort][img_top_title_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：658 × 431</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">查看更多</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">顶部背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_more][img_top_bg])}
+                        {php echo tpl_form_field_image('customize[page_more][img_top_bg]','../addons/hc_face/template/mobile/images/myBg.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_more][img_top_bg]',$customize[page_more][img_top_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：750 × 436</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[推广渠道招募]文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_more][text_more]' value="{if empty($customize[page_more][text_more])}推广渠道招募{else}{$customize[page_more][text_more]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[推广渠道招募]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_more][img_more])}
+                        {php echo tpl_form_field_image('customize[page_more][img_more]','../addons/hc_face/template/mobile/images/more_icon2.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_more][img_more]',$customize[page_more][img_more])}
+                    {/if}
+                    <div class="help-block">建议尺寸：40 × 40</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[联系客服]文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_more][text_contact]' value="{if empty($customize[page_more][text_contact])}联系客服{else}{$customize[page_more][text_contact]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[联系客服]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_more][img_contact])}
+                        {php echo tpl_form_field_image('customize[page_more][img_contact]','../addons/hc_face/template/mobile/images/more_icon4.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_more][img_contact]',$customize[page_more][img_contact])}
+                    {/if}
+                    <div class="help-block">建议尺寸：40 × 40</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[隐私协议]文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_more][text_protocol]' value="{if empty($customize[page_more][text_protocol])}隐私协议{else}{$customize[page_more][text_protocol]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[隐私协议]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_more][img_protocol])}
+                        {php echo tpl_form_field_image('customize[page_more][img_protocol]','../addons/hc_face/template/mobile/images/more_icon6.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_more][img_protocol]',$customize[page_more][img_protocol])}
+                    {/if}
+                    <div class="help-block">建议尺寸：40 × 40</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[投诉]文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_more][text_complain]' value="{if empty($customize[page_more][text_complain])}投诉{else}{$customize[page_more][text_complain]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[投诉]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_more][img_complain])}
+                        {php echo tpl_form_field_image('customize[page_more][img_complain]','../addons/hc_face/template/mobile/images/complain.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_more][img_complain]',$customize[page_more][img_complain])}
+                    {/if}
+                    <div class="help-block">建议尺寸：40 × 40</div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">购买报告</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">顶部背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_buy][img_top_bg])}
+                        {php echo tpl_form_field_image('customize[page_buy][img_top_bg]','../addons/hc_face/template/mobile/images/myBg.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_buy][img_top_bg]',$customize[page_buy][img_top_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：750 × 436</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[顶部滑块]选中状态背景色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_buy][color_slider_bg_selected]" value="{if empty($customize[page_buy][color_slider_bg_selected])}#3D1A90{else}{$customize[page_buy][color_slider_bg_selected]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[顶部滑块]选中状态文字颜色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_buy][color_slider_word_selected]" value="{if empty($customize[page_buy][color_slider_word_selected])}#FFFFFF{else}{$customize[page_buy][color_slider_word_selected]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[顶部滑块]普通状态背景色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_buy][color_slider_bg_normal]" value="{if empty($customize[page_buy][color_slider_bg_normal])}#FFFFFF{else}{$customize[page_buy][color_slider_bg_normal]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[顶部滑块]普通状态文字颜色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_buy][color_slider_word_normal]" value="{if empty($customize[page_buy][color_slider_word_normal])}#3D1A90{else}{$customize[page_buy][color_slider_word_normal]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[面相报告]标题文字颜色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_buy][color_face_title_color]" value="{if empty($customize[page_buy][color_face_title_color])}#3E1C8F{else}{$customize[page_buy][color_face_title_color]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[面相报告]解锁报告按钮背景色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_buy][color_face_unlock_btn_bg]" value="{if empty($customize[page_buy][color_face_unlock_btn_bg])}#8C00BD{else}{$customize[page_buy][color_face_unlock_btn_bg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[手相报告]标题文字颜色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_buy][color_hand_title_color]" value="{if empty($customize[page_buy][color_hand_title_color])}#1C00F7{else}{$customize[page_buy][color_hand_title_color]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[手相报告]解锁报告按钮背景色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_buy][color_hand_unlock_btn_bg]" value="{if empty($customize[page_buy][color_hand_unlock_btn_bg])}#1C00F7{else}{$customize[page_buy][color_hand_unlock_btn_bg]}{/if}">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">分销</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">顶部背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_distribution][img_top_bg])}
+                        {php echo tpl_form_field_image('customize[page_distribution][img_top_bg]','../addons/hc_face/template/mobile/images/myBg.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_distribution][img_top_bg]',$customize[page_distribution][img_top_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：750 × 436</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">是否显示[升级代理和升级合伙人]：</label>
+                <div class="col-sm-6" style="line-height: 34px;">
+                    <input type="radio" name="customize[page_distribution][is_show_agent]" {if empty($customize[page_distribution][is_show_agent])}checked="checked"{/if} value="0">开启
+                    <input type="radio" name="customize[page_distribution][is_show_agent]" {if $customize[page_distribution][is_show_agent]==1}checked="checked"{/if} value="1">关闭
+                    <span class="help-block">默认开启，可以自行关闭。</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[升级代理]文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_distribution][text_agent]' value="{if empty($customize[page_distribution][text_agent])}升级代理{else}{$customize[page_distribution][text_agent]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[升级代理]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_distribution][img_agent])}
+                        {php echo tpl_form_field_image('customize[page_distribution][img_agent]','../addons/hc_face/template/mobile/images/fuck_1.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_distribution][img_agent]',$customize[page_distribution][img_agent])}
+                    {/if}
+                    <div class="help-block">建议尺寸：340 × 200</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[升级合伙人]文字：</label>
+                <div class="col-sm-9">
+                    <input class='form-control' name='customize[page_distribution][text_patner]' value="{if empty($customize[page_distribution][text_patner])}升级合伙人{else}{$customize[page_distribution][text_patner]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[升级合伙人]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_distribution][img_patner])}
+                        {php echo tpl_form_field_image('customize[page_distribution][img_patner]','../addons/hc_face/template/mobile/images/fuck_2.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_distribution][img_patner]',$customize[page_distribution][img_patner])}
+                    {/if}
+                    <div class="help-block">建议尺寸：340 × 200</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[回主页]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_distribution][img_backtoindex])}
+                        {php echo tpl_form_field_image('customize[page_distribution][img_backtoindex]','../addons/hc_face/template/mobile/images/home.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_distribution][img_backtoindex]',$customize[page_distribution][img_backtoindex])}
+                    {/if}
+                    <div class="help-block">建议尺寸：87 × 87</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[底部广告]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_distribution][img_bottom_ad])}
+                        {php echo tpl_form_field_image('customize[page_distribution][img_bottom_ad]','../addons/hc_face/template/mobile/images/fuck_3.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_distribution][img_bottom_ad]',$customize[page_distribution][img_bottom_ad])}
+                    {/if}
+                    <div class="help-block">建议尺寸：679 × 150</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[立即提现]背景色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_distribution][color_cash_now_bg]" value="{if empty($customize[page_distribution][color_cash_now_bg])}#3D1A90{else}{$customize[page_distribution][color_cash_now_bg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[立即提现]文字色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_distribution][color_cash_now_word]" value="{if empty($customize[page_distribution][color_cash_now_word])}#FFFFFF{else}{$customize[page_distribution][color_cash_now_word]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">收益金额字体色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_distribution][color_money_word]" value="{if empty($customize[page_distribution][color_money_word])}#402093{else}{$customize[page_distribution][color_money_word]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[[立即升级]背景色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_distribution][color_upgrade_now_bg]" value="{if empty($customize[page_distribution][color_upgrade_now_bg])}#FFFFFF{else}{$customize[page_distribution][color_upgrade_now_bg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[立即升级]文字色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_distribution][color_upgrade_now_word]" value="{if empty($customize[page_distribution][color_upgrade_now_word])}#0034A6{else}{$customize[page_distribution][color_upgrade_now_word]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">转发给好友背景色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_distribution][color_share_friend_bg]" value="{if empty($customize[page_distribution][color_share_friend_bg])}#3D1A90{else}{$customize[page_distribution][color_share_friend_bg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">转发给好友文字色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_distribution][color_share_friend_word]" value="{if empty($customize[page_distribution][color_share_friend_word])}#FFFFFF{else}{$customize[page_distribution][color_share_friend_word]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">转发给好友边框色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_distribution][color_share_friend_border]" value="{if empty($customize[page_distribution][color_share_friend_border])}#3D1A90{else}{$customize[page_distribution][color_share_friend_border]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[生成推广图片]背景色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_distribution][color_gen_img_bg]" value="{if empty($customize[page_distribution][color_gen_img_bg])}#FFFFFF{else}{$customize[page_distribution][color_gen_img_bg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[生成推广图片]文字色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_distribution][color_gen_img_word]" value="{if empty($customize[page_distribution][color_gen_img_word])}#3D1A90{else}{$customize[page_distribution][color_gen_img_word]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[生成推广图片]边框色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_distribution][color_gen_img_border]" value="{if empty($customize[page_distribution][color_gen_img_border])}#3D1A90{else}{$customize[page_distribution][color_gen_img_border]}{/if}">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">测面相</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_face_upload][img_bg])}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_bg]','../addons/hc_face/template/mobile/images/upload_bg.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_bg]',$customize[page_face_upload][img_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：750 × 1240</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">默认头像</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_face_upload][img_default])}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_default]','../addons/hc_face/template/mobile/images/photo.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_default]',$customize[page_face_upload][img_default])}
+                    {/if}
+                    <div class="help-block">建议尺寸：400 × 400</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">拍照按钮背景图片</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_face_upload][img_btn_upload])}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_btn_upload]','../addons/hc_face/template/mobile/images/btn.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_btn_upload]',$customize[page_face_upload][img_btn_upload])}
+                    {/if}
+                    <div class="help-block">建议尺寸：570 × 100</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">拍照按钮图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_face_upload][img_btn_upload_icon])}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_btn_upload_icon]','../addons/hc_face/template/mobile/images/camera.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_btn_upload_icon]',$customize[page_face_upload][img_btn_upload_icon])}
+                    {/if}
+                    <div class="help-block">建议尺寸：40 × 30</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">未提交之前的中部背景图片</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_face_upload][img_middle_info])}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_middle_info]','../addons/hc_face/template/mobile/images/result.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_middle_info]',$customize[page_face_upload][img_middle_info])}
+                    {/if}
+                    <div class="help-block">建议尺寸：656 × 377</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[解码中]背景图片</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_face_upload][img_scan])}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_scan]','../addons/hc_face/template/mobile/images/scan.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_scan]',$customize[page_face_upload][img_scan])}
+                    {/if}
+                    <div class="help-block">建议尺寸：680 × 911</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[面相要求]文字颜色</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_face_upload][color_desc_content]" value="{if empty($customize[page_face_upload][color_desc_content])}#FFFFFF{else}{$customize[page_face_upload][color_desc_content]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[面相要求]文字背景色</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_face_upload][color_desc_bg]" value="{if empty($customize[page_face_upload][color_desc_bg])}#25165C{else}{$customize[page_face_upload][color_desc_bg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[面相检测信息]背景色</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_face_upload][color_verify_bg]" value="{if empty($customize[page_face_upload][color_verify_bg])}#5D2AC8{else}{$customize[page_face_upload][color_verify_bg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[面相检测信息]成功图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_face_upload][img_verify_prepared])}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_verify_prepared]','../addons/hc_face/template/mobile/images/confirm.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_verify_prepared]',$customize[page_face_upload][img_verify_prepared])}
+                    {/if}
+                    <div class="help-block">建议尺寸：33 × 33</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[报告生成成功]图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_face_upload][img_upload_success])}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_upload_success]','../addons/hc_face/template/mobile/images/report_icon.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_face_upload][img_upload_success]',$customize[page_face_upload][img_upload_success])}
+                    {/if}
+                    <div class="help-block">建议尺寸：87 × 88</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">测手相</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">背景图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_hand_upload][img_bg])}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_bg]','../addons/hc_face/template/mobile/images/upload_bg.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_bg]',$customize[page_hand_upload][img_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：750 × 1205</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">默认图像</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_hand_upload][img_default])}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_default]','../addons/hc_face/template/mobile/images/hand_pic.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_default]',$customize[page_hand_upload][img_default])}
+                    {/if}
+                    <div class="help-block">建议尺寸：396 × 396</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">手相背景转圈的图片：</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_hand_upload][img_hand_rotate])}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_hand_rotate]','../addons/hc_face/template/mobile/images/hand_roate1.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_hand_rotate]',$customize[page_hand_upload][img_hand_rotate])}
+                    {/if}
+                    <div class="help-block">建议尺寸：418 × 425</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">拍照按钮背景图片</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_hand_upload][img_btn_upload])}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_btn_upload]','../addons/hc_face/template/mobile/images/btn13.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_btn_upload]',$customize[page_hand_upload][img_btn_upload])}
+                    {/if}
+                    <div class="help-block">建议尺寸：549 × 106</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">拍照按钮图标</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_hand_upload][img_btn_upload_icon])}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_btn_upload_icon]','../addons/hc_face/template/mobile/images/camera.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_btn_upload_icon]',$customize[page_hand_upload][img_btn_upload_icon])}
+                    {/if}
+                    <div class="help-block">建议尺寸：40 × 30</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[解码中]背景图片</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_hand_upload][img_scan])}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_scan]','../addons/hc_face/template/mobile/images/hand_bg.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_scan]',$customize[page_hand_upload][img_scan])}
+                    {/if}
+
+                    <div class="help-block">建议尺寸：650 × 388</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[手相要求]文字颜色</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_hand_upload][color_desc_content]" value="{if empty($customize[page_hand_upload][color_desc_content])}#FFFFFF{else}{$customize[page_hand_upload][color_desc_content]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[手相要求]文字背景色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_hand_upload][color_desc_bg]" value="{if empty($customize[page_hand_upload][color_desc_bg])}#0c39a1{else}{$customize[page_hand_upload][color_desc_bg]}{/if}">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[手相检测信息]进度条颜色</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_hand_upload][color_progress_bg]" value="{if empty($customize[page_hand_upload][color_progress_bg])}#004DE4{else}{$customize[page_hand_upload][color_progress_bg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[手相检测信息]成功图标</label>
+                <div class="col-sm-9">
+
+                    {if empty($customize[page_hand_upload][img_verify_prepared])}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_verify_prepared]','../addons/hc_face/template/mobile/images/confirm.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_verify_prepared]',$customize[page_hand_upload][img_verify_prepared])}
+                    {/if}
+                    <div class="help-block">建议尺寸：33 × 33</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[报告生成成功]图标</label>
+                <div class="col-sm-9">
+
+                    {if empty($customize[page_hand_upload][img_upload_success])}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_upload_success]','../addons/hc_face/template/mobile/images/report_icon1.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_hand_upload][img_upload_success]',$customize[page_hand_upload][img_upload_success])}
+                    {/if}
+                    <div class="help-block">建议尺寸：72 × 72</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">提现</div>
+        <div class="panel-body">
+            
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">标题颜色</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_withdraw][color_title]" value="{if empty($customize[page_withdraw][color_title])}#3C1B8F{else}{$customize[page_withdraw][color_title]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">金额颜色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_withdraw][color_money]" value="{if empty($customize[page_withdraw][color_money])}#3C1B8F{else}{$customize[page_withdraw][color_money]}{/if}">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[立即提现]背景色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_withdraw][color_cash_now_bg]" value="{if empty($customize[page_withdraw][color_cash_now_bg])}#4E2E99{else}{$customize[page_withdraw][color_cash_now_bg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[立即提现]文字色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_withdraw][color_cash_now_word]" value="{if empty($customize[page_withdraw][color_cash_now_word])}#FFFFFF{else}{$customize[page_withdraw][color_cash_now_word]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[立即提现]边框色：</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_withdraw][color_cash_now_border]" value="{if empty($customize[page_withdraw][color_cash_now_border])}#4E2E99{else}{$customize[page_withdraw][color_cash_now_border]}{/if}">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">收益</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">顶部图片</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_profite][img_top])}
+                        {php echo tpl_form_field_image('customize[page_profite][img_top]','../addons/hc_face/template/mobile/images/cash.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_profite][img_top]',$customize[page_profite][img_top])}
+                    {/if}
+                    <div class="help-block">建议尺寸：72 × 56</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">标题颜色</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_profite][color_title]" value="{if empty($customize[page_profite][color_title])}#3C1A8F{else}{$customize[page_profite][color_title]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">金额颜色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_profite][color_money]" value="{if empty($customize[page_profite][color_money])}#3C1A8F{else}{$customize[page_profite][color_money]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[选项卡]背景色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_profite][color_tab_bg]" value="{if empty($customize[page_profite][color_tab_bg])}#4E2E99{else}{$customize[page_profite][color_tab_bg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[选项卡]文字颜色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_profite][color_tab_word]" value="{if empty($customize[page_profite][color_tab_word])}#FFFFFF{else}{$customize[page_profite][color_tab_word]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[选项卡]中间竖线颜色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_profite][color_tab_divider]" value="{if empty($customize[page_profite][color_tab_divider])}#FFFFFF{else}{$customize[page_profite][color_tab_divider]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[选项卡]选中状态的底部横线颜色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_profite][color_tab_selected_baseline]" value="{if empty($customize[page_profite][color_tab_selected_baseline])}#FFFFFF{else}{$customize[page_profite][color_tab_selected_baseline]}{/if}">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">我的团队</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">顶部图片</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_group][img_top])}
+                        {php echo tpl_form_field_image('customize[page_group][img_top]','../addons/hc_face/template/mobile/images/group.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_group][img_top]',$customize[page_group][img_top])}
+                    {/if}
+                    <div class="help-block">建议尺寸：72 × 56</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">标题颜色</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_group][color_title]" value="{if empty($customize[page_group][color_title])}#3C1A8F{else}{$customize[page_group][color_title]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">金额颜色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_group][color_money]" value="{if empty($customize[page_group][color_money])}#3C1A8F{else}{$customize[page_group][color_money]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[选项卡]背景色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_group][color_tab_bg]" value="{if empty($customize[page_group][color_tab_bg])}#4E2E99{else}{$customize[page_group][color_tab_bg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[选项卡]文字颜色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_group][color_tab_word]" value="{if empty($customize[page_group][color_tab_word])}#FFFFFF{else}{$customize[page_group][color_tab_word]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[选项卡]中间竖线颜色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_group][color_tab_divider]" value="{if empty($customize[page_group][color_tab_divider])}#FFFFFF{else}{$customize[page_group][color_tab_divider]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">[选项卡]选中状态的底部横线颜色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_group][color_tab_selected_baseline]" value="{if empty($customize[page_group][color_tab_selected_baseline])}#FFFFFF{else}{$customize[page_group][color_tab_selected_baseline]}{/if}">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">解锁报告</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">顶部标题颜色</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_unlock][color_title]" value="{if empty($customize[page_unlock][color_title])}#3C1A8F{else}{$customize[page_unlock][color_title]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">报告包含内容标题颜色</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_unlock][color_middle_title]" value="{if empty($customize[page_unlock][color_middle_title])}#3C1A8F{else}{$customize[page_unlock][color_middle_title]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">支付金额颜色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_unlock][color_pay]" value="{if empty($customize[page_unlock][color_pay])}#ff0000{else}{$customize[page_unlock][color_pay]}{/if}">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">原价颜色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_unlock][color_orgin]" value="{if empty($customize[page_unlock][color_orgin])}#000000{else}{$customize[page_unlock][color_orgin]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">优惠券金额颜色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_unlock][color_discount]" value="{if empty($customize[page_unlock][color_discount])}#ff0000{else}{$customize[page_unlock][color_discount]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">解锁报告背景图片</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_unlock][img_unlock_bg])}
+                        {php echo tpl_form_field_image('customize[page_unlock][img_unlock_bg]','../addons/hc_face/template/mobile/images/btn.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_unlock][img_unlock_bg]',$customize[page_unlock][img_unlock_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：570 × 100</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">邀请解锁背景图片</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_unlock][img_share_bg])}
+                        {php echo tpl_form_field_image('customize[page_unlock][img_share_bg]','../addons/hc_face/template/mobile/images/btn1.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_unlock][img_share_bg]',$customize[page_unlock][img_share_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：570 × 100</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">查看报告</div>
+        <div class="panel-body">
+            
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">背景色</label>
+                <div class="col-sm-9">
+                    <input type='color' name="customize[page_show][color_bg]" value="{if empty($customize[page_show][color_bg])}#401D95{else}{$customize[page_show][color_bg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">报告背景色</label>
+                <div class="col-sm-9">
+                    
+                    <input type='color' name="customize[page_show][color_report_bg]" value="{if empty($customize[page_show][color_report_bg])}#FFFFFF{else}{$customize[page_show][color_report_bg]}{/if}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">报告标题背景图片</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_show][img_report_title_bg])}
+                        {php echo tpl_form_field_image('customize[page_show][img_report_title_bg]','../addons/hc_face/template/mobile/images/content_title.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_show][img_report_title_bg]',$customize[page_show][img_report_title_bg])}
+                    {/if}
+                    <div class="help-block">建议尺寸：305 × 80</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label">广告图片</label>
+                <div class="col-sm-9">
+                    {if empty($customize[page_show][img_ad])}
+                        {php echo tpl_form_field_image('customize[page_show][img_ad]','../addons/hc_face/template/mobile/images/ad.png')}
+                    {else}
+                        {php echo tpl_form_field_image('customize[page_show][img_ad]',$customize[page_show][img_ad])}
+                    {/if}
+                    <div class="help-block">建议尺寸：734 × 114</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default set_div">
+        <div class="panel-heading">恢复默认</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-3 col-md-2 control-label"></label>
+                <div class="col-sm-9">
+                    <input type="button" id="btn_restore" class="btn btn-primary" value="恢复默认值" >
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <input name="submit" type="button" id="submit_info" value="提交" class="btn btn-primary" />
+    <input type="hidden" name="token" value="{$_W['token']}" />
+
+</form>
+<script type="text/javascript" src="../addons/hc_face/template/web/layui/layui.js"></script>
+
+<script type="text/javascript">
+layui.use('layer', function(){ 
+    var $ = layui.jquery, layer = layui.layer; 
+
+    $("#submit_info").click(function(){
+        $.ajax({
+            type: "POST",
+            url: "{php echo $this->createWebUrl('customize',array('act'=>submit));php}",
+            data: $('#form1').serialize(),
+            dataType: "json",
+            success: function(data){
+                layer.msg('编辑成功');
+                window.location.reload();
+            }
+        });
+    }); 
+    $("#btn_restore").click(function(){
+        layer.confirm('恢复默认值之后，自定义化的内容将全部恢复成系统默认，确定恢复默认值么？', 
+            {
+                btn: ['恢复默认值','点错了'] //按钮
+            },
+            function(){
+                $.ajax({
+                    type: "POST",
+                    url: "{php echo $this->createWebUrl('restore',array());php}",
+                    data: '',
+                    dataType: "json",
+                    success: function(data){
+                        var msg = data.msg;
+                        layer.msg(msg);
+                        window.location.reload();
+                    }
+                });
+            }, function(){
+                
+            }
+        );
+    }); 
+});
+
+</script>
+
+</div>
+{template 'common/footer'}

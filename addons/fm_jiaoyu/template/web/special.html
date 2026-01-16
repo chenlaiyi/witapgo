@@ -1,0 +1,2076 @@
+{template 'public/header'}
+{template 'public/comhead'}
+<div class="panel panel-info">
+	<div class="panel-body">
+		<ul class="nav nav-tabs">
+			<li {if $_GPC['do']=='special'}class="active"{/if}><a href="{php echo $this->createWebUrl('special', array('op' => 'display', 'schoolid' => $schoolid))}">营销宝</a></li>
+			<li {if $_GPC['do']=='specialtemp'}class="active"{/if}><a href="{php echo $this->createWebUrl('specialtemp', array('op' => 'display', 'schoolid' => $schoolid))}">模板库</a></li>
+            {if $showformHtml}
+            <li {if $_GPC['do']=='specialform'}class="active"{/if}><a href="{php echo $this->createWebUrl('specialform', array('op' => 'display', 'schoolid' => $schoolid))}">管理表单</a></li>
+            {/if}
+		</ul>
+	</div>
+</div> 
+{if $operation == 'post'}
+<style>
+    .savePage{display: inline-block;padding:2px 10px;font-size: 14px;border-color: #41c9c0;}
+    .cancelPage{padding:3px 10px;font-size: 14px;}
+    .BoxConName{width:100px;text-align: right;}
+    .BoxConName~div{width: calc(100% - 100px);}
+    .app-header { height: 70px; background: url(../web/resource/images/app/iphone_head.png) center center no-repeat; }
+    button.show_yulan_img{display: none;}
+    .SpLi{position: relative;}
+    .SpLi.InEdit:after{ position: absolute; content: ''; height: 100%; width: 100%; top:0; left: 0; background-color: rgba(236,236,236,0.49); }
+
+    .SwitchKcItem{ transition: all 0.15s; width:calc(100% - 10px);border-radius: 5px;height: 35px;line-height: 35px;display: flex;align-items: center;padding:0 5px;position: relative; }
+    .SwitchKcItem:hover{ background-color: #f1f1f1; transition: all 0.15s; }
+    .SwitchKcItem:after{ content:''; position: absolute; width: 90%; margin-left: 5%; height: 1px; background-color: #f7f7f7; bottom: 0; }
+    .KcItem-KmName{height: 20px;line-height: 19px;border:1px solid black;border-radius: 5px ;padding:0 5px;margin-right: 5px;}
+
+    .LineTxtBox{text-align: center;position: relative;height: 20px;line-height: 20px;}
+    .LineTxtBox span{   transform: translate(-50%,-50%); background-color: white; position: absolute; top: 50%; left: 50%; z-index: 2;padding:0 10px}
+    .LineTxtBox .line{    content: ''; transform: translate(-50%,-50%); background-color: #bfbfbf; position: absolute; top: 50%; left: 50%; height: 0.5px; width: 100%; z-index: 1;}
+
+    #SpSort .SpLi.NoContent{ border-bottom:1px dashed black ; }
+    .SpLi-Kc-km{ font-size: 12px;font-weight: lighter;padding:2px 3px;border-radius: 5px;border:1px solid black;margin-right: 3px;  border-color: #428bca; color: #428bca;}
+    .SpLi-Kc-Box{width: 90%; border: 1px solid #8a8a8a; border-radius: 10px; min-height: 100px; margin-left: 5%; padding: 5px 8px;margin-top: 10px; position:relative;background-color: white;}
+    #EditBox .edui-editor.edui-default{height: 410px;
+    overflow-y: auto;position: inherit;}
+    #EditBox #edui1_toolbarbox{position: absolute;top:-80px;border-left:1px solid #EEE;left:0 }
+    /* #EditBox #edui1_toolbarbox{position: absolute !important;top:0 !important;width: 100% !important;left: 0 !important;} */
+    #edui1_toolbarboxouter{border-bottom: none;}
+    #edui1_toolbarboxouter{border-right:1px solid #EEE;border-top:1px solid #EEE;}
+    #edui1_bottombar{position: absolute;bottom: -23px;width: 100%;border:1px solid #EEE;border-top:none;left:0}
+    #edui1_bottombar *{border:none}
+    .SpLi.HighNoC:after{ position: absolute; content: ''; height: 100%; width: 100%; top:0; left: 0;box-shadow: inset 0 0 5px 1px #ff0101; }
+    .NoContent .VBR{display: none;}
+</style>
+<div class="main" style="height: calc(100vh - 130px);position: relative;min-height: 650px;" >
+    <div class="panel panel-info" style="width: 420px;height: 100%;float: left;" >
+        <div class="panel-heading">
+            <span>操作区</span>
+            <span style="float: right;">
+                <span class="btn btn-primary savePage" onclick="Save()"> <i class="fa fa-save "></i> 保存</span>
+                <span class="btn btn-default cancelPage"> <i class="fa fa-mail-reply"></i> <a href="{php echo $this->createWebUrl('special', array('op' => 'display','schoolid' => $schoolid))}">退出编辑</a> </span>
+            </span>
+        </div>
+        <div class="panel-body" >
+            <div class="ExInfoBox" style="margin-bottom: 40px;" >
+                <div class="BoxTitle">
+                    说明：
+                </div>
+                <div style="text-indent: 26px;">
+                    <div> 可对容器进行上下拖动调整排序 </div>
+                    <div>图片容器: 可设置图片</div>
+                    <div>文本容器: 可设置文本内容</div>
+                    <div>课程容器: 可插入指定内容</div>
+                </div>
+            </div>
+
+            <div class="Op_btnBox">
+                <span class="btn btn-default"  onclick="AddSpDock(6)"> <i class="fa fa-plus "></i> 添加标题</span>
+                <span class="btn btn-default"  onclick="AddSpDock(5)"> <i class="fa fa-plus "></i> 添加表单容器</span>
+            </div>
+            <div class="Op_btnBox" style="margin-top: 10px;">
+                <span class="btn btn-default"  onclick="AddSpDock(1)"> <i class="fa fa-plus "></i> 添加图片容器</span>
+                <span class="btn btn-default"  onclick="AddSpDock(2)"> <i class="fa fa-plus "></i> 添加文本容器</span>
+            </div>
+            <div class="Op_btnBox"  style="margin-top: 10px;">
+                <span class="btn btn-default"  onclick="AddSpDock(3)"> <i class="fa fa-plus "></i> 添加课程容器</span>
+                <span class="btn btn-default"  onclick="AddSpDock(4)"> <i class="fa fa-plus "></i> 添加视频容器</span>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="uploader-modal modal right fade" style="z-index:1050 !important;"  id="ShowAllKcBox" tabindex="-1" role="dialog" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog myModalleft">
+            <div class="modal-content" id="ed_stubox" style="max-height:unset !important;">
+                <div class="modal-header" style="text-align: center;color: black;">
+                    <h4 class="modal-title" id="myModalLabel">选择课程</h4>
+                </div>
+                <div class="modal-body" style="height:100%;overflow-y: scroll; max-height: 87%;">
+                    <div class="input-group" id="KcEditor">
+                        <input class="form-control" type="text" id="ActItem-Kc-fontColor" placeholder="请选择背景颜色" >
+                        <span class="input-group-addon" id="ActItem-Kc-backGround" style="width:35px;border-left:none;"></span>
+                        <span class="input-group-btn">
+                            <button class="btn btn-default colorpicker" type="button">选择颜色 <i class="fa fa-caret-down"></i></button>
+                            <button class="btn btn-default colorclean" type="button"><span><i class="fa fa-remove"></i></span></button>
+                        </span>
+                    </div>
+
+                    <script type="text/javascript">
+                        $(function(){
+                            $("#KcEditor .colorpicker").each(function(){
+                                var elm = this;
+                                util.colorpicker(elm, function(color){
+                                    SetBgColor(color.toHexString(),3)
+                                    $(elm).parent().prev().prev().val(color.toHexString());
+                                    $(elm).parent().prev().css("background-color", color.toHexString());
+                                });
+                            });
+                            $("#KcEditor .colorclean").click(function(){
+                                $(this).parent().prev().prev().val("");
+                                $(this).parent().prev().css("background-color", "#FFF");
+                            });
+                        });
+                    </script>
+
+                    <div style="height: 300px;">
+                        <div class="LineTxtBox">
+                            <div class="line"></div>
+                            <span style=" font-size: 16px;">已添加课程</span>
+                        </div>
+                        <div id="HasAddKcBox" style="margin-top: 10px;max-height: calc(100% - 30px);overflow-y: auto;overflow-x: hidden;padding:0 5px" >
+                        </div>
+                    </div>
+                    <div style="height: calc(100% - 336px);" >
+                        <div class="LineTxtBox">
+                            <div class="line"></div>
+                            <span style=" font-size: 16px;">未添加课程</span>
+                        </div>
+                        <div style="margin-top: 10px;padding:0 5px" >
+                            <input class="form-control" style="border-radius: 5px;" name="keywords" id="keywords" placeholder="搜索课程" type="text">
+                        </div>
+                        <div id="NotAddKcBox" style="margin-top: 10px;height: calc(100% - 60px);overflow-y: auto;overflow-x: hidden;padding:0 5px">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-foot">
+                    <a class="btn btn-danger" style="color: #fff;" onclick="RemoveDock();">移除容器</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="panel panel-info" style="height: 100%;margin-left: 20px;float: left;width: calc(100% - 440px);">
+        <div class="panel-heading">编辑区 </div>
+        <div class="panel-body" style="height:calc(100% - 42px);">
+            <div style="display: flex;height: 100%;">
+                <!-- 页面展示区 -->
+                <div style="padding:20px 20px 20px 40px;width: 500px;">
+                    <div
+                        style="width:380px;height:655px;border:1px solid #cccccc;border-radius:18px ;display: flex;flex-direction: column;">
+                        <div class="app-header"></div>
+                        <div style="flex:1;margin:0 10px 10px 10px;overflow: hidden; ">
+                            <div id="SpSort"
+                                style="height: 100%;width: 100%;border:1px solid #cccccc;overflow-y: auto;overflow-x: hidden;">
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 编辑区 -->
+                <div style="flex: 1;padding:20px 0px">
+                    <div id="EditBox"
+                        style="width: 550px;max-height: 655px;border-radius: 5px;border:1px solid #d2d2d2;position: relative;box-shadow: 2px 1px 8px #d6d6d6;display: none;">
+                        <i class="leftArrow" style="left: -20px; top: 28px;"></i>
+                        <div style="width: 100%;height: 100%;padding:20px">
+                            <div class="EditBoxTitle"
+                                style="height: 40px;font-size: 16px;margin-bottom: 20px;line-height: 20px;">设置容器
+                                <span style="padding: 4px 12px;font-size: 12px;" class="btn btn-danger"
+                                    onclick="DeDock()">移除容器</span>
+                            </div>
+                            <form id="EditContainer">
+                                <div id="ContainerImg" class="switchCont" style="display: none;">
+                                    <div class="form-group">
+                                        <label class="col-sm-2control-label" style="width: 100px;">上传图片:</label>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="Img" class="form-group">
+                                            {php echo tpl_form_field_images('Img','','',array(),array('readonly'=>true))}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="ContainerTitle" class="switchCont" style="display: none;">
+                                    <div class="form-group">
+                                        <label class="col-xs-12 col-sm-4 col-md-3 col-lg-2 control-label">标题</label>
+                                        <div class="col-sm-8 col-xs-12">
+                                            <input type="text" class="form-control" name="temptitle" placeholder="请输入标题">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="ContainerVideo" class="switchCont" style="display: none;">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" style="width: 100px;">自适应浮动:</label>
+                                        <div class="col-sm-9">
+                                            <input type="checkbox"  name="video_fix">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" style="width: 100px;">选择视频:</label>
+                                        <div class="col-sm-8">
+                                            <script type="text/javascript">
+                                                function showVideoDialog(elm, options) {
+                                                    require(["util"], function(util){
+                                                        var btn = $(elm);
+                                                        var ipt = btn.parent().prev();
+                                                        var val = ipt.val();
+                                                        util.audio(val, function(url){
+                                                            if(url && url.attachment && url.url){
+                                                                btn.prev().show();
+                                                                ipt.val(url.attachment);
+                                                                ipt.attr("filename",url.filename);
+                                                                ipt.attr("url",url.url);
+                                                            }
+                                                            if(url && url.media_id){
+                                                                ipt.val(url.media_id);
+                                                            }
+                                                            SetVideoData(EditTagid,url.attachment,url.url)
+                                                            // ipt.change()
+                                                        }, {"direct":true,"multi":false,"type":"video","fileSizeLimit":5120000});
+                                                    });
+                                                }
+                                            </script>
+
+                                            <div class="input-group">
+                                                <input type="text" value="" name="Video" class="form-control" autocomplete="off" filename="" url="">
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-default" type="button" onclick="showVideoDialog(this,{'direct':true,'multi':false,'type':'video','fileSizeLimit':5120000});">选择媒体文件</button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <span onclick="lookVideo()" style="line-height: 35px;"> <i class="fa fa-eye" >预览</i></span>
+                                    </div>
+                                </div>
+                                <div id="ContainerEditor" class="switchCont" style="display: none;">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" id="ActItem-Text-fontColor"  name="headcolor" data-type="Client" data-target="fontColor" placeholder="请选择背景颜色" >
+                                            <span class="input-group-addon" id="ActItem-Text-backGround" data-type="Client" data-target="backGround" style="width:35px;border-left:none;"></span>
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default colorpicker" type="button">选择颜色 <i class="fa fa-caret-down"></i></button>
+                                                <button class="btn btn-default colorclean" type="button"><span><i class="fa fa-remove"></i></span></button>
+                                            </span>
+                                        </div>
+
+                                        <script type="text/javascript">
+                                            $(function(){
+                                                $("#ContainerEditor .colorpicker").each(function(){
+                                                    var elm = this;
+                                                    util.colorpicker(elm, function(color){
+                                                        SetBgColor(color.toHexString(),2)
+                                                        $(elm).parent().prev().prev().val(color.toHexString());
+                                                        $(elm).parent().prev().css("background-color", color.toHexString());
+                                                    });
+                                                });
+                                                $("#ContainerEditor .colorclean").click(function(){
+                                                    $(this).parent().prev().prev().val("");
+                                                    $(this).parent().prev().css("background-color", "#FFF");
+                                                });
+                                            });
+                                        </script>
+                                        <label class="col-sm-2control-label" style="width: 100px;">内容:</label>
+
+                                    </div>
+
+                                    <div class="form-group" style="position: relative;height: 416px;margin-top: 80px;">
+                                        {php echo tpl_ueditor('content', $item['content'],array('height'=>380));}
+                                    </div>
+                                </div>
+
+                                <div id="ContainerForm" class="switchCont" style="display: none;">
+                                    <div class="form-group">
+
+                                        <div class="form-group">
+                                            <label class="radio-inline">
+                                                <div class="radio-custom radio-primary" >
+                                                    <input type="radio" name='construction' value="up_and_down" checked>
+                                                    <label>上下结构</label>
+                                                </div>
+                                            </label>
+                                            <label class="radio-inline">
+                                                <div class="radio-custom radio-primary" >
+                                                    <input type="radio" name='construction' value="leftright">
+                                                    <label>左右结构</label>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="radio-inline">
+                                                <div class="radio-custom radio-primary" >
+                                                    <input type="radio" name='checkShowType' value="background-color" checked>
+                                                    <label></label>背景色
+                                                </div>
+                                            </label>
+                                            <label class="radio-inline">
+                                                <div class="radio-custom radio-primary" >
+                                                    <input type="radio" name='checkShowType' value="background-img">
+                                                    <label></label>背景图
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div class="form-group" style="display: none;" id="ShowImg">
+                                            <div class="formImg" class="form-group">
+                                                {php echo tpl_form_field_images('formImg')}
+                                            </div>
+                                        </div>
+                                        <div class="form-group" >
+                                            <div class="input-group">
+                                                <input id="tidstr" name="tidstr" type="hidden" value="{$tidstr}"/>
+                                                <input class="form-control" id="tidnamearr" type="text" value="{$teachers}"/>
+                                                <span class="input-group-btn">
+                                                    <a class="btn btn-primary" href="javascript::;" data-toggle="tooltip" data-placement="top" onclick="xxxz();"><i class="fa fa-anchor"></i> 选择老师</a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="input-group" id="ShowBgColor">
+                                            <input class="form-control" type="text" id="ActItem-Form-fontColor"  name="headcolor" data-type="Client" data-target="fontColor" placeholder="请选择背景颜色" >
+                                            <span class="input-group-addon" id="ActItem-Form-backGround" data-type="Client" data-target="backGround" style="width:35px;border-left:none;"></span>
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default colorpicker" type="button">选择颜色 <i class="fa fa-caret-down"></i></button>
+                                                <button class="btn btn-default colorclean" type="button"><span><i class="fa fa-remove"></i></span></button>
+                                            </span>
+                                        </div>
+
+                                        <script type="text/javascript">
+                                            $(function(){
+                                                $("#ContainerForm .colorpicker").each(function(){
+                                                    var elm = this;
+                                                    util.colorpicker(elm, function(color){
+                                                        SetBgColor(color.toHexString(),5)
+                                                        $(elm).parent().prev().prev().val(color.toHexString());
+                                                        $(elm).parent().prev().css("background-color", color.toHexString());
+                                                    });
+                                                });
+                                                $("#ContainerForm .colorclean").click(function(){
+                                                    $(this).parent().prev().prev().val("");
+                                                    $(this).parent().prev().css("background-color", "#FFF");
+                                                });
+                                            });
+                                        </script>
+                                        
+
+                                    </div>
+                                    <div id="ContainerFormTitle" style="max-height: 333px; overflow-y: auto;">
+                                        
+                                    </div>
+                                    <div class="form-group input-group" style="margin-top: 15px;">
+                                        <button class="btn btn-default" type="button" onclick="addForm()"><span>添加内容<i class="fa fa-plus"></i></span></button>
+                                    </div>
+                                </div>
+                                
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" style="min-width: 600px!important;" id="Modal11" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  >
+	<div class="modal-dialog" style="left: 50%; top:50%;transform: translate(-50%,-50%);">
+		<div class="modal-content" style="background-color: transparent;">
+            <div class="modal-body form_paike_boxs" style="padding: 7px;position: relative;max-height: unset;" >
+                <div id='ShowVideoHtml' style="text-align: center;"> </div>
+            </div>
+            <a  style="background-color: transparent; color: white; position: absolute; top: -40px; right: -40px;font-size: 20px;" data-dismiss="modal"><i class="fa fa-close"></i></a>
+
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" style="min-width: 583px!important;" id="Modal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 20px;">
+            <div class="modal-header">
+                <h4 class="modal-title" style="text-align:center;color:#333;font-size: 17px;">选择负责人</h4>
+            </div>
+            <div class="modal-body" style="width: 100%;">
+                <div class="js-menu-container" ng-controller="MenuCtrl" ng-cloak>
+                    <div class="panel we7-panel">
+                        <div class="panel-body system-menu-list">
+                            <ul class="one">
+                                {loop $list $menu}
+                                <li class="menu-item">
+                                    <div class="table-div table-div-menu" style="padding: 12px 37px;">
+                                        <div class="table-div__item name">{$menu['sname']}</div>
+                                        <div class="table-div__item name"></div>
+                                        <div class="table-div__item action">
+                                            <div class="link-group">
+                                                <a href="javascript:;" class="toggle"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ul class="two">
+                                        <li class="menu-item">
+                                            <div class="input-group text-info">
+                                            {loop $menu['alltea'] $r}
+                                                <label class="checkbox-inline" style="width:80px;margin-left: 10px"><input class="pre idss" data-name="{$r['tname']}" type="checkbox" value="{$r['id']}" style="float: none;"/>{$r['tname']}</label>
+                                            {/loop}
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                {/loop}
+                                <li class="menu-item">
+                                    <div class="table-div table-div-menu" style="padding: 12px 37px;">
+                                        <div class="table-div__item name">未分组({php echo count($list2)}人)</div>
+                                        <div class="table-div__item name"></div>
+                                        <div class="table-div__item action">
+                                            <div class="link-group">
+                                                <a href="javascript:;" class="toggle"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ul class="two">
+                                        <li class="menu-item">
+                                            <div class="input-group text-info">
+                                            {loop $list2 $row}
+                                                <label class="checkbox-inline" style="width:80px;margin-left: 10px"><input class="pre idss" data-name="{$row['tname']}" type="checkbox" value="{$row['id']}" style="float: none;"/>{$row['tname']}</label>
+                                            {/loop}
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <script>
+                        $('.toggle').click(function () {
+                            $(this).parent().parent().parent().parent().toggleClass('menu-open')
+                        })
+                    </script>
+                </div>
+                <script type="text/javascript">
+                    $(function(){
+                        angular.bootstrap($('.js-menu-container'), ['systemApp']);
+                    });
+                </script>
+            </div>
+            <div class="modal-footer" style="border-radius: 6px;">
+                <input type="button" onclick="tijiao()" class="btn btn-success" value="确定">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .TipsReDesign{ z-index: 9999; position: fixed; width: auto; max-width: 300px; height: auto; color:white; padding:15px; top:50%; text-align: center; left:50%; background-color:rgba(0,0,0,.43); border-radius: 5px; transform:translate(-50%,-50%) scale(0); overflow: hidden; opacity:0; transition:  opacity 0.1s 0.025s, transform 0.1s  cubic-bezier(1, -0.17, 1, 0.13); }
+    .TipsReDesign.OnShow{ opacity:1; transition: opacity 0.001s cubic-bezier(0.58, 0.08, 1, -0.18), transform 0.125s cubic-bezier(0.04, 0.84, 0.42, 0.76); transform:translate(-50%,-50%) scale(1); }
+    .TipsReDesign.Re{ opacity: 0; transform:translate(-50%,-50%) scale(0.6); transition:  opacity 0.01s 0.025s, transform 0.1s  cubic-bezier(1, -0.17, 1, 0.13);; }
+</style>
+<div class="TipsReDesign">
+    <span>提示文字</span>
+</div>
+
+<script>
+var tTipsReDesign,tTipsReDesignRe,tidstr=`{$tidstr}`,imgval='';
+function xxxz(){
+		$('#Modal3').modal('toggle');
+		if(tidstr.indexOf(',')>= 1){
+			var tidstrsarr= new Array(); //定义一数组
+			tidstrs= tidstr.split(','); //字符分割
+			for(var i=0;i<tidstrs.length;i++){
+				if(tidstrs[i] > 0){
+					tidstrsarr[i] = parseInt(tidstrs[i]);
+				}
+			}
+			$(".pre").each(function() {
+				var index = $.inArray(parseInt($(this).val()), tidstrsarr);
+				if(index >= 0){
+					$(this).prop("checked",true);
+				}else{
+					$(this).prop("checked",false);
+				}
+			});
+		}else{
+			$(".pre").each(function() {
+				if (parseInt(tidstr) == $(this).val()){
+					$(this).prop("checked",true);
+				}else{
+					$(this).prop("checked",false);
+				}
+			});
+		}
+	}
+    function tijiao(){
+		var all_select_id = '';
+		var all_select_text = '';
+		var len = $("input:checkbox:checked").length;
+		$(".idss").each(function(i) {
+			if($(this).is(':checked')){
+				if(i == len-1){
+					all_select_id += $(this).val();
+					all_select_text += $(this).attr("data-name");
+				}else{
+					all_select_id += $(this).val() + ',';
+					all_select_text += $(this).attr("data-name") + ',';
+				}
+			}
+		});
+		tidstr = all_select_id;
+		$(`#tidstr`).val(all_select_id);
+		$(`#tidnamearr`).val(all_select_text);
+		$('#Modal3').modal('toggle');
+	}
+
+</script>
+
+<script>
+    var SpData = []; //营销宝内容数据
+    var MaxTagid = 0;
+    var EditTagid = 0;
+    // var titleNum = 0;
+    var tempFormData = [];
+    function AddSpDock(type){ //增加容器
+        MaxTagid++;
+        let tagid = MaxTagid;
+        if(type == 1){
+            let InsertHtml = `  <li class="SpLi NoContent" tagid="${tagid}" type="${type}" style="min-height: 40px;" >
+                                    <img class="NoC" style="width:356px;" src="{MODULE_URL}public/web/images/basicIMGpic.png">
+                                </li>`;
+            $("#SpSort").append(InsertHtml)
+            let InsertData = {
+                tagid:tagid,
+                type:1,
+                imgurl:'',
+                imgvalue:''
+            }
+            SpData.push(InsertData);
+        }
+        if(type == 2){
+            let InsertHtml = `  <li class="SpLi NoContent" tagid="${tagid}" type="${type}" style="min-height: 40px;padding:5px" >
+                                     <img class="NoC" style="width:356px;" src="{MODULE_URL}public/web/images/basicTXTpic.png">
+                                    <div  style="width:100%"></div>
+                                </li>`;
+            $("#SpSort").append(InsertHtml)
+            let InsertData = {
+                tagid:tagid,
+                type:2,
+                textcontent:''
+            }
+            SpData.push(InsertData);
+        }
+        if(type == 3){
+            let InsertHtml = `  <li class="SpLi NoContent" tagid="${tagid}" type="${type}" style="min-height: 100px;padding: 1px 0px 10px 0px;" >
+                                    <div class="NoC" style="width:100%"><img style="width:356px;" src="{MODULE_URL}public/web/images/basicKCpic.png"></div>
+                                </li>`;
+            $("#SpSort").append(InsertHtml)
+            let InsertData = {
+                tagid:tagid,
+                type:3,
+                kclist:[]
+            }
+            SpData.push(InsertData);
+        }
+        if(type == 4){ //视频
+            if($("li.SpLi[type=4]").length > 0){
+                ReToastGlobal("一个营销宝只能添加一个视频容器");
+                return
+            }
+            let InsertHtml = `  <li class="SpLi NoContent" tagid="${tagid}" type="${type}" style="min-height: 40px;" >
+                <div class="NoC" style="width:100%"><img style="width:356px;" src="{MODULE_URL}public/web/images/basicVIDEOpic.png"></div>
+                <div style="height:250px " class="VBR"> 
+                <video src="" style="height:100% !important" ></video></div>
+                                  
+                                </li>`;
+            $("#SpSort").append(InsertHtml)
+            let InsertData = {
+                tagid:tagid,
+                type:4,
+                videourl:'',
+                videovalue:'',
+                video_fix:0
+            }
+            SpData.push(InsertData);
+        }
+        if(type == 5){
+            if($("li.SpLi[type=5]").length > 0){
+                ReToastGlobal("一个营销宝只能添加一个表单");
+                return
+            }
+            let InsertHtml = `  <li class="SpLi NoContent" tagid="${tagid}" type="${type}" style="min-height: 100px;padding: 1px 0px 10px 0px;" >
+                                <div class="NoC" style="width:100%"><img style="width:356px;" src="{MODULE_URL}public/web/images/up_and_down.jpg"></div>
+                                </li>`;
+            $("#SpSort").append(InsertHtml)
+            let InsertData = {
+                tagid:tagid,
+                type:5,
+                imgurl:'',
+                imgvalue:'',
+                BgColor:'',
+                construction:'up_and_down',
+                formData:[]
+            }
+            SpData.push(InsertData);
+        }
+        $("#SpSort").animate({
+            scrollTop:$("#SpSort")[0].scrollHeight
+        },150)
+        if(type == 6){
+            if($("li.SpLi[type=6]").length > 0){
+                ReToastGlobal("只能添加一个标题");
+                return
+            }
+            let InsertHtml = `  <li class="SpLi NoContent" tagid="${tagid}" type="${type}" style="min-height: 35px; line-height: 30px;padding: 1px 0px 10px 0px;" >
+                                <div class="form-group">
+                                    <label class="col-xs-12 col-sm-4 col-md-3 col-lg-2 control-label">标题</label>
+                                    <div class="col-sm-8 col-xs-12">
+                                        <input type="text" class="form-control temptitle" placeholder="请输入标题" disabled>
+                                    </div>
+                                </div>
+                                </li>`;
+            $("#SpSort").append(InsertHtml)
+            let InsertData = {
+                tagid:tagid,
+                type:6,
+                title:'请输入标题'
+            }
+            SpData.push(InsertData);
+        }
+        AddDockListener()
+    }
+
+    function AddDockListener(){ //新增容器监听
+        $('.SpLi').off('click')
+        $('.SpLi').on('click',function(event){
+           event.stopPropagation()
+            $('.SpLi').removeClass('InEdit')
+            $(this).addClass('InEdit')
+            $(this).removeClass('HighNoC')
+            EditTagid = $(this).attr('tagid');
+            $("#EditBox").show()
+            if(Number($(this).attr('type')) === 1)
+            { //图片内容监听
+                let ImgUrl = $(this).find('img').attr('src')
+                imgval = $(this).find('img').attr('data-value')
+                $("#EditBox input[name='Img']").val(imgval)
+                $("#EditBox input[name='Img']").attr('url',ImgUrl)
+                $(".switchCont").hide()
+                $("#ContainerImg").show()
+                $("#container").on('click',function(){
+                    CancelEditContainer()
+                })
+            }
+            else if(Number($(this).attr('type')) === 2)
+            { //编辑器内容监听
+                $(".switchCont").hide()
+                $('#ContainerEditor').show()
+                EditorListener()
+                    $("#container").on('click',function(){
+                        CancelEditContainer()
+                    })
+            }
+            else if(Number($(this).attr('type')) === 3)
+            {
+                CancelEditContainer()
+                $("#EditBox").hide()
+                ShowAllKc()
+            }
+            else if(Number($(this).attr('type')) === 4)
+            { //视频
+                let VideoUrl = $(this).find('video').attr('src')
+                let Videoval = $(this).find('video').attr('data-value')
+                    $(':checkbox[name="video_fix"]').bootstrapSwitch('state', Number($(this).find('video').attr('data-fix')));    
+
+                $("#EditBox input[name='Video']").val(Videoval)
+                $("#EditBox input[name='Video']").attr('url',VideoUrl)
+                $(".switchCont").hide()
+                $("#ContainerVideo").show()
+                $("#container").on('click',function(){
+                    CancelEditContainer()
+                })
+            }
+            else if(Number($(this).attr('type')) === 5)
+            { //编辑器内容监听
+                $(".switchCont").hide()
+                ShowformHtml()
+                $('#ContainerForm').show()
+                $("#container").on('click',function(){
+                })
+            }
+            else if(Number($(this).attr('type')) === 6)
+            {
+                SpData.map(x=>{
+                    if(Number(x.type) === 6){
+                        $('input[name=temptitle]').val(x.title);
+                    }
+                })
+                $(".switchCont").hide()
+                $("#ContainerTitle").show()
+            }
+        })
+    }
+
+    function CancelEditContainer(){ //取消操作容器
+        $(".SpLi").removeClass('InEdit')
+        $('#EditBox').hide()
+        $("#container").off("click")
+        $('#ShowAllKcBox').modal('hide')
+    }
+
+    function SetIMGData(tagid,imgval,imgurl){ //TODO:设置图片数据
+        $(`li.SpLi[tagid=${EditTagid}]>img`).attr('src',imgurl)
+        $(`li.SpLi[tagid=${EditTagid}]>img`).attr('data-value',imgval)
+        SpData.map(x=>{
+            if(x.tagid === Number(tagid) && (x.type === 1 || x.type === 5)){
+                x.imgurl = imgurl
+                x.imgvalue = imgval
+                if(x.type === 5){ //针对form表单清空显示
+                    $("#ContainerForm").find('input[name=formImg]').val(imgval)
+                    $("#ContainerForm").find('input[name=formImg]').attr('url',imgurl)
+                }
+            }
+        })
+    }
+
+    function SetTempTitleData(tagid,tempval){ //TODO:设置图片数据
+        SpData.map(x=>{
+            if(x.tagid === Number(tagid) && x.type === 6){
+                x.title = tempval
+            }
+        })
+    }
+
+    function SetVideoData(tagid,videovalue,videourl){ //设置视频数据
+        $(`li.SpLi[tagid=${EditTagid}] video`).attr('src',videourl)
+        $(`li.SpLi[tagid=${EditTagid}] video`).attr('data-value',videovalue)
+        let Target = $(`li.SpLi[tagid=${EditTagid}]`)
+        if(videovalue === ''){
+            Target.find(".NoC").show()
+            Target.addClass("NoContent")
+
+        }else {
+            Target.find(".NoC").hide()
+            Target.removeClass("NoContent")
+        }
+        SpData.map(x=>{
+            if(x.tagid === Number(tagid) && x.type === 4){
+                x.videourl = videourl
+                x.videovalue = videovalue
+            }
+        })
+    }
+
+    require(['jquery', 'util', 'bootstrap.switch'], function($, u){
+        $(':checkbox[name="video_fix"]').bootstrapSwitch();
+        $(':checkbox[name="video_fix"]').on('switchChange.bootstrapSwitch', function(e, state){
+            var video_fix = state ? 1 : 0;
+            $("video").attr("data-fix",video_fix)
+            SpData.map(x=>{
+                if(x.tagid === Number(EditTagid) && x.type === 4){
+                    x.video_fix = video_fix
+                }
+            })
+        });
+    });
+
+
+    function lookVideo(){ //预览视频
+        let video = $(`li.SpLi[tagid=${EditTagid}] video`).attr('src')
+        $("#ShowVideoHtml").show()
+        let html = `<video style="position: relative; min-height: 350px;max-height: 700px;" controls="controls" >
+                        <source src="${video}" type="video/mp4">
+                    </video>    `
+        $("#ShowVideoHtml").html(html)
+        $('#Modal11').modal('toggle',150)
+    }
+
+    function SetTXTData(tagid,txtval){ //设置文本数据
+        let Target = $(`li.SpLi[tagid=${EditTagid}]`)
+        Target.children("div").html(txtval)
+        if(txtval === ''){
+            Target.find(".NoC").show()
+        }else {
+            Target.find(".NoC").hide()
+            Target.removeClass("NoContent")
+        }
+        SpData.map(x=>{
+            if(x.tagid === Number(tagid) && x.type === 2){
+                x. textcontent = txtval
+            }
+        })
+    }
+
+    function SetBgColor(BgColor,type){ //TODO:设置背景颜色
+        SpData.map(x=>{
+            if(Number(x.tagid) === Number(EditTagid) && x.type === type){
+                x.BgColor = BgColor
+                $(`li.SpLi[tagid=${EditTagid}]`).css("background-color", BgColor)
+                if(type === 5){ //针对form表单清空显示
+                    $("#ContainerForm").find('#ActItem-Form-fontColor').val(BgColor)
+                    $("#ContainerForm").find('#ActItem-Form-backGround').css("background-color", BgColor)
+                }
+            }
+        })
+    }
+
+    function SetKCData(tagid,kcinfo){ //设置课程数据
+        let iconarr = kcinfo.buystu
+        let iconhtml = ''
+        for(let item of iconarr){
+            iconhtml += `<img src="${item}" style="width:30px;height:30px;border-radius:50%;margin-right:5px;"> `
+        }
+        let ContainerHtml = `<div data-container-id="${kcinfo.id}" class="SpLi-Kc-Box">
+                    <div style=" position:absolute; width: 70%;">
+                        <div style="width:100%">
+                            <h4 style="display: flex;margin:9px 0">
+                                <span class="SpLi-Kc-km">${kcinfo.km}</span> <span> ${kcinfo.name}</span>
+                            </h4>
+                        </div>
+                        <div style="width:100%;font-size:12px;margin-bottom: 2px;">
+                            <span> ${kcinfo.startdate}-${kcinfo.enddate}</span>
+                        </div>
+                        <div style="width:100%;display:flex;background-color: transparent;">
+                            ${iconhtml}
+                        </div>
+                    </div>
+                    <div style="margin-top:10%;float:right;">
+                        <button class="btn btn-danger" style="border-radius: 25px;padding:3px 10px">立即学习</button>
+                        <span style="color:#8a8a8a;display: block;text-align: center;margin-top:2px">已有${kcinfo.buynum}人在读</span>
+                    </div>
+                </div>`;
+        let TargetLi = $(`li.SpLi[tagid=${tagid}]`);
+        if( TargetLi.hasClass("NoContent")){
+            TargetLi.find(".NoC").hide()
+            TargetLi.removeClass("NoContent")
+        }
+        TargetLi.append(ContainerHtml)
+        SpData.map(x=>{
+            if(x.tagid === Number(tagid) && x.type === 3){
+                x.kclist.push(kcinfo)
+            }
+        })
+
+    }
+
+    function RemoveKCData(tagid,kcid){ //移除课程
+        let TargetLi =  $(`li.SpLi[tagid=${tagid}]`)
+        $(`li.SpLi[tagid=${tagid}]>div[data-container-id=${kcid}]`).remove()
+        SpData.map(x=>{
+            if(x.tagid === Number(tagid) && x.type === 3){
+                x.kclist.map((y,index)=>{
+                    if(Number(y.id) === Number(kcid)){
+                        x.kclist.splice(index,1)
+                        if(x.kclist.length === 0){
+                            TargetLi.find(".NoC").show()
+                            TargetLi.addClass("NoContent")
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    function DeDock(){ //图片和文本容器移除
+        $(`li.SpLi[tagid=${EditTagid}]`).remove()
+        SpData.map((x,index)=>{
+            if(Number(x.tagid) === Number(EditTagid)){
+                SpData.splice(index,1)
+            }
+        })
+    }
+
+    function RemoveDock(){ //课程容器移除
+        $(`li.SpLi[tagid=${EditTagid}]`).remove()
+        $("#ShowAllKcBox").modal('hide')
+        SpData.map((x,index)=>{
+            if(Number(x.tagid) === Number(EditTagid)){
+                SpData.splice(index,1)
+            }
+        })
+    }
+
+    function ImgListener(){ //上传图片监听
+        $('#EditBox').find('input[name=Img]').on('change',function(){
+            var imgurl = $(this).attr('url')
+            imgval = $(this).val()
+            SetIMGData(EditTagid,imgval,imgurl)
+        })
+        $('#ContainerForm').find('input[name=formImg]').on('change',function(){
+            var imgurl = $(this).attr('url')
+            imgval = $(this).val()
+            SetIMGData(EditTagid,imgval,imgurl)
+        })
+    }
+
+    function TempTitleListener(){ //上传图片监听
+        $('#EditBox').find('input[name=temptitle]').on('change',function(){
+            $(".temptitle").val($(this).val())
+            SetTempTitleData(EditTagid,$(this).val())
+        })
+    }
+
+
+    function VideoListener(){ //上传视频监听
+        $('#EditBox').find('input[name=Video]').on('change input',function(){
+            let videourl = $(this).val()
+            let videoval = $(this).val()
+            SetVideoData(EditTagid,videoval,videourl)
+        })
+    }
+
+    function EditorListener(){ //富文本编辑器监听
+
+        $(`li.SpLi[tagid=${EditTagid}]>div`).html();
+        let editorhtml = $(`li.SpLi[tagid=${EditTagid}]>div`).html();
+        UE.getEditor('content').setContent(editorhtml);
+        var ue = UE.getEditor('content');
+        ue.addListener("contentChange",function(){
+            SetTXTData(EditTagid,UE.getEditor('content').getContent())
+        })
+    }
+
+    function ShowAllKc(){ //展示课程弹窗
+        $("#NotAddKcBox").html('')
+        $("#HasAddKcBox").html('')
+        let url = "{php echo $this->createWebUrl('special', array('op' => 'GetKcList','schoolid' => $schoolid))}"
+        $.ajax({
+            url: url,
+            type: "post",
+            dataType: "json",
+            success: function (res) {
+                for(let i of res){
+                    let CheckAdd = false
+                    SpData.map(x=>{
+                        if(x.tagid === Number(EditTagid) && Number(x.type) === 3){
+                            x.kclist.map( y=>{
+
+                                if(Number(y.id) === Number(i.id) ){
+                                    CheckAdd = true
+                                }
+                            })
+                        }
+                    })
+                    if(CheckAdd === false){
+                        let html = `
+                            <div class="SwitchKcItem search_on_keydown" onclick="appendKc(this,'${i.id}','${i.name}','${i.kmname}',true)" >
+                                <span class="KcItem-KmName">${i.kmname}</span>
+                                <div class="name" style="flex:1;font-weight: bolder;">
+                                    ${i.name}
+                                </div>
+                                <div>
+                                    <i class="fa fa-plus" style="font-weight: lighter;font-size: 14px;"></i>
+                                </div>
+                            </div>
+                        `;
+                        $("#NotAddKcBox").append(html)
+                    }else {
+                        let html = `
+                            <div class="SwitchKcItem search_on_keydown" onclick="appendKc(this,'${i.id}','${i.name}','${i.kmname}',false)" >
+                                <span class="KcItem-KmName">${i.kmname}</span>
+                                <div class="name" style="flex:1;font-weight: bolder;">
+                                    ${i.name}
+                                </div>
+                                <div>
+                                    <i class="fa fa-minus" style="font-weight: lighter;font-size: 14px;"></i>
+                                </div>
+                            </div>
+                        `;
+                        $("#HasAddKcBox").append(html)
+                    }
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown){
+            }
+        });
+        $("#ShowAllKcBox").modal('toggle')
+    }
+
+    function appendKc(e,id,kcname,kmname,type){ //双向追加课程
+        $(e).remove()
+        let Icon = '';
+        if(type === true){
+            Icon = '<i class="fa fa-minus" style="font-weight: lighter;font-size: 14px;"></i>';
+
+        }else{
+            Icon = '<i class="fa fa-plus" style="font-weight: lighter;font-size: 14px;"></i>';
+
+        }
+        let html = `
+                <div class="SwitchKcItem search_on_keydown" onclick="appendKc(this,'${id}','${kcname}','${kmname}',${!type})" >
+                    <span class="KcItem-KmName">${kmname}</span>
+                    <div class="name" style="flex:1;font-weight: bolder;">
+                        ${kcname}
+                    </div>
+                    <div>
+                       ${Icon}
+                    </div>
+                </div>
+                `;
+        if(type == true){
+            $.ajax({
+                url: "{php echo $this->createWebUrl('special', array('op' => 'GetKcInfo','schoolid' => $schoolid))}",
+                type: "post",
+                dataType: "json",
+                data:{'id':id},
+                success: function (res) {
+                    SetKCData(EditTagid,res.data)
+                },
+                error: function (jqXHR, textStatus, errorThrown){
+                }
+            });
+            $("#HasAddKcBox").append(html);
+        }else{
+            RemoveKCData(EditTagid,id)
+            // $(`li.SpLi[tagid=${EditTagid}]>div[data-container-id=${id}]`).remove()
+            $("#NotAddKcBox").append(html);
+        }
+    }
+
+    function UpdateSpData(){ //更新排序
+        let TempSpData = []
+        $("#SpSort>.SpLi").each(function(){
+            let ThisTagId = Number($(this).attr('tagid'))
+            SpData.map(x=>{
+                if(Number(x.tagid) === ThisTagId){
+                    TempSpData.push(x)
+                }
+            })
+        })
+        SpData = TempSpData
+    }
+
+    function GetDefaultData(id){ //获取初始数据
+        let url = "{php echo $this->createWebUrl('special', array('op' => 'GetSpContainerList','schoolid' => $schoolid))}"
+        if(Number(id) !== 0){
+            $.ajax({
+            url: url,
+            type: "post",
+            dataType: "json",
+            data:{
+                id:id
+            },
+            success: function (res) {
+               if(res.data !== null && res.data.length !== 0 ){
+                SpData = res.data
+                SpData.map((x,index)=>{
+                    SpData[index].tagid = Number(x.tagid)
+                    SpData[index].type = Number(x.type)
+                    if(Number(x.tagid) >  MaxTagid){
+                        MaxTagid = Number(x.tagid)
+                    }
+                })
+                if(SpData.length > 0){
+                    SpData.map(x=>{
+                        RanderSpContent(x)
+                    })
+                }
+               }
+
+            },
+            error: function (jqXHR, textStatus, errorThrown){
+                //DoSomething
+            }
+        });
+        }
+
+    }
+
+    function HTMLDecode(text) {  //JS HTML反转义
+        var temp = document.createElement("div");
+        temp.innerHTML = text;
+        var output = temp.innerText || temp.textContent;
+        temp = null; return output;
+    }
+
+    function RanderSpContent(item){ //渲染容器
+        if(item.type === 1){
+            let InsertHtml = `  <li class="SpLi" tagid="${item.tagid}" type="1" style="min-height: 40px;" >
+                                    <img  style="width:356px;" src="${item.imgurl}" data-value="${item.imgvalue}">
+                                </li>`;
+            $("#SpSort").append(InsertHtml)
+        }
+        if(item.type === 2){
+            $("#ActItem-Text-fontColor").val(item.BgColor)
+            $("#ActItem-Text-backGround").css("background-color", item.BgColor)
+            let IitHtml = HTMLDecode(item.textcontent);
+            let InsertHtml = `  <li class="SpLi " tagid="${item.tagid}" type="2" style="min-height: 40px;padding:5px;background-color:${item.BgColor}" >
+                                    <img class="NoC" style="width:356px;display:none" src="{MODULE_URL}public/web/images/basicTXTpic.png">
+                                    <div  style="width:100%">
+                                       `+ IitHtml +`
+                                    </div>
+                                </li>`;
+            $("#SpSort").append(InsertHtml)
+        }
+        if(item.type === 3){
+            $("#ActItem-Kc-fontColor").val(item.BgColor)
+            $("#ActItem-Kc-backGround").css("background-color", item.BgColor)
+            let InsertHtml = `  <li class="SpLi " tagid="${item.tagid}" type="3" style="min-height: 100px;padding: 1px 0px 10px 0px;background-color:${item.BgColor}" >
+                                    <div class="NoC" style="width:100%;display:none"><img style="width:356px;" src="{MODULE_URL}public/web/images/basicKCpic.png"></div>
+
+                                </li>`;
+            $("#SpSort").append(InsertHtml)
+            item.kclist.map(x=>{
+                let kcinfo = x;
+                let iconarr = kcinfo.buystu
+                let iconhtml = ''
+                for(let item of iconarr){
+                    iconhtml += `<img src="${item}" style="width:30px;height:30px;border-radius:50%;margin-right:5px;"> `
+                }
+                let ContainerHtml = `<div data-container-id="${kcinfo.id}" class="SpLi-Kc-Box">
+                            <div style=" position:absolute; width: 70%;">
+                                <div style="width:100%">
+                                    <h4 style="display: flex;margin:9px 0">
+                                        <span class="SpLi-Kc-km">${kcinfo.km}</span> <span> ${kcinfo.name}</span>
+                                    </h4>
+                                </div>
+                                <div style="width:100%;font-size:12px;margin-bottom: 2px;">
+                                    <span> ${kcinfo.startdate}-${kcinfo.enddate}</span>
+                                </div>
+                                <div style="width:100%;display:flex;background-color: transparent;">
+                                    ${iconhtml}
+                                </div>
+                            </div>
+                            <div style="margin-top:10%;float:right;">
+                                <button class="btn btn-danger" style="border-radius: 25px;padding:3px 10px">立即学习</button>
+                                <span style="color:#8a8a8a;display: block;text-align: center;margin-top:2px">已有${kcinfo.buynum}人在读</span>
+                            </div>
+                        </div>`;
+                let TargetLi = $(`li.SpLi[tagid=${item.tagid}]`);
+                TargetLi.append(ContainerHtml)
+            })
+        }
+        if(item.type === 4){
+            let InsertHtml = `  <li class="SpLi" tagid="${item.tagid}" type="4" style="min-height: 40px;" >
+                <div style="height:250px " class="VBR"> 
+                <video src="${item.videourl}" data-value="${item.videovalue}" style="height:100% !important" data-fix="${item.video_fix}" ></video></div>
+                                  
+                                </li>`;
+            $("#SpSort").append(InsertHtml)
+        }
+        if(item.type === 5){
+            // let tempFormDataShow = item.formData
+            // let tempFormDataHtml = '';
+            // for(i in tempFormDataShow){
+            //     tempFormDataHtml += `<div>
+            //                 <label style="font-size: 18px;">${tempFormDataShow[i]['title']}</label>
+            //             </div>`
+            //     if(tempFormDataShow[i]['type'] == 'text'){
+            //         tempFormDataHtml += `<input class="form-control" type="text" name="{$item['type']}{$key}" placeholder="请输入内容" disabled>`
+            //     }
+            //     if(tempFormDataShow[i]['type'] == 'radio'){
+            //         let RadioData = tempFormDataShow[i]['data'];
+            //         for(radio of RadioData){
+            //             tempFormDataHtml += `<label class="radio-inline" style="font-size:14px;line-height: 35px;">
+            //                                     <input class="form-control" type="radio" value="${radio}" disabled> 
+            //                                     <label for="${radio}">${radio}</label>
+            //                                 </label>`
+            //         }
+            //     }
+
+            //     if(tempFormDataShow[i]['type'] == 'checkbox'){
+            //         let CheckboxData = tempFormDataShow[i]['data'];
+            //         for(checkbox of CheckboxData){
+            //             tempFormDataHtml += `<label class="radio-inline" style="margin-left:0px;width:30%;">
+            //                 <input class="form-control" type="text" style="margin-top:10px;" value="${checkbox}" disabled>
+            //                                 </label>`
+            //         }
+            //     }
+            // }
+            var typepic = 'up_and_down';
+            if(item.construction == 'leftright'){
+                typepic = 'leftright';
+            }else{
+                typepic = 'up_and_down';
+            }
+            // let InsertHtml = `  <li class="SpLi NoContent" tagid="${item.tagid}" type="5" style="min-height: 100px;padding: 5px;background-color:${item.BgColor}" >
+            //                     ${tempFormDataHtml}
+            //                     </li>`;
+            let InsertHtml = `  <li class="SpLi NoContent" tagid="${item.tagid}" type="5" style="min-height: 100px;padding: 1px 0px 10px 0px;" >
+                                <div class="NoC" style="width:100%"><img style="width:356px;" src="{MODULE_URL}public/web/images/${typepic}.jpg"></div>
+                                </li>`;
+            $("#SpSort").append(InsertHtml)
+        }
+        if(item.type === 6){
+            let InsertHtml = `<li class="SpLi" tagid="${item.tagid}" type="6" style="min-height: 35px;line-height: 30px;padding: 5px;">
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        <input style="text-align:center;" type="text" class="form-control temptitle" placeholder="${item.title}" disabled>
+                    </div>
+                </div>
+            </li>`;
+            $("#SpSort").append(InsertHtml)
+        }
+        AddDockListener()
+    }
+
+    function _Init(id){ //初始化
+        GetDefaultData(id)
+    }
+    function ShowformHtml(){ //点击form模块，显示相对应的form内容
+        radioItemOff()
+        $("#ContainerFormTitle").html('')
+        SpData.map(x=>{
+            if(Number(x.type) === 5){
+                tempFormData = x.formData
+                if(x.construction == 'up_and_down'){
+                    $('input:radio[name="construction"][value="up_and_down"]').prop('checked', true);
+                }else{
+                    $('input:radio[name="construction"][value="leftright"]').prop('checked', true);
+                }
+                if(x.BgColor){
+                    $('input:radio[name="checkShowType"][value="background-color"]').prop('checked', true);
+                    $("#ShowImg").hide()
+                    $("#ShowBgColor").show()
+                    $("#ActItem-Form-fontColor").val(x.BgColor)
+                    $("#ActItem-Form-backGround").css("background-color", x.BgColor)
+                }else{
+                    $('input:radio[name="checkShowType"][value="background-img"]').prop('checked', true);
+                    $("#ShowBgColor").hide()
+                    $("#ShowImg").show()
+                    $("#ShowImg").show()
+                    $('input[name=formImg]').val(x.imgvalue)
+                    $('input[name=formImg]').attr('url',x.imgurl)
+                }
+            }
+        })
+
+        var formhtml = '';
+        tempFormData.map(x=>{
+            let istext = '';
+            let isradio = '';
+            let ischeckbox = '';
+            let selectedHtml = '';
+            let checkBoxHtml = '';
+            if(x.type === 'text'){
+                istext = "selected";
+            }else if(x.type === 'radio'){
+                isradio = "selected";
+
+                x.data.map((y,index)=>{
+                    selectedHtml += `<div style="flex:1">
+                                <input class="form-control radioItem" type="text" value="${y}" />
+                            </div>`;
+                })
+            }else if(x.type === 'checkbox'){
+                
+                ischeckbox = "selected";
+                selectedHtml = `<div style="flex:1">
+                                <button class="btn btn-default" type="button" onclick="addCheckBox(this)"><span>添加自定义选项<i class="fa fa-plus"></i></span></button>
+                            </div>`;
+                x.data.map((y,index)=>{
+                    checkBoxHtml += `<div class="col-sm-3" style="position:relative;min-width:130px;">
+                                        <input class="form-control radioItem" type="text" placeholder="请输入内容" style="margin-top:10px;" value="${y}"/>
+                                        <div class="fa fa-minus" style="position:absolute; right: 0px; top: 10px;" onclick="delCheckBox(this)"></div>
+                                    </div>`;
+                })
+                
+            }
+            formhtml += `<div class="form-group formItemRoot" style="position:relative;display: flex;justify-content: flex-start; flex-wrap: wrap; align-items: center;border-bottom: 0.1px solid #eae9e9;padding:5px;">
+                            <div class="col-sm-3">
+                                <input class="form-control" type="text" name="formTitle[]" value="${x.title}" placeholder="${x.title}" onchange="changeTitle(this)"/>
+                            </div>
+                            <div class="col-sm-3" >
+                                <select style="width: 100px;" onchange="changeType(this)">
+                                    <option value="text" data-val="text" ${istext}>填写文本内容</option>
+                                    <option value="radio" data-val="radio" ${isradio}>单选</option>
+                                    <option value="checkbox" data-val="checkbox" ${ischeckbox}>多选</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6 mutiBox" style="display:flex;">
+                                ${selectedHtml}
+                            </div>
+                            <div class="fa fa-minus" style="position:absolute;right:0px;" onclick="delOne(this)"></div>
+                            <div class="form-group" style="float:left">${checkBoxHtml}</div>
+                        </div>`
+        })
+        $("#ContainerFormTitle").html(formhtml)  
+        radioItemOn()
+    }
+    function addForm(){ //添加自定义form表单内容
+        radioItemOff()
+        let TempItem = {'title':'',type:'text',data:[]}
+        let formIndex = tempFormData.length;
+        var formtitle = '标题'+`${formIndex}`;
+        TempItem.title = formtitle;
+        html = `<div class="form-group formItemRoot"  style="position:relative;display: flex;justify-content: flex-start; flex-wrap: wrap; align-items: center;border-bottom: 0.1px solid #eae9e9;padding:5px;">
+                    <div class="col-sm-3">
+                        <input class="form-control" type="text" name="formTitle[]" placeholder="${formtitle}" onchange="changeTitle(this)"/>
+                    </div>
+                    <div class="col-sm-3" >
+                        <select style="width: 100px;" onchange="changeType(this)">
+                            <option value="text" data-val="text">填写文本内容</option>
+                            <option value="radio" data-val="radio">单选</option>
+                            <option value="checkbox" data-val="checkbox">多选</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 mutiBox" style="display:flex;">
+                    </div>
+                    <div class="fa fa-minus" style="position:absolute;right:0px;" onclick="delOne(this)"></div>
+                    <div class="form-group" style="float:left"></div>
+                </div>`
+        $("#ContainerFormTitle").append(html)
+        
+        tempFormData.push(TempItem)
+        radioItemOn()
+        scrollTopA()
+    }
+
+    function scrollTopA(){
+        var ele = document.getElementById('ContainerFormTitle');
+        ele.scrollTop = ele.scrollHeight;
+    }
+
+    function changeTitle(e){ //监听表单input标题内容修改
+        var title = $(e).val()
+        let index = $(e).parent().parent().index();
+        tempFormData[index]['title'] = title
+    }
+
+    function changeType(e){
+        var type = $(e).find("option:selected").attr('data-val')
+        let index = $(e).parent().parent().index();
+        tempFormData[index]['type'] = type
+        $(e).parent().parent().find(".mutiBox").html('')
+        if(type == 'radio'){
+            radioItemOff()
+            tempFormData[index]['data'] = ['是','否']
+            let radioHtml = `<div style="flex:1">
+                                <input class="form-control radioItem" type="text" placeholder="是" />
+                            </div>
+                            <div style="flex:1">
+                                <input class="form-control radioItem" type="text" placeholder="否" />
+                            </div>`
+            $(e).parent().parent().find(".mutiBox").html(radioHtml)
+            radioItemOn()
+        }
+        if(type == 'checkbox'){
+            radioItemOff()
+            let radioHtml = `<div style="flex:1">
+                                <button class="btn btn-default" type="button" onclick="addCheckBox(this)"><span>添加自定义选项<i class="fa fa-plus"></i></span></button>
+                            </div>
+                            `
+            $(e).parent().parent().find(".mutiBox").html(radioHtml)
+            radioItemOn()
+        }
+    }
+
+    function delOne(e){
+        let index = $(e).parent().index();
+        $(e).parent().remove();
+        tempFormData.splice(index,1)
+    }
+
+    function radioItemOff(){
+        $(".radioItem").off('click')
+    }
+        
+    function radioItemOn(){
+        $(".radioItem").on('input',function(){
+            let index = $(this).parents('.formItemRoot').index()
+            let i = $(this).parent().index()
+            tempFormData[index]['data'][i] = $(this).val()
+        })
+    }
+    function addCheckBox(e){
+        html = `<div class="col-sm-3" style="position:relative;min-width:130px;">
+                    <input class="form-control radioItem" type="text" placeholder="请输入内容" style="margin-top:10px;"/>
+                    <div class="fa fa-minus" style="position:absolute; right: 0px; top: 10px;" onclick="delCheckBox(this)"></div>
+                </div>`
+            $(e).parent().parent().next().next().append(html)
+        radioItemOn()
+        scrollTopA()
+    }
+
+    function delCheckBox(e){
+        let index = $(e).parent().index();
+        $(e).parent().remove();
+    }
+
+    $("input[name='checkShowType']").change(function(){ //切换显示背景图还是背景色
+        if($(this).val() == 'background-img'){
+            $("#ShowBgColor").hide()
+            $("#ShowImg").show()
+        }
+        if($(this).val() == 'background-color'){
+            $("#ShowBgColor").show()
+            $("#ShowImg").hide()
+        }
+        SpData.map(x=>{
+            if(x.tagid === Number(EditTagid) && x.type === 5){
+                if($(this).val() == 'background-img'){
+                    x.BgColor = ''
+                    SetBgColor(x.BgColor,5)
+                }
+                if($(this).val() == 'background-color'){
+                    x.imgurl = ''
+                    x.imgvalue = ''
+                    SetIMGData(x.tagid,x.imgurl,x.imgvalue)
+                }
+            }
+        })
+    })
+    
+    $("input[name='construction']").change(function(){ //切换显示背景图还是背景色
+        if($(this).val() == 'up_and_down'){
+            $(`.SpLi[tagid=${EditTagid}]`).find('img').attr('src',"{MODULE_URL}public/web/images/up_and_down.jpg")
+        }
+        if($(this).val() == 'leftright'){
+            $(`.SpLi[tagid=${EditTagid}]`).find('img').attr('src',"{MODULE_URL}public/web/images/leftright.jpg")
+        }
+        SpData.map(x=>{
+            if(x.tagid === Number(EditTagid) && x.type === 5){
+                x.construction = $(this).val()
+            }
+        })
+    })
+    
+    $(function () {
+        _Init("{$_GPC['id']}")
+        $('#ShowAllKcBox').on('hidden.bs.modal', function () {
+            CancelEditContainer()
+        })
+
+        $("#EditBox").on('click', function (event) {
+            event.stopPropagation()
+        })
+
+           //课程模糊搜索
+        $("#keywords").bind("input propertychange",function(event){
+            keywords = $("#keywords").val();
+            $("#NotAddKcBox").find(".search_on_keydown").each(function(){
+                let name = $(this).find(".name").text();
+                let has_name = name.search(keywords);
+                if(has_name == -1 ){
+                    $(this).hide();
+                }else{
+                    $(this).show();
+                }
+            });
+        });
+
+        var SortOption = {
+            revert: 100,
+            tolerance: "pointer",
+            distance: 30,
+            cursor:"move",
+            start:function(){
+                $(".SpLi").off('click')
+            },
+            stop:function(){
+                AddDockListener()
+            },
+            update:function() {
+                UpdateSpData()
+            }
+        }
+
+        require(["jquery.ui"], function(jqueryui){
+            $( "#SpSort" ).sortable(SortOption);
+        });
+
+        AddDockListener()
+        ImgListener()
+        VideoListener()
+        TempTitleListener()
+    })
+
+    function Save(){ //保存
+        let HasEmpty = false;
+        SpData.map(x=>{
+            let ThisEmpty = false;
+            if(Number(x.type) === 3){
+                if(x.kclist.length === 0){
+                    ThisEmpty = true
+                }
+            }
+            if(!x.textcontent && Number(x.type) === 2){
+                ThisEmpty = true
+            }
+            if(!x.imgurl && Number(x.type) === 1){
+                ThisEmpty = true
+            }
+
+            if(!x.videourl && Number(x.type) === 4){
+                ThisEmpty = true
+            }
+            if(Number(x.type) === 5){
+                if(tempFormData.length > 0){
+                    x.formData = tempFormData
+                }
+            }
+            if(ThisEmpty === true){
+                HasEmpty = true
+                $(`.SpLi[tagid=${x.tagid}]`).addClass("HighNoC")
+            }
+        })
+        if(!`{$_GPC['id']}`){
+            if($("input[name=temptitle]").val() === null || $("input[name=temptitle]").val() === ''){
+                ReToastGlobal("保存失败！请填写模板标题！")
+                return
+            }
+                if(imgval === null || imgval === ''){
+                ReToastGlobal("保存失败！至少上传一张图片！")
+                return
+            }
+        }
+        if(HasEmpty === true){
+            ReToastGlobal("保存失败！请确保所有容器都已设置内容！")
+            return
+        }
+        let tempTitle = $("input[name=temptitle]").val()
+        $.ajax({
+            url: "{php echo $this->createWebUrl('special', array('op' => 'save','schoolid' => $schoolid))}",
+            type: "post",
+            dataType: "json",
+            data:{'content':SpData,'id':`{$_GPC['id']}`,'tidstr':tidstr},
+            success: function (res) {
+                if(res.status === true){
+                    ReToastGlobal("保存成功，即将退出编辑")
+                    setTimeout(() => {
+                        window.history.back()
+                    }, 1000);
+                }else {
+                    ReToastGlobal(res.msg)
+
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown){
+            }
+        });
+    }
+</script>
+{elseif $operation == 'display'}
+<script>
+    require(['bootstrap'],function($){
+        $('.btn,.tips').hover(function(){
+            $(this).tooltip('show');
+        },function(){
+            $(this).tooltip('hide');
+        });
+    });
+</script>
+<style>
+    .list .item {
+    height: 162px;
+    display: -ms-flexbox;
+    display: flex;
+    border-radius: 6px;
+    -webkit-box-shadow: 0 2px 10px 0 rgba(0,0,0,.05);
+    box-shadow: 0 2px 10px 0 rgba(0,0,0,.05);
+    margin-bottom: 16px;
+}
+.list .item .item-left {
+    width: 162px;
+    height: 162px;
+}
+.list .item .item-left .cover {
+    position: relative;
+    cursor: pointer;
+}
+.list .item .item-left .cover img {
+    width: 162px;
+    height: 162px;
+    border-radius: 6px 0 0 6px;
+}
+.list .item .item-right {
+    padding: 16px 25px 24px 20px;
+    width: 100%;
+}
+.list .item .item-right .part-one .detail .title .status.dark-gray {
+    background-color: #999;
+    border: 1px solid #999;
+}
+.list .item .item-right .part-one .detail {
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+}
+.list .item .item-right .part-one .detail, .list .item .item-right .part-one .detail .title {
+    display: flex;
+    align-items: center;
+}
+.list .item .item-right .part-one .detail .title .text {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    width: 484px;
+    max-width: 484px;
+    margin-left: 8px;
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.list .item .item-right .part-one .detail .operate {
+    display: flex;
+    align-items: center;
+}
+
+.list .item .item-right .part-one .detail .operate .icon {
+    font-size: 14px;
+    margin-left: 10px;
+    color: #bfbfbf;
+    cursor: pointer;
+}
+.list .item .item-right .part-one .tags {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+}
+.list .item .item-right .part-one .tags .type {
+    font-size: 14px;
+    color: #999;
+    margin-right: 16px;
+}
+.list .item .item-right .part-two {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-top: 22px;
+}
+.list .item .item-right .part-two .time {
+    width: 400px;
+    height: 50px;
+    line-height: 20px;
+    font-size: 14px;
+    color: #999;
+}
+.list .item .item-right .part-two .time .end-time {
+    margin-top: 8px;
+}
+.list .item .item-right .part-two .data {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+    height: 50px;
+    width: calc(100% - 250px);
+    line-height: 20px;
+    font-size: 14px;
+    color: #999;
+    margin-left: 40px;
+    position: relative;
+}
+.list .item .item-right .part-two .data .line {
+    position: absolute;
+    left: 0;
+    width: 2px;
+    height: 50px;
+    background-color: #e8e8e8;
+}
+.list .item .item-right .part-two .data-item {
+    text-align: center;
+}
+.list .item .item-right .part-two .data-item .number {
+    font-size: 18px;
+    color: #999;
+}
+.list .item .item-right .part-two .data-item .number.active {
+    color: #ff8534;
+    cursor: pointer;
+}
+.list .item .item-right .part-two .data-item .label {
+    margin-top: 14px;
+    color: #999;
+}
+.ant-dropdown-menu {
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    padding: 10px;
+}
+.list li {
+    padding: 2px;
+    list-style: none;
+    position: relative;
+}
+</style>
+<div class="main">
+    <div class="panel panel-info">
+        <div class="panel-heading">营销宝列表</div>
+        <div class="panel-body">
+            <form action="./index.php" method="get" class="form-horizontal" role="form">
+                <input type="hidden" name="c" value="site">
+                <input type="hidden" name="a" value="entry">
+                <input type="hidden" name="m" value="fm_jiaoyu">
+                <input type="hidden" name="do" value="special"/>
+                <input type="hidden" name="op" value="display"/>
+                <input type="hidden" name="schoolid" value="{$schoolid}" />
+                <div class="form-group">
+                    <label class="col-xs-12 col-sm-2 col-md-1 control-label">营销宝名称</label>
+                    <div class="col-sm-2 col-lg-2">
+                        <input class="form-control" name="s_name" type="text" value="{$_GPC['s_name']}">
+                    </div>
+
+                    <label class="col-xs-12 col-sm-3 col-md-1 control-label">时间段</label>
+                    <div class="col-sm-2 col-lg-2">
+                        {php echo tpl_form_field_daterange('createtime', array('start' => date('Y-m-d', $starttime), 'end' => date('Y-m-d', $endtime)));}
+                    </div>
+                    <div class="col-sm-2 col-lg-2" style="margin-left:50px">
+                        <button class="btn btn-default"><i class="fa fa-search"></i> 搜索</button>
+                    </div>
+                    <div class="span8 control-group">
+						<a class="btn qx_edit btn-primary" href="javascript:AddNewSp()"><i class="fa fa-plus"></i> 添加营销宝</a>
+					</div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="list">
+            {loop $list $item}
+            <div class="item">
+                <div class="item-left">
+                    <div class="cover">
+                        <img src="{php echo tomedia($item['shareimg'])}">
+                    </div>
+                </div>
+                <div class="item-right">
+                    <div class="part-one">
+                        <div class="detail">
+                            <div class="title">
+                                <span class="label label-{$item['status']}">{$item['statusName']}</span>
+                                <span class="text">{$item['title']}</span>
+                            </div>
+                            <div class="operate">
+                                    <a href="javascript:;" title="点击复制" class="account icon iconfont" data-url="{php echo $_W['siteroot'] . 'app/index.php?i=' . $weid . '&c=entry&schoolid=' . $schoolid . '&id='.$item['id'].'&m=fm_jiaoyu&do=special&type=sp'}"><i class="fa fa-link"></i></a>
+                                    <span class="icon iconfont ant-dropdown-trigger " onclick="showhandle(this,`{$item['id']}`)">
+                                        <i class="fa fa-ellipsis-h"></i>
+                                    </span>
+                                    <div class="handlemenu" style="display:none;position: absolute;right: 16px;padding-right: 0.2%;margin-top:7%;">
+                                        <ul class="ant-dropdown-menu">
+                                            <li style="text-align: center;">
+                                                <a href="javascript:editSp('{$item['id']}')" style="color: #bfbfbf;">设置</a>
+                                            </li>
+                                            <li style="text-align: center;">
+                                                <a href="{php echo $this->createWebUrl('special', array('op' => 'post', 'id' => $item['id'],'schoolid' => $schoolid))}" style="color: #bfbfbf;">设计</a>
+                                            </li>
+                                            <li style="text-align: center;">
+                                                <a href="{php echo $this->createWebUrl('special', array('op' => 'delete', 'id' => $item['id'],'schoolid' => $schoolid))}" style="color: #bfbfbf;" onclick="return confirm('确认删除此记录吗？');return false;">删除</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="tags">
+                            <div class="type">类型：
+                                {if $item['marketingtype'] == 1}
+                                红包赠送
+                                {elseif $item['marketingtype'] == 2}
+                                优惠券赠送
+                                {else}
+                                积分赠送
+                                {/if}
+                            </div>
+                            <div class="scenes">次数限定：
+                                {$item['maxnum']}次
+                            </div>
+                        </div>
+                    </div>
+                    <div class="part-two">
+                        <div class="time">
+                            <div class="start-time">发布时间：{php echo date("Y-m-d H:i",$item['createtime'])}</div>
+                            <div class="end-time">活动时间：{php echo date("Y-m-d H:i",$item['start'])}至{php echo date("Y-m-d H:i",$item['end'])}</div>
+                        </div>
+                        <div class="data">
+                            <div class="line"></div>
+                            <div class="data-item share">
+                                <div class="number">{$item['clicknum']}</div>
+                                <div class="label">浏览数</div>
+                            </div>
+                            <div class="data-item browser">
+                                <div class="number">{$item['shtime']}</div>
+                                <div class="label">分享数</div>
+                            </div>
+                            <!-- <div class="data-item sign-up">
+                                <div class="number active">1</div>
+                                <div class="label">报名数</div>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/loop}
+        </div>
+        <script>
+            function showhandle(e){
+                $(e).next().fadeToggle()
+            }
+            $('.account').each(function(){
+                util.clip(this, $(this).attr('data-url'));
+            });
+        </script>
+        {$pager}
+    </div>
+</div>
+    <style>
+        .tab_saidnav{ position: absolute; width: 48px; height: 100px; left: -47px; top: 23%; text-align: center; background-color: #e7e7eb; border-top-left-radius: 5px; border-bottom-left-radius: 5px; cursor:pointer }
+        .tab_saidnav li{ list-style: none; width: 100%; height: 50%; border-right: 1px #e7e7eb solid; }
+        .tab_saidnav .acts{ background-color: #fff; border-right: 1px #fff solid; border-bottom: 1px #e7e7eb solid; }
+        .tab_saidnav li:first-child{ border-top-left-radius: 5px; }
+        .tab_saidnav li:last-child{ border-bottom-left-radius: 5px; }
+        .tab_saidnav li div{ width: 80%; margin-left: 10%; padding-top: 20%; -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none;}
+    </style>
+
+    <div class="uploader-modal modal right fade" style="z-index:1050 !important;"  id="SpEditBox" tabindex="-1" role="dialog" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog myModalleft" style="width: 450px;">
+            <div class="tab_saidnav">
+                <li opt="basic" class="acts"><div>基础设置</div></li>
+                <li opt="marketing"><div>赠送设置</div></li>
+            </div>
+            <div class="modal-content" id="ed_stubox" style="max-height:unset !important;">
+                <div class="modal-header" style="text-align: center;color: black;">
+                    <h4 class="modal-title" id="myModalLabel">编辑营销宝</h4>
+                </div>
+                <div class="modal-body" style="height:100%;overflow-y: scroll; max-height: 87%;">
+                    <form action="" method="post" class="form-horizontal form" id="SpForm"	enctype="multipart/form-data">
+                        <input type="hidden" name="spid" value=0>
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div id="basic">
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label"><span style="color:red">*</span>标题</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" name="title" class="form-control" value="" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">分享标题</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" name="sharetitle" class="form-control" value="" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">分享描述</label>
+                                        <div class="col-sm-9">
+                                            <textarea name="sharedescription" rows="6" style="resize: none; border-color: #ece9e9;width: 100%;"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">分享图片</label>
+                                        <div class="col-sm-9">
+                                            {php echo tpl_form_field_image('shareimg')}
+
+                                        <div class="help-block">图片最大高度为600，每张图片宽高请设置为相同的宽高！！！</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="marketing" style="display: none;">
+                                    <div class="form-group" style="line-height: 35px;">
+                                        <label class="col-md-3 control-label">活动时间</label>
+                                        <div class="col-sm-9">
+                                            <label class="radio-inline">
+                                                {php echo tpl_form_field_daterange('activetime', array('start' => date('Y-m-d', TIMESTAMP - 86399*7), 'end' => date('Y-m-d', TIMESTAMP + 86399*7)));}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">赠送类型</label>
+                                        <div class="col-sm-9">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="marketingtype" value="3" >赠送积分
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="marketingtype" value="1" >赠送红包
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="marketingtype" value="2" >优惠券
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mtClassHide" style="display: none;" id="score">
+                                        <label class="col-md-3 control-label">积分数</label>
+                                        <div class="col-sm-9">
+                                            <input type="number" name="sharescore" class="form-control" value="" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group mtClassHide" style="display: none;" id="redpacket">
+                                        <label class="col-md-3 control-label">选择红包</label>
+                                        <div class="col-sm-9" >
+                                            <select style="margin-right:15px;width: 100%;" name="redpacketid">
+                                                <option value="0">选择红包</option>
+                                                {loop $welfare $it}
+                                                    {if $it['type'] == 1}
+                                                    <option value="{$it['id']}">{$it['title']}</option>
+                                                    {/if}
+                                                {/loop}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group mtClassHide" style="display: none;" id="coupon">
+                                        <label class="col-md-3 control-label">选择优惠券</label>
+                                        <div class="col-sm-9" >
+                                            <select style="margin-right:15px;width: 100%;" name="couponid">
+                                                <option value="0">选择优惠券</option>
+                                                {loop $welfare $it}
+                                                    {if $it['type'] == 2}
+                                                    <option value="{$it['id']}">{$it['title']}</option>
+                                                    {/if}
+                                                {/loop}
+                                            </select>
+                                        </div>
+                                    </div>
+                                
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">点击次数</label>
+                                        <div class="col-sm-9">
+                                            <input type="number" name="maxnum" class="form-control" value="" />
+                                        </div>
+                                        <label class="col-sm-12 control-label">当用户点击次数达到设定值当时候,才能领取相应的奖励</label>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-foot">
+                    <a class="btn btn-primary" style="color: #fff;" onclick="SaveSp();">提交</a>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+                </div>
+                <script type="text/javascript">
+
+                    $(document).on('click', '#clear_tname', function(){
+                        var t = $(this).parents().children();
+                        var want = t.find('input[class*=sxword]');
+                        var selectdiv = t.find('select[class*=select]');
+
+                        want.show();
+                        want.val('');
+                        selectdiv.hide();
+
+                    });
+                    var divid = 0;
+
+
+                </script>
+            </div>
+        </div>
+    </div>
+
+<script>
+    function editSp(id){
+        let url = "{php echo $this->createWebUrl('special', array('op' => 'editSp','schoolid' => $schoolid))}";
+        $.ajax({
+            url: url,
+            type: "post",
+            dataType: "json",
+            data:{
+                id:id
+            },
+            success: function (res) {
+                $("input[name=spid]").val(id)
+                $("#myModalLabel").text("编辑营销宝")
+                $("input[name=title]").val(res.data.title)
+                $("input[name=sharetitle]").val(res.data.sharetitle)
+                $("textarea[name=sharedescription]").val(res.data.sharedescription)
+                $("input[name=shareimg]").val(res.data.shareimg)
+                $("input[name=shareimg]").parent().next().find('img').attr('src',res.data.shareimgurl)
+                $("input:radio[name='marketingtype'][value='" + res.data.marketingtype + "']").click();
+                $("input[name=maxnum]").val(res.data.maxnum)
+                if(res.data.start){
+                    $(".date-title").parent().prev().prev().val(res.data.start)
+                    $(".date-title").parent().prev().val(res.data.end)
+                    $(".date-title").html(res.data.start + '至' + res.data.end)
+                }
+                $("#SpEditBox").modal('toggle')
+                if(res.data.marketingtype == 3){
+                    $("input[name=sharescore]").val(res.data.shareval)
+                    $("#score").show()
+                }else if(res.data.marketingtype == 1){
+                    $("select[name='redpacketid']").val(res.data.shareval);
+                    $("#redpacket").show()
+                }else if(res.data.marketingtype == 2){
+                    $("select[name='couponid']").val(res.data.shareval);
+                    $("#coupon").show()
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown){
+            }
+        });
+    }
+
+    function AddNewSp(){
+        $("#myModalLabel").text("新增营销宝")
+        $("input[name=title]").val('')
+        $("input[name=spid]").val(0)
+        $("input[name=sharetitle]").val('')
+        $("textarea[name=sharedescription]").val('')
+        $("input[name=shareimg]").val('')
+        $("input[name=shareimg]").parent().next().find('img').attr('src','')
+        $("input[name=sharescore]").val('')
+        $("input[name=maxnum]").val('')
+        $("#SpEditBox").modal('toggle')
+    }
+
+    function SaveSp(){
+        let url = "{php echo $this->createWebUrl('special', array('op' => 'saveSp','schoolid' => $schoolid))}";
+        $.ajax({
+            url: url,
+            type: "post",
+            dataType: "json",
+            data:$("#SpForm").serialize(),
+            success: function (res) {
+               alert(res.msg)
+               window.location.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown){
+            }
+        });
+    }
+
+    $(".check_all").click(function(){
+        var checked = $(this).get(0).checked;
+        $("input[type=checkbox]").attr("checked",checked);
+    });
+
+    $("input[name=btndeleteall]").click(function(){
+        var check = $("input[type=checkbox][class!=check_all]:checked");
+        if(check.length < 1){
+            alert('请选择要删除的记录!');
+            return false;
+        }
+        if(confirm("确认要删除选择的记录?")){
+            var id = new Array();
+            check.each(function(i){
+                id[i] = $(this).val();
+            });
+            var url = "{php echo $this->createWebUrl('special', array('op' => 'deleteall','schoolid' => $schoolid))}";
+            $.post(
+                url,
+                {idArr:id},
+                function(data){
+                    if(data.result){
+					    alert(data.msg);
+                        location.reload();
+                    }else{
+                        alert(data.msg);
+                    }
+                },'json'
+            );
+        }
+    });
+
+    $(".tab_saidnav li").click(function(){
+        $(".tab_saidnav .acts").removeClass("acts")
+        $(this).addClass("acts")
+        let opt = $(this).attr("opt")
+        if (opt == 'basic'){
+            $("#marketing").hide()
+            $("#basic").show()
+        }
+        if (opt == 'marketing'){
+            $("#basic").hide()
+            $("#marketing").show()
+        }
+    });
+    $("input[name='marketingtype']").click(function(){
+        $(".mtClassHide").hide()
+        let checkid = $(this).val()
+        if(checkid == 3){
+            $('#score').slideDown()
+        }else if(checkid == 1){
+            $('#redpacket').slideDown()
+        }else if(checkid == 2){
+            $('#coupon').slideDown()
+        }
+    })
+</script>
+{/if}
+
+{template 'public/footer'}

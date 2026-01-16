@@ -1,0 +1,245 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name = "format-detection" content ="telephone=no">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>{$title} - {$config['name']}</title>
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_CSS__}/base.css">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_CSS__}/index.css?v=20191120">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_PLUGIN__}/storeinvite/css/invite.css?v=20200219">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_CSS__}/swiper.min.css">
+    <!-- 解决引用mui时ios输入框失去焦点页面跳到顶部问题 -->
+    <style type="text/css">
+        body{overflow: scroll; -webkit-overflow-scrolling: touch;}
+    </style>
+    <!-- 移动端适配 -->
+    <script>
+        var html = document.querySelector('html');
+        changeRem();
+        window.addEventListener('resize', changeRem);
+        function changeRem() {
+            var width = html.getBoundingClientRect().width;
+            html.style.fontSize = width / 10 + 'px';
+        }
+    </script>
+    <script src="{__MOBILE_STORE_JS__}/jquery-2.1.4.min.js"></script>
+    <script src="{__PLUGIN__}/layer/mobile/2.0/layer.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script>
+        // jssdk config 对象
+        jssdkconfig = {php echo json_encode($_W['account']['jssdkconfig']);} || {};
+        // 是否启用调试
+        jssdkconfig.debug = false;
+        jssdkconfig.jsApiList = [
+            'checkJsApi',
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'getLocation',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'hideMenuItems'
+        ];
+        wx.config(jssdkconfig);
+        wx.error(function (res) {
+            layer.open({ content: '对不起，微信JSSDK信息验证失败！', skin: 'msg', time: 2 });
+        });
+        wx.ready(function () {
+            var title = "{$_share['title']}";
+            var imgUrl = "{$_share['imgUrl']}";
+            var link = "{$_share['link']}";
+            var desc = "{$_share['desc']}";
+
+            if (wx.onMenuShareTimeline) {
+                //转发到朋友圈
+                wx.onMenuShareTimeline({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                //转发给朋友
+                wx.onMenuShareAppMessage({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    type: 'link',
+                    dataUrl: '',
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareQQ({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareWeibo({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+            }
+            else{
+                //新版发送朋友圈
+                wx.updateTimelineShareData({
+                    title: title, // 分享标题
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+                wx.updateAppMessageShareData({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+<section class="">
+    <img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/retailBanner.jpg" width="100%">
+</section>
+<section style=" position:relative; margin-top:-0.9rem; width:100%">
+    <section class="mb24">
+        <section class="rankingRetail pd24 ">
+            <em class="fr coin" > <i class="cf69 font28"><span id="userMoney">0.00</span>元</i><img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/coin.png"></em>
+            <figure style="line-height:0.6rem" >
+                <section class="myRanking">
+                    <p class="font42 cf69" id="userRanking">暂无</p>
+                    <p class="font24">我的排名</p>
+                </section>
+                <img src="{php echo tomedia($_W['store_user']['headurl'])}">
+                <figcaption><span class=" font34">{$_W['store']['name']}</span>
+                    <p class="c9 font22">返利<span id="userInvite">0</span>笔</p>
+                </figcaption>
+            </figure>
+        </section>
+    </section>
+</section>
+<h5 class="fn pd24 clearfix">
+    <section class="rankingTitRetail fr font24">
+        <a href="javascript:getRanking('total');" id="total" class="selected">总榜</a><a href="javascript:getRanking('day');" id="day">日榜</a><a href="javascript:getRanking('week');" id="week">周榜</a><a href="javascript:getRanking('month');" id="month">月榜</a>
+    </section>
+    <p class="font34">排行榜<span class=" ml10 font22 c9">前50名分销排行榜</span></p>
+</h5>
+<section class="pd24 bgfff">
+    <section class="rankingListRetail">
+        <ul id="LoadLists">
+
+        </ul>
+    </section>
+</section>
+<section style="height:1.27rem"></section>
+<section class="buttonFloat">
+    <a href="{php echo $this->createMobileUrl('store.invite_center',array('act'=>'index'))}" class="db font32 yellowBtn" style="background: #FFD112;">分销中心</a>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script src="{__MOBILE_STORE_JS__}/index.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li data-id="<%= rows[i].id %>">
+        <em > <i class="cf69 font28"><%= rows[i].money %>元</i><img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/coin.png"></em>
+        <%if(i==0){%>
+        <span> <img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/top01.png"> </span>
+        <%}else if(i==1){%>
+        <span> <img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/top02.png"> </span>
+        <%}else if(i==2){%>
+        <span> <img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/top03.png"> </span>
+        <%}else{%>
+        <span> <%= i+1 %> </span>
+        <%}%>
+        <dl>
+            <dt> <img src="<%= rows[i].logo %>"> </dt>
+            <dd><%= rows[i].name %><p class="c9 font22">返利<%= rows[i].invite %>笔</p></dd>
+        </dl>
+    </li>
+    <% } %>
+</script>
+<script type="text/javascript">
+    $(function() {
+        getRanking('total');
+    });
+
+    function getRanking(status){
+        //选中点击选项卡
+        $(".rankingTitRetail > a").each(function(){
+            $(this).removeClass("selected")
+        });
+        $("#"+status).addClass("selected");
+        //获取排行榜数据
+        $("#LoadLists").html("<div class='dropload-load'><span class='loading'></span>数据加载中...</div>");
+        $.ajax({
+            type: 'GET',
+            url: "{php echo $this->createMobileUrl('store.invite_ranking', array('act' => 'getJsonList'));}",
+            data:{
+                "status":status
+            },
+            dataType: 'json',
+            success: function(data){
+                if (data['count']>0)
+                {
+                    var html = template("listtpl", data);
+                    $('#LoadLists').html(html);
+                    if(data['ranking']>0)
+                    {
+                        $("#userRanking").html(data['ranking']);
+                        $("#userInvite").html(data['invite']);
+                        $("#userMoney").html(data['money']);
+                    }
+                    else
+                    {
+                        $("#userRanking").html("暂无");
+                        $("#userInvite").html("0");
+                        $("#userMoney").html("0.00");
+                    }
+                }
+                else
+                {
+                    $('#LoadLists').html('<p class="c9 font24 pd24" align="center">- 哎呦，已经到底了哦 -</p>');
+                }
+            },
+            error: function(xhr, type){
+                $('#LoadLists').html('<p class="c9 font24 pd24" align="center">- 哎呦，已经到底了哦 -</p>');
+            }
+        });
+    }
+</script>
+</body>
+</html>

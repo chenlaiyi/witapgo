@@ -1,0 +1,211 @@
+<!doctype html>
+<html>
+{template 'user/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<body>
+
+<section  id="ContentList">
+    <ul class="address" id="LoadLists">
+
+    </ul>
+</section>
+<div class="buttonBox">
+    <ul class="clearfix address_fix">
+        <li><a href="{php echo $this->createMobileUrl('user.user_address',array('act'=>'modify','store_id'=>$store_id,'useWxAddress'=>1,'pid'=>$pid,'draw_id'=>$draw_id))}" class="weixin"><i>使用微信地址</i></a></li>
+        <li><a href="{php echo $this->createMobileUrl('user.user_address',array('act'=>'modify','store_id'=>$store_id,'pid'=>$pid,'draw_id'=>$draw_id))}" class="newadd"><i>添加新地址</i></a></li>
+    </ul>
+</div>
+
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li data-id="<%= rows[i].id %>">
+        <div class="addr_info">
+            {if $pid>0}
+            <a href="{php echo $this->createMobileUrl('user.order_intmall',array('act'=>'submit','store_id'=>$store_id,'pid'=>$pid))}&addressid=<%= rows[i].id %>">
+            <p class="addr_name"><span class="fr c9"><%= rows[i].mobile %></span><%= rows[i].username %></p>
+            <p class="lh20"><%= rows[i].province %><%= rows[i].city %><%= rows[i].county %><%= rows[i].address %></p>
+            </a>
+            {else if $draw_id>0}
+            <a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'submit','store_id'=>$store_id,'draw_id'=>$draw_id))}&addressid=<%= rows[i].id %>">
+            <p class="addr_name"><span class="fr c9"><%= rows[i].mobile %></span><%= rows[i].username %></p>
+            <p class="lh20"><%= rows[i].province %><%= rows[i].city %><%= rows[i].county %><%= rows[i].address %></p>
+            </a>
+            {else}
+            <a href="{php echo $this->createMobileUrl('user.user_address',array('act'=>'modify','store_id'=>$store_id))}&id=<%= rows[i].id %>">
+            <p class="addr_name"><span class="fr c9"><%= rows[i].mobile %></span><%= rows[i].username %></p>
+            <p class="lh20"><%= rows[i].province %><%= rows[i].city %><%= rows[i].county %><%= rows[i].address %></p>
+            </a>
+            {/if}
+        </div>
+        <div class="addr_manage  font28">
+            <input type="radio" id="default<%= rows[i].id %>" name="addr_default" value="默认地址" <%if(rows[i].is_default==1){%> checked="checked"<%}%>>
+            <label for="default<%= rows[i].id %>" class="setDefault">默认地址</label>
+            <span class="fr"> <a href="{php echo $this->createMobileUrl('user.user_address',array('act'=>'modify','store_id'=>$store_id))}&id=<%= rows[i].id %>" class="addr_edit" >编辑</a> <a href="javascript:void(0);" class="addr_del">删除</a> </span> </div>
+    </li>
+    <% } %>
+</script>
+<script type="text/javascript">
+    $(function() {
+        var page = 0;
+        var pageSize = 10;
+
+        window.delCount = 0;
+
+        $('#ContentList').dropload({
+            scrollArea : window,
+            domUp : {
+                domClass   : 'dropload-up',
+                domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+            },
+            domDown : {
+                domClass   : 'dropload-down',
+                domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+            },
+            loadUpFn : function(me){
+                $.ajax({
+                    type: 'GET',
+                    url: "{php echo $this->createMobileUrl('user.user_address', array('act' => 'getJsonList','store_id' => $store_id));}",
+                    data:{
+                        "page":1,
+                        "pageSize":pageSize
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        var html = template("listtpl", data);
+                        $('#LoadLists').html(html);
+                        // 每次数据加载完，必须重置
+                        me.resetload();
+                        // 重置页数，重新获取loadDownFn的数据
+                        page = 1;
+                        window.delCount = 0;
+                        // 解锁loadDownFn里锁定的情况
+                        me.unlock();
+                        me.noData(false);
+                    },
+                    error: function(xhr, type){
+                        layer.open({
+                            content: '系统错误，稍后重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            loadDownFn : function(me){
+                page++;
+                // 拼接HTML
+                var result = '';
+                $.ajax({
+                    type: 'GET',
+                    url: "{php echo $this->createMobileUrl('user.user_address', array('act' => 'getJsonList','store_id' => $store_id));}",
+                    data:{
+                        "page":page,
+                        "pageSize":pageSize,
+                        "delCount":window.delCount
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        var arrLen = data.rows.length;
+                        if(arrLen > 0){
+                            var html = template("listtpl", data);
+                            // 如果没有数据
+                        }else{
+                            // 锁定
+                            me.lock();
+                            // 无数据
+                            me.noData();
+                        }
+
+                        // 插入数据到页面，放到最后面
+                        $('#LoadLists').append(html);
+                        // 每次数据插入，必须重置
+                        me.resetload()
+                    },
+                    error: function(xhr, type){
+                        layer.open({
+                            content: '系统错误，稍后重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            threshold : 50
+        });
+
+        //编辑信息
+        $('#LoadLists').on('click','.setDefault',function(){
+            var editobj = $(this);
+            var id = editobj.parents('li').data("id");
+            $.ajax({
+                url: "{php echo $this->createMobileUrl('user.user_address',array('act'=>'setDefault','store_id' => $store_id))}",
+                type: "post",
+                dataType: "json",
+                data: {id:id},
+                success: function (result) {
+                    if (result.status === 1) {
+                        layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                        return true;
+
+                    } else {
+                        layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                        return false;
+                    }
+                }
+            });
+        });
+
+        //删除信息
+        $('#LoadLists').on('click','.addr_del',function(){
+            var delobj = $(this);
+            var Rowid = delobj.parents('li').data("id");
+            //询问框
+            layer.open({
+                content: '你确定要删除吗？'
+                , btn: ['确定', '取消']
+                , yes: function (index) {
+                    $.ajax({
+                        type: "post",
+                        dataType: "json",
+                        url: "{php echo $this->createMobileUrl('user.user_address', array('act' => 'del','store_id' => $store_id));}",
+                        data: {
+                            id: Rowid
+                        },
+                        success: function (data, status) {
+                            if (data.status == 1) {
+                                window.delCount = window.delCount + 1;
+                                delobj.parents('li').remove();
+                                layer.open({
+                                    content: data.msg
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                            }
+                            else {
+                                layer.open({
+                                    content: data.msg
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                            }
+                        }
+                    });
+                    layer.close(index);
+                }
+            });
+        });
+
+    });
+</script>
+</body>
+</html>

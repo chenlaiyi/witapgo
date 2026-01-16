@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">资金管理</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebAppUrl('store_renew');}">续费记录</a></li>
+                            <li><a href="{php echo $this->createWebAppUrl('store_renew',array('act'=>'setmeal'));}">购买套餐</a></li>
+                            <li class="active"><a href="">下单支付</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="row text-center box-body">
+                                <div class="row">
+                                    <div class="col-sm-4 col-md-1">
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-3">
+                                        <div class="color-palette-set">
+                                            <div class="callout callout-info"><span><strong>1.购买下单</strong></span></div>
+                                        </div>
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-3">
+                                        <div class="color-palette-set">
+                                            <div class="callout callout-warning"><span>2.在线支付</span></div>
+                                        </div>
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-3">
+                                        <div class="color-palette-set">
+                                            <div class="callout callout-success"><span>3.续费成功</span></div>
+                                        </div>
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-1">
+                                    </div><!-- /.col -->
+                                </div>
+                            </div>
+                            <div class="row text-center">
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4 col-md-3">
+                                </div><!-- /.col -->
+                                <div class="col-sm-4 col-md-6">
+                                    <div class="box">
+                                        <div class="box-body table-responsive no-padding">
+                                            <table class="table">
+                                                <tbody>
+                                                <tr class="active">
+                                                    <th>购买套餐名称</th>
+                                                    <th>续费天数</th>
+                                                    <th>活动数量</th>
+                                                    <th>购买价格</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>{$model['name']}</td>
+                                                    <td>{$model['day']} 天</td>
+                                                    <td>{php echo $model['create_num']==-1?'不限':$model['create_num']}</td>
+                                                    <td><small id="setmeal_money">{$model['money']}</small> 元</td>
+                                                </tr>
+                                                <tr class="active">
+                                                    <th colspan="4">使用余额</th>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="4" style="line-height:24px">
+                                                        <label>
+                                                            <input type="checkbox" class="flat-blue" id="is_use_money" name="is_use_money"  value="1" > 余额可抵扣<code id="use_money">{$use_money}</code>元<small style="color:#777">（账户余额：<small id="store_money">{$store['money']}</small>元）</small>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr class="active">
+                                                    <th colspan="4">支付方式</th>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="4" style="line-height:24px">
+                                                        <label>
+                                                            <input type="radio" class="flat-blue paytype" name="paytype"  value="1" checked > 微信<code id="wx_money">{$model['money']}</code>元
+                                                        </label>
+                                                        &nbsp;&nbsp;
+                                                        {if !empty($config['aliappid'])}
+                                                        <label>
+                                                            <input type="radio" class="flat-blue paytype" name="paytype"  value="2" > 支付宝<code id="zfb_money">{$model['money']}</code>元
+                                                        </label>
+                                                        {/if}
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div><!-- /.box-body -->
+                                    </div><!-- /.box -->
+                                </div><!-- /.col -->
+                                <div class="col-sm-4 col-md-3">
+                                </div><!-- /.col -->
+                            </div>
+                            <div class="row text-center">
+                                <div class="btn-group" style="margin-top: 10px;">
+                                    <button id="btn_start" type="button" class="btn btn-info" onclick="Pay();">
+                                        <span class="fa fa-get-pocket" aria-hidden="true"></span>&nbsp;立即支付
+                                    </button>
+                                    <button id="btn_create" type="button" class="btn btn-danger">
+                                        <span class="fa fa-file-text-o" aria-hidden="true"></span>&nbsp;续费记录
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script>
+    $(function () {
+        SelectNav("商家账户续费");
+        $("#btn_create").click(function(){
+            window.location.href = "{php echo $this->createWebAppUrl('store_renew');}";
+        });
+
+        myrequire(['icheck'], function () {
+            //初始化icheck控件radio
+            $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+                checkboxClass: 'icheckbox_flat-blue',
+                radioClass: 'iradio_flat-blue'
+            });
+
+            $("#is_use_money").on('ifChanged',function () {
+                if($(this).is(':checked')){
+                    var setmeal_money = $('#setmeal_money').html();
+                    var use_money = $('#use_money').html();
+                    var pay_money =  (parseFloat(setmeal_money) - parseFloat(use_money)).toFixed(2);
+                    $('#wx_money').html(pay_money);
+                    if($('#zfb_money').length > 0){
+                        $('#zfb_money').html(pay_money);
+                    }
+
+                    if(pay_money == 0){
+                        $(".paytype").each(function(){
+                            $(this).iCheck('uncheck');
+                            $(this).iCheck('disable');
+                        });
+                    }
+
+                }else{
+                    var setmeal_money = $('#setmeal_money').html();
+                    $('#wx_money').html(setmeal_money);
+                    if($('#zfb_money').length > 0){
+                        $('#zfb_money').html(setmeal_money);
+                    }
+
+                    $(".paytype").each(function(index,item){
+
+                        if($('.paytype').filter(':checked').length == 0) {
+                            $(this).prop('checked', true);
+                            $(this).iCheck('update');
+                        }
+                        $(this).iCheck('enable');
+                    });
+                }
+            });
+        });
+    });
+
+    function Pay() {
+        var is_use_money = $("input[name='is_use_money']:checked").val()?$("input[name='is_use_money']:checked").val():0;
+        var paytype = $("input[name='paytype']:checked").val()?$("input[name='paytype']:checked").val():0;
+
+
+        $("#btn_start").attr("disabled", true);
+        $(".buy_save").attr("disabled", "disabled");
+
+        $.ajax({
+            type: "post",
+            url: "{php echo $this->createWebAppUrl('store_renew',array('act'=>'setmeal_addOrder'));}",
+            data: {'id':{$model['id']}, 'is_use_money': is_use_money, 'paytype': paytype },
+            cache: false,
+            async: false,
+            success: function (data, status) {
+                var data = JSON.parse(data)
+                if (data.status == 1) {
+                    Command: toastr["success"](data.msg, "成功提示");
+                    if (paytype == 1) {
+                        window.location.href = "{php echo $this->createWebAppUrl('store_renew',array('act'=>'wxpay'));}&id=" + data.id;
+                    }
+                    else if(paytype == 2) {
+                        //新建弹出窗口
+                        var newwindow = window.open("about:blank");
+                        window.focus();
+                        newwindow.location.href = "{php echo $this->createWebAppUrl('store_renew',array('act'=>'alipay'));}&id=" + data.id;
+                        newwindow.focus();
+                    }
+                    else{
+                        window.location.href = "{php echo $this->createWebAppUrl('store_renew',array('act'=>'success'));}&paynumber=" + data.paynumber;
+                    }
+                }
+                else {
+                    Command: toastr["error"](data.msg, "错误提示");
+                    setTimeout(function () {
+                        window.location.href = window.location.href;
+                    }, 2000);
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

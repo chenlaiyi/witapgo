@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{$system.name}</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+  <script src="__PUBLIC__/static/layuiadmin/layui/echarts.min.js"></script>
+
+</head>
+<body class="layui-layout-body">
+  
+  <div id="LAY_app">
+    <div class="layui-layout layui-layout-admin">
+      <div class="layui-header">
+        <!-- 头部区域 -->
+        <ul class="layui-nav layui-layout-left">
+          <li class="layui-nav-item layadmin-flexible" lay-unselect>
+            <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+              <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+            </a>
+          </li>
+          
+          <li class="layui-nav-item" lay-unselect>
+            <a href="javascript:;" layadmin-event="refresh" title="刷新">
+              <i class="layui-icon layui-icon-refresh-3"></i>
+            </a>
+          </li>
+
+        </ul>
+        <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+          
+          <li class="layui-nav-item" lay-unselect>
+            <a href="javascript:;">
+              <cite>{$_W['user']['username']}</cite>
+            </a>
+            <dl class="layui-nav-child">
+              <dd><a href="{$backUrl}">返回系统</a></dd>
+              <dd><a href="{$loginUrl}">退出</a></dd>
+            </dl>
+          </li>
+          <li class="layui-nav-item layui-hide-xs" lay-unselect>
+            <a href="javascript:;" layadmin-event="theme">
+              <i class="layui-icon layui-icon-theme"></i>
+            </a>
+          </li>
+          <li class="layui-nav-item layui-hide-xs" lay-unselect>
+            <a href="javascript:;" layadmin-event="note">
+              <i class="layui-icon layui-icon-note"></i>
+            </a>
+          </li>
+          <li class="layui-nav-item layui-hide-xs" lay-unselect>
+            <a href="javascript:;" layadmin-event="fullscreen">
+              <i class="layui-icon layui-icon-screen-full"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- 侧边菜单 -->
+      <div class="layui-side layui-side-menu">
+        <div class="layui-side-scroll">
+          <div class="layui-logo" lay-href="{:siteUrl('admin/index/console','','web')}">
+            <span>{$system.name}</span>
+          </div>
+          
+          <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+
+			<li data-name="order" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="订单" lay-direction="2">
+                <i class="layui-icon layui-icon-cart"></i>
+                <cite>商城管理</cite>
+              </a>
+              <dl class="layui-nav-child">
+              	<dd>
+                  <a lay-href="{:siteUrl('admin/goods/set','','web')}">商城设置</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/banner/index',array('b_type'=>2),'web')}">商城轮播图</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/category/index','','web')}">商城分类</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/goods/index','','web')}">商品列表</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/goodsOrder/index','','web')}">商城订单</a>
+                </dd>
+              </dl>
+            </li>
+            <li data-name="commission" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="佣金" lay-direction="2">
+                <i class="layui-icon layui-icon-rmb"></i>
+                <cite>提现管理</cite>
+              </a>
+              <dl class="layui-nav-child">
+              	<dd>
+                  <a lay-href="{:siteUrl('admin/commission/index','','web')}">提现设置</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/commission/wait','','web')}">待审核</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/commission/already','','web')}">已打款</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/commission/invaild','','web')}">无效</a>
+                </dd>
+              </dl>
+            </li>
+            <li data-name="commission" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="分销" lay-direction="2">
+                <i class="layui-icon layui-icon-release"></i>
+                <cite>分销管理</cite>
+              </a>
+              <dl class="layui-nav-child">
+              	<dd>
+                  <a lay-href="{:siteUrl('admin/brokerage/set','','web')}">分销设置</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/brokerage/user_index','','web')}">分销商管理</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/brokerage/card_index',array('pid'=>0),'web')}">卡密列表</a>
+                </dd>
+              </dl>
+            </li>
+            <li data-name="commission" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="签到" lay-direction="2">
+                <i class="layui-icon layui-icon-ok"></i>
+                <cite>签到管理</cite>
+              </a>
+              <dl class="layui-nav-child">
+              	<dd>
+                  <a lay-href="{:siteUrl('admin/signin/set','','web')}">签到设置</a>
+                </dd>
+              </dl>
+            </li>
+            <li data-name="commission" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="签到" lay-direction="2">
+                <i class="layui-icon layui-icon-app"></i>
+                <cite>任务中心</cite>
+              </a>
+              <dl class="layui-nav-child">
+              	<dd>
+                  <a lay-href="{:siteUrl('admin/task/set','','web')}">任务中心设置</a>
+                </dd>
+              </dl>
+            </li>
+            <li data-name="user" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="用户" lay-direction="2">
+                <i class="layui-icon layui-icon-user"></i>
+                <cite>用户管理</cite>
+              </a>
+              <dl class="layui-nav-child">
+                <dd>
+                  <a lay-href="{:siteUrl('admin/user/index','','web')}">用户列表</a>
+                </dd>
+              </dl>
+            </li>
+            <li data-name="order" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="订单" lay-direction="2">
+                <i class="layui-icon layui-icon-diamond"></i>
+                <cite>会员管理</cite>
+              </a>
+              <dl class="layui-nav-child">
+                <dd>
+                  <a lay-href="{:siteUrl('admin/member/set','','web')}">会员设置</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/member/index','','web')}">会员列表</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/member/member_log','','web')}">会员订单</a>
+                </dd>
+              </dl>
+            </li>
+            <li data-name="order" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="订单" lay-direction="2">
+                <i class="layui-icon layui-icon-fire"></i>
+                <cite>话费管理</cite>
+              </a>
+              <dl class="layui-nav-child">
+                <dd>
+                  <a lay-href="{:siteUrl('admin/huafei/set','','web')}">话费设置</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/huafei/log_index','','web')}">充值订单</a>
+                </dd>
+              </dl>
+            </li>
+            <li data-name="order" class="layui-nav-item">
+              <a href="javascript:;" lay-tips="订单" lay-direction="2">
+                <i class="layui-icon layui-icon-senior"></i>
+                <cite>推客管理</cite>
+              </a>
+              <dl class="layui-nav-child">
+                <dd>
+                  <a lay-href="{:siteUrl('admin/jtk/set','','web')}">推客设置</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/jtk/meituan_index','','web')}">美团订单</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/jtk/pubmeituan_index','','web')}">美团分销订单</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/jtk/ele_index','','web')}">饿了么订单</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/jtk/pdd_index','','web')}">拼多多订单</a>
+                </dd>
+                <!-- <dd data-name="grid">
+                  <a>连锁餐饮订单</a>
+                  <dl class="layui-nav-child">
+	                  <dd><a lay-href="{:siteUrl('admin/jtk/kfc_index','','web')}">肯德基订单</a></dd>
+	                  <dd><a lay-href="{:siteUrl('admin/jtk/mcdonald_index','','web')}">麦当劳订单</a></dd>
+	                  <dd><a lay-href="{:siteUrl('admin/jtk/pagoda_index','','web')}">百果园订单</a></dd>
+	                  <dd><a lay-href="{:siteUrl('admin/jtk/nayuki_index','','web')}">奈雪的茶订单</a></dd>
+	                  <dd><a lay-href="{:siteUrl('admin/jtk/luckin_index','','web')}">瑞幸咖啡订单</a></dd>
+	                  <dd><a lay-href="{:siteUrl('admin/jtk/spk_index','','web')}">星巴克订单</a></dd>
+	                  <dd><a lay-href="{:siteUrl('admin/jtk/heytea_index','','web')}">喜茶订单</a></dd>
+	               </dl>
+                </dd> -->
+                <dd>
+                  <a lay-href="{:siteUrl('admin/jtk/jd_index','','web')}">京东订单</a>
+                </dd>
+                <dd>
+                  <a lay-href="{:siteUrl('admin/jtk/didi_index','','web')}">滴滴订单</a>
+                </dd>
+              </dl>
+            </li>
+            <?php echo $plugin_html ?>
+            <li data-name="home" class="layui-nav-item layui-nav-itemed">
+              <a href="javascript:;" lay-tips="设置" lay-direction="2">
+                <i class="layui-icon layui-icon-set"></i>
+                <cite>系统管理</cite>
+              </a>
+              <dl class="layui-nav-child">
+                <dd data-name="grid">
+                  <a lay-href="{:siteUrl('admin/system/index','','web')}">系统设置</a>
+                  <dl class="layui-nav-child">
+	                  <dd><a lay-href="{:siteUrl('admin/upload/index','','web')}">上传设置</a></dd>
+	               </dl>
+                </dd>
+                <dd data-name="console">
+                  <a lay-href="{:siteUrl('admin/system/home','','web')}">首页设置</a>
+                </dd>
+                <dd data-name="console">
+                  <a lay-href="{:siteUrl('admin/banner/index',array('b_type'=>1),'web')}">首页轮播图</a>
+                </dd>
+                <dd data-name="console">
+                  <a lay-href="{:siteUrl('admin/navigation/index','','web')}">首页导航</a>
+                </dd>
+                <dd data-name="console">
+                  <a lay-href="{:siteUrl('admin/popular/index','','web')}">首页热门</a>
+                </dd>
+                <dd data-name="console">
+                  <a lay-href="{:siteUrl('admin/picture/index',array('b_type'=>1),'web')}">首页图片</a>
+                </dd>
+              </dl>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 页面标签 -->
+      <div class="layadmin-pagetabs" id="LAY_app_tabs">
+        <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
+        <div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage"></div>
+        <div class="layui-icon layadmin-tabs-control layui-icon-down">
+          <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
+            <li class="layui-nav-item" lay-unselect>
+              <a href="javascript:;"></a>
+              <dl class="layui-nav-child layui-anim-fadein">
+                <dd layadmin-event="closeThisTabs"><a href="javascript:;">关闭当前标签页</a></dd>
+                <dd layadmin-event="closeOtherTabs"><a href="javascript:;">关闭其它标签页</a></dd>
+                <dd layadmin-event="closeAllTabs"><a href="javascript:;">关闭全部标签页</a></dd>
+              </dl>
+            </li>
+          </ul>
+        </div>
+        <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
+          <ul class="layui-tab-title" id="LAY_app_tabsheader">
+            <li lay-id="{$homeUrl}" lay-attr="{$homeUrl}" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
+          </ul>
+        </div>
+      </div>
+      
+
+      <!-- 主体内容 -->
+      <div class="layui-body" id="LAY_app_body">
+        <div class="layadmin-tabsbody-item layui-show">
+          	<iframe src="{$consoleUrl}" frameborder="0" class="layadmin-iframe"></iframe>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+  <script>
+  layui.config({
+      base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+  }).extend({
+      index: 'lib/index' //主入口模块
+  }).use(['index', 'table'], function(){
+      var $ = layui.$
+      	  ,table = layui.table
+          ,admin = layui.admin;
+
+  });
+  </script>
+  
+  <!-- 百度统计 -->
+  <script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?d214947968792b839fd669a4decaaffc";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,81 @@
+@charset "utf-8";
+body,div,p,ul,ol,li,dl,dt,dd,h1,h2,h3,h4,h5,h6,pre,form,input,select,button,textarea,table,th,td,a,span,canvas,figure{margin: 0; padding: 0; background: no-repeat center / contain; cursor: default;}
+ul,ol{list-style: none;}
+i,em{ font-style:normal;}
+img{border: none;}
+.clearfix:after{content: ""; clear: both; display: block; visibility: hidden; height: 0;}
+/*定义主题色*/
+:root {
+	--color-blue:#0A2470;
+    --color-blue-dark: #070F3D;
+	--color-blue-900:#0A277B;    
+	--color-blue-800:#103BA1;    
+	--color-blue-700:#0e3789;  
+	--color-blue-600:#0F3AA0; 
+	--color-blue-500:#1867e1;
+	--color-blue-200:#2790f6;
+	--color-blue-100:#315ad0;
+	--color-blue-rgba-50:rgba(10,36,112,0.87);
+	--color-blue-rgba-0:rgba(10,36,112,0);
+	--color-blue-100-rgba-0:rgba(49,90,208,0);
+	--color-blue-700-rgba-0:rgba(14,55,137,0); 
+	--color-green: #03E7ED;  
+	--color-green-900:#16D8FB;
+	--color-green-900-rgba-0:rgba(22,216,251,0); 
+}
+
+body{ background: var(--color-blue-dark); color: #fff; line-height: 1.5;}
+
+.digit{
+	position:absolute;
+	display:block;
+	width:1em;
+	background-color:var(--color-blue-900);
+	border-radius:0.2em;
+	text-align:center;
+	color:#fff;
+	letter-spacing:-1px;
+}
+
+.digit.static{
+	box-shadow:1px 1px 1px rgba(4, 4, 4, 0.35);
+
+	background-image: linear-gradient(bottom, #3A3A3A 50%, var(--color-blue-900) 50%);
+	background-image: -o-linear-gradient(bottom, #3A3A3A 50%, var(--color-blue-900) 50%);
+	background-image: -moz-linear-gradient(bottom, #3A3A3A 50%, var(--color-blue-900) 50%);
+	background-image: -webkit-linear-gradient(bottom, #3A3A3A 50%, var(--color-blue-900) 50%);
+	background-image: -ms-linear-gradient(bottom, #3A3A3A 50%, var(--color-blue-900) 50%);
+
+	background-image: -webkit-gradient(
+			linear,
+			left bottom,
+			left top,
+			color-stop(0.5, var(--color-blue-900)),
+			color-stop(0.5, var(--color-blue-900))
+	);
+}
+
+.countDiv{
+	display:inline-block;
+	width:16px;
+	height:1.6em;
+	position:relative;
+}
+
+.countDiv:before,
+.countDiv:after{
+	position:absolute;
+	width:5px;
+	height:5px;
+	background-color:#fff;
+	border-radius:50%;
+	left:50%;
+	margin-left:-3px;
+	top:0.5em;
+	box-shadow:1px 1px 1px rgba(4, 4, 4, 0.5);
+	content:'';
+}
+
+.countDiv:after{
+	top:0.9em;
+}

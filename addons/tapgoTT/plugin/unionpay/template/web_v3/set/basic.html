@@ -1,0 +1,139 @@
+<div class="form-group">
+	<label class="col-lg control-label">回调地址</label>
+	<div class="col-sm-9 col-xs-12">
+		<p class='form-control-static'>
+			<a href='javascript:;' class="js-clip" title='点击复制链接' data-url="{php echo mobileUrl('commission/rank',array(),true)}" >
+				{php echo mobileUrl('unionpay/set',array(),true)}
+			</a>
+			<span style="cursor: pointer;" data-toggle="popover" data-trigger="hover" data-html="true"
+				  data-content="<img src='{$qrcode}' width='130' alt='链接二维码'>" data-placement="auto right">
+                        <i class="glyphicon glyphicon-qrcode"></i>
+                    </span>
+		</p>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-lg control-label">数据更新类型</label>
+	<div class="col-sm-9 col-xs-12">
+		{ifp 'unionpay.set.edit'}
+		<label class="radio-inline">
+			<input type="radio" name="type" value="0" {if empty($item['type'])}checked{/if} /> 商户资料
+		</label>
+		<label class="radio-inline">
+			<input type="radio" name="type" value="1" {if $item['type']==1}checked{/if} /> 机构对账单
+		</label>
+		<label class="radio-inline">
+			<input type="radio" name="type" value="2" {if $item['type']==2}checked{/if} /> 机构级差分润
+		</label>
+		{/if}
+	</div>
+</div>
+
+{ifp 'unionpay.set.edit'}
+<div class="form-group refresh">
+	<label class="col-lg control-label"></label>
+	<div class="col-sm-9 col-xs-12">
+		<a id="refresh" href="javascript:;" class="btn btn-primary">立即更新</a>
+		<!--<a href="javascript:;" class="btn btn-primary"></a>-->
+	</div>
+</div>
+{/if}
+
+
+<script>
+
+    function addlink(){
+        var html ='<tr>';
+        html+='<td>';
+        html+='<input type="hidden" name="id[]" value="" ><input type="text" class="form-control" name="nickname[]" value="">';
+        html+='</td>';
+        html+='<td>';
+        html+='<input type="text" class="form-control" name="commission_total[]" value="">';
+        html+='</td>';
+        html+='<td>';
+        html+='<input type="hidden"  name="avatar[]" value="{$row[\'avatar\']}" />';
+        html+='<img onclick="selectImage(this)" onerror="this.src=\'{TAPGO_TT_LOCAL}static/images/nopic100.jpg\'" src="{TAPGO_TT_LOCAL}static/images/nopic100.jpg>" style=\'width:40px;height:40px;\'';
+        html+='</td>';
+
+        html+='<td></td></tr>';;
+        $('#tbody-items').append(html);
+    }
+
+    function selectImage(obj){
+        util.image('',function(val){
+            $(obj).attr('src',val.url);
+            var group  =$(obj).parent();
+            group.find(':hidden').val(val.url);
+        });
+    }
+
+    function get(i,count,openids){
+        var size = 50;
+        var sizeArray = openids.slice(i*size,(i+1)*size);
+        $.post("{php echo webUrl('commission/rank/ajaxgetcommission')}",{openid:sizeArray},function(json){
+            if(json.status == '1')
+            {
+                $("#refresh").text("完成 "+(i+1)*size+"/"+count);
+                if(count <= (i+1)*size)
+                {
+                    $("#refresh").removeClass("disabled");
+                    $("#refresh").text("刷新排行榜");
+                    tip.msgbox.suc("更新成功!");
+                }
+                i++;
+                get(i,count,openids);
+            }
+            if(json.status == "0")
+            {
+                ("#refresh").removeClass("disabled");
+                tip.msgbox.err("更新失败!");
+
+            }
+        },'json');
+    }
+
+    $(function () {
+
+        if($(":radio[name=type][checked]").val() != 2)
+        {
+            $("table").hide();
+        }
+        if($(":radio[name=type][checked]").val() != 0)
+        {
+            $(".refresh").hide();
+        }
+        $(":radio[name=type]").click(function () {
+            var _this = this;
+            $("table").show();
+            $(".refresh").show();
+            if($(_this).val() != '2')
+            {
+                $("table").hide();
+            }
+            if($(_this).val() != '0')
+            {
+                $(".refresh").hide();
+            }
+        });
+    });
+
+    $(".refresh div a").click(function (e) {
+        tip.confirm('刷新排行榜 , 会造成服务器压力剧增 , 请在访问量小的时候进行',function () {
+            $.getJSON("{php echo webUrl('commission/rank/ajaxgetcommissionopenid')}",function (data) {
+
+                var i = 0;
+                if (data.status == 0)
+                {
+                    tip.msgbox.err('暂时没有任何分销商!');
+                }
+                else
+                {
+                    $("#refresh").addClass("disabled");
+                    get(i,data.result.openid.length,data.result.openid);
+                }
+
+            })
+        });
+    });
+</script>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'user/common/header'}
+<body>
+<!--支付成功-->
+<section class="pay_ok">
+    <section class="payok_img"><img src="{__MOBILE_USER_IMG__}/pay_ok.png" width="100%" height="100%"></section>
+    <h2>支付成功</h2>
+    <p class="tc">
+        <a href="{php echo $this->createMobileUrl('user.intmall_home',array('act'=>'index','store_id'=>$store_id))}" class="font28">去逛逛</a>
+    </p>
+</section>
+<script>
+    $(function(){
+        $(".pay_ok").css({ "top":(($(document).height() - $(".pay_ok").height())/2)/37.5+"rem" });
+    });
+</script>
+</body>
+</html>
+<script type="text/javascript">
+    /* {if !empty($config['pay_domain']) } */
+    //清空浏览器历史记录
+    pushHistory();
+    //监听浏览器后退事件
+    window.addEventListener("popstate",
+            function(e) {
+                //转向指定的URL
+                location.href='{php echo $this->createMobileUrl('user.user_member',array('act'=>'index','store_id'=>$store_id))}';
+            }, false);
+    //清空浏览器历史记录
+    function pushHistory() {
+        var url = "#";
+        var state = {
+            title: "title",
+            url: "#"
+        };
+        window.history.pushState(state, "title", "#");
+    }
+    /*{/if}*/
+</script>

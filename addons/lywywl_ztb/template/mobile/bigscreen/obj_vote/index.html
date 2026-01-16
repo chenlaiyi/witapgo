@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'bigscreen/common/header'}
+<body>
+<div class="header displayFlexDefault flexJusBetween">
+  <div class="headLeft vertical flexJusBetween">
+    <p>按F11全屏/退出</p>
+    <p id="curTime"></p>
+  </div>
+  <!-- <div class="leftArrow"></div> -->
+  <div class="headCenter displayFlex">
+    <span class="left"><em></em><em></em><em></em></span>
+    <h1>活动数据大屏</h1>
+    <span class="right"><em></em><em></em><em></em></span>
+  </div>
+  <div class="headRight vertical flexJusBetween">
+    <sub></sub>
+    <i></i>
+    <p></p>
+    {if $power}
+    <p>{$power}提供支持</p>
+    {/if}
+  </div>
+</div>
+<section class="p-a-24">
+  <article>
+    <section>
+      <div class="">
+        <ul class="displayFlexDefault flexJusBetween">
+          <li class=" con-left width-per-24">
+            <div class="borR8 border-color-blue-900 h150 m-b-24">
+              <div class="p-a-16">
+                <dl class="codeArea displayFlexDefault flexJusBetween ">
+                  <dt class="m-r-16">
+                    <img src="{php echo $this->createMobileUrl('bigscreen.login', array('act' => 'showActivityQrcode'));}&id={$id}" />
+                  </dt>
+                  <dd class="font-size-24">
+                    <div class="m-b-16 h72 text-ellipsis">{$activityObj['title']}</div>
+                    <div class="font-size-20 center joinIn displayFlex background-color-lineGra-blue">
+                      <img src={__BIG_SCREEN_IMG__}/point.png />
+                      <span class="p-x-8">扫码前往活动</span>
+                      <img src={__BIG_SCREEN_IMG__}/point.png />
+                    </div>
+                  </dd>
+                </dl>
+              </div>
+            </div>
+            <div class="borR8 border-color-blue-900 m-b-24" style="height: 20.8rem; overflow: hidden">
+              <h4 class="title"><span class="left"><em></em><em></em><em></em></span>数据统计<span class="right"><em></em><em></em><em></em></span></h4>
+              <ul class="DateStatistics clearfix m-b-24">
+                <li>
+                  <span id="totalRepostNum" class="text-color-green font-size-32 counter">{$activityObj['repost_num']}</span>
+                  <p class="h26">总转发次数</p>
+                </li>
+                <li>
+                  <span id="totalClickNum" class="text-color-green font-size-32 counter">{$activityObj['click_num']}</span>
+                  <p class="h26">总浏览数量</p>
+                </li>
+                <li>
+                  <span id="totalJoin" class="text-color-green font-size-32 counter">{$projectParams['totalJoin']}</span>
+                  <p class="h26">总参与选手数</p>
+                </li>
+                <li>
+                  <span id="totalVote" class="text-color-green font-size-32 counter">{$projectParams['totalVote']}</span>
+                  <p class="h26">总投票数</p>
+                </li>
+                <li>
+                  <span id="totalJoinVote" class="text-color-green font-size-32 counter">{$projectParams['totalJoinVote']}</span>
+                  <p class="h26">总直接投票数</p>
+                </li>
+                <li>
+                  <span id="totalGiftVote" class="text-color-green font-size-32 counter">{$projectParams['totalGiftVote']}</span>
+                  <p class="h26">总打赏转化票数</p>
+                </li>
+                <li>
+                  <span id="totalGift" class="text-color-green font-size-32 counter">{$projectParams['totalGift']}</span>
+                  <p class="h26">总打赏数</p>
+                </li>
+                <li>
+                  <span id="totalGiftMoney" class="text-color-green font-size-32 counter">{$projectParams['totalGiftMoney']}</span>
+                  <p class="h26">总打赏金额(元)</p>
+                </li>
+              </ul>
+            </div>
+
+            <div class="borR8 border-color-blue-900 m-b-24" style="height:39rem; overflow: hidden">
+              <h4 class="title" style="height: 4.125rem; line-height: 4.125rem;"><span class="left"><em></em><em></em><em></em></span>今日新增用户投票<span class="right"><em></em><em></em><em></em></span></h4>
+              <section class="record p-x-16">
+                <div class="txtScroll-top scrollIncreased">
+                  <div class="bd">
+                    <div class="tempWrap" style="overflow:hidden; position:relative; ">
+                      <ul id="increaseUser" class="infoList">
+                        {if $projectParams['increVote1List']}
+                        {loop $projectParams['increVote1List'] $increVote1}
+                        <li>
+                          <dl>
+                            <dt><img src="{$increVote1['headurl']}"
+                                     width="54" height="54"></dt>
+                            <dd> <span class="fr">投了一票</span><span class="name">{$increVote1['nickname']}</span><span>{$increVote1['createtime']}</span></dd>
+                          </dl>
+                        </li>
+                        {/loop}
+                        {/if}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </li>
+          <li class=" width-per-50 con-center">
+            <div class="countdown border-color-blue-900 borR8 center font-size-28 m-b-24">
+              <text id="countdownTitle">距活动结束时间:</text>
+              <div id="countdown"></div>
+            </div>
+            <div class="clearfix cellWarp" style="height: 24rem; overflow: hidden;">
+              <div class="cell border-color-blue-900 borR8 width-per-31-96 background-color-blue m-b-16 fl">
+                <div class=" p-a-16">
+                  <h4 id="todayInvite" class="font-size-32 text-color-green counter">{$projectParams['todayInvite']}</h4>
+                  <p class="font-size-20 h35">今日转发数量</p>
+                </div>
+              </div>
+              <div class="cell border-color-blue-900 borR8 width-per-31-96 background-color-blue m-b-16 fl">
+                <div class=" p-a-16">
+                  <h4 id="todayJoin" class="font-size-32 text-color-green counter">{$projectParams['todayJoin']}</h4>
+                  <p class="font-size-20 h35">今日参与选手数</p>
+                </div>
+              </div>
+              <div class="cell border-color-blue-900 borR8 width-per-31-96 background-color-blue m-b-16 fl">
+                <div class=" p-a-16">
+                  <h4 id="todayVote" class="font-size-32 text-color-green counter">{$projectParams['todayVote']}</h4>
+                  <p class="font-size-20 h35">今日投票数</p>
+                </div>
+              </div>
+              <div class="cell border-color-blue-900 borR8 width-per-31-96 background-color-blue m-b-16 fl">
+                <div class=" p-a-16">
+                  <h4 id="todayJoinVote" class="font-size-32 text-color-green counter">{$projectParams['todayJoinVote']}</h4>
+                  <p class="font-size-20 h35">今日直接投票数</p>
+                </div>
+              </div>
+              <div class="cell border-color-blue-900 borR8 width-per-31-96 background-color-blue m-b-16 fl">
+                <div class=" p-a-16">
+                  <h4 id="todayGiftVote" class="font-size-32 text-color-green counter">{$projectParams['todayGiftVote']}</h4>
+                  <p class="font-size-20 h35">今日打赏转化票数</p>
+                </div>
+              </div>
+              <div class="cell border-color-blue-900 borR8 width-per-31-96 background-color-blue m-b-16 fl">
+                <div class=" p-a-16">
+                  <h4 id="todayGift" class="font-size-32 text-color-green counter">{$projectParams['todayGift']}</h4>
+                  <p class="font-size-20 h35">今日打赏数</p>
+                </div>
+              </div>
+              <div class="cell border-color-blue-900 borR8 width-per-31-96 background-color-blue m-b-16 fl">
+                <div class=" p-a-16">
+                  <h4 id="todayGiftMoney" class="font-size-32 text-color-green counter">{$projectParams['todayGiftMoney']}</h4>
+                  <p class="font-size-20 h35">今日打赏金额(元)</p>
+                </div>
+              </div>
+            </div>
+            <div class="m-b-24 displayFlexDefault flexJusBetween">
+              <!-- 购买记录+获客饼状图 -->
+              <div class="h340 border-color-blue-900 borR8 background-color-blue" style="width: 49%;">
+                <h4 class="title"><span class="left"><em></em><em></em><em></em></span>实时打赏记录<span class="right"><em></em><em></em><em></em></span></h4>
+                <section class="record p-x-16">
+                  <div class="txtScroll-top shoppingSheet">
+                    <div class="bd">
+                      <div class="tempWrap" style="overflow:hidden; position:relative; ">
+                        <ul id="realtimeDraw" class="infoList">
+                          {if $projectParams['drawList']}
+                          {loop $projectParams['drawList'] $draw}
+                          <li>
+                            <dl>
+                              <dt><img src="{$draw['headurl']}"
+                                       width="54" height="54"></dt>
+                              <dd> <span class="fr">打赏：{$draw['name']} x {$draw['num']}</span> <span class="name">{$draw['nickname']}</span> <span class="time">{$draw['createtime']}</span> </dd>
+                            </dl>
+                          </li>
+                          {/loop}
+                          {/if}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="h340 border-color-blue-900 borR8 background-color-blue" style="width: 49%;">
+                <h4 class="title"><span class="left"><em></em><em></em><em></em></span>获客饼状图<span class="right"><em></em><em></em><em></em></span></h4>
+                <section class="p-x-8">
+                  <div id="getCustomers" style="width: 100%; height:18.875rem;" ></div>
+
+                </section>
+              </div>
+            </div>
+            <!-- 溯源排行 -->
+            <div class="m-b-24">
+              <div class="border-color-blue-900 borR8 " style="height: 18.5rem;">
+                <h4 class="title background-color-lineGra-blue"><span class="left"><em></em><em></em><em></em></span>溯源排行<span
+                        class="right"><em></em><em></em><em></em></span></h4>
+                <div class="sourceRanking">
+                  <!-- <ul class="sourceRanking">
+                  <li class="th displayFlex flexJusBetween"><span>排名</span><span>团队名称</span><span>成员人数</span><span>曝光总量</span><span>今日/总转发</span><span>今日/总参团</span><span>今日/总返利</span><span>今日/总直销</span><span>今日/总销售</span></li>
+                  <li class="td displayFlex flexJusBetween"><span>1</span><span>无敌队</span><span>982</span><span>265511 </span><span>265511</span><span>265511</span><span>362</span><span>5230</span><span>6300</span></li>
+                  <li class="td displayFlex flexJusBetween"><span>1</span><span>无敌队</span><span>982</span><span>265511 </span><span>265511</span><span>265511</span><span>362</span><span>5230</span><span>6300</span></li>
+              </ul> -->
+                  <table width="100%" class="center" border="0" id="sourceRankingTb">
+                    <tr>
+                      <th>排名</th>
+                      <th>团队名称</th>
+                      <th>成员人数</th>
+                      <th>曝光总量</th>
+                      <th>今日/总转发</th>
+                      <th>今日/总报名</th>
+                      <th>今日/总投票</th>
+                      <th>今日/总打赏</th>
+                    </tr>
+                    {loop $marketingTeamList $index $marketingTeam}
+                    <tr>
+                      <td>{php echo $index+1;}</td>
+                      <td><span class="teamName">{$marketingTeam['name']}</span></td>
+                      <td>{$marketingTeam['marketing_user_count']}</td>
+                      <td>{$marketingTeam['total_click_num']}</td>
+                      <td>{$marketingTeam['today_repost_num']}/{$marketingTeam['total_repost_num']}</td>
+                      <td>{$marketingTeam['today_join_num']}/{$marketingTeam['total_join_num']}</td>
+                      <td>{$marketingTeam['today_vote_num']}/{$marketingTeam['total_vote_num']}</td>
+                      <td>{$marketingTeam['today_gift_num']}/{$marketingTeam['total_gift_num']}</td>
+                    </tr>
+                    {/loop}
+                  </table>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="con-right width-per-24 ">
+            <div class="borR8 border-color-blue-900 h295 m-b-24">
+              <h4 class=" title"><span class="left"><em></em><em></em><em></em></span>7天投票分布图<span
+                      class="right"><em></em><em></em><em></em></span></h4>
+              <div id="profile" style="width: 100%; height: 15rem;"></div>
+            </div>
+            <div class="borR8 border-color-blue-900  h295" style="height:52rem;">
+              <h4 class="title"><span class="left"><em></em><em></em><em></em></span>票数排行榜<span class="right"><em></em><em></em><em></em></span></h4>
+              <section class="paihang">
+                <div class="tableHeader displayFlex flexJusBetween">
+                  <span class="center">排行</span><span>选手名</span><span>票数</span><span>打赏金额</span>
+                </div>
+                <ul id="paihang">
+                  {if $projectParams['playerVoteList']}
+                  {loop $projectParams['playerVoteList'] $index $playerVote}
+                  {if $index < 3}
+                  <li class="text-color-green-900">
+                    <em class="fr m-r-16">{$playerVote['gift_money']}元</em>
+                    <em class="fr m-r-16">{$playerVote['vote_num']}</em>
+                    <span class="font-size-36 font-style-italic">{php echo $index+1;}</span>
+                    <dl>
+                      <dd>{$playerVote['name']}</dd>
+                    </dl>
+                  </li>
+                  {else}
+                  <li>
+                    <em class="fr m-r-16">{$playerVote['gift_money']}元</em>
+                    <em class="fr m-r-16">{$playerVote['vote_num']}</em>
+                    <span>{php echo $index+1;}</span>
+                    <dl>
+                      <dd>{$playerVote['name']}</dd>
+                    </dl>
+                  </li>
+                  {/if}
+                  {/loop}
+                  {/if}
+                </ul>
+              </section>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+  </article>
+</section>
+
+<!--<div id="popp">-->
+<!--    <div class="mdui-p-a-4 mdui-col-xs-3 poppCont">-->
+<!--        <div class="mdui-typo-headline mdui-text-color-black mdui-text-center">扫码进入活动</div>-->
+<!--        <img src={__BIG_SCREEN_IMG__}/2wm.png alt="二维码" class=" mdui-center">-->
+<!--    </div>-->
+<!--</div>-->
+<script type="text/javascript">
+  var dom3 = document.getElementById("getCustomers");
+  var myChart3 = echarts.init(dom3);
+  var app = {};
+  var optionBing;
+  optionBing = {
+
+
+    tooltip: {
+      trigger: 'item'
+    },
+    series: [{
+      name: '活动数据',
+      type: 'pie',
+      radius: '55%',
+      center: ['50%', '50%'],
+      data: [
+        {
+          value: {$activityObj['click_num']},
+          name: '总浏览量',
+          label: {
+            color: ableShowFontColor
+          }
+        },
+        {
+          value: {$activityObj['repost_num']},
+          name: '总分享次数',
+          label: {
+            color: ableShowFontColor
+          }
+        },
+        {
+          value: {$projectParams['totalJoin']},
+          name: '总报名人数',
+          label: {
+            color: ableShowFontColor
+          }
+        },
+        {
+          value: {$projectParams['totalVote']},
+          name: '总投票数',
+          label: {
+            color: ableShowFontColor
+          }
+        }
+      ].sort(function(a, b) {
+        return a.value - b.value;
+      }),
+      roseType: 'radius',
+      label: {
+        color: 'rgba(255, 255, 255, 0.3)'
+      },
+      labelLine: {
+        smooth: 0.2,
+        length: 10,
+        length2: 20
+      },
+      itemStyle: {
+        color: '#c23531',
+        shadowBlur: 200,
+        shadowColor: 'rgba(0, 0, 0, 0.5)',
+        normal:{
+          color:function(params) {
+            //自定义颜色
+            var colorList = [
+              '#FFFF00',  '#FF8C00','#00FFFF', '#FF0000'
+            ];
+            return colorList[params.dataIndex]
+          }
+        }
+      },
+
+      animationType: 'scale',
+      animationEasing: 'elasticOut',
+      animationDelay: function(idx) {
+        return Math.random() * 200;
+      }
+    }]
+  };
+
+  if (optionBing && typeof optionBing === 'object') {
+    myChart3.setOption(optionBing);
+  }
+</script>
+<script type="text/javascript">
+  var chartDom = document.getElementById('profile');
+  var myChart = echarts.init(chartDom);
+  var optionZhu;
+
+  optionZhu = {
+    xAxis: {
+      type: 'category',
+      data: {$projectParams['date']},
+      axisLabel: {
+        formatter: '{value}',
+        textStyle: {
+          color: ableShowFontColor
+        },
+        interval: 0
+      }
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: '{value}',
+        textStyle: {
+          color: ableShowFontColor
+        }
+      },
+      axisLine:{
+        show:false
+      }
+    },
+    series: [{
+      data: {$projectParams['weekData']},
+      type: 'bar',
+      showBackground: true,
+      backgroundStyle: {
+        color: 'rgba(180, 180, 180, 0.2)'
+      }
+    }]
+  };
+
+  optionZhu && myChart.setOption(optionZhu);
+</script>
+<script type="text/javascript">
+  //异步更新活动数据
+  function updateActivityData(activity_id, color, timeout=window.requestTimer){
+    $.ajax({
+      type: 'get',
+      timeout: timeout,
+      url: "{php echo $this->createMobileUrl('bigscreen.obj_vote', array('act' => 'getActivityData'));}&id="+activity_id,
+      dataType: 'json',
+      success: function(data){
+        if(data.status == 1){
+          var data = data.data;
+          $('#totalRepostNum').html(data['activityObj']['repost_num']);
+          $('#totalClickNum').html(data['activityObj']['click_num']);
+          $('#totalJoin').html(data['totalJoin']);
+          $('#totalVote').html(data['totalVote']);
+          $('#totalJoinVote').html(data['totalJoinVote']);
+          $('#totalGiftVote').html(data['totalGiftVote']);
+          $('#totalGift').html(data['totalGift']);
+          $('#totalGiftMoney').html(data['totalGiftMoney']);
+
+          $('#todayInvite').html(data['todayInvite']);
+          $('#todayJoin').html(data['todayJoin']);
+          $('#todayVote').html(data['todayVote']);
+          $('#todayJoinVote').html(data['todayJoinVote']);
+          $('#todayGiftVote').html(data['todayGiftVote']);
+          $('#todayGift').html(data['todayGift']);
+          $('#todayGiftMoney').html(data['todayGiftMoney']);
+
+          //柱壮图
+          optionZhu.series[0].data = data['weekData'];
+          optionZhu.xAxis.data = data['date'];
+          optionZhu && myChart.setOption(optionZhu);
+
+          //饼状图
+          var series = [{
+            name: '活动数据',
+            type: 'pie',
+            radius: '55%',
+            center: ['50%', '50%'],
+            data: [{
+              value: data['activityObj']['click_num'],
+              name: '总浏览数量',
+              label: {
+                color: ableShowFontColor
+              }
+            },
+              {
+                value: data['activityObj']['repost_num'],
+                name: '总转发次数',
+                label: {
+                  color: ableShowFontColor
+                }
+              },
+              {
+                value: data['totalJoin'],
+                name: '总报名人数',
+                label: {
+                  color: ableShowFontColor
+                }
+              },
+              {
+                value: data['totalVote'],
+                name: '总投票数',
+                label: {
+                  color: ableShowFontColor
+                }
+              }
+            ].sort(function(a, b) {
+              return a.value - b.value;
+            }),
+            roseType: 'radius',
+            label: {
+              color: 'rgba(255, 255, 255, 0.3)'
+            },
+            labelLine: {
+              smooth: 0.2,
+              length: 10,
+              length2: 20
+            },
+            itemStyle: {
+              color: '#c23531',
+              shadowBlur: 200,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+              normal:{
+                color:function(params) {
+                  //自定义颜色
+                  var colorList = [
+                    '#FFFF00',  '#FF8C00','#00FFFF', '#FF0000'
+                  ];
+                  return colorList[params.dataIndex]
+                }
+              }
+            },
+
+            animationType: 'scale',
+            animationEasing: 'elasticOut',
+            animationDelay: function(idx) {
+              return Math.random() * 200;
+            }
+          }]
+          optionBing.series = series;
+          if (optionBing && typeof optionBing === 'object') {
+            myChart3.setOption(optionBing);
+          }
+
+          if(data['playerVoteList']){
+            var html = '';
+            data['playerVoteList'].forEach(function(item, index){
+              if(index < 3){
+                html += "<li class=\"text-color-green-900\">\n" +
+                        "                    <em class=\"fr m-r-16\">"+ item['gift_money'] +"元</em>\n" +
+                        "                    <em class=\"fr m-r-16\">"+ item['vote_num'] +"</em>\n" +
+                        "                    <span class=\"font-size-36 font-style-italic\">"+ (index+1) +"</span>\n" +
+                        "                    <dl>\n" +
+                        "                      <dd>"+ item['name'] +"</dd>\n" +
+                        "                    </dl>\n" +
+                        "                  </li>";
+              }else{
+                html += "<li>\n" +
+                        "                    <em class=\"fr m-r-16\">"+ item['gift_money'] +"元</em>\n" +
+                        "                    <em class=\"fr m-r-16\">"+ item['vote_num'] +"</em>\n" +
+                        "                    <span>"+ (index+1) +"</span>\n" +
+                        "                    <dl>\n" +
+                        "                      <dd>"+ item['name'] +"</dd>\n" +
+                        "                    </dl>\n" +
+                        "                  </li>";
+              }
+            })
+
+            $('#paihang').html(html);
+          }
+
+          setTimeout(function(){
+            updateActivityData(activity_id, color);
+          }, window.requestTimer)
+        }
+        if(data.status == 2){
+          var url = "{php echo $this->createMobileUrl('bigscreen.login', array('act' => 'index'));}&id="+activity_id+"&color="+color
+          window.location.href = url;
+        }
+        if(data.status == 3){
+          var url = "{php echo $this->createMobileUrl('bigscreen.login', array('act' => 'noBigScreen'));}&id="+activity_id+"&color="+color
+          window.location.href = url;
+        }
+      },
+      error: function (xmlHttpRequest, status){
+        xmlHttpRequest.abort();
+        setTimeout(function(){
+          updateActivityData(activity_id, color);
+        }, 2 * window.requestTimer)
+        return false;
+      }
+    })
+  }
+
+  function callGetIncreaseUser(obj){
+    setTimeout(function(){
+      getIncreaseUser(obj['activity_id'], obj['color'], obj['maxJoinId'], obj['html']);
+    },obj['n'] * window.requestTimer)
+  }
+  //异步加载用户投票
+  function getIncreaseUser(activity_id, color, maxJoinId, html, timeout=window.requestTimer){
+    var obj = {activity_id: activity_id, color: color, maxJoinId: maxJoinId, html: html, n: 1};
+
+    //如果长度超过200则刷新页面
+    var liArr = html.match(/<li>/g);
+    if(Array.isArray(liArr) && liArr.length >= 200){
+      location.reload();
+    }
+
+    $.ajax({
+      type: "get",
+      timeout: timeout,
+      url: "{php echo $this->createMobileUrl('bigscreen.obj_vote', array('act' => 'getIncreaseUser'));}&id="+activity_id+'&join_id='+maxJoinId,
+      dataType:'json',
+      success: function (data){
+        if(data.status == 1){
+          var maxJoinId = data.maxJoinId;
+          var count = data.count;
+          var data = data.data;
+          data.forEach(function (item) {
+            html = html + "<li>\n" +
+                    "                          <dl>\n" +
+                    "                            <dt><img src=\""+ item['headurl'] +"\"\n" +
+                    "                                     width=\"54\" height=\"54\"></dt>\n" +
+                    "                            <dd> <span class=\"fr\">投了一票</span><span class=\"name\">"+ item['nickname'] +"</span><span>"+ item['createtime'] +"</span></dd>\n" +
+                    "                          </dl>\n" +
+                    "                        </li>";
+          })
+          window.scrollIncreased[0].destroy();
+          var curPageIndex = window.scrollIncreased[0].getIndex();
+          window.scrollIncreased = null;
+          $('#increaseUser').html(html);
+          window.scrollIncreased = jQuery(".scrollIncreased").slide({
+            titCell: ".hd ul",
+            mainCell: ".bd ul",
+            autoPage: true,
+            effect: "topLoop",
+            autoPlay: true,
+            scroll:1,
+            vis: 10,
+            defaultIndex: curPageIndex,
+            interTime: 3000
+          });
+
+          obj['maxJoinId'] = maxJoinId;
+          obj['html'] = html;
+          callGetIncreaseUser(obj);
+        }
+        if(data.status == 2){
+          var url = "{php echo $this->createMobileUrl('bigscreen.login', array('act' => 'index'));}&id="+activity_id+"&color="+color
+          window.location.href = url;
+        }
+        if(data.status == 3){
+          var url = "{php echo $this->createMobileUrl('bigscreen.login', array('act' => 'noBigScreen'));}&id="+activity_id+"&color="+color
+          window.location.href = url;
+        }
+        if(data.status == 0){
+          callGetIncreaseUser(obj);
+        }
+      },
+      error: function (xmlHttpRequest, status){
+        xmlHttpRequest.abort();
+        obj['n'] = 2;
+        callGetIncreaseUser(obj);
+        return false;
+      }
+    })
+  }
+
+  function callRealTimeDraw(obj){
+    setTimeout(function(){
+      realTimeDraw(obj['activity_id'], obj['color'], obj['maxDrawListId'], obj['html']);
+    }, obj['n'] * window.requestTimer)
+  }
+  //异步加载实时投票记录
+  function realTimeDraw(activity_id, color, maxDrawListId, html, timeout=window.requestTimer){
+    var obj = {activity_id: activity_id, color: color, maxDrawListId: maxDrawListId, html: html, n: 1};
+
+    //如果长度超过200则刷新页面
+    var liArr = html.match(/<li>/g);
+    if(Array.isArray(liArr) && liArr.length >= 200){
+      location.reload();
+    }
+
+    $.ajax({
+      type: "get",
+      timeout: timeout,
+      url: "{php echo $this->createMobileUrl('bigscreen.obj_vote', array('act' => 'realTimeDraw'));}&id="+activity_id+"&draw_id="+maxDrawListId,
+      dataType:'json',
+      success: function (data){
+        if(data.status == 1){
+          var maxDrawListId = data.maxDrawListId;
+          var count = data.count;
+          var data = data.data;
+          data.forEach(function (item, index) {
+            html = html + "<li>\n" +
+                    "                            <dl>\n" +
+                    "                              <dt><img src=\""+ item['headurl'] +"\"\n" +
+                    "                                       width=\"54\" height=\"54\"></dt>\n" +
+                    "                              <dd> <span class=\"fr\">打赏："+ item['name'] +" x "+ item['num'] +"</span> <span class=\"name\">{$draw['nickname']}</span> <span class=\"time\">{$draw['createtime']}</span> </dd>\n" +
+                    "                            </dl>\n" +
+                    "                          </li>";
+          })
+          window.shoppingSheetRes[0].destroy();
+          var curPageIndex = window.shoppingSheetRes[0].getIndex();
+          window.shoppingSheetRes = null;
+          $('#realtimeDraw').html(html);
+          window.shoppingSheetRes = jQuery(".shoppingSheet").slide({
+            titCell: ".hd ul",
+            mainCell: ".bd ul",
+            autoPage: true,
+            effect: "topLoop",
+            autoPlay: true,
+            scroll:1,
+            vis: 9,
+            defaultIndex: curPageIndex,
+            interTime: 3000
+          });
+
+          obj['maxDrawListId'] = maxDrawListId;
+          obj['html'] = html;
+          callRealTimeDraw(obj);
+        }
+        if(data.status == 2){
+          var url = "{php echo $this->createMobileUrl('bigscreen.login', array('act' => 'index'));}&id="+activity_id+"&color="+color
+          window.location.href = url;
+        }
+        if(data.status == 3){
+          var url = "{php echo $this->createMobileUrl('bigscreen.login', array('act' => 'noBigScreen'));}&id="+activity_id+"&color="+color
+          window.location.href = url;
+        }
+        if(data.status == 0){
+          callRealTimeDraw(obj);
+        }
+      },
+      error: function (xmlHttpRequest, status){
+        xmlHttpRequest.abort();
+        obj['n'] = 2;
+        callRealTimeDraw(obj);
+        return false;
+      }
+    })
+  }
+
+  //异步加载溯源信息
+  function getMarketingTeam(activity_id, color, timeout=window.requestTimer){
+    $.ajax({
+      type: "get",
+      timeout: timeout,
+      url: "{php echo $this->createMobileUrl('bigscreen.obj_vote', array('act' => 'getMarketingTeam'));}&id="+activity_id,
+      dataType:'json',
+      success: function (data){
+        if(data.status == 1){
+          var data = data.data;
+          var html = '<tr>\n' +
+                  '<th>排名</th>\n' +
+                  '<th>团队名称</th>\n' +
+                  '<th>成员人数</th>\n' +
+                  '<th>曝光总量</th>\n' +
+                  '<th>今日/总转发</th>\n' +
+                  '<th>今日/总报名</th>\n' +
+                  '<th>今日/总投票</th>\n' +
+                  '<th>今日/总打赏</th>\n' +
+                  '</tr>';
+          data.forEach(function (item, index) {
+            html = html + "<tr>" +
+                    "<td>"+ (index+1) +"</td>\n" +
+                    "<td><span class=\"teamName\">"+ item['name'] +"</span></td>\n" +
+                    "<td>"+  item['marketing_user_count'] +"</td>\n" +
+                    "<td>"+ item['total_click_num'] +"</td>\n" +
+                    "<td>"+ item['total_repost_num'] +"/"+ item['total_repost_num'] +"</td>\n" +
+                    "<td>"+ item['today_join_num'] +"/"+ item['total_join_num'] +"</td>\n" +
+                    "<td>"+ item['today_vote_num'] +"/"+ item['total_vote_num'] +"</td>\n" +
+                    "<td>"+ item['today_gift_num'] +"/"+ item['total_gift_num'] +"</td>\n" +
+                    "</tr>";
+          })
+
+          $('#sourceRankingTb').html(html);
+
+          setTimeout(function(){
+            getMarketingTeam(activity_id, color);
+          },window.requestTimer)
+        }
+        if(data.status == 2){
+          var url = "{php echo $this->createMobileUrl('bigscreen.login', array('act' => 'index'));}&id="+activity_id+"&color="+color
+          window.location.href = url;
+        }
+        if(data.status == 3){
+          var url = "{php echo $this->createMobileUrl('bigscreen.login', array('act' => 'noBigScreen'));}&id="+activity_id+"&color="+color
+          window.location.href = url;
+        }
+      },
+      error: function (xmlHttpRequest, status){
+        xmlHttpRequest.abort();
+        setTimeout(function(){
+          getMarketingTeam(activity_id, color);
+        }, 2 * window.requestTimer)
+        return false;
+      }
+    })
+  }
+
+  //倒计时
+  function countdown(endtime){
+
+    var ts = endtime
+
+    $('#countdown').countdown({
+      timestamp	: ts,
+      callback	: function(days, hours, minutes, seconds){}
+    });
+  }
+
+  //获取当前时间
+  function getCurTime(){
+    var weeks = ['星期天','星期一','星期二','星期三','星期四','星期五','星期六']
+    var curDate = new Date();
+    var timeStr = curDate.getFullYear()+'年'
+    timeStr += (curDate.getMonth() + 1 < 10 ? '0'+(curDate.getMonth()+1) : curDate.getMonth()+1) +'月'
+    timeStr += (curDate.getDate() < 10 ? '0'+(curDate.getDate()) : curDate.getDate()) + '日 '
+    timeStr += (curDate.getHours()) + ':'
+    timeStr += (curDate.getMinutes() < 10 ? '0'+(curDate.getMinutes()) : curDate.getMinutes()) + ' '
+    timeStr += weeks[curDate.getDay()]
+    return timeStr;
+  }
+
+  //初始化
+  function init(){
+    var activity_start_time = parseInt({$activityObj['start_time']}) * 1000;
+    var activity_end_time = parseInt({$activityObj['end_time']}) * 1000;
+
+    //倒计时
+    var cur_time = (new Date()).getTime();
+    if(cur_time < activity_start_time){
+      $('#countdownTitle').text('距活动开始时间:')
+      countdown(activity_start_time);
+    }else{
+      $('#countdownTitle').text('距活动结束时间:')
+      countdown(activity_end_time);
+    }
+
+    //加载当前时间
+    setInterval(function (){
+      $('#curTime').text(getCurTime());
+    }, 1000)
+
+    //初始化实时购买轮播
+    window.shoppingSheetRes = jQuery(".shoppingSheet").slide({
+      titCell: ".hd ul",
+      mainCell: ".bd ul",
+      autoPage: true,
+      effect: "topLoop",
+      autoPlay: true,
+      scroll:1,
+      vis: 5,
+      interTime: 3000
+    });
+
+    //初始化新增用户轮播
+    window.scrollIncreased = jQuery(".scrollIncreased").slide({
+      titCell: ".hd ul",
+      mainCell: ".bd ul",
+      autoPage: true,
+      effect: "topLoop",
+      autoPlay: true,
+      vis:10,
+      scroll:1
+    });
+  }
+</script>
+<script type="text/javascript">
+  window.onload = function (){
+    var activity_id = {$id};
+    var color = "{$color}";
+    var maxVote1ListId = {$projectParams['maxVote1ListId']};
+    var maxDrawListId = {$projectParams['maxDrawListId']};
+    var userHtml = $('#increaseUser').html();
+    var drawHtml = $('#realtimeDraw').html();
+
+    //初始化轮播效果
+    init();
+
+    //异步加载今日用户投票记录
+    setTimeout(function(){
+      getIncreaseUser(activity_id, color, maxVote1ListId, userHtml);
+    },22000)
+
+    //异步加载实时打赏记录
+    setTimeout(function(){
+      realTimeDraw(activity_id, color, maxDrawListId, drawHtml);
+    },20000)
+
+    //异步更新溯源记录
+    setTimeout(function(){
+      getMarketingTeam(activity_id, color);
+    },25000)
+
+    //异步更新活动数据
+    setTimeout(function(){
+      updateActivityData(activity_id, color);
+    },15000)
+  }
+</script>
+</body>
+</html>
+

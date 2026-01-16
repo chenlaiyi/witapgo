@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name = "format-detection" content ="telephone=no">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>{$title} - {$config['name']}</title>
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_CSS__}/base.css">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_CSS__}/index.css?v=20191120">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_PLUGIN__}/storeinvite/css/invite.css?v=20200219">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_CSS__}/swiper.min.css">
+    <!-- 解决引用mui时ios输入框失去焦点页面跳到顶部问题 -->
+    <style type="text/css">
+        body{overflow: scroll; -webkit-overflow-scrolling: touch;}
+    </style>
+    <!-- 移动端适配 -->
+    <script>
+        var html = document.querySelector('html');
+        changeRem();
+        window.addEventListener('resize', changeRem);
+        function changeRem() {
+            var width = html.getBoundingClientRect().width;
+            html.style.fontSize = width / 10 + 'px';
+        }
+    </script>
+    <script src="{__MOBILE_STORE_JS__}/jquery-2.1.4.min.js"></script>
+    <script src="{__PLUGIN__}/layer/mobile/2.0/layer.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script>
+        // jssdk config 对象
+        jssdkconfig =  {php echo json_encode($_W['account']['jssdkconfig']);} || {};
+        // 是否启用调试
+        jssdkconfig.debug = false;
+        jssdkconfig.jsApiList = [
+            'checkJsApi',
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'getLocation',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'hideMenuItems'
+        ];
+        wx.config(jssdkconfig);
+        wx.error(function (res) {
+            layer.open({ content: '对不起，微信JSSDK信息验证失败！', skin: 'msg', time: 2 });
+        });
+   </script>
+</head>
+<body>
+<h5 class="fn pd24 clearfix">
+    <p class="font34">{$title}<span class=" ml10 font22 c9"></span></p>
+</h5>
+<section class="pd24 bgfff">
+    <section class="marketingInfoListRetail">
+        <ul id="LoadLists">
+        {loop $JsonList $item}
+        <li data-id="">
+            <em > <i class="cf69 font24">{php echo date('Y-m-d H:i', $item['createtime']);}</i></em>
+            <dl>
+                <dt><img src="{$item['headurl']}"> </dt>
+                <dd>{$item['nickname']}<p class="c9 font22">openId:{$item['openid']}</p>
+
+                    {if isset($item['register_name'])}
+                        <p class="c9 font22">登记姓名：{$item['register_name']}</p>
+                        <p class="c9 font22">登记电话:<a href="tel:{$item['phone']}">{$item['phone']}</a></p>
+                    {/if}
+                    {if isset($item['vote'])}
+                        <p class="c9 font22">投票数:{$item['vote']}</p>
+                    {/if}
+                </dd>
+            </dl>
+        </li>
+        {/loop}
+        </ul>
+    </section>
+</section>
+<section style="height:1.27rem"></section>
+<section class="buttonFloat">
+    <a href="{php echo $this->createMobileUrl('user.admins_marketing', array('store_id' => $store_id, 'activity_id' => $activity_id));}" class="db font32 yellowBtn" style="background: #FFD112;">返回</a>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script src="{__MOBILE_STORE_JS__}/index.js"></script>
+</body>
+</html>
+
+
+

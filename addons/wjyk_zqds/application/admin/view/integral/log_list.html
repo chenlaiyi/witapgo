@@ -1,0 +1,167 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>充值记录列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+</head>
+<style>
+  .layui-table-cell{
+      display:table-cell;
+      vertical-align: middle;
+  }
+</style>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">积分记录</div>
+                <div class="layui-card-body">
+                	<div class="demoTable" style="margin-bottom:10px;display: flex;">
+						<div class="layui-inline">
+					      <label class="layui-form-label">用户昵称：</label>
+					      <div class="layui-input-inline">
+			              	<input class="layui-input" placeholder="请输入用户昵称" name="nickname" id="nickname" autocomplete="off">
+					      </div>
+					    </div>
+			            <div class="layui-inline">
+					      <label class="layui-form-label">时间范围</label>
+					      <div class="layui-input-inline">
+					        <input type="text" class="layui-input" id="test10" placeholder=" - " readonly style="width: 280px;">
+					      </div>
+					    </div>
+			            <button class="layui-btn" style="margin-left:20px;" data-type="reload">搜索</button>
+					</div>
+                    <table class="layui-hide" id="test-table-operate" lay-filter="test-table-operate"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+       	,excel: '../layui/layui_exts/excel/excel',
+    }).use(['jquery','index', 'table','excel','laydate'], function(){
+        var $ = layui.$
+        	,table = layui.table
+            ,admin = layui.admin
+            ,excel = layui.excel
+            ,laydate = layui.laydate;
+        	
+
+            
+        laydate.render({
+            elem: '#test10'
+           	,range: true
+           	,trigger: 'click'
+   	    	,type: 'datetime'
+   	    	,format: 'yyyy/MM/d HH:mm:ss'
+          });
+        
+        table.render({
+            elem: '#test-table-operate'
+            ,url:"{:siteUrl('admin/integral/integral_log_list','','web')}"
+            ,cols: [[
+                {field:'uid', title: '用户信息',templet:function(d){
+                	return "<img style='max-width:25px;' src='"+d.avatar+"'></img>"+d.nickname;
+                }}
+                ,{field:'integral', title: '操作积分', sort: true}
+                ,{field:'type', title: '类型', sort: true,templet:function(d){
+                	if(d.type == 1){
+                		return "签到";
+                	}else if(d.type == 2){
+                		return "消费";
+                	}
+                }}
+                ,{field:'createtime', title: '提交时间', sort: true ,templet:function(d){
+                	return layui.util.toDateString(d.createtime*1000, "yyyy-MM-dd HH:mm");
+                }}
+            ]]
+            ,page: true
+        });
+        
+        $('#exportExcel').on('click', function(){
+            var con_time = $('#test10');
+			// 模拟从后端接口读取需要导出的数据
+			$.ajax({
+				url: "{:siteUrl('admin/recharge/recharge_log_list_export','','web')}"
+				,data :{
+                    'con_time': con_time.val()
+				}
+				,dataType: 'json'
+				,success(res) {
+					var data = res.data;
+					console.log(data);
+					// 重点！！！如果后端给的数据顺序和映射关系不对，请执行梳理函数后导出
+					data = excel.filterExportData(data, [
+					    'logno'
+					    ,'nickname'
+						,'payment'
+						,'money'
+						,'actual'
+						,'createtime'
+					]);
+					// 重点2！！！一般都需要加一个表头，表头的键名顺序需要与最终导出的数据一致
+					data.unshift({ 
+						logno: "充值单号"
+						, nickname: "充值人"
+						, payment: "充值方式"
+						, money: "充值金额（元）"
+						, actual: "实付金额（元）"
+						, createtime:"充值时间"
+					});
+
+					excel.exportExcel(data, '充值记录.xlsx', 'xlsx');
+
+				}
+				,error() {
+					layer.alert('获取数据失败，请检查是否部署在本地服务器环境下');
+				}
+			});
+		  }); 	
+       
+        
+        var $ = layui.$, active = {
+                reload: function(){
+                    var demoReload = $('#test-table-demoReload');
+                    var status = $('#is_status');
+                    var con_time = $('#test10');
+                    //执行重载 --id
+                    table.reload('test-table-operate', {
+                      page: {
+                        curr: 1 //重新从第 1 页开始
+                      }
+                      ,where: {
+                        'nickname':  $('#nickname').val(),
+                        'is_status': status.val(),
+                        'con_time': con_time.val()
+                      }
+                    });
+                  }
+            };
+
+            $('.demoTable .layui-btn').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+
+    });
+</script>
+</body>
+<div class="layui-footer" style="margin-top:20px;display: flex;justify-content: center;align-items: flex-end;">
+	{include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}
+</div>
+</html>

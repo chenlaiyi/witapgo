@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                访问受限
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">系统</li>
+                <li class="active">访问受限</li>
+            </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="error-page">
+                <h2 class="headline text-red">403</h2>
+                <div class="error-content">
+                    <h3><i class="fa fa-warning text-red"></i> 您没有本页面的访问权限!</h3>
+                    <p style="line-height: 28px;">
+                        对不起，您没有访问当前页面的权限，如需要权限请联系管理员对您的帐号进行功能授权，现在您只能够按照下列导航进行操作！
+                        <br>
+                        <a href="{php echo $this->createWebUrl('home');}" >管理首页</a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="javascript:history.go(-1);">返回上一页</a>
+                    </p>
+                </div>
+            </div><!-- /.error-page -->
+
+        </section><!-- /.content -->
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+</body>
+</html>
+<script>
+    $(function () {
+        //设置选中导航
+        SelectNav("控制面板");
+    });
+</script>
+<!--bjgucG9zZ2UuY29t-->
+<!--ZTc2ZDAyODUtZDlmZC00MjE2LWExYWYtYTA5M2IyNDgyYTg0-->

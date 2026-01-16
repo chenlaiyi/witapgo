@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'user/common/header'}
+<body>
+<section class="rebate_box">
+        <!--个人中心-->
+        <section class="rebate_user">
+            <img src="{php echo tomedia($model['headurl'])}" alt=""/>
+            <h3>{$model['nickname']}</h3>
+            <p class="font26 "><img src="{__MOBILE_USER_IMG__}/shouji.png">{$model['mobile']}</p>
+            <section class="rebate_total"></section>
+        </section>
+    <section class="rebate_info">
+        <!--统计-->
+        <section class="rebate_account">
+
+            <!--<ul id="store_title_ul">
+                <li id="store_title_li">
+                    <select id="store_title_select">
+                        <option value ="测试商家00001">测试商家00001</option>
+                        <option value ="测试商家00002">测试商家00002</option>
+                        <option value="测试商家00003">测试商家00003</option>
+                        <option value="测试商家00004">测试商家00004</option>
+                    </select>
+                </li>
+            </ul>-->
+
+            <ul>
+                <li>
+                    <a href="{php echo $this->createMobileUrl('user.user_score',array('act'=>'index','store_id'=>$store_id))}">
+                        <h4 class="font34">{$model['score']}</h4>
+                        <p class="font24">账户积分</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="{php echo $this->createMobileUrl('user.user_bill',array('act'=>'index','store_id'=>$store_id))}">
+                        <h4 class="font34">{$model['money']}</h4>
+                        <p class="font24">账户余额</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="{php echo $this->createMobileUrl('user.user_draw',array('act'=>'index','store_id'=>$store_id,'types'=>3))}">
+                        <h4 class="font34">{$totalMoney}</h4>
+                        <p class="font24">微信红包</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="{php echo $this->createMobileUrl('user.user_draw',array('act'=>'index','store_id'=>$store_id,'types'=>4))}">
+                        <h4 class="font34">{$totalGoods}</h4>
+                        <p class="font24">实物商品</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="{php echo $this->createMobileUrl('user.user_draw',array('act'=>'index','store_id'=>$store_id,'types'=>5))}">
+                        <h4 class="font34">{$totalCards}</h4>
+                        <p class="font24">商家卡券</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="{php echo $this->createMobileUrl('user.user_draw',array('act'=>'index','store_id'=>$store_id))}">
+                        <h4 class="font34">{$userTotalActivity}</h4>
+                        <p class="font24">参加活动</p>
+                    </a>
+                </li>
+            </ul>
+        </section>
+    </section>
+</section>
+<!--商城广告位-->
+<section class="mall_ad">
+    <a href="{php echo $this->createMobileUrl('user.intmall_home',array('act'=>'index','store_id'=>$store_id))}" class="db"><img src="{__MOBILE_USER_IMG__}/mall_ad.jpg" width="100%" height="auto" class="db"></a>
+</section>
+<!--活动订单-->
+<section class="pd0_24">
+<section class="borRds24 shadow bg_fff">
+<h2 class="InfoTit fn bg_fff">
+    <a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'index','store_id'=>$store_id))}" class="fn fr c9 font28">查看全部</a>
+    <span class="font32 d_ib">活动订单</span><i class="arrow"></i>
+</h2>
+<section class="mall_order bg_fff">
+    <ul>
+        <li><a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'index','store_id'=>$store_id,'status'=>1))}"><img src="{__MOBILE_USER_IMG__}/order_paid.png?v=20191101"><p>待发货</p></a></li>
+        <li><a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'index','store_id'=>$store_id,'status'=>2))}"><img src="{__MOBILE_USER_IMG__}/deliver.png?v=20191101"><p>已发货</p></a></li>
+        <li><a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'index','store_id'=>$store_id,'status'=>3))}"><img src="{__MOBILE_USER_IMG__}/order_writeoff.png?v=20191101"><p>已完成</p></a></li>
+    </ul>
+</section>
+</section>
+</section>
+<!--商城订单-->
+<section class="pd24">
+<section class="borRds24 shadow bg_fff">
+<h2 class="InfoTit fn bg_fff">
+    <a href="{php echo $this->createMobileUrl('user.order_intmall',array('act'=>'index','store_id'=>$store_id))}" class="fn fr c9 font28">查看全部</a>
+    <span class="font32 d_ib">商城订单</span><i class="arrow"></i>
+</h2>
+<section class="mall_order bg_fff">
+    <ul>
+        <li><a href="{php echo $this->createMobileUrl('user.order_intmall',array('act'=>'index','store_id'=>$store_id,'status'=>1))}"><img src="{__MOBILE_USER_IMG__}/order_unpaid.png?v=20191101"><p>待支付</p></a></li>
+        <li><a href="{php echo $this->createMobileUrl('user.order_intmall',array('act'=>'index','store_id'=>$store_id,'status'=>2))}"><img src="{__MOBILE_USER_IMG__}/order_paid.png?v=20191101"><p>已支付</p></a></li>
+        <li><a href="{php echo $this->createMobileUrl('user.order_intmall',array('act'=>'index','store_id'=>$store_id,'status'=>3))}"><img src="{__MOBILE_USER_IMG__}/deliver.png?v=20191101"><p>已发货</p></a></li>
+        <li><a href="{php echo $this->createMobileUrl('user.order_intmall',array('act'=>'index','store_id'=>$store_id,'status'=>4))}"><img src="{__MOBILE_USER_IMG__}/order_writeoff.png?v=20191101"><p>已完成</p></a></li>
+    </ul>
+</section>
+</section>
+</section>
+<!--资金明细-->
+<section class="pd0_24">
+<section class="center_nav">
+<section class="borRds24 shadow bg_fff">
+    {if $storeConfig['is_money_refund'] == 1}
+    <section class="center_nav_item">
+        <a href="{php echo $this->createMobileUrl('user.user_refund',array('act'=>'index','store_id'=>$store_id))}">
+            <img src="{__MOBILE_USER_IMG__}/cash.png?v=20191101" class="item_icon">
+            <p>我要提现</p>
+            <span class="arrow_gray"></span>
+        </a>
+    </section>
+    {/if}
+    <section class="center_nav_item">
+        <a href="{php echo $this->createMobileUrl('user.user_draw',array('act'=>'index','store_id'=>$store_id))}">
+            <img src="{__MOBILE_USER_IMG__}/fan.png?v=20191101" class="item_icon">
+            <p>参与记录</p>
+            <span class="arrow_gray"></span>
+        </a>
+    </section>
+    <section class="center_nav_item">
+        <a href="{php echo $this->createMobileUrl('user.user_groupbuy',array('act'=>'index','store_id'=>$store_id))}">
+            <img src="{__MOBILE_USER_IMG__}/pin.png?v=20191101" class="item_icon">
+            <p>拼团记录</p>
+            <span class="arrow_gray"></span>
+        </a>
+    </section>
+    {if !empty($writeoff_count)}
+    <section class="center_nav_item">
+        <a href="{php echo $this->createMobileUrl('user.user_writeoff',array('act'=>'index','store_id'=>$store_id))}">
+            <img src="{__MOBILE_USER_IMG__}/writeoff_y.png?v=20191120" class="item_icon">
+            <p>核销记录</p>
+            <span class="arrow_gray"></span>
+        </a>
+    </section>
+    {/if}
+    <section class="center_nav_item">
+        <a href="{php echo $this->createMobileUrl('user.user_bill',array('act'=>'index','store_id'=>$store_id))}">
+            <img src="{__MOBILE_USER_IMG__}/account_line.png?v=20191101" class="item_icon">
+            <p>资金明细</p>
+            <span class="arrow_gray"></span>
+        </a>
+    </section>
+    <section class="center_nav_item">
+        <a href="{php echo $this->createMobileUrl('user.user_score',array('act'=>'index','store_id'=>$store_id))}">
+            <img src="{__MOBILE_USER_IMG__}/integral.png?v=20191101" class="item_icon">
+            <p>积分明细</p>
+            <span class="arrow_gray"></span>
+        </a>
+    </section>
+    <section class="center_nav_item">
+        <a href="{php echo $this->createMobileUrl('user.user_address',array('act'=>'index','store_id'=>$store_id))}">
+            <img src="{__MOBILE_USER_IMG__}/address.png?v=20191101" class="item_icon">
+            <p>我的地址</p>
+            <span class="arrow_gray"></span>
+        </a>
+    </section>
+    <section class="center_nav_item">
+        <a href="{php echo $this->createMobileUrl('user.intmall_collect',array('act'=>'index','store_id'=>$store_id))}">
+            <img src="{__MOBILE_USER_IMG__}/collect_line.png?v=20191101" class="item_icon">
+            <p>我的收藏</p>
+            <span class="arrow_gray"></span>
+        </a>
+    </section>
+</section>
+</section>
+</section>
+{template 'user/common/footer'}
+<script type="text/javascript">
+    //设置底部菜单选中
+    SelectNav("个人中心");
+
+</script>
+</body>
+</html>

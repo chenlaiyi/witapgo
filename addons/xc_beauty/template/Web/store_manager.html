@@ -1,0 +1,243 @@
+{template 'common/header'}
+<link rel="stylesheet" type="text/css" href="../addons/{php echo $_GPC['m']}/resource/css/style.css" />
+<link rel="stylesheet" type="text/css" href="../addons/{php echo $_GPC['m']}/resource/swal/dist/sweetalert2.min.css" />
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            {$xtitle}
+        </h3>
+    </div>
+    <div class="panel-body">
+        {template 'Web/menu'}
+        <form class="form-horizontal" role="form" method="post" action="{url 'site/entry/announcement',array('m'=>$_GPC['m'],'op'=>'savemodel','version_id'=>$_GPC['version_id'])}" name="submit" style="padding: 20px 0;">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">仅扫码核销订单</label>
+                <div class="col-sm-8">
+                    {if $xc['code_he']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="code_he">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="code_he" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">退款</label>
+                <div class="col-sm-8">
+                    {if $xc['tui']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="tui">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="tui" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">顶部月收入统计</label>
+                <div class="col-sm-8">
+                    {if $xc['count']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="count">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="count" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">客户会员数据</label>
+                <div class="col-sm-8">
+                    {if $xc['user']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="user">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="user" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">搜索</label>
+                <div class="col-sm-8">
+                    {if $xc['search']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="search">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="search" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">扫一扫</label>
+                <div class="col-sm-8">
+                    {if $xc['search']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="code">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="code" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">收银台</label>
+                <div class="col-sm-8">
+                    {if $xc['pay_yin']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="pay_yin">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="pay_yin" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">收款码</label>
+                <div class="col-sm-8">
+                    {if $xc['pay_code']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="pay_code">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="pay_code" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">会员充值</label>
+                <div class="col-sm-8">
+                    {if $xc['recharge']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="recharge">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="recharge" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">下单</label>
+                <div class="col-sm-8">
+                    {if $xc['buy']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="buy">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="buy" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">订单</label>
+                <div class="col-sm-8">
+                    {if $xc['order']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="order">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="order" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">预约</label>
+                <div class="col-sm-8">
+                    {if $xc['online']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="online">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="online" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">奖品</label>
+                <div class="col-sm-8">
+                    {if $xc['prize']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="prize">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="prize" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">收银记录</label>
+                <div class="col-sm-8">
+                    {if $xc['yin_record']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="yin_record">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="yin_record" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">充值记录</label>
+                <div class="col-sm-8">
+                    {if $xc['recharge_record']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="recharge_record">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="recharge_record" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">收入统计</label>
+                <div class="col-sm-8">
+                    {if $xc['order_count']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="order_count">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="order_count" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">配货</label>
+                <div class="col-sm-8">
+                    {if $xc['pei']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="pei">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="pei" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">商城订单</label>
+                <div class="col-sm-8">
+                    {if $xc['mall_order']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="mall_order">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="mall_order" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">员工提成</label>
+                <div class="col-sm-8">
+                    {if $xc['member_ti']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="member_ti">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="member_ti" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">收入提现</label>
+                <div class="col-sm-8">
+                    {if $xc['store_ti']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="store_ti">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="store_ti" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <input type="button" name="submit" class="btn btn-default" value="提交">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{template 'common/footer'}
+<script>
+    require(["../addons/{php echo $_GPC['m']}/resource/swal/dist/sweetalert2.min.js"],function(){
+        $(function(){
+            $("input[name='submit']").click(function(){
+                var data=$(".form-horizontal").serialize();
+                $.ajax({
+                    type:"post",
+                    url:"{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'store_manager_save','version_id'=>$_GPC['version_id'])}",
+                    data:data,
+                    dataType:'json',
+                    success:function(res){
+                        if(res.status==1){
+                            swal('操作成功!', '操作成功!', 'success');
+                        }else{
+                            swal('操作失败!', '操作失败!', 'error');
+                        }
+                    }
+                })
+            });
+        })
+    })
+</script>

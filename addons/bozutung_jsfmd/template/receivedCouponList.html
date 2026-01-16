@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li class="layui-this">
+						<a href="{php echo webUrl('receivedCouponList', ['cid'=>$_GPC['cid']])}">优惠券领取情况({$coupon['description']})</a>
+					</li>
+					<li>
+						<a href="{php echo webUrl('couponList')}">返回</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="layui-form">
+				<table class="layui-table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>领取者昵称</th>
+							<th>有效截止时间</th>
+							<th>状态</th>
+						</tr>
+					</thead>
+					<tbody>
+						{loop $list $index $item}
+						<tr>
+							<td class="wmin20">{$item['id']}</td>
+							<td>{$item['nickname']}</td>
+							<td>{$item['end_time']}</td>
+							<td>{$item['status']}</td>
+						</tr>
+						{/loop}
+					</tbody>
+				</table>
+				<div class="pager">
+					{$pager}
+				</div>
+			</div>
+			<script>
+				layui.use(['laypage', 'layer'], function(){
+					var laypage = layui.laypage;
+					var layer = layui.layer;
+
+					// 分页
+					laypage.render({
+						elem: $('.pager')
+						,limit: '{php echo $pageSize; }'
+						,count: '{php echo $total; }'
+						,theme: '#1E9FFF'
+						,curr:  '{php echo $pageIndex; }'
+						,hash: '{php echo $pageIndex; }'
+						,jump: function (obj, first) {
+							if (first != true) {
+								var currentPage = obj.curr;
+								window.location.href = "{php echo webUrl('receivedCouponList', ['cid'=>$_GPC['cid']])}&page=" + currentPage;
+							}
+						}
+					});
+					$('.pager').show();
+				});
+			</script>
+
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

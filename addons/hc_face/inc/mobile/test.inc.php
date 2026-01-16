@@ -1,0 +1,2 @@
+<?php
+ goto whG9t; AKg8h: global $_GPC, $_W; goto ltY0q; ltY0q: $weid = $_W["\165\156\x69\141\143\x69\144"]; goto k5VuE; whG9t: defined("\111\x4e\137\111\101") or exit("\101\x63\143\x65\x73\x73\40\104\145\156\151\145\144"); goto jl8AT; jl8AT: require_once IA_ROOT . "\57\x61\144\x64\x6f\156\163\x2f\150\x63\x5f\x66\x61\x63\145\x2f\x69\x6e\x63\x2f\x6d\x6f\x64\x65\x6c\x2f\x61\143\x63\157\x75\156\164\56\x70\x68\160"; goto AKg8h; k5VuE: include $this->template("\x74\x65\x73\x74");

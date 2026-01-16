@@ -1,0 +1,142 @@
+<link href="{$_W['siteroot']}web/resource/css/font-awesome.min.css" rel="stylesheet">
+<style>
+    .tempheader{
+        background-color: #fff;
+        width: 90%;
+        margin: 5%;
+    }
+    .tempcate{
+        width: 360px;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    .tempcate div{
+        width: 16%;
+        border-radius: 40%;
+        font-size: 14px;
+        text-align: center;
+        margin: 2px;
+        display: inline-block;
+        height: 35px;
+        line-height: 35px;
+        background-color: #f5f5f5;
+    }
+    .act{
+        color:rgb(71, 132, 266);
+        font-weight: bold;
+        background-color:rgb(224, 239, 254) !important;
+    }
+    .container{
+        background-color: #f7f7f7;
+        min-height: 540px;
+    }
+    .container-content{
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-top: 3%;
+    }
+    .content{
+        width: 46.5%;
+        height: 240px;
+        background-color: #fff;
+        margin-bottom: 2%;
+    }
+    
+    .content-header{
+        font-size: 16px;
+        padding: 5% 0 10% 0;
+        border-bottom: 2px solid #ddd;
+        margin: 5%;
+    }
+    .content-content{
+        padding: 5% 5% 0 5%;
+        overflow:hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 8;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        color:#807e7e;
+    }
+    .content:nth-child(odd){
+        margin-left: 2%;
+    }
+    .content:nth-child(even){
+        margin-right: 2%;
+    }
+    .goback{
+        position: fixed;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        right: 30px;
+        bottom: 75px;
+        border: 1px solid;
+        text-align: center;
+    }
+    .fa-angle-left{
+        font-size: 27px;
+        font-weight: bold;
+        text-align: center;
+    }
+</style>
+<div class="goback" onclick="closeShow_menu_bg();">
+	<i class="fa fa-angle-left"></i>
+</div>
+<div class="tempheader">
+    <h1>通知模板</h1>
+    <span>轻松发布,通知必达,已读未读一目了然</span>
+    <div class="tempcate">
+        <div class="cate act" onclick="selectCate(this,0)">全部</div>
+        {loop $tempCateList $item}
+        <div class="cate" onclick="selectCate(this,`{$item['id']}`)">{$item['name']}</div>
+        {/loop}
+    </div>
+    <div class="container">
+        <div class="container-content" id="content">
+            {loop $tempList $row}
+            <div class="content" onclick="checkConten(this)">
+                <div class="content-header">{$row['name']}</div>
+                <div class="content-content">{$row['content']}</div>
+            </div>
+            {/loop}
+        </div>
+    </div>
+</div>
+<script>
+    //选这的模板分类
+    function selectCate(e,id){
+        $(".cate").removeClass('act')
+        $.ajax({
+            url: "{php echo $this->createMobileUrl('indexajax',array('op'=>'getTempLibrary','schoolid'=>$_GPC['schoolid'],'weid'=>$_GPC['weid']))}",
+            type: "post",
+            data: {cate_id:id},
+            dataType: "json",
+            success: function (res) {
+                if(res){
+                    let html = '';
+                    let data = res.data;
+                    for (let item of data) {
+                        html += `<div class="content" onclick="checkConten(this)">
+                                    <div class="content-header">
+                                        ${item['name']}
+                                    </div>
+                                    <div class="content-content">
+                                        ${item['content']}
+                                    </div>
+                                </div>`                        
+                    }
+                    $("#content").html(html)
+                }
+            }
+        });
+    }
+    //选中的模板内容，追加到text文本框中
+    function checkConten(e){
+        let name = $(e).find('.content-header').text()
+        let content = $(e).find('.content-content').text()
+        $("#title").val(name)
+        $("#feedback_content").val(content)
+        closeShow_menu_bg()
+    }
+</script>

@@ -1,0 +1,2 @@
+<?php
+ goto X1RqX; q38DL: global $_GPC, $_W; goto JVc5w; JVc5w: $weid = $_W["\165\x6e\x69\141\x63\x69\x64"]; goto Mql6r; X1RqX: defined("\111\x4e\137\x49\x41") or exit("\101\x63\x63\x65\x73\163\40\104\145\156\x69\145\144"); goto q38DL; Mql6r: include $this->template("\162\x65\144\151\x72\x65\143\x74");

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'user/common/header'}
+<link rel="stylesheet" type="text/css" href="{__MOBILE_USER_CSS__}/swiper.min.css">
+<script type="text/javascript" src="{__MOBILE_USER_JS__}/jquery.flexslider-min.js"></script>
+<script type="text/javascript" src="{__MOBILE_USER_JS__}/swiper.jquery.min.js"></script>
+<script>
+    wx.ready(function () {
+        wx.showMenuItems({
+            menuList: ["menuItem:share:timeline", "menuItem:share:appMessage"]
+        });
+
+        var title = "{$_share['title']}";
+        var desc = "{$_share['desc']}";
+        var url = "{$_share['link']}";
+        var link = url;
+        var imgUrl = "{$_share['imgUrl']}";
+
+        if (wx.onMenuShareTimeline) {
+            //转发到朋友圈
+            wx.onMenuShareTimeline({
+                title: title,
+                desc: desc,
+                link: link,
+                imgUrl: imgUrl,
+                success: function () {
+                    layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+                },
+                cancel: function () {
+                    layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                }
+            });
+            //转发给朋友
+            wx.onMenuShareAppMessage({
+                title: title,
+                desc: desc,
+                link: link,
+                imgUrl: imgUrl,
+                type: 'link',
+                dataUrl: '',
+                success: function () {
+                    layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+                },
+                cancel: function () {
+                    layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                }
+            });
+            wx.onMenuShareQQ({
+                title: title, // 分享标题
+                desc: desc, // 分享描述
+                link: link, // 分享链接
+                imgUrl: imgUrl, // 分享图标
+                success: function () {
+                    layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+                },
+                cancel: function () {
+                    layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                }
+            });
+            wx.onMenuShareWeibo({
+                title: title, // 分享标题
+                desc: desc, // 分享描述
+                link: link, // 分享链接
+                imgUrl: imgUrl, // 分享图标
+                success: function () {
+                    layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+                },
+                cancel: function () {
+                    layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                }
+            });
+        }
+        else{
+            //新版发送朋友圈
+            wx.updateTimelineShareData({
+                title: title, // 分享标题
+                link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                imgUrl: imgUrl, // 分享图标
+            }, function(res) {
+                layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+            });
+
+            wx.updateAppMessageShareData({
+                title: title, // 分享标题
+                desc: desc, // 分享描述
+                link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                imgUrl: imgUrl, // 分享图标
+            }, function(res) {
+                layer.open({ content: '分享成功！', skin: 'msg', time: 2 });
+            });
+        }
+    });
+</script>
+<body>
+{if !empty($bannerList)}
+<!--banner切换-->
+<section class="block_home_slider">
+    <section id="home_slider" class="flexslider">
+        <ul class="slides">
+            {loop $bannerList $info}
+            <li>
+                <section class="slide">
+                    <a href="{$info['url']}">
+                        <img src="{php echo tomedia($info['pic_url'])}" alt="{$info['title']}"/>
+                    </a>
+                </section>
+            </li>
+            {/loop}
+        </ul>
+    </section>
+</section>
+<script type="text/javascript">
+    $(function () {
+        $('#home_slider').flexslider({
+            animation : 'slide',
+            controlNav : true,
+            directionNav : true,
+            animationLoop : true,
+            slideshow : true,
+            slideshowSpeed : 3000,
+            useCSS : false,
+            autoPlay:true,
+        });
+    });
+</script>
+{/if}
+<!--导航-->
+<section class="bg_fff mallNav clearfix">
+    <ul>
+        {loop $classList $info}
+        <li>
+            <a href="{php echo $this->createMobileUrl('user.intmall_product',array('act'=>'index','store_id'=>$store_id,'cid'=>$info['id']))}">
+                <img src="{php echo tomedia($info['pic_url'])}" alt="{$info['name']}"/>
+                <p>{$info['name']}</p>
+            </a>
+        </li>
+        {/loop}
+    </ul>
+</section>
+<!--中心区域-->
+<section class="bg_fff mainPush mt15 clearfix">
+    <ul>
+        {loop $redProductList $info}
+        <li>
+            <a href="{php echo $this->createMobileUrl('user.intmall_product',array('act'=>'detail','store_id'=>$store_id,'id'=>$info['id']))}">
+                <h2 class="fn">{$info['title']}</h2>
+                <p class="graphic_wz"><span class="org">{$info['score']}</span><span class="c9 ml5">积分</span></p>
+                <img src="{php echo tomedia($info['thumb_url'])}" alt="{$info['title']}"/>
+            </a>
+        </li>
+        {/loop}
+    </ul>
+</section>
+<!--兑换排行榜-->
+<section class="exchange">
+    <h2 class="exchange_title">兑换排行榜</h2>
+    <ul class="exchange_list clearfix">
+        {loop $hotProductList $info}
+        <li>
+            <a href="{php echo $this->createMobileUrl('user.intmall_product',array('act'=>'detail','store_id'=>$store_id,'id'=>$info['id']))}">
+                <section class="exchange_pro_img"><img src="{php echo tomedia($info['thumb_url'])}" alt="{$info['title']}"/></section>
+                <section class="exchange_pro_info">
+                    <h2 class="fn">{$info['title']}</h2>
+                    <p class="score">{$info['score']}积分{if $info['paymoney']>0} +{$info['paymoney']}元{/if}</p>
+                    <del class="org_price">市场价：{$info['money']}元</del><span class="exchange_btn"></span>
+                </section>
+            </a>
+        </li>
+        {/loop}
+    </ul>
+</section>
+{template 'user/common/footer'}
+<script type="text/javascript">
+    //设置底部菜单选中
+    SelectNav("积分商城");
+    //积分商城首页图片宽高控制
+    $(".exchange_list li .exchange_pro_img").height($(".exchange_list li .exchange_pro_img").width());
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keywords" http-equiv="{$school['title']} - 师生统计">
+    <link rel="shortcut icon" href="{$_W['siteroot']}{$_W['config']['upload']['attachdir']}/{if !empty($_W['setting']['copyright']['icon'])}{$_W['setting']['copyright']['icon']}{else}images/global/wechat.jpg{/if}" />
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/sp_public.css">
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/index.css">
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/sp_population.css">
+    <title>{$school['title']} - 师生统计</title>
+    <style>
+        .teacher_sex {position: relative;width: 45%;height: 100%;margin-bottom: 1%;float:left;}
+        .student_sex {position: relative;width: 45%;height: 100%;margin-bottom: 1%;float:right;}
+    </style>
+</head>
+<body class="background">
+<div class="expand">
+    <div class="expand_left"></div>
+    <div class="expand_right"></div>
+    <div class="expand_circle"></div>
+</div>
+<div class="open-page">
+    <div class="circle-red">
+        <div class="circle-blue">
+            <div class="circle-yellow"></div>
+        </div>
+    </div>
+</div>
+{template 'common/header_base'}
+<section class="c-content-pop l-center-flex l-content-pop">
+    <div class="c-content_item l-content_item">
+        <div class="o-box c-content_box-up1">
+            <div class="teacher_sex "></div>
+            <div class="student_sex"></div>
+        </div>
+        <div class="o-box c-content_box-down1"></div>
+    </div>
+    <div class="c-content_item l-content_item">
+        <div class="o-box c-content_box-up2"></div>
+        <div class="o-box c-content_box-down2"></div>
+    </div>
+    <div class="c-content_item l-content_item">
+        <div class="o-box c-content_box-up3"></div>
+        <div class="o-box c-content_box-down3"></div>
+    </div>
+</section>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/jquery.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/echarts.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/index.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/sp_bg.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/title.js"></script>
+<script type="text/javascript">
+    var GPC_do = "{$_GPC['do']}";
+    $.ajax({
+        url: "{php echo $this->createMobileUrl('bdpeople',array('op'=>'firstdata','schoolid'=>$schoolid))}",
+        type: "POST",
+        dataType: "json",
+        success: function (res) {
+            drawCharts($('.c-content_box-up3')[0], res.new_bd_jsfz);
+            drawCharts($('.c-content_box-down1')[0], res.new_finish_class);
+            drawCharts($('.c-content_box-down2')[0], res.new_stu_series_data);
+            drawCharts($('.teacher_sex')[0], res.teasex);
+            drawCharts($('.student_sex')[0], res.stusex);
+            drawCharts($('.c-content_box-up2')[0], res.tea_age);
+            drawCharts($('.c-content_box-down3')[0], res.stu_nj);
+        }
+    });
+    //打开时加载动画
+    setTimeout(function () {
+        $(".expand_circle").css({"display": "none"});
+        $(".expand_left").css({"transform": "translateX(100%)"});
+        $(".expand_right").css({"transform": "translateX(-100%)"});
+        setTimeout(function () {
+            $(".expand").css({"z-index": -1});
+        }, 500)
+    }, 1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<style>
+    .bacg { display: none; position: absolute; width: 100%; top: 0px; left: 0px; height: 100%; background-color: rgba(0, 0, 0, 0.6); } 
+</style>
+{loop $list $item}
+<div class="col-sm-4">
+    <div class="card control mb-1">
+        <div class="card-content">
+            <img style="width: 100%; height: 160px; object-fit: cover;" class="card-img-top img-fluid" src="{php echo tomedia($item['thumb'])}" alt="Card image cap">
+            <div class="card-body card_over px-1 pt-0">
+                <h4 class="card-title text_hidden">{$item['name']}</h4>
+                <p class="card-text text_over">{$item['description']}</p>
+            </div>
+            <div class="bacg">
+                <div class="btnGroup">
+                    <button type="button" class="btn btn-primary" onclick="use_temp(`{$item['id']}`);"><span>立即使用</span></button><br>
+                    <button type="button" class="btn btn-warning mt-2" onclick="preview(`{$item['id']}`)"><span>预览模板</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/loop}
+<script>
+
+$('.control').mouseover(function(e){
+    $(this).children().children(".bacg").show();
+});
+$('.control').mouseout(function(){
+    $(this).children().children(".bacg").hide();
+});
+</script>

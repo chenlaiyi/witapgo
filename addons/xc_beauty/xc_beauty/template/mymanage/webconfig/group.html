@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {template 'common/edithead'}
+    <!--微擎 -->
+    <!--这个放在最后一切平白安全-->
+    <script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+</head>
+<body class="nav-md" style="min-width: 800px">
+<div>
+    <div class="container xc_edit_from" >
+        <div class="main_container" style="overflow-x: hidden;min-height: calc(100vh - 20px);;background-color: white;width: 100%;">
+            <div class="col-md-12 col-xs-12">
+                <div class="x_panel">
+                    {template 'mymanage/webconfig/nav5'}
+                    <div class="x_content">
+                        <br/>
+                        <form class="form-horizontal" role="form" method="post" action="{url 'site/entry/announcement',array('m'=>$_GPC['m'],'op'=>'savemodel','version_id'=>$_GPC['version_id'])}" name="submit" style="padding: 20px 0;">
+                            <input id="copy" type="text" style="position: fixed;top: -500px;left: -500px;" value="{$list['group']}"/>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">团购退款地址</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group" style="margin-bottom: 10px;">
+                        <span class="input-group-btn" onclick="copy()">
+                            <button class="btn btn-default" type="button" style="text-align: left;width: 100%;">{$list['group']}</button>
+                        </span>
+                                    </div>
+                    <span class="help-block">
+                        <p>服务器</p>
+                        <p>点击复制地址</p>
+                        <p># 注释</p>
+                        <p>minute hour day month week command 顺序：分 时 日 月 周 中间用空格隔开</p>
+                        <p>*/1 * * * * curl 退款地址链接</p>
+                        <p>每分执行一次</p>
+                        <p>*/2 * * * * curl 退款地址链接</p>
+                        <p>每2分执行一次</p>
+                        <p>0 */1 * * * curl 退款地址链接</p>
+                        <p>每小时执行一次</p>
+                        <p>0 */2 * * * curl 退款地址链接</p>
+                        <p>每2小时执行一次</p>
+                        <p>只适用liunx crontab -e-> 将内容增加到最后->按 esc-> 按 :wq ->回车</p>
+                        <br/>
+                        <p>自动退款监控配置</p>
+                        <p>1、登录http://jk.cloud.360.cn/MonitorItem/addIndex （先注册账号） —进入控制台</p>
+                        <p>2、选择监控—网站监控—创建监控项</p>
+                        <p>3、选择创建的监控类型 （选择http/https监控）</p>
+                        <p>4、添加监控名称和监控对象 （监控名称自定义） （监控对象复制团购退款地址）</p>
+                    </span>
+                                </div>
+                                <script>
+                                    function copy(objc){
+                                        $("#copy").select(); //选择对象
+                                        document.execCommand("Copy"); //执行浏览器复制命令
+                                        swal('复制成功!', '复制成功!', 'success');
+                                    }
+                                </script>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{template 'common/editfoot'}
+</body>
+</html>

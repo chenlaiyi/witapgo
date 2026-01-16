@@ -1,0 +1,93 @@
+{template 'common/header'}
+<ul class="nav nav-tabs">
+	<li><a href="{php echo $this->createWebUrl('cservice', array('op' => 'display'))}">客服管理</a></li>
+	<li {if $operation == 'display'}class="active"{/if}><a href="{php echo $this->createWebUrl('cgroup', array('op' => 'display'))}">客服组管理</a></li>
+	<li {if $operation == 'post'}class="active"{/if}><a href="{php echo $this->createWebUrl('cgroup', array('op' => 'post'))}">{if !$id}添加客服组{else}编辑客服组{/if}</a></li>
+</ul>
+{if $operation == 'post'}
+<div class="main">
+	<form action="" method="post" class="form-horizontal form" enctype="multipart/form-data" id="form1">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				{if !$id}添加客服组{else}编辑客服组{/if}
+			</div>
+			<div class="panel-body">
+				<div class="form-group">
+					<label class="col-xs-12 col-sm-3 col-md-2 control-label"><span style="color:red">*</span>客服组名称</label>
+					<div class="col-sm-9 col-xs-12">
+						<input type="text" name="name" class="form-control" value="{$cservicegroup['name']}" />
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-xs-12 col-sm-3 col-md-2 control-label">上级客服组</label>
+					<div class="col-sm-9 col-xs-12">
+						<select name="fid" class="form-control">
+							<option value="0">无上级</option>
+							{loop $othergroup $row}
+							<option value="{$row['id']}" {if $row['id'] == $cservicegroup['fid']}selected="selected"{/if}>{$row['name']}</option>
+							{/loop}
+						</select>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-xs-12 col-sm-3 col-md-2 control-label">是否显示</label>
+					<div class="col-sm-9 col-xs-12">
+						<label class="radio-inline"><input type="radio" name="ishow" value="0" {if $cservicegroup['ishow']==0}checked{/if}> 显示</label>
+						<label class="radio-inline"><input type="radio" name="ishow" value="1" {if $cservicegroup['ishow']==1}checked{/if}> 隐藏</label>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-xs-12 col-sm-3 col-md-2 control-label">排序</label>
+					<div class="col-sm-9 col-xs-12">
+						<input type="text" name="displayorder" class="form-control" value="{$cservicegroup['displayorder']}" />
+						<span class="help-block">数字越大越靠前</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group col-sm-12">
+			<input type="hidden" name="token" value="{$_W['token']}" />
+			<input name="submit" type="submit" value="提交" class="btn btn-primary col-lg-1" />
+		</div>
+	</form>
+</div>
+{else}
+<div class="main">
+	<div class="panel panel-default">
+		<div class="panel-heading">客服组列表</div>
+		<div class="panel-body">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th style="width:80px;">ID</th>
+						<th style="width:150px;">组名</th>
+						<th style="width:100px;">排序</th>
+						<th style="width:100px;">状态</th>
+						<th>生成时间</th>
+						<th style="width:160px;">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+				{loop $cservicegrouplist $item}
+					<tr>
+						<td>{$item['id']}</td>
+						<td>{$item['name']}</td>
+						<td>{$item['displayorder']}</td>
+						<td>{if $item['ishow']==0}<span class="label label-success">显示</span>{else}<span class="label label-default">隐藏</span>{/if}</td>
+						<td>{php echo date('Y-m-d H:i', $item['time']);}</td>
+						<td>
+							<a href="{php echo $this->createWebUrl('cgroup', array('op'=>'post','id'=>$item['id']));}" class="btn btn-default btn-sm">编辑</a>
+							<a href="{php echo $this->createWebUrl('cgroup', array('op'=>'delete','id'=>$item['id']));}" onclick="return confirm('确认删除该客服组？');" class="btn btn-danger btn-sm">删除</a>
+						</td>
+					</tr>
+				{/loop}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{/if}
+{template 'common/footer'}

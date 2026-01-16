@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                分销业务员 - {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">商户</li>
+                <li class="active">商家分销</li>
+                <li class="active">{$title}</li>
+                <li class="active">分销业务员</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebUrl('store_invite', array('act' => 'index'));}">返回商家</a></li>
+                            <li><a href="{php echo $this->createWebUrl('store_promoter', array('act' => 'index','sid' => $sid));}">分销业务员列表</a></li>
+                            <li class="active"><a href="#">{if !empty($model['id'])}编辑{else}创建{/if}分销业务员</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content" id="form_content" method="post">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> {if !empty($model['id'])}编辑{else}创建{/if}分销业务员信息</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="name" class="col-sm-2 control-label"><span class="text-red">(*)</span>分销业务员名称</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="name" maxlength="20"
+                                                       name="model[name]" nullmsg="请输入分销业务员名称！" placeholder="请输入推分销业务员名称"
+                                                       type="text" value="{$model['name']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入分销业务员名称，以便对分销业务员进行区分。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>分销业务员头像</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('model[headurl]',$model['headurl']);}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="openid" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>业务员微信OPENID</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="openid" maxlength="100" placeholder="请输入分销业务员微信OPENID" type="text" value="{$model['openid']}" disabled/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="mobile" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>业务员联系电话</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="mobile" maxlength="20"
+                                                       name="model[mobile]" nullmsg="请输入分销业务员联系电话！" placeholder="请输入分销业务员联系电话"
+                                                       type="text" value="{$model['mobile']}"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="status2" class="col-sm-2 control-label">分销业务员状态</label>
+                                            <div class="col-sm-10">
+                                                <input data-off-text="关闭" data-on-text="开启" data-size="mini" id="status"
+                                                       type="checkbox" value="true" {if $model['status']==1}checked{/if}/>
+                                                <input id="status2" name="model[status]" type="hidden"
+                                                       value="{$model['status']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 选择分销业务员开启/关闭状态，关闭后分销业务员将被禁用</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+                                                <input type="hidden" name="token" value="{$_W['token']}"/>
+                                                <input type="hidden" name="submit" value="submit"/>
+                                                <button type="submit" class="btn btn-primary" id="SubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script>
+    $(function () {
+        //设置选中导航
+        SelectNav("商家分销");
+
+        myrequire(['select2','bootstrap-switch', 'validform', 'icheck'], function () {
+            $(".select2").select2();
+
+            //绑定更改状态操作
+            $('#status').bootstrapSwitch({
+                onSwitchChange: function (event, state) {
+                    var status = state ? 1 : 0;
+                    $("#status2").val(status);
+                }
+            });
+
+            //绑定更改状态操作
+            $('#is_manager').bootstrapSwitch({
+                onSwitchChange: function (event, state) {
+                    var status = state ? 1 : 0;
+                    $("#is_manager2").val(status);
+                }
+            });
+
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createWebUrl('store_promoter', array('act' => 'index','sid' => $sid));}";
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+                    }
+                }
+            });
+
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>系统设置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+    <style>
+		.layui-form-label{
+			width:145px;
+        }
+		.layui-input-block{
+			margin-left:175px;
+		}
+        form{
+            padding-right:15px ;
+        }
+    </style>
+</head>
+<body>
+<form class="layui-form" style="margin-top:21px;">  <div class="layui-form-item">    <label class="layui-form-label" >是否开启</label>    <div class="layui-input-block">      <input type="radio" name="is_open" value="1" title="开启" {if $set['is_open'] == '1'}checked{/if} >      <input type="radio" name="is_open" value="2" title="隐藏" {if $set['is_open'] == '2'  || $set['is_open'] == ''}checked{/if}>    </div>  </div>    <div class="layui-form-item">    <label class="layui-form-label" >充值方式</label>    <div class="layui-input-block" id="way">      <input type="radio" name="way" value="1" title="自动充值" {if $set['way'] == '1'}checked{/if} lay-filter="bbb">      <input type="radio" name="way" value="2" title="手动充值" {if $set['way'] == '2'  || $set['way'] == ''}checked{/if} lay-filter="bbb">      <input type="radio" name="way" value="3" title="代理充值" {if $set['way'] == '3' }checked{/if} lay-filter="bbb">    </div>  </div>    <div class="layui-form-item">    <label class="layui-form-label">充值类型</label>    <div class="layui-input-block">      <input type="checkbox" name="type[]" value="1" title="慢充" {if strpos($set['type'],'1') !== false} checked {/if}>      <input type="checkbox" name="type[]" value="2" title="快充" {if strpos($set['type'],'2') !== false}  checked {/if}>    </div>  </div>    <div class="layui-input-block way1"  {if $set['way'] == '2'  || $set['way'] == '' || $set['way'] == '3'} style="display:none;"{/if}>		<div class="layui-form-mid"> 获取AppKey、AppSecret配置，请联系售后资讯</div>  </div>    <div class="layui-form-item way1" {if $set['way'] == '2'  || $set['way'] == '' || $set['way'] == '3'} style="display:none;"{/if}>	<label class="layui-form-label">AppKey</label>	<div class="layui-input-block">		<input type="text" name="app_key" autocomplete="off" class="layui-input" value="{$set['app_key']}">	</div>  </div>  <div class="layui-form-item way1" {if $set['way'] == '2'  || $set['way'] == ''|| $set['way'] == '3'} style="display:none;"{/if}>	<label class="layui-form-label">AppSecret</label>	<div class="layui-input-block">		<input type="text" name="app_secret" autocomplete="off" class="layui-input" value="{$set['app_secret']}">	</div>  </div>  <div class="layui-form-item way3" {if $set['way'] == '1'|| $set['way'] == '2'} style="display:none;"{/if}>	<label class="layui-form-label">代理AppId</label>	<div class="layui-input-block">		<input type="text" name="appid" autocomplete="off" class="layui-input" value="{$set['appid']}">	</div>  </div>  <div class="layui-form-item way3" {if $set['way'] == '1'|| $set['way'] == '2'} style="display:none;"{/if}>	<label class="layui-form-label">代理AppSecret</label>	<div class="layui-input-block">		<input type="text" name="appsecret" autocomplete="off" class="layui-input" value="{$set['appsecret']}">	</div>  </div>    <div class="layui-form-item">    <label class="layui-form-label" >是否开启{$name}抵扣</label>    <div class="layui-input-block">      <input type="radio" name="discount_open" value="1" title="开启" {if $set['discount_open'] == '1'}checked{/if} >      <input type="radio" name="discount_open" value="2" title="隐藏" {if $set['discount_open'] == '2'  || $set['discount_open'] == ''}checked{/if}>    </div>  </div>    <div class="layui-form-item">	<label class="layui-form-label">普通用户慢充充值折扣</label>	<div class="layui-input-inline">		<input type="number" name="not_discount" autocomplete="off" class="layui-input" value="{$set['not_discount']}">	</div>	<div class="layui-form-mid way-3"> 0 - 1之间的小数，例如0.95 ,最低0.92</div>	<div class="layui-form-mid way3"  {if $set['way'] == '1'|| $set['way'] == '2'} style="display:none;"{/if}> 0 - 1之间的小数，例如0.95 ,最低{$discount}</div>  </div>  <div class="layui-form-item">	<label class="layui-form-label">会员慢充充值折扣</label>	<div class="layui-input-inline">		<input type="number" name="discount" autocomplete="off" class="layui-input" value="{$set['discount']}">	</div>	<div class="layui-form-mid way-3" > 0 - 1之间的小数，例如0.95 ,最低0.92</div>	<div class="layui-form-mid way3" {if $set['way'] == '1'|| $set['way'] == '2'} style="display:none;"{/if}> 0 - 1之间的小数，例如0.95 ,最低{$discount}</div>  </div>  <div class="layui-form-item">	<label class="layui-form-label">普通用户快充充值折扣</label>	<div class="layui-input-inline">		<input type="number" name="not_quick_discount" autocomplete="off" class="layui-input" value="{$set['not_quick_discount']}">	</div>	<div class="layui-form-mid way-3" > 0 - 1之间的小数，例如0.96 ,最低0.96</div>	<div class="layui-form-mid way3" {if $set['way'] == '1'|| $set['way'] == '2'} style="display:none;"{/if}> 0 - 1之间的小数，例如0.96 ,最低{$quick_discount}</div>  </div>  <div class="layui-form-item">	<label class="layui-form-label">会员快充充值折扣</label>	<div class="layui-input-inline">		<input type="number" name="quick_discount" autocomplete="off" class="layui-input" value="{$set['quick_discount']}">	</div>	<div class="layui-form-mid way-3" > 0 - 1之间的小数，例如0.96 ,最低0.96</div>	<div class="layui-form-mid way3" {if $set['way'] == '1'|| $set['way'] == '2'} style="display:none;"{/if}> 0 - 1之间的小数，例如0.96 ,最低{$quick_discount}</div>  </div>    <div class="layui-form-item way2" {if $set['way'] == '2'} style="display:none;"{/if}>	<label class="layui-form-label">购买话费分销比例</label>	<div class="layui-input-inline">		<input type="number" name="huafei_rebate" autocomplete="off" class="layui-input" value="{$set['huafei_rebate']}">	</div>	<div class="layui-form-mid">建议不超过1。   本分销比例基于话费利润和销售价格无关，计算公式：( 支付金额 - 渠道成本价）* 你设置的分销比例   * 提现兑换比例  = 分销可得{$name}</div>  </div>    <div class="layui-form-item">    <label class="layui-form-label">温馨提示</label>    <div class="layui-input-block">    	<script id="ueditor" name="notice" type="text/plain" >{$set['notice']|raw}</script>    </div>  </div>  
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit lay-filter="demo1">立即提交</button>
+    </div>
+  </div>
+  <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+<div class="layui-footer" style="margin-top: 20px; display: flex; justify-content: center; align-items: flex-end;">	{include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}</div>
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script><script type="text/javascript" src="__PUBLIC__/static/ueditor/ueditor.config.js"></script><script type="text/javascript" src="__PUBLIC__/static/ueditor/ueditor.all.js"></script>
+<script>
+	layui.config({
+	    base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+	}).extend({
+	    index: 'lib/index' //主入口模块
+	}).use(['jquery','layer', 'index', 'table','upload','layedit'], function(){
+		var $ = layui.$
+		, layer = layui.layer
+	    , table = layui.table	    , layedit = layui.layedit
+	    , form = layui.form
+	    , upload = layui.upload;
+				form.on('radio(bbb)', function (data) {            if ($('#way input[name="way"]:checked').val() == "1") {            	$(".way-3").show();                $(".way1").show();                $(".way3").hide();                $(".way2").show();            }else if ($('#way input[name="way"]:checked').val() == "3"){            	$(".way-3").hide();            	$(".way3").show();            	$(".way1").hide();            	$(".way2").show();            }else if ($('#way input[name="way"]:checked').val() == "2"){            	$(".way-3").show();            	$(".way1").hide();            	$(".way3").hide();            	$(".way2").hide();            }else{            	$(".way-3").show();            	$(".way1").hide();            	$(".way2").hide();            	$(".way3").hide();            }            form.render();        });		var ue = UE.getEditor('ueditor', {		         zIndex: 99,		         maximumWords: 999,		         scaleEnabled: true,		         initialFrameWidth: 800,		         initialFrameHeight: 300,		         autoHeightEnabled: false,		 });
+		
+		upload.render({
+            elem: '#test1'
+            ,url: "{:siteUrl('admin/index/upload','','web')}" 
+            ,done: function(res){
+                if(res.code < 0){
+                    return layer.msg('上传失败');
+                }else{
+                    $('#demo1').attr('src', res.msg); 
+                    $('#detail_pic').val(res.msg);
+                }
+            }
+        });
+		
+		upload.render({
+            elem: '#test2'
+            ,url: "{:siteUrl('admin/index/upload','','web')}" 
+            ,done: function(res){
+
+                if(res.code < 0){
+                    return layer.msg('上传失败');
+                }else{
+                    $('#demo2').attr('src', res.msg); 
+                    $('#end_pic').val(res.msg);
+                }
+            }
+        });			
+        form.on('submit(demo1)', function(data){
+            var admin = layui.admin
+            admin.req({
+                url:"{:siteUrl('admin/huafei/set_huafei','','web')}",
+                data:data.field,
+                type:"POST",
+                done:res=>{
+                    if(res.code == 0 ){
+                		layer.msg("设置成功");
+                	}
+                }
+            })
+            return false
+        });
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li class="layui-this">
+						<a href="{php echo webUrl('addVideoCourse')}">添加视频课程</a>
+					</li>
+					<li>
+						<a href="{php echo webUrl('courseList', ['action'=>'video'])}">返回</a>
+					</li>
+				</ul>
+			</div>
+
+			<form class="layui-form fixed" action="" method="post" enctype="multipart/form-data" id="data-form">
+				<!-- 状态 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">状态</label>
+					<div class="layui-input-block">
+						<input type="radio" name="enabled" value="1"
+							title="启用" {if $oldData['enabled']=='1' || empty($oldData['id']) }checked{/if}>
+						<input type="radio" name="enabled" value="0"
+							title="禁用" {if $oldData['enabled']=='0' && $oldData['id'] }checked{/if}>
+					</div>
+				</div>
+				<!-- 门店 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">门店</label>
+					<div class="layui-input-block">
+						{loop $_W['list_store'] $index $item}
+							<input type="checkbox" name="store[]" value="{$item['id']}" lay-skin="primary"
+								title="{$item['name']}">
+						{/loop}
+					</div>
+				</div>
+				<!-- 类别 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">类别</label>
+					<div class="layui-input-block">
+						<select name="category" lay-verify="required">
+							<option value="">请选择...</option>
+							{loop $_GPC['categoryList'] $index $item}
+							<option value="{$item['id']}">{$item['name']}</option>
+							{/loop}
+						</select>
+					</div>
+				</div>
+				<!-- 名称 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="course" lay-verify="required" class="layui-input">
+					</div>
+				</div>
+				<!-- 主讲人 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">主讲人</label>
+					<div class="layui-input-block">
+						<input type="text" name="speaker" lay-verify="required" class="layui-input">
+					</div>
+				</div>
+				<!-- 简介 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">简介</label>
+					<div class="layui-input-block">
+						<textarea name="intro" class="layui-textarea"></textarea>
+					</div>
+				</div>
+				<!-- 封面 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">封面</label>
+					<div class="layui-input-block">
+						{php echo slwl_tpl_form_field_image('cover');}
+						<div class="layui-form-mid layui-word-aux">推荐尺寸：432 x 570，或同比例</div>
+					</div>
+				</div>
+				<!-- 价格 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">价格</label>
+					<div class="layui-input-block">
+						<input type="number" name="price" lay-verify="required" class="layui-input" min="1"
+							oninput="if(value.length>8)value=value.slice(0,8)">
+						<div class="layui-form-mid layui-word-aux">单位：元</div>
+					</div>
+				</div>
+				<!-- 推荐度 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">推荐度</label>
+					<div class="layui-input-block">
+						<input type="text" name="recommend" lay-verify="required" class="layui-input">
+						<div class="layui-form-mid layui-word-aux">数字越大越靠前</div>
+					</div>
+				</div>
+
+				<!-- 详情 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">详情</label>
+					<div class="layui-input-block box-act-body">
+						{php echo tpl_ueditor('details')}
+					</div>
+				</div>
+				<div class="layui-tab-content fixed" id="data-submit">
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="save">保存</button>
+							<button class="layui-btn" lay-submit lay-filter="save" data-type="saveAndAdd">保存并新增</button>
+							<a href="{php echo webUrl('courseList', ['action' => 'video'])}" class="layui-btn layui-btn-primary">取消</a>
+							<input type="hidden" name="token" value="{$_W['token']}" />
+						</div>
+					</div>
+				</div>
+			</form>
+			<script>
+				layui.use('form', function(){
+					var form = layui.form;
+
+					form.on('submit(save)', function(data){
+						let subType = data.elem.dataset.type;
+						let url = "{php echo webUrl('addVideoCourse')}";
+						var $obj = $(this);
+
+						if (!$obj.hasClass('lock')) {
+							$obj.addClass('lock'); // 不能再点击
+
+							$.ajax({
+								type: "POST",
+								url: url,
+								dataType: 'json',
+								data: data.field,
+								success: function (rs) {
+									if (rs && rs.code.toString() === '0') {
+										layer.msg('保存成功' , {
+											time: 500
+										}, function () {
+											if (subType && subType === 'saveAndAdd') {
+												window.location.href = "{php echo webUrl('addVideoCourse')}";
+											} else {
+												window.location.href = "{php echo webUrl('courseList', ['action' => 'video'])}";
+											}
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+										});
+									}
+									$obj.removeClass('lock');
+								},
+								error: function () {
+									layer.msg('保存过程发生错误，请与管理员联系', {
+										offset: '20%',
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						}
+
+						return false;
+					});
+				});
+			</script>
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

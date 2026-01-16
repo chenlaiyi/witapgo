@@ -1,0 +1,842 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns="http://www.we7.cc" versionCode="0.8,1.0">
+
+	<application setting="false">
+		<name><![CDATA[深蓝健身房瑜伽馆行业]]></name>
+		<identifie><![CDATA[bozutung_jsfmd]]></identifie>
+		<version><![CDATA[4.18.0]]></version>
+		<type><![CDATA[business]]></type>
+		<ability><![CDATA[深蓝健身房瑜伽馆行业门店]]></ability>
+		<description><![CDATA[深蓝健身房瑜伽馆行业门店]]></description>
+		<author><![CDATA[源码学习：782969966]]></author>
+		<url><![CDATA[http://www.we7.cc/]]></url>
+	</application>
+
+	<platform>
+		<subscribes>
+		</subscribes>
+
+		<handles>
+		</handles>
+
+		<rule embed="false" /> 
+		<card embed="false" />
+		<oauth type="1" />
+		
+		<supports>
+			<item type="wxapp" />
+		</supports>
+	</platform>
+
+	<bindings>
+		<menu>
+			<entry title="首页" do="web" state="" direct="false"/>
+		</menu>
+		<page>
+			<entry title="首页" do="pages/index/index" state="" direct="false"/>
+		</page>
+	</bindings>
+
+	<permissions>
+	</permissions>
+
+	<install><![CDATA[
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_activity` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `content` text,
+  `tel` varchar(30) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `cover` varchar(255) DEFAULT NULL,
+  `delete` tinyint(4) DEFAULT '0',
+  `store_info` text,
+  `time` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_adact` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT '0',
+  `displayorder` int(11) DEFAULT '0',
+  `title` varchar(255) DEFAULT '',
+  `subtitle` varchar(255) DEFAULT '',
+  `thumb` varchar(255) DEFAULT '',
+  `detail` text,
+  `out_thumb` varchar(255) DEFAULT '',
+  `out_link` varchar(255) DEFAULT '',
+  `enabled` tinyint(4) DEFAULT '0',
+  `addtime` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_admin` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `sort` int(11) DEFAULT '0',
+  `mp_user_id` int(11) DEFAULT '0',
+  `group_id` int(11) DEFAULT '0',
+  `last_time` datetime DEFAULT '2000-01-01 00:00:00',
+  `status` tinyint(4) DEFAULT '0',
+  `mark` text,
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_admin_role` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `sort` int(11) DEFAULT '0',
+  `title` varchar(255) DEFAULT '',
+  `desc` varchar(255) DEFAULT '',
+  `status` tinyint(4) DEFAULT '0',
+  `auth_menu` text,
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_adv` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `displayorder` int(11) DEFAULT '0',
+  `advname` varchar(255) DEFAULT '',
+  `thumb` varchar(255) DEFAULT '',
+  `enabled` tinyint(4) DEFAULT '0',
+  `page_url` varchar(255) DEFAULT '',
+  `store_info` text,
+  `addtime` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_book_queue` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `plan_id` int(11) DEFAULT NULL,
+  `store_id` int(11) DEFAULT NULL,
+  `form_id` varchar(255) DEFAULT NULL,
+  `course_info` text,
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_category` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `delete` tinyint(4) DEFAULT '0',
+  `name` varchar(255) DEFAULT NULL,
+  `icon` varchar(255) DEFAULT NULL,
+  `sort` int(11) DEFAULT '0',
+  `store_info` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_coach` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `avatar` varchar(255) DEFAULT NULL,
+  `simple` text,
+  `zizhi` text,
+  `speech` text,
+  `video` varchar(255) DEFAULT NULL,
+  `video_image` varchar(255) DEFAULT NULL,
+  `delete` tinyint(4) DEFAULT '0',
+  `private` tinyint(4) DEFAULT '0',
+  `strong_points` varchar(255) DEFAULT NULL,
+  `details` text,
+  `price` decimal(10,2) DEFAULT '0.00',
+  `course_num_lower` int(11) DEFAULT '0',
+  `wechat` varchar(255) DEFAULT NULL,
+  `tel` varchar(30) DEFAULT NULL,
+  `details_enabled` tinyint(4) DEFAULT '0',
+  `store_info` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_collect` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `displayorder` int(11) DEFAULT '0',
+  `id_user` varchar(255) DEFAULT '',
+  `id_resource` int(11) DEFAULT '0',
+  `res_type` varchar(255) DEFAULT '',
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_commission` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `id_user` int(11) DEFAULT '0',
+  `id_com_1` int(11) DEFAULT '0',
+  `id_com_2` int(11) DEFAULT '0',
+  `id_com_3` int(11) DEFAULT '0',
+  `status` tinyint(4) DEFAULT '0',
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=147 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_commission_brokerage` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `id_user` int(11) DEFAULT '0',
+  `money` int(11) DEFAULT '0',
+  `money_withdraw` int(11) DEFAULT '0',
+  `money_total` int(11) DEFAULT '0',
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_commission_brokerage_log` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `id_user` int(11) DEFAULT '0',
+  `money` int(11) DEFAULT '0',
+  `status` tinyint(4) DEFAULT '0',
+  `mark` text,
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_commission_order` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `id_user` int(11) DEFAULT '0',
+  `id_order` int(11) DEFAULT '0',
+  `id_order_user` int(11) DEFAULT '0',
+  `money` int(11) DEFAULT '0',
+  `type` varchar(255) DEFAULT '',
+  `status` tinyint(4) DEFAULT '0',
+  `rebate` text,
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=159 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_commission_settle_log` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `id_user` int(11) DEFAULT '0',
+  `money_order` int(11) DEFAULT '0',
+  `money_brokerage` int(11) DEFAULT '0',
+  `id_order` int(11) DEFAULT '0',
+  `info` text,
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_coupon` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT '0',
+  `displayorder` int(11) DEFAULT '0',
+  `title` varchar(255) DEFAULT '',
+  `intro` varchar(500) DEFAULT '',
+  `thumb` varchar(255) DEFAULT '',
+  `enough` int(11) DEFAULT '0',
+  `timelimit` tinyint(4) DEFAULT '0',
+  `timedays1` varchar(255) DEFAULT '',
+  `timedays2` varchar(255) DEFAULT '',
+  `backtype` tinyint(4) DEFAULT '0',
+  `backmoney` int(11) DEFAULT '0',
+  `discount` int(11) DEFAULT '0',
+  `flbackmoney` int(11) DEFAULT NULL,
+  `backwhen` tinyint(4) DEFAULT '0',
+  `total` int(11) DEFAULT '0',
+  `receive` int(11) DEFAULT '0',
+  `enabled` int(11) DEFAULT '0',
+  `addtime` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_coupon_user` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `displayorder` int(11) DEFAULT '0',
+  `user` int(11) DEFAULT '0',
+  `saleid` int(11) DEFAULT '0',
+  `title` varchar(255) DEFAULT '',
+  `option_value` text,
+  `time_start` datetime DEFAULT '2000-01-01 00:00:00',
+  `time_end` datetime DEFAULT '2000-01-01 00:00:00',
+  `status` tinyint(4) DEFAULT '0',
+  `price` int(11) DEFAULT '0',
+  `addtime` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_course` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `displayorder` int(11) DEFAULT '0',
+  `name` varchar(255) DEFAULT '',
+  `price` decimal(10,2) DEFAULT NULL,
+  `simple` varchar(255) DEFAULT '',
+  `number` int(11) DEFAULT NULL,
+  `difficulty` tinyint(4) DEFAULT NULL,
+  `system_id` int(11) DEFAULT NULL,
+  `novice_price` decimal(10,2) DEFAULT NULL,
+  `calorie` tinyint(4) DEFAULT NULL,
+  `calorie_tips` varchar(255) DEFAULT '',
+  `flexibility` tinyint(4) DEFAULT NULL,
+  `heart_lung` tinyint(4) DEFAULT NULL,
+  `harmony` tinyint(4) DEFAULT NULL,
+  `muscle_endurance` tinyint(4) DEFAULT NULL,
+  `muscle_force` tinyint(4) DEFAULT NULL,
+  `slides` text,
+  `description` text,
+  `precautions` text,
+  `own_articles` text,
+  `video` varchar(255) DEFAULT '',
+  `show_image` varchar(255) DEFAULT '',
+  `video_image` varchar(255) DEFAULT '',
+  `recommend` int(11) DEFAULT '0',
+  `delete` tinyint(4) DEFAULT '0',
+  `details` mediumtext,
+  `details_enabled` tinyint(4) DEFAULT '0',
+  `store_info` text,
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_course_member_level` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `course_id` int(11) DEFAULT NULL,
+  `member_level_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_course_payment_way` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `course_id` int(11) DEFAULT NULL,
+  `payment_way` tinyint(4) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_course_plan` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `course_id` int(11) DEFAULT NULL,
+  `store_id` int(11) DEFAULT NULL,
+  `coach_id` int(11) DEFAULT NULL,
+  `booked_number` int(11) DEFAULT '0',
+  `number` int(11) DEFAULT NULL,
+  `start` int(11) DEFAULT NULL,
+  `end` int(11) DEFAULT NULL,
+  `book_start` int(11) DEFAULT '0',
+  `book_end` int(11) DEFAULT NULL,
+  `delete` tinyint(4) DEFAULT '0',
+  `price` decimal(10,2) DEFAULT NULL,
+  `novice_price` decimal(10,2) DEFAULT NULL,
+  `training_id` int(11) DEFAULT NULL,
+  `can_queue` tinyint(4) DEFAULT '0',
+  `left_tip` tinyint(4) DEFAULT '5',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=142 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_course_system` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `delete` tinyint(4) DEFAULT '0',
+  `description` text,
+  `icon` varchar(255) DEFAULT NULL,
+  `bg_color` varchar(255) DEFAULT NULL,
+  `detail` text,
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_course_video` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `course_id` int(11) DEFAULT NULL,
+  `sequence` int(11) DEFAULT '1',
+  `delete` tinyint(4) DEFAULT '0',
+  `title` varchar(255) DEFAULT '',
+  `speaker` varchar(255) DEFAULT '',
+  `url` varchar(255) DEFAULT '',
+  `cover` varchar(255) DEFAULT '',
+  `free_time` int(11) DEFAULT '0',
+  `time_count` int(11) DEFAULT '0',
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_dimension` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `key` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_live` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT '0',
+  `delete_status` tinyint(4) DEFAULT '0',
+  `sl_title` varchar(255) DEFAULT '',
+  `cover_img` varchar(255) DEFAULT '',
+  `start_time` datetime DEFAULT '2000-01-01 00:00:00',
+  `end_time` datetime DEFAULT '2000-01-01 00:00:00',
+  `anchor_name` varchar(255) DEFAULT '',
+  `anchor_img` varchar(255) DEFAULT '',
+  `roomid` varchar(255) DEFAULT '',
+  `goods` longtext,
+  `live_status` varchar(255) DEFAULT '',
+  `share_img` varchar(255) DEFAULT '',
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_log` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `create` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `card_id` int(11) DEFAULT NULL,
+  `money` decimal(10,2) DEFAULT '0.00',
+  `money_wechat` decimal(10,2) DEFAULT '0.00',
+  `type` tinyint(4) DEFAULT '0',
+  `subtype` tinyint(4) DEFAULT NULL,
+  `time` tinyint(4) DEFAULT NULL,
+  `times` int(11) DEFAULT NULL,
+  `reason` varchar(255) DEFAULT '',
+  `order_id` int(11) DEFAULT '0',
+  `other_id` int(11) DEFAULT '0',
+  `delete` tinyint(4) DEFAULT '0',
+  `user_card_id` int(11) DEFAULT NULL,
+  `post_info` text,
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=414 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_log_refund` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `id_user` int(11) DEFAULT '0',
+  `price` int(11) DEFAULT '0',
+  `txt` text,
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_member_card` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `type` tinyint(4) DEFAULT '0',
+  `name` varchar(255) DEFAULT NULL,
+  `times` int(11) DEFAULT NULL,
+  `time` int(11) DEFAULT NULL,
+  `price` decimal(10,2) DEFAULT '0.00',
+  `delete` tinyint(4) DEFAULT '0',
+  `sort` int(11) DEFAULT '0',
+  `money` decimal(10,2) DEFAULT '0.00',
+  `details` mediumtext,
+  `to_sell` tinyint(4) DEFAULT '1',
+  `course_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_member_level` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `icon` varchar(255) DEFAULT NULL,
+  `price` decimal(10,2) DEFAULT '0.00',
+  `delete` tinyint(4) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_menu_display_order` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `eid` int(11) DEFAULT NULL,
+  `display_order` int(11) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_mod_wxapp` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT '0',
+  `displayorder` int(11) DEFAULT '0',
+  `title` varchar(255) DEFAULT '',
+  `page_url` varchar(255) DEFAULT '',
+  `appid` varchar(255) DEFAULT '',
+  `page_page` varchar(255) DEFAULT '',
+  `enabled` int(11) DEFAULT '0',
+  `addtime` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_oplogs` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `op_domain` varchar(255) DEFAULT '',
+  `op_user` varchar(255) DEFAULT '',
+  `op_type` varchar(255) DEFAULT '',
+  `op_txt` text,
+  `addtime` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_order` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT '0',
+  `user_id` int(11) DEFAULT '0',
+  `plan_id` int(11) DEFAULT '0',
+  `store_id` int(11) DEFAULT '0',
+  `form_id` varchar(255) DEFAULT '',
+  `other_id` int(11) DEFAULT NULL,
+  `create_time` int(11) DEFAULT NULL,
+  `status` tinyint(4) DEFAULT '0',
+  `sn` varchar(255) DEFAULT NULL,
+  `delete` tinyint(4) DEFAULT '0',
+  `paid_money` decimal(10,2) DEFAULT '0.00',
+  `refund_money` decimal(10,2) DEFAULT '0.00',
+  `refund_time` int(11) DEFAULT '0',
+  `paid_time` int(11) DEFAULT '0',
+  `end` int(11) DEFAULT '0',
+  `type` tinyint(4) DEFAULT NULL,
+  `subtype` tinyint(4) DEFAULT '0',
+  `order_info` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=370 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_private_coach_buy` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `coach_id` int(11) DEFAULT NULL,
+  `time` int(11) DEFAULT NULL,
+  `order_id` int(11) DEFAULT NULL,
+  `num` int(11) DEFAULT '0',
+  `left_times` int(11) DEFAULT NULL,
+  `post_info` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_settings` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `setting_name` varchar(255) DEFAULT '',
+  `setting_value` longtext,
+  `addtime` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_sign_in` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `type` tinyint(4) DEFAULT '0',
+  `other_id` int(11) DEFAULT NULL,
+  `time` int(11) DEFAULT NULL,
+  `course_id` int(11) DEFAULT NULL,
+  `coach_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_store` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `sort` int(11) DEFAULT '0',
+  `name` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `subway_name` varchar(255) DEFAULT NULL,
+  `subway_distance` int(11) DEFAULT NULL,
+  `subway_description` text,
+  `bus_stop_name` varchar(255) DEFAULT NULL,
+  `bus_stop_distance` int(11) DEFAULT NULL,
+  `bus_stop_description` text,
+  `drive_place` varchar(255) DEFAULT NULL,
+  `drive_description` text,
+  `way` tinyint(4) DEFAULT '0',
+  `lng` double DEFAULT NULL,
+  `lat` double DEFAULT NULL,
+  `coordinate` text,
+  `store_info` text,
+  `delete` tinyint(4) DEFAULT '0',
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_system_settings` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `service_term` mediumtext,
+  `introduction` mediumtext,
+  `refund_tip` varchar(255) DEFAULT '',
+  `nb_bg_color` varchar(255) DEFAULT '',
+  `nb_word_color` varchar(255) DEFAULT '',
+  `syllabus_bg_image` varchar(255) DEFAULT '',
+  `training_bg_image` varchar(255) DEFAULT '',
+  `recommend_bg_image` varchar(255) DEFAULT '',
+  `my_top_bg_image` varchar(255) DEFAULT '',
+  `mini_program_name` varchar(255) DEFAULT '',
+  `training_service_term` mediumtext,
+  `invitation_tip` varchar(255) DEFAULT '',
+  `activity_tip` varchar(255) DEFAULT '',
+  `logo` varchar(255) DEFAULT '',
+  `tel` varchar(255) DEFAULT '',
+  `copyright` varchar(255) DEFAULT '',
+  `tech_tel` varchar(255) DEFAULT '',
+  `book_remind_template` text,
+  `private_teach_rule` mediumtext,
+  `member_rights` mediumtext,
+  `sign_in_time` int(11) DEFAULT '15',
+  `coach_tip` varchar(255) DEFAULT '',
+  `store_tip` varchar(255) DEFAULT '',
+  `coach_bg_image` varchar(255) DEFAULT '',
+  `store_bg_image` varchar(255) DEFAULT '',
+  `royalty_rate` int(11) DEFAULT '1',
+  `distribute_rule` mediumtext,
+  `royalty_rate2` int(11) DEFAULT '1',
+  `home_text` varchar(255) DEFAULT '',
+  `private_text` varchar(255) DEFAULT '',
+  `store_text` varchar(255) DEFAULT '',
+  `me_text` varchar(255) DEFAULT '',
+  `zdy` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_tpl_rss` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `delete_status` tinyint(4) DEFAULT '0',
+  `sl_title` varchar(255) DEFAULT '',
+  `tpl_id` varchar(255) DEFAULT '',
+  `tpl_type` varchar(255) DEFAULT '',
+  `mark` varchar(255) DEFAULT '',
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_tpl_rss_log` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `send_info` text,
+  `return_info` text,
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_training_battalion` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `details` mediumtext,
+  `cover` varchar(255) DEFAULT NULL,
+  `store_id` int(11) DEFAULT NULL,
+  `price` int(11) DEFAULT NULL,
+  `early_bird_price` int(11) DEFAULT NULL,
+  `min_number` int(11) DEFAULT NULL,
+  `max_number` int(11) DEFAULT NULL,
+  `booked_number` int(11) DEFAULT NULL,
+  `delete` tinyint(4) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_user` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `nickname` text,
+  `nickname_select` varchar(255) DEFAULT '',
+  `avatar` varchar(255) DEFAULT '',
+  `openid` varchar(255) DEFAULT '',
+  `province` varchar(255) DEFAULT '',
+  `gender` tinyint(4) DEFAULT '0',
+  `last_time` int(11) DEFAULT '0',
+  `register_time` int(11) DEFAULT '0',
+  `delete` tinyint(4) DEFAULT '0',
+  `member_level_id` int(11) DEFAULT '0',
+  `balance` decimal(10,2) DEFAULT '0.00',
+  `due_time` int(11) DEFAULT '0',
+  `left_times` int(11) DEFAULT '0',
+  `real_name` varchar(255) DEFAULT '',
+  `tel` varchar(255) DEFAULT '',
+  `commission` decimal(10,2) DEFAULT '0.00',
+  `id_no` varchar(255) DEFAULT '',
+  `id_card_image` varchar(255) DEFAULT '',
+  `image` varchar(255) DEFAULT '',
+  `waistline` varchar(255) DEFAULT '',
+  `height` varchar(255) DEFAULT '',
+  `weight` varchar(255) DEFAULT '',
+  `thigh` varchar(255) DEFAULT '',
+  `bust` varchar(255) DEFAULT '',
+  `role` int(11) DEFAULT '0',
+  `age` int(11) DEFAULT '0',
+  `mark` text,
+  `id_label` text,
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=364 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_user_card` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `type` tinyint(4) DEFAULT NULL,
+  `times` int(11) DEFAULT NULL,
+  `left_times` int(11) DEFAULT NULL,
+  `due_time` int(11) DEFAULT NULL,
+  `card_id` int(11) DEFAULT NULL,
+  `order_id` int(11) DEFAULT NULL,
+  `delete` tinyint(4) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_user_commission` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `id_user` int(11) DEFAULT '0',
+  `id_com_1` int(11) DEFAULT '0',
+  `id_com_2` int(11) DEFAULT '0',
+  `id_com_3` int(11) DEFAULT '0',
+  `status` tinyint(4) DEFAULT '0',
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_user_label` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `sort` int(11) DEFAULT '0',
+  `title` varchar(255) DEFAULT '',
+  `subtitle` text,
+  `thumb` varchar(255) DEFAULT '',
+  `enabled` tinyint(4) DEFAULT '0',
+  `delete` tinyint(4) DEFAULT '0',
+  `create_time` datetime DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_user_relation` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `lower` int(11) DEFAULT NULL,
+  `upper` int(11) DEFAULT NULL,
+  `upperupper` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_bozutung_jsfmd_video_course` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT '',
+  `speaker` varchar(255) DEFAULT '',
+  `intro` text,
+  `price` int(11) DEFAULT '0',
+  `category` int(11) DEFAULT '0',
+  `recommend` int(11) DEFAULT '0',
+  `delete` tinyint(4) DEFAULT '0',
+  `cover` varchar(255) DEFAULT '',
+  `slides` text,
+  `details` mediumtext,
+  `buy_count` int(11) DEFAULT '0',
+  `store_info` text,
+  `enabled` tinyint(4) DEFAULT '0',
+  `create_time` date DEFAULT '2000-01-01',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+]]></install>
+	<uninstall><![CDATA[DROP TABLE IF EXISTS `ims_bozutung_jsfmd_activity`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_adact`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_admin`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_admin_role`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_adv`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_book_queue`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_category`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_coach`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_collect`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_commission`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_commission_brokerage`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_commission_brokerage_log`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_commission_order`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_commission_settle_log`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_coupon`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_coupon_user`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_course`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_course_member_level`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_course_payment_way`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_course_plan`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_course_system`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_course_video`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_dimension`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_live`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_log`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_log_refund`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_member_card`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_member_level`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_menu_display_order`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_mod_wxapp`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_oplogs`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_order`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_private_coach_buy`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_settings`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_sign_in`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_store`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_system_settings`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_tpl_rss`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_tpl_rss_log`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_training_battalion`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_user`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_user_card`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_user_commission`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_user_label`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_user_relation`;
+DROP TABLE IF EXISTS `ims_bozutung_jsfmd_video_course`;
+]]></uninstall>
+	<upgrade><![CDATA[ru_rpgrade.php]]></upgrade>
+
+</manifest>

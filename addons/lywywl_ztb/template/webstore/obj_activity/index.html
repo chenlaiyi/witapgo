@@ -1,0 +1,2224 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<style>
+    .we7-modal-dialog .modal-footer .btn, .modal-dialog .modal-footer .btn {
+        display: inline-block;
+        min-width: 90px;
+        vertical-align: top;
+    }
+    .we7-modal-dialog .modal-footer .btn+.btn, .modal-dialog .modal-footer .btn+.btn {
+        margin-left: 5px; margin-bottom: 10px;  }
+</style>
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}{php echo !empty($tmpModel)?' - '.$tmpModel['name']:"" }
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a></li>
+                <li class="active">活动管理</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="">活动列表</a></li>
+                            <li><a href="{php echo $this->createWebAppUrl('sys_tmp', array('act' => 'index'));}">创建活动</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchKey" class="col-sm-1 control-label">活动名称</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="SearchKey"
+                                                       placeholder="项目名称/项目编号/项目TOKEN" value="{$token}">
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchObjTmp">活动模板</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchObjTmp">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $objTmpList $item}
+                                                    <option value="{$item['id']}" {if $item['id'] == $tmp_id}selected="selected"{/if}>{$item['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchStatus">活动状态</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchStatus">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="1">启用</option>
+                                                    <option value="0">禁用</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label class="control-label col-sm-1" for="SearchProcess">活动进度</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchProcess">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $timetype $type $value}
+                                                    <option value="{$type}">{$value}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchTime">创建时间</label>
+                                            <div class="col-sm-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control pull-right" id="SearchTime"
+                                                           placeholder="开始时间 - 结束时间" readonly>
+                                                </div>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchCheckStatus">审核状态</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchCheckStatus">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $activityCheckStatus $index $types}
+                                                    <option value="{$index}" {php echo $check_status ==$index?'selected':''}>{$types}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label class="col-sm-1 control-label" for="SearchActivityType">活动类别</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchActivityType">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $activityTypes $index $activity}
+                                                    <option value="{$index}">{$activity}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                       </div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索
+                                            </button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置检索</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="box" class="table-responsive">
+                                <div id="toolbar" class="btn-group">
+                                    <button id="btn_add" type="button" class="btn btn-info">
+                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp;创建
+                                    </button>
+                                    <button id="btn_delete" type="button" class="btn btn-danger">
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;删除
+                                    </button>
+                                </div>
+                                <table id="tb_bandlist" class="table text-nowrap" data-reorderable-columns="true" ></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script id="datatpl" type="text/html">
+    <form class="form-horizontal" name="form_content" id="form_content" method="post">
+        <table class="table table-hover">
+            <tr>
+                <th width="20%">活动名称</th>
+                <td width="80%"><%= title %></td>
+            </tr>
+            <tr>
+                <th width="20%">活动状态</th>
+                <td width="80%"><%= check_statusname %></td>
+            </tr>
+            <tr>
+                <th width="20%">处理时间</th>
+                <td width="80%"><%= updatetime %></td>
+            </tr>
+            <% if(check_status != 2){ %>
+            <tr>
+                <th width="20%">驳回原因</th>
+                <td width="80%">
+                    <%=check_note%>
+                </td>
+            </tr>
+            <% } %>
+        </table>
+    </form>
+</script>
+
+<script>
+    $(function () {
+        SelectNav("我创建的活动");
+
+        require(["daterangepicker"], function () {
+            //时间搜索
+            $('#SearchTime').daterangepicker({
+                format: "YYYY/MM/DD"
+            });
+        });
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            myrequire(['bootstrap-table-zh-cn', 'bootstrap-table-editable','bootstrap-table-fixed-columns'], function () {
+                $(".select2").select2();
+                //1.初始化Table
+                var oTable = new TableInit();
+                oTable.Init();
+                //2.初始化Button的点击事件
+                var oButtonInit = new ButtonInit();
+                oButtonInit.Init();
+            });
+        });
+    });
+
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#tb_bandlist').bootstrapTable({
+                url: "{php echo $this->createWebAppUrl('obj_activity', array('act' => 'getJsonList','tmp_id' => $tmp_id));}",         //请求后台的URL（*）
+                method: 'get',                      //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: true,                    //是否启用排序
+                sortName: "id",                   //排序字段
+                sortOrder: "desc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: false,                //是否启用点击选中行
+                height: 575,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                fixedColumns: true,                    //冻结列开启关闭
+                fixedNumber: 1,                        //冻结列数量
+                onLoadError: function () {  //加载失败时执行
+                    Command: toastr["error"]("对不起，网络繁忙，请稍后再试！", "错误提示");
+                },
+                columns: [{
+                    checkbox: true
+                }, {
+                    field: 'id',
+                    title: '编号',
+                    titleTooltip: '当前信息的唯一编号，数据主键',
+                    sortable: true
+                },{
+                    field: 'activity_types',
+                    title: '活动类型',
+                    titleTooltip: '活动所属类型',
+                    sortable: true
+                },{
+                    field: 'tmp_id',
+                    title: '使用模板',
+                    titleTooltip: '发布信息隶属的平台商家',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return row.tmp_name ;
+                    }
+                },
+                    /*{if $plug_rebate2}*/
+                    {
+                        field: 'or_open_rebate2',
+                        title: '返利模式',
+                        titleTooltip: '活动分销返利模式',
+                        formatter: function (value, row, index) {
+                            if (value == 0) {
+                                return "<span class='label bg-teal'>一级返利</span>";
+                            } else if(value == 1) {
+                                return "<span class='label bg-red'>二级返利</span>";
+                            }
+                            else{
+                                return "<span class='label bg-gray'>没有返利</span>";
+                            }
+                        }
+                    },
+                    /*{/if}*/
+                    /*{if $plug_ladder}*/
+                    {
+                        field: 'or_open_ladder',
+                        title: '阶梯返利',
+                        titleTooltip: '活动分销阶梯返利',
+                        formatter: function (value, row, index) {
+                            if (value == 1) {
+                                return "<span class='label bg-olive'>已开启</span>";
+                            }
+                            else if(value == 0){
+                                return "<span class='label bg-yellow'>未开启</span>";
+                            }else{
+                                return "<span class='label bg-gray'>暂不支持</span>";
+                            }
+                        }
+                    },
+                    /*{/if}*/
+                    {
+                    field: 'title',
+                    title: '活动名称',
+                    titleTooltip: '创建拓客活动的名称',
+                    sortable: true,
+                },
+                    /*{if $plug_laddercm||$plug_laddergg }*/
+                        {
+                            field: 'is_join',
+                            title: '关联进阶团',
+                            titleTooltip: '创建拓客活动是否允许和进阶团关联',
+                            formatter:
+                            function (value, row, index) {
+                                if (value == -1) {
+                                    return "<span class='label bg-gray'>非抽奖</span>";
+                                }  else {
+                                    return [
+                                        '<input name="is_join"   rowid="' + row.id + '" type="checkbox" data-size="mini" data-on-text="开启" data-off-text="关闭" ' + (row.is_join == 1 ? "checked" : "") + ' />'
+                                        ].join('');
+                                }
+                            }
+                        },
+                    /*{/if}*/
+                {
+                    field: 'start_time',
+                    title: '开始时间',
+                    titleTooltip: '创建拓客活动开始时间',
+                    sortable: true,
+                }, {
+                    field: 'end_time',
+                    title: '结束时间',
+                    titleTooltip: '创建拓客活动结束时间',
+                    sortable: true,
+                }, {
+                    field: 'status',
+                    title: '活动状态',
+                    titleTooltip: '创建拓客活动当前状态',
+                    sortable: true,
+                    formatter: statusFormatter
+                }, {
+                    field: 'check_status',
+                    title: '审核状态',
+                    titleTooltip: '创建活动审核状态',
+                    sortable: true,
+                    formatter:function(value, row, index){
+                        if (value == 1) {
+                            return "<span class='badge bg-yellow'>" + row.check_statusname + "</span>";
+                        } else if (value == 2) {
+                            return "<span class='badge bg-green'>" + row.check_statusname + "</span>";
+                        } else {
+                            return "<span class='badge bg-red'>" + row.check_statusname + "</span>";
+                        }
+                    }
+                }, {
+                    field: 'join_num',
+                    title: '参与人数',
+                    titleTooltip: '参与转发赚取返利的人数',
+                    sortable: true,
+                }, {
+                    field: 'buy_num',
+                    title: '购买人数',
+                    titleTooltip: '拓客活动参团人数',
+                    sortable: true,
+                }, {
+                    field: 'get_num',
+                    title: '奖品总量',
+                    titleTooltip: '拓客活动分享成交数量',
+                    sortable: true,
+                }, {
+                    field: 'repost_num',
+                    title: '转发总量',
+                    titleTooltip: '拓客活动被用户分享的次数',
+                    sortable: true,
+                }, {
+                    field: 'click_num',
+                    title: '曝光总量',
+                    titleTooltip: '拓客活动的访问总量',
+                    sortable: true,
+                }, {
+                    field: 'createtime',
+                    title: '创建时间',
+                    titleTooltip: '创建信息的时间',
+                    sortable: true,
+                }, {
+                    field: 'updatetime',
+                    title: '编辑时间',
+                    titleTooltip: '编辑信息的时间',
+                    sortable: true,
+                }, {
+                    field: 'action',
+                    title: '操作',
+                    titleTooltip: '点击下方按钮对信息进行操作',
+                    width: 60,
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                pageSize: params.limit,  //每页大小
+                page: params.offset / params.limit + 1,//页码
+                sortOrder: params.order,//排序
+                sortName: params.sort,//排序字段
+                key: $("#SearchKey").val(), //关键词
+                tmp_id: $("#SearchObjTmp").val(), //活动模板
+                status: $("#SearchStatus").val(), //信息状态
+                process: $("#SearchProcess").val(), //信息状态
+                timer: $("#SearchTime").val(), //信息状态
+                check_status:$("#SearchCheckStatus").val(),
+                activityType: $("#SearchActivityType").val()
+            };
+            return temp;
+        };
+        return oTableInit;
+    };
+
+    function operateFormatter(value, row, index) {
+        return [
+            '<button class="oper btn btn-info btn-xs" href="javascript:void(0)" title="操作菜单">',
+            '<i class="fa fa-edit"></i> 操作菜单',
+            '</button>',
+        ].join('');
+    }
+    window.operateEvents = {
+        'click .oper': function (e, value, row, index) {
+            if(row.activity_types=='分享红包') // 1
+            {
+                require(["jquery", "util"], function(){
+
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn1_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn1_draw">中奖纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn1_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn1_modify">编辑活动</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebAppUrl('obj_share', array('act' => 'objQrPreview' ));}&token='+ row.token +'&id='+ row.id +'><p>请用微信浏览器打开，即可预览活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn1_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn1_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+            }
+            if(row.activity_types=='红包拓客') // 2
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn2_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn2_pay">购买日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn2_draw">返利纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn2_join">参与用户</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn2_prize">奖项管理</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn2_modify">编辑活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><p id="objqrcode2">二维码生成中，请耐心等待！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn2_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+
+                    //创建项目二维码 一个活动一个二维码
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebAppUrl('obj_soliciting', array('act' => 'objQrPreview'));}&id="+row.id,
+                        data: {},
+                        dataType:'json',
+                        success: function (data) {
+                            if (data.status == 1) {
+                                $("#objqrcode2").html("<img src="+ data.path +" width='180'>")
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn2_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+
+            }
+            if(row.activity_types=='联盟拓客') // 3
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn3_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn3_writeoff">核销日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn3_usercard">领券日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn3_pay">购买日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn3_draw">返利日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn3_join">参与用户</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn3_auditing" style="margin-left: 5px;margin-bottom: 10px;">商家申请</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn3_store">商家管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn3_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn3_modify">编辑活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><p id="objqrcode3">二维码生成中，请耐心等待！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn3_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+
+                    //创建项目二维码 一个活动一个二维码
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebAppUrl('obj_union', array('act' => 'objQrPreview'));}&id="+row.id,
+                        data: {},
+                        dataType:'json',
+                        success: function (data) {
+                            if (data.status == 1) {
+                                $("#objqrcode3").html("<img src="+ data.path +" width='180'>")
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn3_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+
+            }
+            if(row.activity_types=='集赞拓客') // 4
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn4_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn4_click">点击记录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn4_draw">中奖纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn4_join">参与用户</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn4_prize">奖项管理</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn4_modify">编辑活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><p id="objqrcode4">二维码生成中，请耐心等待！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn4_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+
+                    //创建项目二维码 一个活动一个二维码
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebAppUrl('obj_praise', array('act' => 'objQrPreview'));}&id="+row.id,
+                        data: {},
+                        dataType:'json',
+                        success: function (data) {
+                            if (data.status == 1) {
+                                $("#objqrcode4").html("<img src="+ data.path +" width='180'>")
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn4_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+
+            }
+            if(row.activity_types=='锦鲤抽奖') // 5
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn5_share">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn5_code">抽奖码管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn5_join">参与用户</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn5_apply">商家申请</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn5_store">商家管理</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn5_modify">编辑活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><p id="objqrcode5">二维码生成中，请耐心等待！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn5_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+
+                    //创建项目二维码 一个活动一个二维码
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebAppUrl('obj_fish', array('act' => 'objQrPreview'));}&id="+row.id,
+                        data: {},
+                        dataType:'json',
+                        success: function (data) {
+                            if (data.status == 1) {
+                                $("#objqrcode5").html("<img src="+ data.path +" width='180'>")
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn5_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links );  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+
+            }
+            if(row.activity_types=='大&nbsp;&nbsp;转&nbsp;&nbsp;盘') // 6
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn6_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn6_draw">中奖纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn6_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn6_modify">编辑活动</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebAppUrl('obj_wheel', array('act' => 'objQrPreview' ));}&token='+ row.token +'&id='+ row.id +'><p>请用微信浏览器打开，即可预览活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn6_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn6_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+            }
+            if(row.activity_types=='九&nbsp;&nbsp;宫&nbsp;&nbsp;格') // 7
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn7_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn7_draw">中奖纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn7_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn7_modify">编辑活动</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebAppUrl('obj_9box', array('act' => 'objQrPreview' ));}&token='+ row.token +'&id='+ row.id +'><p>请用微信浏览器打开，即可预览活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn7_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn7_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+            }
+            if(row.activity_types=='抢&nbsp;&nbsp;福&nbsp;&nbsp;袋') // 8
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn8_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn8_draw">中奖纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn8_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn8_modify">编辑活动</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebAppUrl('obj_bag', array('act' => 'objQrPreview' ));}&token='+ row.token +'&id='+ row.id +'><p>请用微信浏览器打开，即可预览活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn8_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn8_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+            }
+            if(row.activity_types=='砸&nbsp;&nbsp;金&nbsp;&nbsp;蛋') // 9
+            {
+                require(["jquery", "util"], function(){
+
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn9_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn9_draw">中奖纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn9_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn9_modify">编辑活动</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebAppUrl('obj_eggs', array('act' => 'objQrPreview' ));}&token='+ row.token +'&id='+ row.id +'><p>请用微信浏览器打开，即可预览活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn9_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn9_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+            }
+            if(row.activity_types=='翻&nbsp;&nbsp;卡&nbsp;&nbsp;牌') // 10
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn10_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn10_draw">中奖纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn10_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn10_modify">编辑活动</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebAppUrl('obj_opencard', array('act' => 'objQrPreview' ));}&token='+ row.token +'&id='+ row.id +'><p>请用微信浏览器打开，即可预览活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn10_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn10_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+            }
+            if(row.activity_types=='幸运扑克') // 11
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn11_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn11_draw">中奖纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn11_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn11_modify">编辑活动</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebAppUrl('obj_poker', array('act' => 'objQrPreview' ));}&token='+ row.token +'&id='+ row.id +'><p>请用微信浏览器打开，即可预览活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn11_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn11_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+            }
+            if(row.activity_types=='刮&nbsp;&nbsp;刮&nbsp;&nbsp;卡') // 12
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn12_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn12_draw">中奖纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn12_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn12_modify">编辑活动</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebAppUrl('obj_scratch', array('act' => 'objQrPreview' ));}&token='+ row.token +'&id='+ row.id +'><p>请用微信浏览器打开，即可预览活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn12_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn12_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+            }
+            if(row.activity_types=='摇&nbsp;&nbsp;一&nbsp;&nbsp;摇') // 13
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn13_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn13_draw">中奖纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn13_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn13_modify">编辑活动</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebAppUrl('obj_shake', array('act' => 'objQrPreview' ));}&token='+ row.token +'&id='+ row.id +'><p>请用微信浏览器打开，即可预览活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn13_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn13_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+            }
+            if(row.activity_types=='水&nbsp;&nbsp;果&nbsp;&nbsp;机') // 14
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn14_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn14_draw">中奖纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn14_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn14_modify">编辑活动</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebAppUrl('obj_tiger', array('act' => 'objQrPreview' ));}&token='+ row.token +'&id='+ row.id +'><p>请用微信浏览器打开，即可预览活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn14_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn14_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+            }
+            if(row.activity_types=='助力砍价') // 15
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn15_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn15_pay">购买日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn15_draw">返利纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn15_join">参与用户</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn15_prize">奖项管理</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn15_modify">编辑活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><p id="objqrcode15">二维码生成中，请耐心等待！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn15_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+
+                    //创建项目二维码 一个活动一个二维码
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebAppUrl('obj_cut', array('act' => 'objQrPreview'));}&id="+row.id,
+                        data: {},
+                        dataType:'json',
+                        success: function (data) {
+                            if (data.status == 1) {
+                                $("#objqrcode15").html("<img src="+ data.path +" width='180'>")
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn15_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+
+            }
+            if(row.activity_types=='经典拼团') // 16
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn16_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn16_pay">购买日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn16_draw">返利纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn16_join">参与用户</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn16_prize">奖项管理</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn16_modify">编辑活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" data-activity_type="'+row.activity_type+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><p id="objqrcode16">二维码生成中，请耐心等待！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn16_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+
+                    //创建项目二维码 一个活动一个二维码
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebAppUrl('obj_collage', array('act' => 'objQrPreview'));}&id="+row.id,
+                        data: {},
+                        dataType:'json',
+                        success: function (data) {
+                            if (data.status == 1) {
+                                $("#objqrcode16").html("<img src="+ data.path +" width='180'>")
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn16_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+
+            }
+            if(row.activity_types=='阶梯拼团') // 17
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn17_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn17_pay">购买日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn17_draw">返利纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn17_join">参与用户</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn17_prize">奖项管理</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn17_modify">编辑活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><p id="objqrcode17">二维码生成中，请耐心等待！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn17_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+
+                    //创建项目二维码 一个活动一个二维码
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebAppUrl('obj_ladder', array('act' => 'objQrPreview'));}&id="+row.id,
+                        data: {},
+                        dataType:'json',
+                        success: function (data) {
+                            if (data.status == 1) {
+                                $("#objqrcode17").html("<img src="+ data.path +" width='180'>")
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn17_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+
+            }
+            if(row.activity_types=='全民投票') // 18
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn18_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn18_click">投票记录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn18_blacklist">黑&nbsp;&nbsp;名&nbsp;&nbsp;单</button>{if $config['is_show_gift']==1}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn18_gift">礼物打赏</button>{/if}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn18_auditing">选手报名</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn18_player">选手管理</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn18_modify">编辑活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebAppUrl('obj_vote', array('act' => 'objQrPreview' ));}&token='+ row.token +'&id='+ row.id +'><p>请用微信浏览器打开，即可预览投票活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn18_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn18_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+            }
+            if(row.activity_types=='问卷调查') // 19
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn19_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn19_draw">中奖纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn19_join">参与用户</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn19_statistics">问卷统计</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn19_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn19_modify">编辑活动</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebAppUrl('obj_survey', array('act' => 'objQrPreview' ));}&token='+ row.token +'&id='+ row.id +'><p>请用微信浏览器打开，即可预览活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn19_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn19_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+            }
+            if(row.activity_types=='报名拓客') // 20
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn20_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn20_pay">报名日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn20_draw">返利纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn20_join">参与用户</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn20_prize">奖项管理</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn20_modify">编辑活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><p id="objqrcode20">二维码生成中，请耐心等待！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn20_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+
+                    //创建项目二维码 一个活动一个二维码
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebAppUrl('obj_enroll', array('act' => 'objQrPreview'));}&id="+row.id,
+                        data: {},
+                        dataType:'json',
+                        success: function (data) {
+                            if (data.status == 1) {
+                                $("#objqrcode20").html("<img src="+ data.path +" width='180'>")
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn20_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+
+            }
+
+            if(row.activity_types=='全民拼团') // 21
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn21_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn21_pay">购买日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn21_draw">返利纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn21_join">参与用户</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn21_group">拼团记录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn21_prize">奖项管理</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn21_modify">编辑活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><p id="objqrcode21">二维码生成中，请耐心等待！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn21_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+
+                    //创建项目二维码 一个活动一个二维码
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebAppUrl('obj_whole', array('act' => 'objQrPreview'));}&id="+row.id,
+                        data: {},
+                        dataType:'json',
+                        success: function (data) {
+                            if (data.status == 1) {
+                                $("#objqrcode21").html("<img src="+ data.path +" width='180'>")
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn21_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+
+            }
+            if(row.activity_types=='挑战10秒') // 22
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn22_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn22_join">挑战记录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn22_draw">中奖纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn22_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn22_modify">编辑活动</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebAppUrl('obj_10second', array('act' => 'objQrPreview' ));}&token='+ row.token +'&id='+ row.id +'><p>请用微信浏览器打开，即可预览挑战活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn22_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn22_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+            }
+            if(row.activity_types=='进阶团') // 23
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn23_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn23_draw">返利纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn23_join">拼团记录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn23_joinlog">参与记录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn23_prize">奖项管理</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn23_modify">编辑活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" id="btn_check" '+(row.check_status!=0?'':'style="display:none"')+'>活动审核</button></div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><p id="objqrcode23">二维码生成中，请耐心等待！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn23_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+
+                    //创建项目二维码 一个活动一个二维码
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebAppUrl('obj_laddercm', array('act' => 'objQrPreview'));}&id="+row.id,
+                        data: {},
+                        dataType:'json',
+                        success: function (data) {
+                            if (data.status == 1) {
+                                $("#objqrcode23").html("<img src="+ data.path +" width='180'>")
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn23_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+
+            }
+            if(row.activity_types=='语音红包') // 24
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn24_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default btn_border_color" data-dismiss="modal" data-id="'+ row.id +'" id="btn24_writeoff">核销日志</button><button type="button" class="btn btn-default btn_border_color" data-dismiss="modal" data-id="'+ row.id +'" id="btn24_uservoicered">语音识别记录</button><button type="button" class="btn btn-default btn_border_color" data-dismiss="modal" data-id="'+ row.id +'" id="btn24_draw">中奖记录</button><button type="button" class="btn btn-default btn_border_color" data-dismiss="modal" data-id="'+ row.id +'" id="btn24_join">参与用户</button></div><div><button type="button" class="btn btn-default btn_border_color" data-dismiss="modal" data-id="'+ row.id +'" id="btn24_store">商家管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn24_auditing" style="margin-left: 5px;margin-bottom: 10px;">商家申请</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn24_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn24_modify">编辑活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_check" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">'+(row.check_status==0||row.check_status==3?'提交审核':'审核详情')+'</button>{if $plug_bigscreen && $is_store_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}</div>';
+
+					var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><p id="objqrcode21">二维码生成中，请耐心等待！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn24_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+					//创建项目二维码 一个活动一个二维码
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebAppUrl('obj_voice', array('act' => 'objQrPreview'));}&id="+row.id,
+                        data: {},
+                        dataType:'json',
+                        success: function (data) {
+                            if (data.status == 1) {
+                                $("#objqrcode21").html("<img src="+ data.path +" width='180'>")
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+
+
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn24_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+            }
+            if(row.activity_types=='团中团') // 25
+            {
+                require(["jquery", "util"], function(){
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn25_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn25_draw">返利纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn25_join">拼团记录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn25_joinlog">参与记录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn25_prize">奖项管理</button></div><div><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn25_modify">编辑活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" id="btn_obj_copy" data-id="'+ row.id +'" data-activity_tables="'+ row.activity_tables +'">一键克隆</button><button type="button" class="btn btn-default" data-dismiss="modal" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" id="btn_check" '+(row.check_status!=0?'':'style="display:none"')+'>活动审核</button></div>';
+                    var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><p id="objqrcode23">二维码生成中，请耐心等待！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn25_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+
+                    //创建项目二维码 一个活动一个二维码
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebAppUrl('obj_laddergg', array('act' => 'objQrPreview'));}&id="+row.id,
+                        data: {},
+                        dataType:'json',
+                        success: function (data) {
+                            if (data.status == 1) {
+                                $("#objqrcode23").html("<img src="+ data.path +" width='180'>")
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                });
+
+                require(["clipboard"], function (Clipboard) {
+                    //复制预览网址
+                    new Clipboard('#btn25_copy', {
+                        text: function(trigger) {
+                            $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                            return trigger.getAttribute('aria-label');
+                        }
+                    });
+                });
+
+            }
+
+        },
+    };
+
+    function statusFormatter(value, row, index) {
+        return [
+            '<input name="status"   rowid="' + row.id + '" type="checkbox" data-size="mini" data-on-text="开启" data-off-text="关闭" ' + (row.status == 1 ? "checked" : "") + ' />'
+        ].join('');
+    }
+
+    //加载成功时执行
+    $('#tb_bandlist').on('load-success.bs.table column-switch.bs.table', function (data) {
+        $('#tb_bandlist').bootstrapTable('resetView');
+        //绑定更改状态操作
+        $(':checkbox[name="status"]').bootstrapSwitch({
+            onSwitchChange: function (event, state) {
+                var status = state ? 1 : 0;
+                var rowId = parseInt($(this).attr("rowid"));
+                $.ajax({
+                    type: "post",
+                    dataType:'json',
+                    url: "{php echo $this->createWebAppUrl('obj_activity', array('act' => 'setStatus'));}",
+                    data: {
+                        "id": rowId,
+                        "status": status
+                    },
+                    success: function (jsonData, status) {
+                        if (jsonData.status == 1) {
+                            Command: toastr["success"](jsonData.msg, "成功提示");
+                        }
+                        else {
+                            Command: toastr["error"](jsonData.msg, "错误提示");
+                        }
+                    }
+                });
+            }
+        });
+
+        //绑定更改状态操作
+        $(':checkbox[name="is_join"]').bootstrapSwitch({
+            onSwitchChange: function (event, state) {
+                var is_joins = state ? 1 : 0;
+                var rowId = parseInt($(this).attr("rowid"));
+                $.ajax({
+                    type: "post",
+                    dataType:'json',
+                    url: "{php echo $this->createWebAppUrl('obj_activity', array('act' => 'setis_join'));}",
+                    data: {
+                        "id": rowId,
+                        "is_join": is_joins
+                    },
+                    success: function (jsonData, status) {
+                        if (jsonData.status == 1) {
+                            Command: toastr["success"](jsonData.msg, "成功提示");
+                        }
+                        else {
+                            Command: toastr["error"](jsonData.msg, "错误提示");
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+    var ButtonInit = function () {
+        var oInit = new Object();
+        var postdata = {};
+
+        oInit.Init = function () {
+            $("#btn_delete").click(function () {
+                var arrselections = $("#tb_bandlist").bootstrapTable('getSelections');
+                if (arrselections.length <= 0) {
+                    Command: toastr["warning"]("请选择需要操作的数据！", "选择提示");
+                    return;
+                }
+
+                var ids = '';
+                for (var i = 0; i < arrselections.length; i++) {
+                    ids += arrselections[i].id + ",";
+                }
+                ids = ids.substr(0, ids.length - 1);
+
+                //询问框
+                layer.open({
+                    content: '关联数据也将被清除，你确定要删除吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        $.ajax({
+                            type: "post",
+                            dataType:'json',
+                            url: "{php echo $this->createWebAppUrl('obj_activity', array('act' => 'delList'));}",
+                            data: {"ids": ids},
+                            success: function (data, status) {
+                                if (data.status == 1) {
+                                    Command: toastr["success"](data.msg, "成功提示");
+                                    $("#tb_bandlist").bootstrapTable('refresh');
+                                }
+                                else {
+                                    Command: toastr["error"](data.msg, "错误提示");
+                                }
+                            }
+                        });
+                        layer.close(index);
+                    }
+                });
+            });
+            //查询操作
+            $("#btn_query").click(function () {
+                $("#tb_bandlist").bootstrapTable('refresh');
+            });
+            //创建操作
+            $("#btn_add").click(function () {
+                window.location.href = "{php echo $this->createWebAppUrl('sys_tmp', array('act' => 'index'));}";
+            });
+			//编辑操作
+            $(document).delegate("#btn1_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_share', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn1_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_share_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn1_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn1_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+
+            //编辑操作
+            $(document).delegate("#btn2_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_soliciting', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn2_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_soliciting_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn2_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //购买管理
+            $(document).delegate("#btn2_pay", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_soliciting_pay', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn2_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与管理
+            $(document).delegate("#btn2_join", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_soliciting_join', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+
+            //编辑操作
+            $(document).delegate("#btn3_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_union', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn3_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //核销管理
+            $(document).delegate("#btn3_writeoff", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_union_writeoff', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //领券管理
+            $(document).delegate("#btn3_usercard", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_union_cardbag', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //购买管理
+            $(document).delegate("#btn3_pay", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_union_pay', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //返利管理
+            $(document).delegate("#btn3_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与用户
+            $(document).delegate("#btn3_join", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_union_join', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //商家申请
+            $(document).delegate("#btn3_auditing", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_union_store_wait', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //商家管理
+            $(document).delegate("#btn3_store", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_union_store', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn3_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_union_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+
+            //编辑操作
+            $(document).delegate("#btn4_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_praise', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn4_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_praise_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn4_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn4_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //点击管理
+            $(document).delegate("#btn4_click", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_praise_click', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与管理
+            $(document).delegate("#btn4_join", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_praise_join', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+
+
+            //编辑操作
+            $(document).delegate("#btn5_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_fish', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //商家管理
+            $(document).delegate("#btn5_store", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_fish_store', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //商家申请
+            $(document).delegate("#btn5_apply", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_fish_store_wait', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //用户管理
+            $(document).delegate("#btn5_join", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_fish_join', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //抽奖码管理
+            $(document).delegate("#btn5_code", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_fish_code', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn5_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+
+
+            //编辑操作
+            $(document).delegate("#btn6_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_wheel', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn6_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_wheel_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn6_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn6_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+
+
+            //编辑操作
+            $(document).delegate("#btn7_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_9box', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn7_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_9box_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn7_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn7_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+
+
+            //编辑操作
+            $(document).delegate("#btn8_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_bag', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn8_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_bag_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn8_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn8_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+
+
+            //编辑操作
+            $(document).delegate("#btn9_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_eggs', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn9_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_eggs_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn9_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn9_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+
+
+            //编辑操作
+            $(document).delegate("#btn10_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_opencard', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn10_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_opencard_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn10_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn10_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+
+            //编辑操作
+            $(document).delegate("#btn11_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_poker', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn11_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_poker_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn11_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn11_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+
+
+            //编辑操作
+            $(document).delegate("#btn12_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_scratch', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn12_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_scratch_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn12_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn12_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+
+            //编辑操作
+            $(document).delegate("#btn13_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_shake', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn13_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_shake_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn13_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn13_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+
+            //编辑操作
+            $(document).delegate("#btn14_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_tiger', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn14_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_tiger_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn14_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn14_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+
+            //编辑操作
+            $(document).delegate("#btn15_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_cut', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn15_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_cut_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn15_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //购买管理
+            $(document).delegate("#btn15_pay", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_cut_pay', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn15_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与管理
+            $(document).delegate("#btn15_join", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_cut_join', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+            //编辑操作
+            $(document).delegate("#btn16_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_collage', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn16_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_collage_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn16_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //购买管理
+            $(document).delegate("#btn16_pay", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_collage_pay', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn16_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与管理
+            $(document).delegate("#btn16_join", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_collage_join', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+            //编辑操作
+            $(document).delegate("#btn17_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_ladder', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn17_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_ladder_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn17_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //购买管理
+            $(document).delegate("#btn17_pay", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_ladder_pay', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn17_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与管理
+            $(document).delegate("#btn17_join", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_ladder_join', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+            //编辑操作
+            $(document).delegate("#btn18_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_vote', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //选手管理
+            $(document).delegate("#btn18_player", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_vote_player', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //选手报名
+            $(document).delegate("#btn18_auditing", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_vote_player_wait', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //礼物打赏
+            $(document).delegate("#btn18_gift", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_vote_gift', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //黑名单管理
+            $(document).delegate("#btn18_blacklist", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_vote_blacklist', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //投票记录
+            $(document).delegate("#btn18_click", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_vote_click', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn18_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+            //--问卷调查
+            //编辑操作
+            $(document).delegate("#btn19_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_survey', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn19_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_survey_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //中奖管理
+            $(document).delegate("#btn19_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn19_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与管理
+            $(document).delegate("#btn19_join", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_survey_join', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //问卷统计
+            $(document).delegate("#btn19_statistics", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_survey_statistics', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+            //编辑操作
+            $(document).delegate("#btn20_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_enroll', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn20_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_enroll_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn20_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //购买管理
+            $(document).delegate("#btn20_pay", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_enroll_pay', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn20_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与管理
+            $(document).delegate("#btn20_join", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_enroll_join', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+            //编辑操作
+            $(document).delegate("#btn21_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_whole', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn21_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_whole_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn21_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //购买管理
+            $(document).delegate("#btn21_pay", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_whole_pay', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn21_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与管理
+            $(document).delegate("#btn21_join", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_whole_join', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //拼团记录
+            $(document).delegate("#btn21_group", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_whole_group', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+            //编辑操作
+            $(document).delegate("#btn22_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_10second', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn22_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_10second_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn22_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn22_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与管理
+            $(document).delegate("#btn22_join", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_10second_join', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //进阶团部分23
+            //编辑操作
+            $(document).delegate("#btn23_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_laddercm', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn23_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_laddercm_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn23_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //购买管理
+            $(document).delegate("#btn23_pay", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_laddercm_pay', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn23_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与管理
+            $(document).delegate("#btn23_join", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_laddercm_join', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与管理
+            $(document).delegate("#btn23_joinlog", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_laddercm_joinlog', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+            //语音红包24
+            //编辑操作
+            $(document).delegate("#btn24_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_voice', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn24_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_voice_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //中奖记录
+            $(document).delegate("#btn24_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn24_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与管理
+            $(document).delegate("#btn24_join", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_voice_join', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //商家管理
+            $(document).delegate("#btn24_store", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_voice_store', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+			//商家申请
+            $(document).delegate("#btn24_auditing", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_voice_store_wait', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+			//语音识别日志
+            $(document).delegate("#btn24_uservoicered", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_voice_join_log', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+			//核销管理
+            $(document).delegate("#btn24_writeoff", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_voice_writeoff', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+            //团中团部分25
+            //编辑操作
+            $(document).delegate("#btn25_modify", "click", function() {
+                var editurl = "{php echo $this->createWebAppUrl('obj_laddergg', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn25_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_laddergg_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn25_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //购买管理
+            $(document).delegate("#btn25_pay", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_laddergg_pay', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn25_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与管理
+            $(document).delegate("#btn25_join", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_laddergg_join', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //参与管理
+            $(document).delegate("#btn25_joinlog", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('obj_laddergg_joinlog', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+
+            //溯源管理
+            $(document).delegate("#btn_marketing", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebAppUrl('marketing_team', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //删除操作
+            $(document).delegate("#btn_remove", "click", function() {
+                var id = $(this).data("id");
+                var title = $(this).data("activitytitle");
+                //询问框
+                layer.open({
+                    content: '你确定要删除<code>['+title+']</code>这个活动吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        $.ajax({
+                            type: "post",
+                            dataType:'json',
+                            url: "{php echo $this->createWebAppUrl('obj_activity', array('act' => 'del'));}",
+                            data: {
+                                id: id
+                            },
+                            success: function (data, status) {
+                                if (data.status == 1) {
+                                    Command: toastr["success"](data.msg, "成功提示");
+                                    $("#tb_bandlist").bootstrapTable('refresh');
+                                }
+                                else {
+                                    Command: toastr["error"](data.msg, "错误提示");
+                                }
+                            }
+                        });
+                        layer.close(index);
+                    }
+                });
+            });
+            //投屏操作
+            $(document).delegate('#btn_project', "click", function(){
+                var id = $(this).data("id");
+
+                $.ajax({
+                    type: "get",
+                    url: "{php echo $this->createWebAppUrl('obj_activity', array('act' => 'getProjectCode'));}&id="+id,
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            var projectCode = data.data['project_code'];
+                            var title = data.data['title'];
+                            var request_time = data.data['project_request_rate'];
+                            var or_bigscreen = data.data['or_bigscreen'];
+
+
+
+                            layer.open({
+                                title: [title,
+                                'background-color:#F4F5F9; color:#5D5D5E; margin:0; text-align:left; height:50px; line-height:50px;'
+                                ]
+                                ,style: 'width:700px; max-width:700px;'
+                                ,anim: 'up'
+                                ,content: "<div class=\"form-inline\" style=\"margin-bottom: 10px; text-align: left;\">\n" +
+                                    "       <label style=\"width: 90px\" for=\"projectCode\">数据投屏密码: </label>&nbsp;\n" +
+                                    "       <input id=\"projectCode\" type=\"text\" class=\"form-control\" style=\"width: 300px;  height: 20px;\" maxlength=\"6\" placeholder=\"填写投屏密码 不填默认为没有密码\" value=\""+ projectCode +"\">&nbsp;&nbsp;\n" +
+                                    "        <button id=\"randProjectCode\" class=\"btn btn-info\" style=\"width: 80px; height: 20px;\">随机密码</button>\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"margin-bottom: 20px; display: flex; flex-wrap: nowrap;\">\n" +
+                                    "        <label style=\"width: 90px\"  for=\"projectCode\"></label>&nbsp;\n" +
+                                    "        <div><strong class=\"text-danger\">提示：</strong>投屏密码为查看数据时验证的密码，不填写默认没有密码,密码最长为6位</div>\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"text-align: left;\">\n" +
+                                    "        <label style=\"width: 90px\">接口请求频率: </label>&nbsp;\n" +
+                                    "        <label><input type=\"radio\" name=\"request_time\" value= 15 "+ (request_time == 15 ? 'checked' : '') +"> 15s/次</label>&nbsp;\n" +
+                                    "        <label><input type=\"radio\" name=\"request_time\" value= 30 "+ (request_time == 30 ? 'checked' : '') +"> 30s/次</label>&nbsp;\n" +
+                                    "        <label><input type=\"radio\" name=\"request_time\" value= 60 "+ (request_time == 60 ? 'checked' : '') +"> 60s/次</label>&nbsp;\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"margin-bottom: 20px; display: flex; flex-wrap: nowrap;\">\n" +
+                                    "        <label style=\"width: 90px\"  for=\"projectCode\"></label>&nbsp;\n" +
+                                    "        <div><strong class=\"text-danger\">提示：</strong>设置数据请求频率，时间越长，请求频率越低，时间越短，需要服务器配置越高</div>\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"text-align: left;\">\n" +
+                                    "        <label style=\"width: 90px\">是否开启投屏: </label>&nbsp;\n" +
+                                    "        <label><input type=\"radio\" name=\"or_bigscreen\" value=0 "+ (or_bigscreen == 0 ? 'checked' : '') +"> 关闭</label>\n" +
+                                    "        <label><input type=\"radio\" name=\"or_bigscreen\" value=1 "+ (or_bigscreen == 1 ? 'checked' : '') +"> 开启</label>\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"margin-bottom: 10px; display: flex; flex-wrap: nowrap;\">\n" +
+                                    "        <label style=\"width: 90px\"  for=\"projectCode\"></label>&nbsp;\n" +
+                                    "        <div><strong class=\"text-danger\">提示：</strong>关闭投屏则活动数据无法显示</div>\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"text-align: left;\">\n" +
+                                    "        <label style=\"width: 90px\">投屏主题颜色: </label>&nbsp;\n" +
+                                    "        <label><input type=\"radio\" name=\"title_color\" value=\"blue\" checked> 蓝色</label>\n" +
+                                    "        <label><input type=\"radio\" name=\"title_color\" value=\"red\"> 红色</label>\n" +
+                                    "        <label><input type=\"radio\" name=\"title_color\" value=\"purple\"> 紫色</label>\n" +
+                                    "        <label><input type=\"radio\" name=\"title_color\" value=\"white\"> 白色</label>\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"margin-bottom: 10px; display: flex; flex-wrap: nowrap;\">\n" +
+                                    "        <label style=\"width: 90px\"  for=\"projectCode\"></label>&nbsp;\n" +
+                                    "        <div><strong class=\"text-danger\">提示：</strong>设置投屏显示的主题颜色</div>\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"text-align: center; margin-top: 20px;\">\n" +
+                                    "        <button id=\"createProjectCode\" class=\"btn btn-info\"  style=\"width: 80px; height: 20px; margin-right: 10px;\" data-id=\""+ id +"\">保存数据</button>\n" +
+                                    "        <button id=\"toProject\" class=\"btn btn-success\" style=\"width: 80px; height: 20px;\" data-id=\""+ id +"\">数据投屏</button>\n" +
+                                    "    </div>"
+                            })
+                        }
+                        else {
+
+                            Command: toastr["error"](data.msg, "错误提示");
+                        }
+                    }
+                });
+            })
+            //克隆操作
+            $(document).delegate("#btn_obj_copy", "click", function() {
+                var id = $(this).data("id");
+                var activity_tables=$(this).data("activity_tables");
+                //询问框
+                layer.open({
+                    content: '你确定要克隆活动数据吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        window.location.href="/app/index.php?i={$_W['uniacid']}&c=entry&a=webapp&iscopy=1&act=modify&do="+activity_tables+"&m=lywywl_ztb&id="+id
+                        layer.close(index);
+                    }
+                });
+            });
+            //审核操作
+            $(document).delegate("#btn_submitCheck", "click", function() {
+                var id = $(this).data("id");
+                $.ajax({
+                    type: "post",
+                    dataType:'json',
+                    url: "{php echo $this->createWebAppUrl('obj_activity', array('act' => 'setCheckStatus'));}",
+                    data: {
+                        id: id
+                    },
+                    success: function (data, status) {
+                        if (data.status == 1) {
+                            Command: toastr["success"](data.msg, "成功提示");
+                            $("#tb_bandlist").bootstrapTable('refresh');
+                        }
+                        else {
+                            Command: toastr["error"](data.msg, "错误提示");
+                        }
+                    }
+                });
+            });
+            //审核详情
+            $(document).delegate("#btn_obj_check", "click", function() {
+                var id = $(this).data("id");
+                var title = $(this).data("title");
+                var check_statusname = $(this).data("check_statusname");
+                var updatetime = $(this).data("updatetime");
+                var check_note = $(this).data("check_note");
+                var check_status = $(this).data("check_status");
+                myrequire([ 'arttemplate'], function (template) {
+                    var data={title:title,check_statusname:check_statusname,updatetime:updatetime,check_note:check_note,check_status:check_status};
+                    var dataHtml = template("datatpl", data);
+                    require(["jquery", "util"], function(){
+                        if (check_status==0||check_status==3)
+                        {
+                            footer = '<button type="button" class="btn btn-success" data-dismiss="modal" id="btn_submitCheck" data-id="'+ id +'"><i class="glyphicon glyphicon-ok"></i>提交</button><button type="button" id="btn_close" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                        }
+                        else
+                        {
+                            footer = '<button type="button" id="btn_close" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                        }
+                        var modalobj = util.dialog('审核详情',dataHtml ,footer,{containerName:'fedex-container'});
+                        modalobj.modal({'keyboard': true});
+                        modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                        modalobj.modal('show');
+                    });
+                });
+            });
+            $(document).delegate("#btn_close", "click", function() {
+                setTimeout(function () {
+                    $("body").removeAttr("style");
+                },500)
+            });
+            //跳转数据投屏
+            $(document).delegate("#toProject", "click", function(){
+                var id = parseInt($(this).data("id"));
+                var color = $('[name="title_color"]:checked').val();
+                var url = "{php echo $this->createMobileUrl('bigscreen.login', array('act' => 'index'));}&id="+id+'&color='+color;
+                window.open(url).location;
+            })
+            //提交投屏密码
+            $(document).delegate("#createProjectCode", "click", function(){
+                var params = {
+                    id: parseInt($(this).data("id")),
+                    projectCode: $('#projectCode').val(),
+                    projectRequestRate: $('[name="request_time"]:checked').val(),
+                    or_bigscreen: $('[name="or_bigscreen"]:checked').val()
+                }
+
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createWebAppUrl('obj_activity', array('act' => 'updateProjectCode'));}",
+                    data: params,
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+
+                            Command: toastr["success"](data.msg, "成功提示");
+                        }
+                        else {
+
+                            Command: toastr["error"](data.msg, "错误提示");
+                        }
+                    }
+                });
+            })
+            //随机生成投屏密码
+            $(document).delegate("#randProjectCode", "click", function(){
+                var code = randCode();
+                $('#projectCode').val(code);
+            })
+
+            //生成随机字符串
+            function randCode(len = 6){
+                var randStr = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                var code = '';
+                for(var i = 0; i < len; i++){
+                    var rand = Math.floor(Math.random() * randStr.length);
+                    code = code + randStr[rand];
+                }
+                return code;
+            }
+        };
+        return oInit;
+    };
+</script>
+</body>
+</html>

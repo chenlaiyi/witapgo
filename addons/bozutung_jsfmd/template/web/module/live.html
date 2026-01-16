@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li {if $operation == 'display'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('', ['do'=>'module/live'])}">
+							<span>房间管理</span>
+						</a>
+					</li>
+					<!-- <li {if $operation == 'sync'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('', ['do'=>'module/live', 'op'=>'sync'])}">同步</a>
+					</li> -->
+				</ul>
+			</div>
+
+		{if $operation == 'display'}
+			<div>
+				<div class="layui-form">
+					<div class="box-tools">
+						<div class="box-search">
+							<div class="layui-input-inline">
+								<input type="text" name="keyword" value="{$keyword}" class="layui-input"
+									placeholder="访问名">
+							</div>
+							<div class="layui-input-inline">
+								<button class="layui-btn" lay-submit lay-filter="table-search"
+									id="table-search">搜索</button>
+							</div>
+						</div>
+					</div>
+					<div class="box-list-img">
+						<table id="sl-live-table" lay-filter="sl-live-table"></table>
+					</div>
+				</div>
+
+				<div class="script">
+					<script type="text/html" id="toolbar">
+						<div class="layui-btn-container">
+							<button class="layui-btn layui-btn-sm" lay-event="sync">
+								同步</button>
+							<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
+								删除</button>
+						</div>
+					</script>
+					<script type="text/html" id="img-share">
+						<div class="box-table-img">
+							<img src="{{d.share_img}}" data-url="{{d.share_img}}"
+								style="max-width: 60px; max-height: 60px;"
+								onerror="this.src='{MODULE_URL}template/public/image/nopic.png'">
+						</div>
+					</script>
+					<script type="text/html" id="img-cover">
+						<div class="box-table-img">
+							<img src="{{d.cover_img}}" data-url="{{d.cover_img}}"
+								style="max-width: 60px; max-height: 60px;"
+								onerror="this.src='{MODULE_URL}template/public/image/nopic.png'">
+						</div>
+					</script>
+					<script type="text/html" id="show-time">
+						<div class="table-multi-line">
+							<div class="box-left">
+								<span>开始时间</span>
+								<span>{{d.start_time}}</span>
+							</div>
+							<div class="box-right">
+								<span>结束时间</span>
+								<span>{{d.end_time}}</span>
+							</div>
+						</div>
+					</script>
+					<script type="text/html" id="operation">
+						<div class="box-btn-panel">
+							<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del"
+								title="ID:{{d.id}}">
+								删除
+							</button>
+						</div>
+					</script>
+					<script>
+						layui.use(['laypage', 'layer', 'table', 'form'], function() {
+							my_laypage = layui.laypage;
+							my_layer = layui.layer;
+							my_table = layui.table;
+							my_form = layui.form;
+
+							url_post = "{php echo webUrl('',['do'=>'module/live','op' =>'post'])}";
+							url_list = "{php echo webUrl('',['do'=>'module/live','op'=>'list'])}";
+							url_delete = "{php echo webUrl('',['do'=>'module/live','op'=>'delete'])}";
+
+							var url_sync = "{php echo webUrl('',['do'=>'module/live','op'=>'sync'])}";
+
+							table_list = my_table.render({
+								elem: '#sl-live-table'
+								, toolbar: '#toolbar'
+								, even: false
+								, url: url_list
+								, cols: [[
+									// type: 'numbers',
+									{type: 'checkbox'}
+									, {field: 'roomid', minWidth: 80, title: '房间ID', sort: true}
+									, {field: 'sl_title', title: "房间名", sort: true}
+									, {field: 'anchor_name', title: "主播名", sort: true}
+									, {field: 'share_img', title: "卡片封面", sort: true, templet: '#img-share'}
+									, {field: 'cover_img', title: "直播间背景", sort: true, templet: '#img-cover'}
+									, {field: 'show_time', title: "直播时间", minWidth: 230, templet: '#show-time'}
+									, {field: 'live_status', title: "状态", width: 80, sort: true}
+									, {title: "操作", width: 100, templet: '#operation', fixed: 'right'}
+								]]
+								, height: 'full-190'
+								, page: {
+									theme: '#1E9FFF'
+								}
+							});
+
+							//头工具栏事件
+							my_table.on('toolbar(sl-live-table)', function (obj)
+							{
+								var checkStatus = my_table.checkStatus(obj.config.id);
+								switch (obj.event) {
+									case 'delete':
+										var obj_data = checkStatus.data;
+
+										funDelete(url_delete, obj_data, function(rst) {
+											if (rst && rst['code']=='0') {
+												table_list.reload(); // 表格重载
+												layer.msg("操作成功", {
+													offset: '20%',
+												});
+											} else {
+												layer.msg(rst['msg'], {
+													offset: '20%',
+												});
+											}
+										});
+										break;
+									case 'sync':
+										var obj_data = checkStatus.data;
+
+										funExec(url_sync, obj_data, function(rst) {
+											if (rst && rst['code']=='0') {
+												table_list.reload(); // 表格重载
+												layer.msg("操作成功", {
+													offset: '20%',
+												});
+											} else {
+												layer.msg(rst['msg'], {
+													offset: '20%',
+												});
+											}
+										}, '确定要立即同步<br>操作比较耗时尽量选用服务器空余时间错峰操作', '再想想', '同步');
+										break;
+
+								};
+							});
+
+							//监听行工具事件
+							my_table.on('tool(sl-live-table)', function (obj)
+							{
+								var obj_data = obj.data;
+								if (obj.event === 'del') {
+									var ids = [];
+									var one = {
+										id: obj_data.id
+									};
+									ids.push(one);
+
+									funDelete(url_delete, ids, function(rst) {
+										if (rst && rst['code']=='0') {
+											obj.del();
+											layer.msg("成功", {
+												offset: '20%',
+											});
+										} else {
+											if (rst) {
+												layer.msg(rst['msg'], {
+													offset: '20%',
+												});
+											} else {
+												layer.msg("未知错误", {
+													offset: '20%',
+												});
+											}
+										}
+									});
+								}
+							});
+						});
+					</script>
+				</div>
+			</div>
+
+
+		{else if $operation == 'sync'}
+			<div>
+				<form class="layui-form" action="" method="post" enctype="multipart/form-data">
+					<div class="layui-form-item">
+						<label class="layui-form-label">提示</label>
+						<div class="layui-input-block">
+							<div class="layui-form-mid layui-word-aux">
+								拉取小程序后台直播列表，同步到本地服务器，请注意备份
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">是否已备份</label>
+						<div class="layui-input-block">
+							<div>
+								<input type="checkbox" name="agreement" value="1" lay-skin="primary"
+									title="我已经做好了相关文件的备份工作">
+							</div>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="sync">立即同步</button>
+							<input type="hidden" name="token" value="{$_W['token']}" />
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label"></label>
+						<div class="layui-input-block">
+							<div class="layui-form-mid layui-word-aux">
+								<span style="color: red;font-weight: bold;">
+									注：由于操作比较耗时尽量选用服务器空余时间错峰操作！
+								</span>
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<script>
+					layui.use('form', function(){
+						var form = layui.form;
+
+						form.on('submit(sync)', function(data){
+							let url = "{php echo webUrl('', ['do'=>'module/live', 'op'=>'sync'])}";
+							var $obj = $(this);
+
+							if (!$obj.hasClass('lock')) {
+								$obj.addClass('lock'); // 不能再点击
+
+								$.ajax({
+									type: "POST",
+									url: url,
+									dataType: 'json',
+									data: data.field,
+									success: function (rs) {
+
+										if (rs && rs.code.toString() === '0') {
+											layer.msg('同步成功！' , {
+												time: 500
+											}, function () {
+												window.location.href = "{php echo webUrl('', ['do'=>'module/live'])}";
+											});
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+											});
+										}
+										$obj.removeClass('lock');
+									},
+									error: function () {
+										layer.msg('保存过程发生错误，请与管理员联系', {
+											offset: '20%',
+										});
+										$obj.removeClass('lock');
+									}
+								});
+							}
+							return false;
+						});
+					});
+				</script>
+			</div>
+
+
+		{/if}
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

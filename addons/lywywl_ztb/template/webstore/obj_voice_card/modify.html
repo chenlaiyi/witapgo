@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>{$title} - {$objModel['title']}</h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">活动管理</li>
+                <li class="active">{$title}</li>
+                <li class="active">商家管理</li>
+                <li class="active">卡券</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            {if !empty($objModel)}
+                            <li><a href="{php echo $this->createWebAppUrl('obj_activity', array('act' => 'index'));}">返回活动</a></li>
+                            {/if}
+                            <li><a href="{php echo $this->createWebAppUrl('obj_voice_store', array('act' => 'index','aid'=>$aid));}">返回商家</a></li>
+                            <li>
+                                <a href="{php echo $this->createWebAppUrl('obj_voice_card', array('act' => 'index','aid' => $aid,'sid' => $sid));}">卡券列表</a>
+                            </li>
+                            <li class="active"><a href="#">{if !empty($model['id'])}编辑{else}创建{/if}卡券</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content" id="form_content" method="post">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> {if
+                                            !empty($model['id'])}编辑{else}创建{/if}卡券信息</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="name" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>商家卡券名称</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="name" maxlength="100"
+                                                       name="model[name]" nullmsg="请输入商家卡券名称！" placeholder="请输入商家卡券名称"
+                                                       type="text" value="{$model['name']}"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="writeoff_num" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>卡券核销次数
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="n" id="writeoff_num"
+                                                       maxlength="10"
+                                                       name="model[writeoff_num]" nullmsg="请输入卡券核销次数！"
+                                                       placeholder="请输入卡券核销次数"
+                                                       type="number"
+                                                       onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                       value="{$model['writeoff_num']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>卡券核销次数即用户领取一次卡券，可使用的次数。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="money" class="col-sm-2 control-label"><span class="text-red">(*)</span>商家卡券面值</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="money"
+                                                           maxlength="10" name="model[money]"
+                                                           placeholder="请输入商家卡券面值"
+                                                           onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                           onblur = "this.value=FloatMoney(this.value)"
+                                                           step="0.01" min="0"
+                                                           type="number" value="{$model['money']}"/>
+                                                    <span class="input-group-addon">元</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请填写商家提供卡券的面值,金额必须大于0元。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="use_limit" class="col-sm-2 control-label"><span class="text-red">(*)</span>卡券使用门槛</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="use_limit"
+                                                       maxlength="10" name="model[use_limit]"
+                                                       placeholder="请输入使用卡券门槛" nullmsg="请输入使用卡券门槛！"
+                                                       type="text" value="{$model['use_limit']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请填写使用优惠券的门槛条件（10个字以内），例如：“满500元可用”或“无门槛使用”。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>卡券过期类型</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[time_types]" id="time_types0"
+                                                           class="flat-blue time_types" value="0" {if $model['time_types']==0}checked {/if}> 领取计时
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[time_types]" id="time_types1"
+                                                           class="flat-blue time_types" value="1" {if $model['time_types']==1} checked {/if}> 截止到期
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[time_types]" id="time_types2"
+                                                           class="flat-blue time_types" value="2" {if $model['time_types']==2} checked {/if}> 核销计时
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请选择卡券到期类型 领取计时（领取后指定天数过期）截止到期（指定日期过期）核销计时 (首次核销后计时)</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="time_day_box" style="display: {if $model['time_types'] != 0} none{/if};">
+                                            <label for="time_day" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>卡券过期天数
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" datatype="n" id="time_day"
+                                                           maxlength="10"
+                                                           name="model[time_day]" nullmsg="请输入卡券过期天数！"
+                                                           placeholder="请输入卡券过期天数"
+                                                           type="number"
+                                                           onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                           value="{$model['time_day']}"/>
+                                                    <span class="input-group-addon">天</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>用户领取卡券后开始计时，指定天数没有核销自动作废。</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" id="time_end_box" style="display: {if $model['time_types'] != 1} none{/if};">
+                                            <label class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>卡券过期时间
+                                            </label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_daterange('model[interim][time_begin_end]',$model['time_begin_end'],true)}
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>无论用户何时领取卡券，超过指定时间自动作废。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="begin_time_day_box" style="display: {if $model['time_types'] != 2} none{/if};">
+                                            <label for="time_day" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>核销过期天数
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" datatype="n" id="begin_time_day"
+                                                           maxlength="10"
+                                                           name="model[time_day1]" nullmsg="请输入卡券首次核销后过期天数！"
+                                                           placeholder="请输入卡券首次核销后过期天数"
+                                                           type="number"
+                                                           onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                           value="{$model['time_day1']}"/>
+                                                    <span class="input-group-addon">天</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>用户首次核销卡券后开始计时，指定天数后自动作废。</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>开启卡券库存</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[is_open_stock]"
+                                                           id="is_open_stock0"
+                                                           class="flat-blue is_open_stock" value="0" {if $model['is_open_stock']==0}
+                                                    checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[is_open_stock]"
+                                                           id="is_open_stock1"
+                                                           class="flat-blue is_open_stock" value="1" {if $model['is_open_stock']==1}
+                                                    checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启后用户兑换将自动减少库存，库存为0时卡券将不再显示</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" id="is_open_stock1_box" style="display: {if $model['is_open_stock'] != 1} none{/if};">
+                                            <label for="stock" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>卡券库存数量
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="n" id="stock"
+                                                       maxlength="10"
+                                                       name="model[stock]" nullmsg="请输入卡券库存数量！"
+                                                       placeholder="请输入卡券库存数量"
+                                                       type="number"
+                                                       onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                       value="{$model['stock']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>开启后用户兑换将自动减少库存，库存为0时卡券将不再显示</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display: none;">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>商家卡券模板</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('model[pic_url]',$model['pic_url']);}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">卡券背景模板</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group multi-img-details">
+                                                    <div class="multi-item" style="height:auto">
+                                                        <img src="{MODULE_URL}resource/template/card/card1.png" class="img-responsive img-thumbnail cardtmp" {if $model['pic_url']==MODULE_URL.'resource/template/card/card1.png'}style="background-color: #ddd;" {/if}>
+                                                    </div>
+                                                    <div class="multi-item" style="height:auto">
+                                                        <img src="{MODULE_URL}resource/template/card/card2.png" class="img-responsive img-thumbnail cardtmp" {if $model['pic_url']==MODULE_URL.'resource/template/card/card1.png'}style="background-color: #ddd;" {/if}>
+                                                    </div>
+                                                    <div class="multi-item" style="height:auto">
+                                                        <img src="{MODULE_URL}resource/template/card/card3.png" class="img-responsive img-thumbnail cardtmp" {if $model['pic_url']==MODULE_URL.'resource/template/card/card1.png'}style="background-color: #ddd;" {/if}>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="status2" class="col-sm-2 control-label">商家卡券状态</label>
+                                            <div class="col-sm-10">
+                                                <input data-off-text="关闭" data-on-text="开启" data-size="mini" id="status"
+                                                       type="checkbox" value="true" {if $model['status']==1}checked{/if}/>
+                                                <input id="status2" name="model[status]" type="hidden"
+                                                       value="{$model['status']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>
+                                                    选择商家卡券开启/关闭状态，关闭后卡券将不会在前台展示 并不可领取 用户已领取的卡券仍然有效</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sort" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>卡券排序信息
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="n" id="sort" name="model[sort]"
+                                                       nullmsg="信息排序必须填写！"
+                                                       onkeyup="if(isNaN(this.value)) this.value='0';"
+                                                       placeholder="请输入信息排序字段" type="text" value="{$model['sort']}">
+                                                <p class="help-block">请输入数字 例如：1|6|10等数字，注意：此字段只能为数字 信息将按照排序字段正序排列</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+                                                <input type="hidden" name="token" value="{$_W['token']}"/>
+                                                <input type="hidden" name="submit" value="submit"/>
+                                                <button type="submit" class="btn btn-primary" id="SubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script>
+    $(function () {
+        SelectNav("我创建的活动");
+
+        myrequire(['select2', 'bootstrap-switch', 'validform', 'icheck', 'bootstrap-slider'], function () {
+
+            $(".select2").select2();
+
+            //初始化icheck控件radio
+            $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+                checkboxClass: 'icheckbox_flat-blue',
+                radioClass: 'iradio_flat-blue'
+            });
+
+            //绑定更改状态操作
+            $('#status').bootstrapSwitch({
+                onSwitchChange: function (event, state) {
+                    var status = state ? 1 : 0;
+                    $("#status2").val(status);
+                }
+            });
+
+            //选择是否开启广告选项卡
+            $('.time_types').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                if(obj_types==0)
+                {
+                    $("#time_day_box").show();
+                    $("#time_end_box").hide();
+                    $("#begin_time_day_box").hide();
+                }
+                else if(obj_types==1)
+                {
+                    $("#time_day_box").hide();
+                    $("#time_end_box").show();
+                    $("#begin_time_day_box").hide();
+                }else {
+                    $("#time_day_box").hide();
+                    $("#time_end_box").hide();
+                    $("#begin_time_day_box").show();
+                }
+            });
+
+            //选择是否开启商品库存项卡
+            $('.is_open_stock').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                if(obj_types==0)
+                {
+                    $("#is_open_stock1_box").hide();
+                }
+                else
+                {
+                    $("#is_open_stock1_box").show();
+                }
+            });
+
+            //选择奖品封面模板
+            $(".cardtmp").click(function(){
+                var pic_url_ipt =$('input[name="model[pic_url]');
+                pic_url_ipt.val($(this).attr('src'));
+                pic_url_ipt.parent().next().children().first().attr("src", $(this).attr('src'));
+                var select_src=$(this).attr('src');
+                $(".cardtmp").each(function(){
+                    if($(this).attr('src')==select_src)
+                    {
+                        $(this).css("background-color","#ddd");
+                    }
+                    else
+                    {
+                        $(this).css("background-color","#FFF");
+                    }
+                });
+            });
+
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createWebAppUrl('obj_voice_card', array('act' => 'index','aid' => $aid,'sid' => $sid));}";
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+                    }
+                }
+            });
+
+        });
+
+    });
+</script>
+<!-- 重置日期选择器样式 -->
+<link href="{__CSS__}/reset/daterange.css?v=1.0.0" rel="stylesheet">
+</body>
+</html>

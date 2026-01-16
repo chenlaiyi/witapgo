@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,minimum-scale=1,user-scalable=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title>留言管理</title>
+    <link rel="stylesheet" href="{NEWSTATIC_ROOT}/jqueryweui/css/weui.min.css"/>
+	<link rel="stylesheet" href="{NEWSTATIC_ROOT}/jqueryweui/css/jquery-weui.min.css"/>
+	<link rel="stylesheet" href="{NEWSTATIC_ROOT}/common.css?v=20200520"/>
+    <script>
+        var deviceWidth = document.documentElement.clientWidth;
+        document.documentElement.style.fontSize = deviceWidth / 7.5 + 'px';
+    </script>
+	{php echo register_jssdk(false);}
+	<style>		
+	.chatlist .newmsg{padding:0.2rem;font-size:0.28rem;border-bottom:solid 1px #f1f1f1;}
+	.chatlist .newmsg a{color:#999;}
+	.chatlist .newmsg a .newmsgname{color:#E64340;margin-right:0.1rem;}
+	.chatlist .item{padding:0.2rem;border-bottom:solid 1px #f1f1f1;position:relative;background:#fff;}
+	.chatlist .item .mychatbadge{
+		height:0.2rem;width:0.2rem;
+		background:red;border-radius:0.2rem;
+		position:absolute;
+	}
+	.chatlist .item a.tohref{-webkit-box-flex:1; -moz-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1;}	
+	.chatlist .item .text{height:0.4rem;line-height:0.4rem;font-size:0.26rem;color:#999;}
+
+	.chatlist .item .timedo{width:1.4rem;margin-left:0.2rem;}
+	.chatlist .item .timedo .time{font-size:0.24rem;color:#999;height:0.4rem;line-height:0.4rem;text-align:right;}
+	.chatlist .item .timedo .dodel{font-size:0.24rem;color:red;height:0.4rem;line-height:0.4rem;margin-top:0.1rem;text-align:right;}
+	
+	.copyright a,.chatlist .newmsg a .newmsgname{color:{php echo $this->module["config"]['temcolor']};}
+	
+	.weui-dialog__btn{color:{php echo $this->module["config"]['temcolor']};}
+	
+	.copyright{
+		position:fixed;width:100%;z-index:99;bottom:0;
+	}
+	
+	.others-item{
+		font-size:0.28rem;margin-top:0.1rem;color:#000;
+	}
+	</style>
+</head>
+
+<body style="background:#f5f5f5;padding-bottom:0.9rem;">
+{if $liuyans}
+<div class="chatlist">
+	{loop $liuyans $row}
+	<div class="item textellipsis1">
+		<div class="flex textellipsis1">
+			<a href="{php echo $this->createMobileUrl('servicechat',array('toopenid'=>$row['openid']))}" class="flex tohref textellipsis1">
+				{if $row['readstatus'] == 0}<div class="mychatbadge"></div>{/if}
+				<div class="text textellipsis1 flex1">{$row['content']}</div>
+			</a>
+			<div class="timedo">
+				<div class="time">{php echo $this->getChatTimeStr($row['time']);}</div>
+				{if $row['readstatus'] == 0}<div class="dodel" data-fkid="{$row['id']}">已读留言</div>{/if}
+			</div>
+		</div>
+		{if !empty($row['others'])}
+		<div class="others">
+			{loop $row['others'] $rowrow}
+				{if !empty($rowrow['val'])}
+				<div class="others-item flex">
+					<div class="others-name">{$rowrow['name']}：</div>
+					<div class="others-val flex1">
+						{if $rowrow['isimg'] == 1}
+							<img src="{$rowrow['val']}" style="max-width:100%;height:auto;" />
+						{else}
+							{$rowrow['val']}
+						{/if}
+					</div>
+				</div>
+				{/if}
+			{/loop}
+		</div>
+		{/if}
+	</div>
+	{/loop}
+</div>
+{else}			
+	<div class="nodata text-c">
+		<img src="{NEWSTATIC_ROOT}/nodata.png" />
+		<div class="text">暂无记录</div>
+	</div>
+{/if}
+<div class="weui-loadmore hide" style="margin:0.2rem auto;color:#999;">
+	<i class="weui-loading"></i>
+	<span class="weui-loadmore__tips">正在加载</span>
+</div>
+
+<div class="copyright text-c">{php echo nl2br($this->module["config"]['copyright'])}</div>
+
+
+<script src="{NEWSTATIC_ROOT}/jqueryweui/js/jquery-3.1.1.min.js"></script>
+<script src="{NEWSTATIC_ROOT}/jqueryweui/js/jquery-weui.min.js"></script>
+<script src="{NEWSTATIC_ROOT}/jqueryweui/js/fastclick.js"></script>
+<script type="text/javascript">
+$(function(){
+	FastClick.attach(document.body);
+
+	$(document).on("click",".dodel", function() {
+		var fkid = $(this).attr('data-fkid');
+		$.confirm("确定要已读留言吗？", function() {
+			$.ajax({
+				url:"{php echo $this->createMobileUrl('myliuyan')}",
+				data:{
+					id:fkid,
+					op:'delete',
+				},
+				dataType:'json',
+				type:'post',        
+				success:function(data){
+					if(data.error == 1){
+						$.alert(data.message);
+					}else{
+						history.go(0);
+					}
+				},
+			});
+		}, function() {
+
+		});
+	});
+})
+//滚动加载
+var loading = false;  //状态标记
+var count = 2;
+$(document.body).infinite().on("infinite", function() {
+	if(loading) return;
+	loading = true;
+	if(count < {$allpage}){
+		$('.weui-loadmore').removeClass('hide');
+		setTimeout(function() {			
+			$.ajax({
+				url:"{php echo $this->createMobileUrl('myliuyan')}",
+				data:{
+					page:count,
+					isajax:1
+				},
+				dataType:'html',
+				type:'post',        
+				success:function(data){
+					if(data != ''){
+						$('.chatlist').append(data);
+						count++;
+					}
+					loading = false;
+				},
+			});
+		}, 500);   //模拟延迟
+	}else{
+		$('.weui-loadmore .weui-loading').remove();
+		$('.weui-loadmore .weui-loadmore__tips').text('全部数据已经加载完毕');
+	}
+});
+wx.ready(function () {
+	wx.hideOptionMenu();
+});
+</script>
+<script type="text/javascript">
+window.onpageshow = function(event){
+	if (event.persisted) {
+		window.location.reload();
+	}
+}
+</script>
+</body>
+</html>

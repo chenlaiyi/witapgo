@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<body>
+<!--中心区域-->
+<section>
+    <ul class="publish bgfff">
+        <li class="float">
+            <p>账户余额</p>
+            <section class="form_con selectBox">
+                <span class="c9" id="balance">{$store['money']}</span>
+                <span class="arrow_txt">元</span> </section>
+        </li>
+        <li class="float">
+            <p>短信价格</p>
+            <section class="form_con selectBox">
+                <span class="c9" id="smsPrice">{$config['sms_price']}</span>
+                <span class="arrow_txt">元/条</span> </section>
+        </li>
+        <li class="float">
+            <p>短信条数</p>
+            <section class="form_con selectBox">
+                <input type="number" class="form_float_txt" id="smsNum" placeholder="请输入短信条数" onkeyup="if(isNaN(this.value)){this.value='';}">
+                <span class="arrow_txt">条</span> </section>
+        </li>
+        <li class="float">
+            <p>所需金额</p>
+            <section class="form_con selectBox"><span class="c9" id="smsAmount">￥0.00</span><span style="display:none"><span class="main_red ml10">余额不足，点击</span><a href="{php echo $this->createMobileUrl('store.store_recharge');}" class="c9 link">充值</a></span> </section>
+        </li>
+    </ul>
+    <section class="btn-de">
+        <button type="button" class="Button" id="btn_recharge">提交</button>
+        <p class="mt40"> <a href="{php echo $this->createMobileUrl('store.store_bill',array('types'=>3));}" class="returnLink">充值明细</a> </p>
+    </section>
+</section>
+<script>
+    $(function(){
+
+        //短信条数操作
+        $('#smsNum').bind('input propertychange', function () {
+            var smsNum = $(this).val();
+            if ($(this).val() == "") {
+                smsNum = 0;
+            }
+            var balance = parseFloat($('#balance').html());
+            var smsPrice = parseFloat($('#smsPrice').html());
+            var smsAmount = parseFloat(parseInt(smsNum) * smsPrice).toFixed(2);
+            if (smsAmount > balance) {
+                $('#smsAmount').html("￥" + smsAmount);
+                $('#smsAmount').next().show();
+            } else {
+                $('#smsAmount').html("￥" + smsAmount);
+                $('#smsAmount').next().hide();
+            }
+        });
+
+        $("#btn_recharge").click(function(){
+            var smsNum = $("#smsNum").val();
+            if (smsNum == "" || smsNum == "0") {
+                layer.open({
+                    content: '请输入要充值的短信条数！'
+                    , skin: 'msg'
+                    , time: 2 //2秒后自动关闭
+                    , style: 'bottom:-50px;'
+                });
+                $("#smsNum").focus();
+                return false;
+            }
+            $.ajax({
+                type: "post",
+                url: "{php echo $this->createMobileUrl('store.store_sms',array('act'=>'recharge'));}",
+                data: {
+                    smsNum: smsNum
+                },
+                async: false,
+                dataType: "json",
+                beforeSend: function () {
+                    $("#btn_recharge").attr("disabled", true);
+                },
+                success: function(data) {
+                    if (data.status == 1) {
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:-50px;'
+                        });
+                        setTimeout(function() {
+                            location.href = location.href;
+                        },2000);
+                    } else {
+                        $("#btn_recharge").attr("disabled", false);
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:-50px;'
+                        });
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

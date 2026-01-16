@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+
+	<style>
+		.pad-left-right-none { padding-left: 0; padding-right: 0; }
+		.dialog-table { margin-top: 0; margin-bottom: 0; }
+		.layui-tab-title > li.layui-this{ pointer-events: none; }
+	</style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+	<div class="layui-tab box-tab-my">
+		<ul class="layui-tab-title">
+			<li data-op="box-sys" class="layui-this">系统</li>
+			<li data-op="box-wxapp">小程序</li>
+			<li data-op="box-adact">单页面</li>
+			<li data-op="box-course-list">课程</li>
+			<li data-op="box-video-course">视频课程</li>
+			<!-- <li data-op="box-video-category">视频分类</li> -->
+		</ul>
+		<div class="layui-tab-content pad-left-right-none">
+			<!-- 系统 -->
+			<div class="layui-tab-item layui-show">
+				<div class="layui-form box-body">
+					<table class="layui-table dialog-table">
+						<colgroup>
+							<col>
+							<col width="60">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>模块</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>首页</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="@home">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>关于我们</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="^about">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>一键拨号</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url=":callOrganizationTel">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>一键导航</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url=":openOrganizationLocation">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>课程表</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="^schedule">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>教练</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="@coaches">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>私教</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="@coaches?type=private">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>我的</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="@me">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>会员中心</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="^member">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>会员升级</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="^recharge?type=level">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>余额充值</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="^recharge?type=balance">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>购买无限次约课权</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="^recharge?type=unlimited">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>购买约课次数</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="^recharge?type=count">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>领券中心</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="^coupons-supply">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>门店列表</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="@stores">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>活动列表</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="@promotions">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>订单</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="^orders">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>视频首页</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="@vchome">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>视频列表</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="^vcs">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>视频收藏</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="^favorites">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>分销中心</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="^distributor">选择</a>
+								</td>
+							</tr>
+							<tr>
+								<td>直播</td>
+								<td style="text-align:left;">
+									<a href="javascript:;" class="btn btn-default btn-a" data-url="^live">选择</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<!-- 跳转小程序 -->
+			<div class="layui-tab-item box-wxapp">
+				<div class="layui-form-item">
+					<div class="input-group">
+						<input type="text" class="layui-input" name="" id="input-search-wxapp" placeholder="请输入跳转小程序标题">
+						<span class="input-group-btn">
+							<a href="javascript:;" class="btn btn-default" id="btn-search-wxapp">搜索</a>
+						</span>
+					</div>
+				</div>
+				<div class="layui-form box-body-search">
+					<table class="layui-table">
+						<colgroup>
+							<col>
+							<col width="60">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>模块</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody class="box-tbody">
+							<!-- <tr>
+								<td><span class="title">标题</span></td>
+								<td><a href="javascript:;" class="btn btn-default btn-a" data-url="/pages/act/act?id=1">选择</a></td>
+							</tr> -->
+						</tbody>
+					</table>
+				</div>
+				<div class="box-body-search-not">抱歉！未查询到与“ <span></span> ”相关的跳转小程序连接，请更换关键字后重试。</div>
+			</div>
+
+			<!-- 单页面 -->
+			<div class="layui-tab-item box-adact">
+				<div class="layui-form-item">
+					<div class="input-group">
+						<input type="text" class="layui-input" name="" id="input-search-adact" placeholder="请输入单面标题">
+						<span class="input-group-btn">
+							<a href="javascript:;" class="btn btn-default" id="btn-search-adact">搜索</a>
+						</span>
+					</div>
+				</div>
+				<div class="layui-form box-body-search">
+					<table class="layui-table">
+						<colgroup>
+							<col>
+							<col width="60">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>模块</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody class="box-tbody">
+							<!-- <tr>
+								<td><span class="title">标题</span></td>
+								<td><a href="javascript:;" class="btn btn-default btn-a" data-url="/pages/act/act?id=1">选择</a></td>
+							</tr> -->
+						</tbody>
+					</table>
+				</div>
+				<div class="box-body-search-not">抱歉！未查询到与“ <span></span> ”相关的单页面，请更换关键字后重试。</div>
+			</div>
+
+			<!-- 课程 -->
+			<div class="layui-tab-item box-course-list">
+
+				<div class="layui-form-item">
+					<div class="input-group">
+						<input type="text" class="layui-input" name="" id="input-course-list-search" placeholder="请输入官网模块文章标题">
+						<span class="input-group-btn">
+							<a href="javascript:;" class="btn btn-default" id="btn-course-list">搜索</a>
+						</span>
+					</div>
+				</div>
+				<div class="layui-form box-body-search">
+					<table class="layui-table">
+						<colgroup>
+							<col>
+							<col width="60">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>模块</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody class="box-tbody">
+							<!-- <tr>
+								<td><span class="title">标题</span></td>
+								<td><a href="javascript:;" class="btn btn-default btn-a" data-url="/pages/act/act?id=1">选择</a></td>
+							</tr> -->
+						</tbody>
+					</table>
+				</div>
+				<div class="box-body-search-not">抱歉！未查询到与“ <span></span> ”相关的官网文章，请更换关键字后重试。</div>
+			</div>
+
+			<!-- 视频课程 -->
+			<div class="layui-tab-item box-video-course">
+
+				<div class="layui-form-item">
+					<div class="input-group">
+						<input type="text" class="layui-input" name="" id="input-video-course" placeholder="请输入视频课程标题">
+						<span class="input-group-btn">
+							<a href="javascript:;" class="btn btn-default" id="btn-video-course">搜索</a>
+						</span>
+					</div>
+				</div>
+				<div class="layui-form box-body-search">
+					<table class="layui-table">
+						<colgroup>
+							<col>
+							<col width="60">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>模块</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody class="box-tbody">
+							<!-- <tr>
+								<td><span class="title">标题</span></td>
+								<td><a href="javascript:;" class="btn btn-default btn-a" data-url="/pages/act/act?id=1">选择</a></td>
+							</tr> -->
+						</tbody>
+					</table>
+				</div>
+				<div class="box-body-search-not">抱歉！未查询到与“ <span></span> ”相关的视频课程，请更换关键字后重试。</div>
+			</div>
+
+			<!-- 视频分类 -->
+			<div class="layui-tab-item box-video-category">
+
+				<div class="layui-form-item">
+					<div class="input-group">
+						<input type="text" class="layui-input" name="" id="input-video-category" placeholder="请输入视频分类标题">
+						<span class="input-group-btn">
+							<a href="javascript:;" class="btn btn-default" id="btn-search-video-category">搜索</a>
+						</span>
+					</div>
+				</div>
+				<div class="layui-form box-body-search">
+					<table class="layui-table">
+						<colgroup>
+							<col>
+							<col width="60">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>模块</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody class="box-tbody">
+							<!-- <tr>
+								<td><span class="title">官网列表</span></td>
+								<td><a href="javascript:;" class="btn btn-default btn-a" data-url="^articles">选择</a></td>
+							</tr> -->
+						</tbody>
+					</table>
+				</div>
+				<div class="box-body-search-not">抱歉！未查询到与“ <span></span> ”相关的视频分类，请更换关键字后重试。</div>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- 备用克隆 -->
+	<div class="div-clone">
+		<table>
+			<tbody>
+				<tr class="item">
+					<td><span class="title">标题</span></td>
+					<td><a href="javascript:;" class="btn btn-default btn-a" data-param="" data-url="" data-title="">选择</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<script>
+		$(function () {
+			// 跳转小程序
+			$(document).on('click', '#btn-search-wxapp', function () {
+				var $obj = $(this);
+				let $url = "{php echo webUrl('',['do'=>'system/dialoglink','op'=>'search_wxapp'])}";
+				let $input = $('#input-search-wxapp').val();
+
+				// if ($input == null || $input == undefined || $input == '') {
+				//     return false;
+				// }
+				// $obj.html('正在加载...');
+				$('.box-wxapp .box-body-search-not span').text($input);
+
+				$.ajax({
+					type: "POST",
+					url: $url,
+					dataType: 'json',
+					data: {
+						keyword: $input
+					},
+					success: function (rs) {
+
+						if (rs && rs.code.toString() === '0') {
+							$('.box-wxapp .box-body-search').show();
+							$('.box-wxapp .box-body-search-not').hide();
+
+							$('.box-wxapp .box-tbody').empty();
+
+							var $ghost;
+							$.each(rs.data, function (i, e) {
+								$ghost = $('.div-clone .item').clone(true);
+								$ghost.find('.title').text(e.title);
+								$ghost.find('.btn-a').data('url', ':toPresetWxapp(' + e.id + ')');
+
+								$('.box-wxapp .box-tbody').append($ghost);
+							});
+
+							$obj.attr("disabled", false);
+						} else if (rs && rs.code.toString() === '2') {
+							$('.box-wxapp .box-body-search').hide();
+							$('.box-wxapp .box-body-search-not').show();
+						} else {
+							layer.msg('保存异常，请与管理员联系！', {
+								offset: '20%',
+							});
+						}
+					},
+					error: function () {
+						layer.msg('保存过程发生错误，请与管理员联系！', {
+							offset: '20%',
+						});
+					}
+				});
+			});
+
+			// 单页面
+			$(document).on('click', '#btn-search-adact', function () {
+				let $obj = $(this);
+				let $url = "{php echo webUrl('',['do'=>'system/dialoglink','op'=>'search_adact'])}";
+				let $input = $('#input-search-adact').val();
+
+				$('.box-adact .box-body-search-not span').text($input);
+
+				$.ajax({
+					type: "POST",
+					url: $url,
+					dataType: 'json',
+					data: {
+						keyword: $input
+					},
+					success: function (rs) {
+
+						if (rs && rs.code.toString() === '0') {
+							$('.box-adact .box-body-search').show();
+							$('.box-adact .box-body-search-not').hide();
+
+							$('.box-adact .box-tbody').empty();
+
+							var $ghost;
+							$.each(rs.data, function (i, e) {
+								$ghost = $('.div-clone .item').clone(true);
+								$ghost.find('.title').text(e.title);
+								$ghost.find('.btn-a').data('url', '^article?type=page&id=' + e.id);
+
+								$('.box-adact .box-tbody').append($ghost);
+							});
+
+							$obj.attr("disabled", false);
+						} else if (rs && rs.code.toString() === '2') {
+							$('.box-adact .box-body-search').hide();
+							$('.box-adact .box-body-search-not').show();
+						} else {
+							layer.msg('保存异常，请与管理员联系！', {
+								offset: '20%',
+							});
+						}
+					},
+					error: function () {
+						layer.msg('保存过程发生错误，请与管理员联系！', {
+							offset: '20%',
+						});
+					}
+				});
+			});
+
+			// 课程体系
+			$(document).on('click', '#btn-search-course-sys', function () {
+				let $obj = $(this);
+				let $url = "{php echo webUrl('',['do'=>'system/dialoglink','op'=>'search_course_sys'])}";
+				let $input = $('#input-course-sys').val();
+
+				$('.box-course-sys .box-body-search-not span').text($input);
+
+				$.ajax({
+					type: "POST",
+					url: $url,
+					dataType: 'json',
+					data: {
+						keyword: $input
+					},
+					success: function (rs) {
+
+						if (rs && rs.code.toString() === '0') {
+							$('.box-course-sys .box-body-search').show();
+							$('.box-course-sys .box-body-search-not').hide();
+
+							$('.box-course-sys .box-tbody').empty();
+
+							// 默认列表
+							// $ghost = $('.div-clone .item').clone(true);
+							// $ghost.find('.title').text('官网列表');
+							// $ghost.find('.btn-a').data('url', '^articles');
+							// $('.box-course-sys .box-tbody').append($ghost);
+
+							var $ghost;
+							$.each(rs.data, function (i, e) {
+								$ghost = $('.div-clone .item').clone(true);
+								$ghost.find('.title').text(e.name);
+								$ghost.find('.btn-a').data('url', '^articles?type=' + e.id);
+
+								$('.box-course-sys .box-tbody').append($ghost);
+							});
+
+							$obj.attr("disabled", false);
+						} else if (rs && rs.code.toString() === '2') {
+							$('.box-course-sys .box-body-search').hide();
+							$('.box-course-sys .box-body-search-not').show();
+						} else {
+							layer.msg('保存异常，请与管理员联系！', {
+								offset: '20%',
+							});
+						}
+					},
+					error: function () {
+						layer.msg('保存过程发生错误，请与管理员联系！', {
+							offset: '20%',
+						});
+					}
+				});
+			});
+
+			// 课程列表
+			$(document).on('click', '#btn-course-list', function () {
+				let $obj = $(this);
+				let $url = "{php echo webUrl('',['do'=>'system/dialoglink','op'=>'search_course_list'])}";
+				let $input = $('#input-course-list-search').val();
+
+				$('.box-course-list .box-body-search-not span').text($input);
+
+				$.ajax({
+					type: "POST",
+					url: $url,
+					dataType: 'json',
+					data: {
+						keyword: $input
+					},
+					success: function (rs) {
+
+						if (rs && rs.code.toString() === '0') {
+							$('.box-course-list .box-body-search').show();
+							$('.box-course-list .box-body-search-not').hide();
+
+							$('.box-course-list .box-tbody').empty();
+
+							var $ghost;
+							$.each(rs.data, function (i, e) {
+								$ghost = $('.div-clone .item').clone(true);
+								$ghost.find('.title').text(e.name);
+								$ghost.find('.btn-a').data('url', '^course?id=' + e.id);
+
+								$('.box-course-list .box-tbody').append($ghost);
+							});
+
+							$obj.attr("disabled", false);
+						} else if (rs && rs.code.toString() === '2') {
+							$('.box-course-list .box-body-search').hide();
+							$('.box-course-list .box-body-search-not').show();
+						} else {
+							layer.msg('保存异常，请与管理员联系！', {
+								offset: '20%',
+							});
+						}
+					},
+					error: function () {
+						layer.msg('保存过程发生错误，请与管理员联系！', {
+							offset: '20%',
+						});
+					}
+				});
+			});
+
+			// 视频分类
+			$(document).on('click', '#btn-search-video-category', function () {
+				let $obj = $(this);
+				let $url = "{php echo webUrl('',['do'=>'system/dialoglink','op'=>'search_video_category'])}";
+				let $input = $('#input-video-category').val();
+
+				$('.box-video-category .box-body-search-not span').text($input);
+
+				$.ajax({
+					type: "POST",
+					url: $url,
+					dataType: 'json',
+					data: {
+						keyword: $input
+					},
+					success: function (rs) {
+
+						if (rs && rs.code.toString() === '0') {
+							$('.box-video-category .box-body-search').show();
+							$('.box-video-category .box-body-search-not').hide();
+
+							$('.box-video-category .box-tbody').empty();
+
+							var $ghost;
+							$.each(rs.data, function (i, e) {
+								$ghost = $('.div-clone .item').clone(true);
+								$ghost.find('.title').text(e.name);
+								$ghost.find('.btn-a').data('url', '^articles?type=' + e.id);
+
+								$('.box-video-category .box-tbody').append($ghost);
+							});
+
+							$obj.attr("disabled", false);
+						} else if (rs && rs.code.toString() === '2') {
+							$('.box-video-category .box-body-search').hide();
+							$('.box-video-category .box-body-search-not').show();
+						} else {
+							layer.msg('保存异常，请与管理员联系！', {
+								offset: '20%',
+							});
+						}
+					},
+					error: function () {
+						layer.msg('保存过程发生错误，请与管理员联系！', {
+							offset: '20%',
+						});
+					}
+				});
+			});
+
+			// 视频课程
+			$(document).on('click', '#btn-video-course', function () {
+				let $obj = $(this);
+				let $url = "{php echo webUrl('',['do'=>'system/dialoglink','op'=>'search_video_course'])}";
+				let $input = $('#input-video-course').val();
+
+				$('.box-video-course .box-body-search-not span').text($input);
+
+				$.ajax({
+					type: "POST",
+					url: $url,
+					dataType: 'json',
+					data: {
+						keyword: $input
+					},
+					success: function (rs) {
+						if (rs && rs.code.toString() === '0') {
+							$('.box-video-course .box-body-search').show();
+							$('.box-video-course .box-body-search-not').hide();
+
+							$('.box-video-course .box-tbody').empty();
+
+							var $ghost;
+							$.each(rs.data, function (i, e) {
+								$ghost = $('.div-clone .item').clone(true);
+								$ghost.find('.title').text(e.name);
+								$ghost.find('.btn-a').data('url', '^vc?id=' + e.id);
+
+								$('.box-video-course .box-tbody').append($ghost);
+							});
+
+							$obj.attr("disabled", false);
+						} else if (rs && rs.code.toString() === '2') {
+							$('.box-video-course .box-body-search').hide();
+							$('.box-video-course .box-body-search-not').show();
+						} else {
+							layer.msg('保存异常，请与管理员联系！', {
+								offset: '20%',
+							});
+						}
+					},
+					error: function () {
+						layer.msg('保存过程发生错误，请与管理员联系！', {
+							offset: '20%',
+						});
+					}
+				});
+			});
+
+
+
+			// 切换标签时读取数据
+			$(document).on('click', '.box-tab-my li', function () {
+				let $obj = $(this);
+				let $op = $obj.data('op');
+
+				if ($op == 'box-sys') {
+
+				// 跳转小程序
+				} else if ($op == 'box-wxapp') {
+					$('#btn-search-wxapp').click();
+
+				// 单页面
+				} else if ($op == 'box-adact') {
+					$('#btn-search-adact').click();
+
+				// 课程列表
+				} else if ($op == 'box-course-list') {
+					$('#btn-course-list').click();
+
+				// 视频分类
+				} else if ($op == 'box-video-category') {
+					$('#btn-search-video-category').click();
+
+				// 视频课程
+				} else if ($op == 'box-video-course') {
+					$('#btn-video-course').click();
+
+				}
+
+			});
+
+			$(document).on('click', '.btn-a', function () {
+				let $url = $(this).data('url');
+				let $title = $(this).data('title');
+				let $param = $(this).data('param');
+				if($.isFunction(myShowLinkComplete)){
+					myShowLinkComplete($url, $title, $param);
+				}
+			});
+		});
+	</script>
+</div>
+</body>
+</html>

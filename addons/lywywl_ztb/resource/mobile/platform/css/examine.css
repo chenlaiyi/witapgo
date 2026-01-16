@@ -1,0 +1,29 @@
+@charset "utf-8";
+.bgSuccess{ background:#5CB85C}
+.bgDanger{ background:#D9534F}
+.bgDefault{ background:#337AB7}
+.case_item{ background-color:#fff; border-top:1px solid #eee; border-bottom:1px solid #eee; margin-bottom:0.32rem;}
+.case_item .case_info{padding:0.2rem 0.2rem 0.2rem 2.5rem; min-height:2rem; border-bottom:1px solid #eee; position:relative;}
+.case_item .case_info img{width: 2rem;height: 2rem;position:absolute;left:0.2rem;top:0.2rem; border-radius: 0.13rem }
+.case_item .case_info h4{ font-weight:normal; font-size:0.37333rem; line-height:0.66666rem;}
+.case_item .case_count{height:1.13rem; line-height:1.13rem;}
+.case_item .case_count ul{ font-size:0;}
+.case_item .case_count ul li{ display:inline-block; width:50%; height:100%; border-right:1px solid #eee; box-sizing:border-box; font-size:0.34666rem; text-align:center; color:#999; overflow:hidden;}
+.case_item .case_count ul li:last-child{ border-right:0;}
+.content{ background:#fff; border-radius:0.32rem; margin:0px 0.32rem;  top:50%; position:fixed; z-index: 101; width: 93.6%}
+.content h2{ background:#f2f2f2;border-radius:0.32rem 0.32rem 0 0; height:1.173rem; line-height:1.173rem;}
+.content img{ width:4.37rem; height:4.37rem; display:inline-block; padding:0.73rem 0 0.53rem;}
+.description textarea{height:2.47rem; overflow-y: scroll; width: 100%; border:0; background: none; background: #f5f5f5; font-size:0.373rem; padding: 0.13rem }
+.operate_centre a{ width:28.3%; display:block; float:left;box-sizing: border-box; margin:0.16rem 2.5%; text-align:center; border-radius: 0.43338rem;font-size: 0.4rem;padding: 0.16rem 2%; color: #fff}
+.bor_r{ border-right:1px solid #e2e2e2;}
+.case_count li a{ display: block}
+.case_count li.look  span{ background:url(../images/lookIcon.png) no-repeat left  0.35rem; padding-left:0.667rem;   background-size: 0.4rem; display:inline-block;vertical-align:middle;}
+.case_count li.auditing  span{ background:url(../images/auditingIcon.png) no-repeat left  0.35rem; padding-left:0.667rem;   background-size: 0.4rem; display:inline-block;vertical-align:middle;}
+
+.borR5{ border-radius:0.06rem;}
+
+.schArea{background: #fee002; padding: 0.32rem; box-sizing: border-box; z-index: 1; }
+.schArea .schBox{ height:0.8rem; padding: 0.13rem; background:#fff; color: #333; font-size: 0.37333333333333335rem; border-radius: 0.6666666666666666rem;  }
+.schArea .schBox input{color: #333; font-size:0.32rem}
+.schArea .schBox input.schBox{border: 0; background: none; width:79%; float: left; height:100%; line-height:100%; padding: 0;padding-left: 3%; }
+.schArea .schBox input.schBtn{border: 0; background: none; color: #fff; box-sizing: border-box; width: 15%; float: right; background: url(../images/sch.png) no-repeat center 0.18rem; background-size: 0.4rem 0.4rem; height:100%; padding: 0;}

@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+<link href="{MODULE_URL}resource/mobile/plugin/css/common.min.css?v=20170802" rel="stylesheet">
+<style type="text/css">
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {position: static}
+    /**定义编辑器冲突样式**/
+    .Eleditor-area{min-height: 200px;}
+    .Eleditor-controller{z-index:2;}
+    .Eleditor-controller .webuploader-pick{color:#000;}
+    .Eleditor-controller ul li{padding:0 0 0 10%;border-bottom: 1px solid #ddd !important;}
+    .Eleditor-textEditor{z-index:3;}
+    #contentEditor_miaoshu img,#contentEditor_shop img,#contentEditor_rule img,#contentEditor_goods img,#contentEditor5 img{  width: 100%;  }
+    .Eleditor-controller{  z-index: 30;  }
+    .Eleditor-textStyle .Eleditor-textStyle-item-upImg{  display: none;  }
+</style>
+<script src="{__MOBILE_STORE_JS__}/Eleditor.min.js"></script>
+<script src="{__MOBILE_STORE_JS__}/webuploader.min.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/util.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/require.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/lib/mui.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/common.js"></script>
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=F51571495f717ff1194de02366bb8da9&s=1"></script>
+<body class="bgf2">
+<form action="{php echo $this->createMobileUrl('store.obj_fish_store',array('act'=>'modify','aid' => $aid));}" id="form_content" method="post">
+    <section class="bgfff pt20">
+        <ul class="publish">
+            <li class="float">
+                <p>商家名称</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" datatype="*" id="name" maxlength="100"
+                           name="model[name]" nullmsg="请输入活动商家名称！" placeholder="请输入活动商家名称"
+                           type="text" value="{$model['name']}"/>
+                </section>
+            </li>
+            <li>
+                <p>商家LOGO<span></span></p>
+                <section class="form_con clearfix">
+                    <div class="mui-input-cell">
+                        {php echo tpl_app_form_field_image('logo_url',$model['logo_url'] ,false);}
+                    </div>
+                </section>
+                <section class="font26 c9 lh15">
+                    <strong>提示：</strong>  图标建议尺寸200x200像素，将展示在活动首页和商家宣传页顶部
+                </section>
+            </li>
+            <li class="float">
+                <p>联系电话</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" datatype="*" id="tel" maxlength="20"
+                           name="model[tel]" nullmsg="请输入商家联系电话！" placeholder="请输入商家联系电话"
+                           type="tel" value="{$model['tel']}"/>
+                </section>
+            </li>
+            <li class="float">
+                <p>隶属行业</p>
+                <section class="form_con selectBox">
+                    <select id="industry_id" name="model[industry_id]" class="font28">
+                        <option value="">请选择</option>
+                        {loop $industryList $industry}
+                        <option value="{$industry['id']}" {if $industry['id'] == $model['industry_id']}selected="selected"{/if} >{$industry['name']}</option>
+                        {/loop}
+                    </select>
+                </section>
+                <section class="font26 c9 lh15">
+                    <strong>提示：</strong> 请选择商家隶属行业 便于活动中根据行业分类展示商家信息。
+                </section>
+            </li>
+            <li class="float">
+                <p>奖品价值</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" datatype="*" id="money" maxlength="10"
+                           name="model[money]" nullmsg="请输入奖品价值！" placeholder="请输入奖品价值" onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                           onblur = "this.value=FloatMoney(this.value)"
+                           step="0.01" min="0.01"
+                           type="number" value="{$model['money']}"/>
+                </section>
+            </li>
+            <li class="float">
+                <p>奖品内容</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" datatype="*" id="prize" maxlength="200"
+                           name="model[prize]" placeholder="请输入提供奖品内容" nullmsg="请输入提供奖品内容！"
+                           type="text" value="{$model['prize']}"/>
+                </section>
+                <section class="font26 c9 lh15">
+                    <strong>提示：</strong> 请输入提供奖品内容 例如：必胜客300元以下美食任意点 两人免单。
+                </section>
+            </li>
+            <li>
+                <p>商家介绍/使用规则<span></span></p>
+                <section class="form_con clearfix">
+                    <section class="txt_item">
+                        <textarea rows = "3" name="model[content]" id="content" class="form_area" style="display: none;" placeholder = "请输入商家介绍/使用规则" >{$model['content']}</textarea>
+                        <div id="contentEditor"></div>
+                    </section>
+                </section>
+            </li>
+            <li>
+                <p>环境展示<span></span></p>
+                <section class="form_con clearfix">
+                    <div class="mui-input-cell">
+                        {php echo tpl_app_form_field_image('banner_url',$model['banner_url'],true);}
+                    </div>
+                </section>
+                <section class="font26 c9 lh15">
+                    <strong>提示：</strong> 请上传商家门店实景图片 建议大小750*300像素
+                </section>
+            </li>
+            <li id="StoreList">
+                <p class="mb24">商家门店<button class="but_store fr pt5 bgGreen" id="addmapbtn" type="button">添加门店</button></p>
+                {if !empty($model['id'])}
+                {loop $model['store_map_list'] $index $item}
+                <section class="form_con clearfix addmap" style="margin-top: 0.32rem;">
+                    <section class="txt_item">
+                        <input type="text"  name="model[store_map_list][{$index}][name]"  placeholder="请输入门店名称" value="{$item['name']}"  class="form_txt">
+                    </section>
+                    <section class="clearfix mb24">
+                        <section class="coordinate_w33 txt_item">
+                            <input type="text" name="model[store_map_list][{$index}][lng]" value="{$item['lng']}" placeholder="地理经度" class="form_txt">
+                        </section>
+                        <section class="coordinate_w33 txt_item">
+                            <input type="text" name="model[store_map_list][{$index}][lat]" value="{$item['lat']}" placeholder="地理纬度" class="form_txt">
+                        </section>
+                        <section class="select_coordinate clickBtn">
+                            <button class="but_store fr coordinate " type="button">选择坐标</button>
+                        </section>
+                    </section>
+                    <section class="txt_item">
+                        <input type="text" name="model[store_map_list][{$index}][address]" value="{$item['address']}" placeholder="请输入详情地址" class="form_txt">
+                    </section>
+                    <section class="clearfix">
+                        <section class="txt_item add_w fl">
+                            <input type="text" name="model[store_map_list][{$index}][tel]" value="{$item['tel']}" placeholder="请输入电话" class="form_txt">
+                        </section>
+                        <section class="select_coordinate ">
+                            <button class="but_store fr bgRed delmapitem">删除门店</button>
+                        </section>
+                    </section>
+                </section>
+                {/loop}
+                {else}
+                <section class="form_con clearfix addmap" style="margin-top: 0.32rem;">
+                    <section class="txt_item">
+                        <input type="text"  name="model[store_map_list][0][name]"  placeholder="请输入门店名称" value=""  class="form_txt">
+                    </section>
+                    <section class="clearfix mb24">
+                        <section class="coordinate_w33 txt_item">
+                            <input type="text" name="model[store_map_list][0][lng]" value="" placeholder="地理经度" class="form_txt">
+                        </section>
+                        <section class="coordinate_w33 txt_item">
+                            <input type="text" name="model[store_map_list][0][lat]" value="" placeholder="地理纬度" class="form_txt">
+                        </section>
+                        <section class="select_coordinate clickBtn">
+                            <button class="but_store fr coordinate " type="button">选择坐标</button>
+                        </section>
+                    </section>
+                    <section class="txt_item">
+                        <input type="text" name="model[store_map_list][0][address]" value="" placeholder="请输入详情地址" class="form_txt">
+                    </section>
+                    <section class="clearfix">
+                        <section class="txt_item add_w fl">
+                            <input type="text" name="model[store_map_list][0][tel]" value="" placeholder="请输入电话" class="form_txt">
+                        </section>
+                        <section class="select_coordinate ">
+                            <button class="but_store fr bgRed delmapitem">删除门店</button>
+                        </section>
+                    </section>
+                </section>
+                {/if}
+            </li>
+            <li>
+                <p>核销员OPENID<span></span></p>
+                <section class="form_con clearfix">
+                    <section class="txt_item">
+                        <textarea style="width:100%" rows = "3" name="model[openid]" datatype="*" id="openid" class="form_area" placeholder = "请输入核销人员的OPENID 多个人员请用（,）分割"  nullmsg="请输入核销人员的OPENID！" >{$model['openid']}</textarea>
+                    </section>
+                </section>
+                <section class="font26 c9 lh15">
+                    <strong>提示：</strong> 多个人员请用","分割,例如："oIJyhjs1VVYa6enCPsvHebYa79aU,ogaIJ0y00qDCbILPw8Kiv-gDeDYk"。
+                </section>
+                <section class=" clearfix"><a href="javascript:;" class="c9 fr link clickBtn" id="showEwmDialog">获取OPENID</a><a href="javascript:;" class="c9 fr link clickBtn" id="showAdminsEwmDialog">管理入口</a></section>
+            </li>
+            <li class="float">
+                <p>商家排序</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt"  type="number" datatype="n" id="sort" maxlength="10" name="model[sort]" value="{$model['sort']}" onkeyup="if(isNaN(this.value)) this.value='0';" nullmsg="信息排序必须填写！" placeholder="请输入数字 数字越小越靠前">
+                </section>
+                <section class="font26 c9 lh15">
+                    <strong>提示：</strong> 请输入数字 数字越小越靠前。
+                </section>
+            </li>
+            <li>
+                <p>商家状态</p>
+                <section class="form_con rel">
+                    <section class="font26 c9 form_tips">选择信息开启/关闭状态，关闭后该信息将被禁用</section>
+                        <span class="switch {if $model['status']==1}switch_on{else}switch_off{/if}">
+                    <i class="slider"></i>
+                    <input type="hidden" name="model[status]" value="{$model['status']}"/>
+                    </span>
+                </section>
+            </li>
+        </ul>
+    </section>
+    <section class="h24"></section>
+    <section class="buttonBox">
+        <section class="buttonFloat clickBtn">
+            <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+            <input type="hidden" name="token" value="{$_W['token']}"/>
+            <input type="hidden" name="submit" value="submit"/>
+            <a href="{php echo $this->createMobileUrl('store.obj_fish_store',array('act'=>'index','aid'=>$aid))}" class="db font32" style="width: 50%;    float: left;   color: #fff;   border-radius: 0.6rem 0 0 0.6rem;    background: #f92f4a;">返回列表</a>
+            <button type="submit" id="SubmitBtn" style="width: 50%;   float: left;    background: #FFD112;    color: #0e0e0e;border-radius: 0 0.6rem 0.6rem 0;">确认提交</button>
+        </section>
+    </section>
+</form>
+<section class="mask" id="EwmDialog">
+    <section class="content">
+        <h2 class="font32 fn">扫码获取OPENID</h2>
+        <img src="{php echo $this->createMobileUrl('store.obj_fish_store', array('act' => 'openidQrPreview','aid' => $aid));}" />
+        <p class="font28 c6">请用商家核销员的微信扫描二维码</p>
+    </section>
+</section>
+<section class="mask" id="AdminsEwmDialog">
+    <section class="content">
+        <h2 class="font32 fn">核销员管理入口</h2>
+        <img src="{php echo $this->createMobileUrl('store.obj_fish_store', array('act' => 'adminsQrPreview','aid' => $aid));}"/>
+        <p class="font28 c6">请用商家核销员的微信扫描二维码</p>
+    </section>
+</section>
+<script>
+    // 实例化 编辑器
+    var artEditor = new Eleditor({
+        el: "#contentEditor",
+        upload:{
+            server: "{php echo $this->createMobileUrl('file',array('act'=>'upload','type'=>'image','thumb'=>0));}",
+            formData: {
+                'module':"umiacp_bargain",
+            },
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png,webp',
+                mimeTypes: 'image/*'
+            },
+            compress: false,
+            fileSizeLimit: 2
+        },
+    });
+    // 初始化编辑器内容
+    artEditor.append($("#content").val());
+</script>
+<script id="maptpl" type="text/html">
+    <section class="form_con clearfix addmap" style="margin-top: 0.32rem;">
+        <section class="txt_item">
+            <input type="text"  name="model[store_map_list][<%= count %>][name]"  placeholder="请输入门店名称" value=""  class="form_txt">
+        </section>
+        <section class="clearfix mb24">
+            <section class="coordinate_w33 txt_item">
+                <input type="text" name="model[store_map_list][<%= count %>][lng]" value="" placeholder="地理经度" class="form_txt">
+            </section>
+            <section class="coordinate_w33 txt_item">
+                <input type="text" name="model[store_map_list][<%= count %>][lat]" value="" placeholder="地理纬度" class="form_txt">
+            </section>
+            <section class="select_coordinate clickBtn">
+                <button class="but_store fr coordinate " type="button">选择坐标</button>
+            </section>
+        </section>
+        <section class="txt_item">
+            <input type="text" name="model[store_map_list][<%= count %>][address]" value="" placeholder="请输入详情地址" class="form_txt">
+        </section>
+        <section class="clearfix">
+            <section class="txt_item add_w fl">
+                <input type="text" name="model[store_map_list][<%= count %>][tel]" value="" placeholder="请输入电话" class="form_txt">
+            </section>
+            <section class="select_coordinate ">
+                <button class="but_store fr bgRed delmapitem">删除门店</button>
+            </section>
+        </section>
+    </section>
+</script>
+<script id="bdmaptpl" type="text/html">
+    <section class="bgfff">
+        <section style=" height:1.6rem;">
+            <section class="pd24 map_search clearfix">
+                <section class="txt_item w80 fl"> <input  id="txtSearchMap" type="text" placeholder="请输入地址来直接查找相关位置" class="form_txt"></section>
+                <section class="w20 fr"><button class="but_search"  id="btnSearchMap">搜索</button></section>
+            </section>
+        </section>
+        <!--这里是地图-->
+        <section class=" pd0_24 pd24" id="MapContact" style="width: 100%; box-sizing: border-box"></section>
+    </section>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeMap();">确定</a></section>
+</script>
+<script>
+    var selectlng = '';
+    var selectlat = '';
+    var mapBtn = '';
+
+    //开启多门店添加门店信息
+    $("#addmapbtn").click(function () {
+
+        var mapcount	= $(".addmap").length;
+        var obj = {};
+        obj.count = mapcount;
+        var html = template("maptpl",obj);
+        $("#StoreList").append(html);
+    });
+
+    //删除多门店信息
+    $(document).delegate(".delmapitem", "click", function() {
+        var list = $(this).parent().parent().parent().parent();
+        $(this).parent().parent().parent().remove();
+        list.children(".addmap").each(function (index) {
+            $(this).find(".form-control").each(function () {
+                var inputName = $(this).attr("name");
+                $(this).attr("name", inputName.replace(/\[([\d]+)\]/g, "[" + index + "]"));
+            });
+        });
+    });
+
+    $(function(){
+        var oMask = document.querySelector('#EwmDialog');
+        var oButton = document.querySelector('#showEwmDialog');
+        var oContent = document.querySelector('#EwmDialog .content');
+        var oMarginTop=-(parseInt(oContent.offsetHeight)/2);
+        oContent.style.marginTop=oMarginTop+'px';
+        oMask.onclick=function(){
+            this.style.visibility='hidden'
+        };
+        oButton.onclick	=function(){
+            oMask.style.visibility='visible'
+        };
+
+        var aMask = document.querySelector('#AdminsEwmDialog');
+        var aButton = document.querySelector('#showAdminsEwmDialog');
+        var aContent = document.querySelector('#AdminsEwmDialog .content');
+        var aMarginTop=-(parseInt(aContent.offsetHeight)/2);
+        aContent.style.marginTop=aMarginTop+'px';
+        aMask.onclick=function(){
+            this.style.visibility='hidden'
+        };
+        aButton.onclick	=function(){
+            aMask.style.visibility='visible'
+        };
+
+        require(['{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js'], function () {
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                                , style: 'bottom:0;'
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    //赋值编辑器内容
+                    $("#content").val(artEditor.getContent());
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if(data.status == 1){
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+
+                        setTimeout(function () {
+                            window.location.href = "{php echo $this->createMobileUrl('store.obj_fish_store',array('act'=>'index','aid' => $aid));}";
+                        }, 2000);
+
+                    }else{
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+        });
+
+        $(".switch").click(function(e) {
+            if($(this).hasClass("switch_on")){
+                $(this).removeClass("switch_on");
+                $(this).addClass("switch_off");
+                $(this).find("input").val(0);
+            }
+            else{
+                $(this).removeClass("switch_off");
+                $(this).addClass("switch_on");
+                $(this).find("input").val(1);
+            }
+        });
+
+        //地理位置拾取器
+        $('#StoreList').on('click','.coordinate',function(){
+            mapBtn = $(this);
+            var lng = parseFloat(mapBtn.parent().prev().prev().find(":text").val());
+            var lat = parseFloat(mapBtn.parent().prev().find(":text").val());
+
+            selectlng = lng;
+            selectlat = lat;
+
+            var html = template("bdmaptpl", []);
+            layer.open({
+                type: 1
+                ,content: html
+                ,anim: 'up'
+                ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+            });
+
+            var MapHeight = window.screen.height - $(".map_search").parent().height() - $(".buttonFloat").height();
+            var map = new BMap.Map("MapContact");
+            $("#MapContact").css('height', MapHeight+'px');
+            var localpoint;
+            if (isNaN(lng)) {
+                localpoint = new BMap.Point(116.403119, 39.912943);
+            } else {
+                localpoint = new BMap.Point(lng, lat);
+            }
+            map.centerAndZoom(localpoint, 13);
+            addMarker(localpoint);
+            map.addControl(new BMap.ScaleControl());
+            map.addControl(new BMap.OverviewMapControl());
+            map.addControl(new BMap.MapTypeControl());
+            map.enableScrollWheelZoom();
+            var opts = { type: BMAP_NAVIGATION_CONTROL_SMALL }
+            map.addControl(new BMap.NavigationControl(opts));
+
+            var xArr = [];//存放横坐标
+            var yArr = [];//存放纵坐标
+
+            map.addEventListener("touchstart", function (e) {
+                //手指触摸屏幕的时候清空两个数组
+                xArr.length = 0;
+                yArr.length = 0;
+            });
+
+            map.addEventListener("touchmove",function(e){
+                //如果滑动了屏幕，xArr和yArr将各存入两个坐标值，即始末坐标值
+                xArr.push(e.targetTouches[0].pageX);
+                yArr.push(e.targetTouches[0].pageY);
+            });
+
+            map.addEventListener("touchend", function (e) {
+                var far;
+                var flag = true;
+                //计算平移距离，区分滑动事件和点击事件
+                if((xArr.length > 1) && (yArr.length > 1)){
+                    far = (Math.abs(xArr[0]-xArr[1]))^2 + (Math.abs(yArr[0]-yArr[1]))^2;
+                    if(far > 0){
+                        flag = false;
+                    }
+                }
+                if(flag){
+                    var point = new BMap.Point(e.point.lng, e.point.lat);
+                    selectlng = e.point.lng;
+                    selectlat = e.point.lat;
+                    addMarker(point);
+                }
+            });
+
+            var loadCount = 1;
+            map.addEventListener("tilesloaded",function(){
+                if(loadCount == 1){
+                    map.setCenter(new BMap.Point(selectlng, selectlat));
+                }
+                loadCount = loadCount + 1;
+            });
+
+            function addMarker(point) {
+                var myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {
+                    anchor: new BMap.Size(10, 30),
+                    offset: new BMap.Size(10, 25),
+                    imageOffset: new BMap.Size(0, 0)
+                });
+                var marker = new BMap.Marker(point);
+                map.clearOverlays();
+                map.addOverlay(marker);
+            }
+
+            $(document).on("click", "#btnSearchMap", function(){
+                var LocalSearch = new BMap.LocalSearch(map, {
+                    renderOptions: { map: map }
+                });
+                LocalSearch.search($("#txtSearchMap").val());
+                LocalSearch.setSearchCompleteCallback(function () {
+                    var item = LocalSearch.getResults();
+                    selectlng = item.getPoi(0).point.lng;
+                    selectlat = item.getPoi(0).point.lat;
+                });
+            });
+
+            scroll.afterOpen();
+            //清空浏览器历史记录
+            window.history.pushState({title: "title",url:"#"}, "title", "#");
+            //监听浏览器后退事件
+            window.addEventListener("popstate",
+                function(e) {
+                    //后退关闭弹窗赋值
+                    closeMap(mapBtn);
+                }, false);
+        });
+    });
+
+    //关闭关闭弹窗
+    function closeMap(){
+        layer.closeAll();
+        scroll.beforeClose();
+        mapBtn.parent().prev().prev().find(":text").val(selectlng);
+        mapBtn.parent().prev().find(":text").val(selectlat);
+    }
+
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+</script>
+</body>
+</html>

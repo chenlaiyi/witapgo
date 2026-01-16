@@ -1,0 +1,201 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>服务记录</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+</head>
+<style>
+
+.layui-table-cell, .layui-table-tool-panel li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+.common-service {
+    position: relative;
+    overflow: hidden;
+}
+.common-service .main {
+    width: auto;
+    height: auto;
+    overflow: hidden;
+}
+.fl {
+    float: left;
+}
+.common-service .rt-txt .pay-list {
+    overflow: hidden;
+    padding: 0;
+}
+.common-service .rt-txt .pay-list li {
+    width: 134px;
+    height: 68px;
+    text-align: center;
+    line-height: 68px;
+    border-radius: 5px;
+    float: left;
+    margin-right: 20px;
+    color: #999;
+    border: 2px solid #E6EAEB;
+    cursor: pointer;
+    position: relative;
+}
+.common-service .rt-txt .pay-list li .year {
+    font-size: 18px;
+    padding: 12px 0 5px;
+}
+.common-service .rt-txt .pay-list li div {
+    line-height: 20px;
+}
+</style>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">饿了么订单</div>
+                <div class="layui-card-body">
+					<div class="demoTable" style="margin-bottom:10px;display: flex;">
+				
+			            <div class="layui-inline" >
+					      <label class="layui-form-label">时间范围</label>
+					      <div class="layui-input-inline">
+					        <input type="text" class="layui-input" id="test10" placeholder="{$starttime} - {$endtime}" readonly style="width: 300px;">
+					      </div>
+					    </div>
+			            <button class="layui-btn" style="margin-left:20px;" data-type="reload">搜索</button>
+
+					</div>
+					
+
+                    <table class="layui-hide" id="test-table-operate" lay-filter="test-table-operate"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '__PUBLIC__/static/layuiadmin/' 
+    }).extend({
+        index: 'lib/index' 
+        ,excel: '../layui/layui_exts/excel/excel',
+    }).use(['jquery','index', 'table', 'excel','laydate','form'], function(){
+        var $ = layui.$
+        	,table = layui.table
+            ,admin = layui.admin
+            ,excel = layui.excel
+            ,form = layui.form
+            ,laydate = layui.laydate;
+        	
+        var tip_index = 0;
+        
+        $('#test10').hover(function() {
+       	  var that = this;
+       	  tip_index  = layer.tips('订单查询结束时间，订单开始时间至订单结束时间，中间时间段日常要求不超过3个小时，但如618、双11、年货节等大促期间预估时间段不可超过20分钟，超过会提示错误，调用时请务必注意时间段的选择，以保证亲能正常调用！', that); 
+       	},function(){
+       		layer.close(tip_index);
+       	});
+
+            
+        laydate.render({
+            elem: '#test10'
+           	,range: true
+           	,trigger: 'click'
+   	    	,type: 'datetime'
+   	    	,format: 'yyyy/MM/d HH:mm:ss'
+          });
+        	
+
+        table.render({
+            elem: '#test-table-operate'
+            ,url:"{:siteUrl('admin/take/elm_order_list','','web')}"
+           	,cols: [[
+                 {field:'trade_parent_id', title: '订单ID', sort: true}
+                 ,{field:'seller_shop_title', title: '商家名称'}
+                 ,{field:'item_title', title: '商品标题'}
+                 ,{field:'pay_price', title: '支付金额', sort: true}
+                 ,{field:'pub_share_fee', title: '返佣金额', sort: true}
+                 ,{field:'tb_paid_time', title: '支付时间'}
+             ]]
+            ,page: true
+        });
+        
+        form.on('submit(demo1)', function(data){
+            var admin = layui.admin
+
+            $.ajax({
+                url:"{:siteUrl('admin/take/deliver_order','','web')}",
+                data:data.field,
+                type:"POST",
+                success: function(res){
+                	
+                	if(res.code == 1 ){
+                		layer.msg(res.msg,{icon: 1,time:2000},function(){
+                			window.location.href="{:siteUrl('admin/take/index','','web')}";
+                		});
+                	}else{
+                		layer.msg(res.msg,{icon: 2,time:3000},function(){
+                			window.location.href="{:siteUrl('admin/take/index','','web')}";
+                		});
+                	}
+                }
+            })
+            return false
+  
+        });
+        
+        
+        var $ = layui.$, active = {
+            getCheckData: function(){ 
+                var checkStatus = table.checkStatus('test-table-operate')
+                    ,data = checkStatus.data;
+                layer.alert(JSON.stringify(data));
+            }
+        };
+
+        $('.test-table-operate-btn .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        
+        var $ = layui.$, active = {
+             reload: function(){
+                 var demoReload = $('#test-table-demoReload');
+                 var status = $('#is_status');
+                 var con_time = $('#test10');
+                 table.reload('test-table-operate', {
+                   page: {
+                     curr: 1 
+                   }
+                   ,where: {
+                     'realname': demoReload.val(),
+                     'is_status': status.val(),
+                     'con_time': con_time.val()
+                   }
+                 });
+               }
+         };
+
+         $('.demoTable .layui-btn').on('click', function(){
+             var type = $(this).data('type');
+             active[type] ? active[type].call(this) : '';
+         });
+
+    });
+</script>
+</body>
+<div class="layui-footer" style="margin-top:20px;display: flex;justify-content: center;align-items: flex-end;">
+	{include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}
+</div>
+</html>

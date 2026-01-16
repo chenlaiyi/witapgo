@@ -1,0 +1,88 @@
+/*定义主题色*/
+:root {
+	--color-blue:#841EEF;
+    --color-blue-dark: #9831F2;
+	--color-blue-900:#7A23E1;    
+	--color-blue-800:#CD72F8;    
+	--color-blue-700:#9939e5;  
+	--color-blue-600:#b410a5;
+	--color-blue-500:#9832e7;
+	--color-blue-400:#686AF1;
+	--color-blue-200:#e767fe;
+	--color-blue-100:#fda606;
+	/*--color-blue-100:#8921DB;*/
+	--color-blue-rgba-50:rgba(132,30,239,0.87);
+	--color-blue-rgba-0:rgba(132,30,239,0);
+	--color-blue-500-rgba-50:rgba(152,50,231,0.5);
+	--color-blue-600-rgba-50:rgba(180,16,165,0.87);
+	--color-blue-600-rgba-0:rgba(180,16,165,0);
+	--color-blue-100-rgba-0:rgba(49,90,208,0);
+	--color-blue-700-rgba-0:rgba(14,55,137,0); 
+	--color-green: #FED915;  
+	--color-green-900:#d7a6fe;
+	--color-green-900-rgba-0:rgba(215,166,254,0); 
+}
+body{ color: #fff; line-height: 1.5;background: linear-gradient(90deg,var(--color-blue-dark),var(--color-blue-400))}
+
+
+/* 重定义 */
+.headCenter h1::before,.headCenter h1::after{ border-top: 4.5rem solid var(--color-blue-900); }
+.title{ height:3.125rem; text-align: center; position: relative; line-height:3.125rem ;background: linear-gradient(90deg,var(--color-blue-500-rgba-50),var(--color-blue-600-rgba-50))}
+.title:after{ background: linear-gradient(to right, var(--color-green-900-rgba-0),var(--color-green-900),var(--color-green-900-rgba-0)); left:0; bottom: 0; width: 100%;}
+.title span em{background:linear-gradient(to bottom, var(--color-green),var(--color-blue-100))}
+.sourceRanking th { background: var(--color-blue-500-rgba-50);}
+
+/*计时器颜色*/
+.digit{
+	position:absolute;
+	display:block;
+	width:1em;
+	background-color:var(--color-blue-900);
+	border-radius:0.2em;
+	text-align:center;
+	color:#fff;
+	letter-spacing:-1px;
+}
+
+.digit.static{
+	box-shadow:1px 1px 1px rgba(4, 4, 4, 0.35);
+
+	background-image: linear-gradient(bottom, #3A3A3A 50%, var(--color-blue-900) 50%);
+	background-image: -o-linear-gradient(bottom, #3A3A3A 50%, var(--color-blue-900) 50%);
+	background-image: -moz-linear-gradient(bottom, #3A3A3A 50%, var(--color-blue-900) 50%);
+	background-image: -webkit-linear-gradient(bottom, #3A3A3A 50%, var(--color-blue-900) 50%);
+	background-image: -ms-linear-gradient(bottom, #3A3A3A 50%, var(--color-blue-900) 50%);
+
+	background-image: -webkit-gradient(
+			linear,
+			left bottom,
+			left top,
+			color-stop(0.5, var(--color-blue-900)),
+			color-stop(0.5, var(--color-blue-900))
+	);
+}
+
+.countDiv{
+	display:inline-block;
+	width:16px;
+	height:1.6em;
+	position:relative;
+}
+
+.countDiv:before,
+.countDiv:after{
+	position:absolute;
+	width:5px;
+	height:5px;
+	background-color:#fff;
+	border-radius:50%;
+	left:50%;
+	margin-left:-3px;
+	top:0.5em;
+	box-shadow:1px 1px 1px rgba(4, 4, 4, 0.5);
+	content:'';
+}
+
+.countDiv:after{
+	top:0.9em;
+}

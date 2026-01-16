@@ -1,0 +1,178 @@
+{template 'public/header'}
+{template 'public/comhead'}
+<div class="panel panel-info">
+	<div class="panel-body">
+		<ul class="nav nav-tabs">
+			<li {if $_GPC['do']=='special'}class="active"{/if}><a href="{php echo $this->createWebUrl('special', array('op' => 'display', 'schoolid' => $schoolid))}">营销宝</a></li>
+            <li {if $_GPC['do']=='specialtemp'}class="active"{/if}><a href="{php echo $this->createWebUrl('specialtemp', array('op' => 'display', 'schoolid' => $schoolid))}">模板库</a></li>
+            {if $showformHtml}
+            <li {if $_GPC['do']=='specialform'}class="active"{/if}><a href="{php echo $this->createWebUrl('specialform', array('op' => 'display', 'schoolid' => $schoolid))}">管理表单</a></li>
+            {/if}
+		</ul>
+	</div>
+</div> 
+{if $operation == 'display'}
+<div class="main">
+    <div class="panel panel-default">
+        <div class="table-responsive panel-body">
+            <form action="" method="post" class="form-horizontal form" enctype="multipart/form-data">
+                <input type="hidden" name="schoolid" value="{$schoolid}" />
+                <table class="table table-hover">
+                    <thead class="navbar-inner">
+                        <tr>
+                            <th class='with-checkbox' style="width: 3%;"><input type="checkbox" class="check_all" /></th>
+                            <th style="width:15%">微信名称</th>
+                            <th style="width:10%;">微信头像</th>
+                            <th style="width:8%;">提交时间</th>
+                            <th style="width:10%;">操作人</th>
+                            <th style="width:10%;">处理时间</th>
+                            <th style="width:8%;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {loop $list $item}
+                    <tr>
+                        <td class="with-checkbox"><input type="checkbox" name="check" value="{$item['id']}"></td>
+                        <td >
+                            {$item['name']}
+                        </td>
+                        <td>
+							<img src="{$item['icon']}" style="width: 50px;  border-radius: 50%;">
+                        </td>
+                        <td>
+                            {$item['createtime']}
+                        </td>
+                        <td>
+                            {$item['tname']}
+                        </td>
+                        <td>
+                            {$item['cltime']}
+                        </td>
+                        <td>
+                            <a class="btn btn-default btn-sm " onclick="showInfo(`{$item['id']}`)">查看内容</a>
+                            <a class="btn btn-default btn-sm " href="{php echo $this->createWebUrl('specialform', array('id' => $item['id'], 'op' => 'delete', 'schoolid' => $schoolid))}" onclick="return confirm('此操作不可恢复，确认删除？');return false;" title="删除">删除</a>
+                        </td>
+                    </tr>
+                    {/loop}
+                    </tbody>
+                    <tr>
+                        <td colspan="10">
+                           <input type="button" class="btn btn-primary" name="btndeleteall" value="批量删除" />
+                        </td>
+                    </tr>
+                </table>
+                {$pager}
+            </form>
+        </div>
+    </div>
+</div>
+<!-- 新版弹窗 -->
+<div class="modal fade" style="min-width: 500px!important;z-index: 1050 !important;" id="newTc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index:2041 !important;">
+    <div class="modal-dialog" style="left: 30%;top: 8%;">
+        <div class="modal-content">
+            <div class="modal-header" style="color: black;">                    
+                <h4 class="modal-title">个人资料</h4> 
+            </div>
+            <div class="modal-body">
+                <form id="infobox">
+                </form>
+            </div>    
+            <div class="modal-footer">  
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary qx_6005" onclick="tijiao()" >确认</button>
+            </div>          
+        </div>
+    </div>
+</div>
+<!-- 新版弹窗 -->
+<script type="text/javascript">
+    var formid = 0;
+    //显示用户提交的表单数据
+    function showInfo(id){
+        formid = id
+        $('#newTc').modal('toggle');
+        $('#formid').val(id);
+        $.ajax({
+            url: "{php echo $this->createWebUrl('specialform', array('op' => 'getInfo','schoolid' => $schoolid))}",
+            type: "post",
+            dataType: "json",
+            data:{id:id},
+            success: function (res) {
+                $(".modal-footer").show()
+                if(res.status == '1'){
+                    $(".modal-footer").hide()
+                }
+                let data = res.data;
+                let html = ``;
+                let temphtml = ``;
+                for(let item of data){
+                    let titleArr = item.title
+                    let contentArr = item.content
+                    let content = ''
+                    let title = ''
+                    for(i in titleArr){
+                        title = titleArr[i]
+                        if(Array.isArray(contentArr[i])){
+                            for(tempcontent of contentArr[i]){
+                                content += tempcontent+','
+                            }
+                        }else{
+                            content = contentArr[i]
+                        }
+                        temphtml = `<div class="form-group">
+                            <label class="col-sm-2 control-label">${title}</label>
+                            <div class="col-sm-9">
+                                    <input type="text" name="name" class="form-control" value="${content}" disabled>
+                            </div>
+                        </div>`
+                    }
+                    html += temphtml;
+                }
+                $("#infobox").html(html)
+            }
+        });
+    }
+
+    //提交后的数据处理
+    function tijiao(){
+        ReToastGlobal("数据处理中")
+        $.ajax({
+            url: "{php echo $this->createWebUrl('specialform', array('op' => 'save','schoolid' => $schoolid))}",
+            type: "post",
+            dataType: "json",
+            data:{id:formid},
+            success: function (res) {
+                ReToastGlobal(res.msg)
+                location.reload()
+            }
+        });
+    }
+    $("input[name=btndeleteall]").click(function(){
+        var check = $("input[type=checkbox][class!=check_all]:checked");
+        if(check.length < 1){
+            alert('请选择要删除的教师!');
+            return false;
+        }
+        if(confirm("确认要删除选择的记录?")){
+            var id = new Array();
+            check.each(function(i){
+                id[i] = $(this).val();
+            });
+            var url = "{php echo $this->createWebUrl('specialform', array('op' => 'deleteall','schoolid' => $schoolid))}";
+            $.post(
+                url,
+                {idArr:id},
+                function(data){
+                    if(data.result){
+					    alert(data.msg);
+                        location.reload();
+                    }else{
+                        alert(data.msg);
+                    }
+                },'json'
+            );
+        }
+    });
+</script>
+{/if}
+{template 'public/footer'}

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>提现设置</title>
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+<link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+<style>
+.layui-form-label {
+	width: 145px;
+}
+
+.layui-input-block {
+	margin-left: 175px;
+}
+
+form {
+	padding-right: 15px;
+}
+
+.xxx {
+	float: left;
+	margin-right: 10px;
+}
+</style>
+</head>
+<body>
+	<div class="layui-fluid">
+		<div class="layui-row layui-col-space15">
+			<div class="layui-col-md12">
+				<div class="layui-card">
+					<div class="layui-card-header">分销设置</div>
+					<div class="layui-card-body" pad15>
+						<form class="layui-form " style="margin-top: 21px;">
+							<input type="hidden" name="id" value="{$set['id']}">
+							<div class="layui-form-item">
+								<label class="layui-form-label">是否开启</label>
+								<div class="layui-input-block" id="IsPurchased">
+									<input type="radio" name="is_open" value="1" title="开启" {if $set['is_open'] == '1' }checked{/if} lay-filter="aaa">
+									<input type="radio" name="is_open" value="2" title="隐藏" {if $set['is_open'] == '2' || $set['is_open'] == ''}checked{/if} lay-filter="aaa">
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label">分销等级</label>
+								<div class="layui-input-block" id="is_level">
+									<input type="radio" name="is_level" value="1" title="一级分销" {if $set['is_level'] == '1' || $set['is_level'] == '' }checked{/if} lay-filter="bbb">
+									<input type="radio" name="is_level" value="2" title="二级分销" {if $set['is_level'] == '2' }checked{/if} lay-filter="bbb">
+								</div>
+							</div>
+							<div class='level1'>
+								<div class="layui-form-item">
+									<label class="layui-form-label">{$name}一级分销比例</label>
+									<div class="layui-input-inline">
+										<input type="number" name="oneLevel" autocomplete="off" class="layui-input" value="{$set['oneLevel']}">
+									</div>
+									<div class="layui-form-mid layui-word-aux">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;看视频分销（小数单位）比如 0.01 ，0.05 ， 0.1</div>
+								</div>
+							</div>	
+								
+							
+							
+							<div class="level2" {if $set['is_level'] == 1 || $set['is_level'] == ''}style="display: none"{/if}>
+								<div class="layui-form-item">
+									<label class="layui-form-label">{$name}二级分销比例</label>
+									<div class="layui-input-inline">
+										<input type="number" name="twoLevel" autocomplete="off" class="layui-input" value="{$set['twoLevel']}">
+									</div>
+									<div class="layui-form-mid layui-word-aux">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;看视频分销（小数单位）比如 0.01 ，0.05 ， 0.1</div>
+								</div>
+							</div>
+							
+							{if $system['digital_open'] == 1 ||  $system['film_open'] == 1}
+								<div class="layui-form-item">
+									<label class="layui-form-label">购买VIP分销比例</label>
+									<div class="layui-input-inline">
+										<input type="number" name="vip_rebate" autocomplete="off" class="layui-input" value="{$set['vip_rebate']}">
+									</div>
+									<div class="layui-form-mid layui-word-aux">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本分销比例为推广下线开通VIP会员时给予分销商的佣金，计算公式：VIP成本价格   * 你设置的比例   = 分销可得{$name}</div>
+								</div>
+							{/if}
+
+								
+							<div class="layui-form-item">
+								<label class="layui-form-label">邀请好友可得{$name}</label>
+								<div class="layui-input-inline">
+									<input type="number" name="invite_get" autocomplete="off" class="layui-input" value="{$set['invite_get']}">
+								</div>
+								<div class="layui-form-mid layui-word-aux">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;邀请好友首次进入小程序可得{$name}数量</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label">分销海报背景图</label>
+								<div class="layui-upload col-sm-9">
+									<button type="button" class="layui-btn" id="test1">上传自制图片</button>
+									<div class="layui-form-mid layui-word-aux">建议上传750px * 1102px尺寸。仅支持jpg格式</div>
+									<div class="layui-input-block">
+										<div id="ImgPreview">
+											{foreach $background as $v}
+											<div class="xxx" id="container{$v}">
+												<div style="display: flex; justify-content: space-between; align-items: center;">
+													<input type="radio" name="background" value="{$v['url']}" {if $set['background'] ==$v['url']}checked{/if}>
+													{if $v['type'] == 2}
+													<div class="delete-css">
+														<div id="{$v['id']}" class="upload_img layui-btn layui-btn-danger layui-btn-xs">删除</div>
+													</div>
+													{/if}
+												</div>
+												<div class="image-container">
+													<img id="showImg" style="width: 187px; height: 275px; cursor: pointer;" src="{$v['url']}">
+												</div>
+											</div>
+											{/foreach}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<div class="layui-input-block">
+									<button class="layui-btn" lay-submit lay-filter="demo1">立即提交</button>
+								</div>
+							</div>
+							<!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+	<script type="text/javascript" src="__PUBLIC__/static/ueditor/ueditor.config.js"></script>
+	<script type="text/javascript" src="__PUBLIC__/static/ueditor/ueditor.all.js"></script>
+	<script>
+    layui.config({
+        base: '__PUBLIC__/static/layuiadmin/' 
+    }).extend({
+        index: 'lib/index' 
+    }).use('index');
+</script>
+	<script>layui.use(['jquery','form', 'laydate','upload'], function(){
+		var $ = layui.$
+		,form = layui.form 
+		,layer = layui.layer,
+		upload = layui.upload;
+		$('#ImgPreview img').on('click', function () {
+			layer.photos({
+				photos: '#ImgPreview',
+				shadeClose: false,
+				closeBtn: 2,
+				anim: 0
+			});
+		})
+		form.on('radio(bbb)', function (data) {
+			if ($('#is_level input[name="is_level"]:checked ').val() == "1") {
+				$(".level2").hide();
+				$(".level1").show();
+			}else if($('#is_level input[name="is_level"]:checked ').val() == "2"){
+				$(".level2").show();
+				$(".level1").show();
+			}
+			form.render();
+		});
+    	upload.render({
+    		elem: '#test1',
+    		exts: 'jpg',
+    		url: "{:siteUrl('admin/index/upload','','web')}",
+    		multiple: false,
+    		done: function(res){
+    			$.ajax({
+    				url:"{:siteUrl('admin/brokerage/add_background','','web')}",
+    				data:{'url':res.msg},
+    				type:"POST",
+    				success: function(data){
+    					window.location.href="{:siteUrl('admin/brokerage/set','','web')}";
+    				}
+    			})
+    		}
+    	});
+    	$('.upload_img').on('click',function () {
+    		var id = $(this).attr('id');
+    		console.log($(this));
+    		$.ajax({
+    			url:"{:siteUrl('admin/brokerage/del_background','','web')}",
+    			data:{'id':id},
+    			type:"POST",
+    			success: function(data){
+    				window.location.href="{:siteUrl('admin/brokerage/set','','web')}";
+    			}
+    		})
+    	});
+        form.on('submit(demo1)', function(data){
+            var admin = layui.admin
+            admin.req({
+                url:"{:siteUrl('admin/brokerage/set_brokerage','','web')}",
+                data:data.field,
+                type:"POST",
+                done:res=>{
+                	if(res.code == 0 ){
+                		layer.msg("设置成功");
+                	}
+                }
+            })
+            return false
+        });                
+        layui.$('#LAY-component-form-getval').on('click', function(){
+            var data = form.val('example');
+            alert(JSON.stringify(data));
+        });
+
+    });
+</script>
+</body>
+<div class="layui-footer" style="margin-top: 20px; display: flex; justify-content: center; align-items: flex-end;">
+{include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}
+</div>
+</html>

@@ -1,0 +1,98 @@
+
+<script type="text/javascript">
+
+
+
+
+
+
+    // NProgress
+    if (typeof NProgress != 'undefined') {
+        $(document).ready(function () {
+            NProgress.start();
+        });
+
+        $(window).load(function () {
+            NProgress.done();
+        });
+    }
+    function xc_list_message($obdata) {
+
+
+        var _message={};
+
+        _message["heading"]=$obdata["title"];
+        _message["text"]=$obdata["text"];
+        _message["icon"]=$obdata["type"];
+
+        if($obdata["type"]=="error"){
+
+            _message["showHideTransition"]='fade';
+        }
+        $.toast(_message)
+    }
+    function xc_edit_message($opdata) {
+        swal($opdata);
+
+    }
+    var xpagecss = {
+        xload: function () {
+
+            message({
+                title: "操作中",
+                text: "",
+                imageUrl: "../addons/{php echo $_GPC['m']}/resource/images/xload1.gif",
+                showConfirmButton: false,
+                allowOutsideClick: true
+            })
+        }
+    };
+
+    //异步slect2
+    $(".ajax-select").each(function () {
+        $(this).select2({
+            language:'zh-CN',
+            ajax: {
+                url: $(this).attr("data-url"),
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    var data={
+                        q: params.term,
+                        page: params.page
+                    };
+                    return data;
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+                    if(params.page==1){
+                        ajax_data=data.rows;
+                    }else{
+                        ajax_data.push(data.rows);
+                    }
+                    return {
+                        results: data.rows,
+                        pagination: {
+                            more: (params.page * 20) < data.total
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder:$(this).attr("data-placeholder"),
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            minimumInputLength: 0,
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+    });
+    function formatRepo (repo) {
+        if (repo.loading) {
+            return repo.text;
+        }
+        return repo.text;
+    }
+    function formatRepoSelection (repo) {
+        return repo.text || repo.id;
+    }
+</script>

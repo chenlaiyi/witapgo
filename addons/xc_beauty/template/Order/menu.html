@@ -1,0 +1,28 @@
+<ul class="nav nav-tabs">
+    <li role="presentation"><a href="{url 'site/entry/Order',array('m'=>$_GPC['m'],'version_id'=>$_GPC['version_id'])}">订单</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Group',array('m'=>$_GPC['m'],'version_id'=>$_GPC['version_id'])}">团购订单</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Group',array('m'=>$_GPC['m'],'op'=>'index2','version_id'=>$_GPC['version_id'])}">团购个人订单</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Store_order',array('m'=>$_GPC['m'],'version_id'=>$_GPC['version_id'])}">预约</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Prize_order',array('m'=>$_GPC['m'],'version_id'=>$_GPC['version_id'])}">中奖记录</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Order',array('m'=>$_GPC['m'],'op'=>'mall','version_id'=>$_GPC['version_id'])}">商城订单</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Order',array('m'=>$_GPC['m'],'op'=>'package','version_id'=>$_GPC['version_id'])}">套餐订单</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Order',array('m'=>$_GPC['m'],'op'=>'package_log','version_id'=>$_GPC['version_id'])}">套餐使用记录</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Order',array('m'=>$_GPC['m'],'op'=>'score','version_id'=>$_GPC['version_id'])}">积分兑换记录</a></li>
+</ul>
+<script type="text/javascript">
+
+    function  indexofleftdatda($str,findstr) {
+        var $navurl=$str;
+        var navstart=  $navurl.indexOf(findstr);
+        var navparalen= $navurl.length-navstart;
+        var navstrpara =  $navurl.substring(navstart,$navurl.length);
+        return navstrpara;
+    }
+    var  navstrpara= indexofleftdatda(location.href,"?");
+    $(".nav.nav-tabs").find("a").each(function () {
+        if(navstrpara.indexOf(indexofleftdatda($(this).attr("href"),"?"))>-1){
+            $(this).parent().addClass("active");
+            return false;
+        }
+    })
+</script>

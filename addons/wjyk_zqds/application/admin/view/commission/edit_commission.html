@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>编辑提现记录</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+    <style>
+        form{
+            padding-right:15px ;
+        }
+.color-red{
+			color: red;
+        }
+      .order-container {
+            display: flex;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #efefef;
+            margin: 0px;
+            background-color: #FFFFFF;
+        	padding: 30px;
+    	}
+      
+      .col-sm {
+            float: left;
+            padding-right: 10px;
+            padding-left: 10px;
+            position: relative;
+            width: 120px;
+        }
+		
+		li {
+		    list-style: none;
+		    padding: 5px;
+		}
+		
+		.order-title {
+		    line-height: 62px;
+		    font-size: 16px;
+		    color: #000;
+		    font-weight: bold;
+			padding-left: 40px;
+		}
+		
+		.table {
+		    table-layout: fixed;
+		    position: relative;
+		    color: #666;
+			width: 70%;
+			max-width: 70%;
+			margin-bottom: 20px;
+		}
+		table {
+		    background-color: transparent;
+			border-color: grey;
+			border-spacing: 0;
+			border-collapse: collapse;
+		}
+	
+		.table .trorder, .table .trfooter {
+		    border: 1px solid #efefef;
+		}
+		.table tr {
+		    height: 24px;
+		}
+		
+		tr {
+		    display: table-row;
+		    vertical-align: inherit;
+		}
+		
+		.table .trorder, .table .trfooter {
+		    border: 1px solid #efefef;
+		}
+		
+		.table .trorder td {
+		    border-right: 1px solid #efefef;
+		}
+		
+		.order-container .status {
+		    height: 120px;
+		    line-height: 22px;
+		}
+		
+		.font18 {
+		    font-size: 20px;
+		    font-weight: bold;
+		}
+     
+    </style>
+</head>
+<body>
+<form class="layui-form layui-form-pane" style="margin-top:21px;">
+	<input type="hidden" name="id" value="{$srdb['id']}">
+	<input type="hidden" name="uid" value="{$srdb['uid']}">
+	<input type="hidden" name="commission_actual" value="{$srdb['commission_actual']}">
+	<input type="hidden" name="openid" value="{$srdb['openid']}">
+	<input type="hidden" name="commission_wait" value="{$srdb['commission_wait']}">
+	<input type="hidden" name="cash_type" value="{$srdb['cash_type']}" />
+	<div style="background-color: #FFFFFF; margin-bottom: 20px;">
+				<div class="order-title">提现详情</div>
+				<div>
+					<div class="row order-container">
+						<div style="border: #EFEFEF solid 1px;width: 100%;display: flex;display: flex;justify-content: space-around;align-items: center;">
+							<div class="order-container-left" style="width: 50%;padding: 30px;">
+								<div class="row">
+									<div class="col-md-12">
+										<ul>
+											<li class="text">
+												<span class="col-sm">打款方式：</span>
+												{if $srdb['cash_type'] == 2}
+													<span class="text-default"><i class="layui-icon layui-icon-dialogue"></i>微信零钱</span>
+												{else}
+													<span class="text-default"><i class="layui-icon layui-icon-rmb"></i>支付宝</span>
+												{/if}
+											</li>
+											<li class="text">
+												<span class="col-sm">申请{$name}：</span>
+												<i><span class="color-red" style="font-weight: bold;">{$srdb['commission_wait']}</span></i>
+											</li>
+											<li class="text">
+												<span class="col-sm">兑换比例：</span>
+											    <i><span class="color-red" style="font-weight: bold;">{$srdb['exchange']}{$name}=1元</span></i>
+											</li>
+											<li class="text">
+												<span class="col-sm">实际金额：</span>
+												<i><span class="color-red" style="font-weight: bold;">{$srdb['commission_actual']}元</span></i>
+											</li>
+											<li class="text"><span class="col-sm">提现手续费：</span><span class="text-default">{if $srdb['cash_charge'] == 0}0.00{else}{$srdb['cash_charge']}{/if}%</span></li>	
+											<li class="text"><span class="col-sm">提现手续费金额：</span><span class="text-default">{$srdb['service_charge']}元</span></li>
+											{if $srdb['cash_type'] == 1}
+											{if !empty($srdb['zfb_account'])}
+											<li class="text">
+												<span class="col-sm">支付宝账号：</span>	
+												<i><span class="color-red" style="font-weight: bold;">{$srdb['zfb_account']}</span></i>
+											</li>
+											{/if}
+											{if !empty($srdb['pay_qrcode'])}
+											<li class="text">
+												<span class="col-sm">收款码：</span>
+												<div class="layui-upload-list"  id="ImgPreview" style="display: flex;    width: 60%;flex-wrap:wrap">
+													<div class="image-container" id="container" style="margin-right:10px;margin-bottom:10px">
+														<img id="showImg" style="width: 120px;height:100px;cursor:pointer;" src="{$srdb['pay_qrcode']}"  >
+													</div>
+												</div>
+											</li>
+											{/if}
+											{/if}
+											<li class="text"><span class="col-sm">申请时间：</span><span class="text-default">{$srdb['createtime']}</span></li>
+										</ul>
+									</div>
+							
+								</div>
+							</div>
+							<div style="width: 1px;height: 100%;background-color: #EFEFEF;"></div>
+							<div style="width: 50%;padding: 115px;">
+								<div class="status">
+									<span class="text"> 提现者信息：</span>
+									<div class="flex" style="margin-top:20px;">
+										<img src="{$user['avatar']}"
+											style="width: 100px; height: 100px; border: 1px solid #ccc; padding: 1px;border-radius:50%;"
+											onerror="">
+											<span>昵称：{$user['nickname']}</span> 
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+    	{if $srdb['is_status'] == 1}
+	    	{if $srdb['cash_type'] == 1} 
+	    	<button class="layui-btn layui-btn-normal" lay-submit name="edit_submit"  lay-filter="demo1"> 打款到支付宝账户</button> 
+	    	{else}
+			<button class="layui-btn layui-btn-normal" lay-submit name="edit_submit"  lay-filter="demo1"> 打款到微信零钱</button>
+			{/if} 
+	      	      
+	      	<button class="layui-btn layui-btn-danger" lay-submit name="reject_submit" lay-filter="reject"> 审核驳回</button> 
+    	{/if}
+    	
+    	<input type="button" class="layui-btn layui-btn-primary" onclick="history.go(-1)" value="返回列表"> 
+      
+    </div>
+  </div>
+  <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+<div class="layui-footer" style="margin-top:20px;display: flex;justify-content: center;align-items: flex-end;">
+	{include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}
+</div>
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script>
+
+    layui.config({
+        base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['jquery','layer', 'index', 'table'], function(){
+    	var $ = layui.$
+    	, layer = layui.layer
+        , table = layui.table
+        , form = layui.form;   
+    	    	$('#ImgPreview img').on('click', function () {            layer.photos({                photos: '#ImgPreview',                shadeClose: false,                closeBtn: 2,                anim: 0            });        })
+
+      //监听提交
+        form.on('submit(demo1)', function(data){
+            var admin = layui.admin
+            $(".layui-btn").attr("disabled",true);
+            $.ajax({
+                url:"{:siteUrl('admin/commission/edit_submit','','web')}",
+                data:data.field,
+                type:"POST",
+                success: function(data){
+                	var res = JSON.parse(data);
+                	console.log(res);
+                	if(res.code == 0 ){
+                		layer.msg(res.msg,{icon: 2,time:3000},function(){
+                			window.location.href="{:siteUrl('admin/commission/wait','','web')}";
+                		});
+                	}else{
+                		layer.msg(res.msg,{icon: 1,time:3000},function(){
+                			window.location.href="{:siteUrl('admin/commission/wait','','web')}";
+                		});
+                	}
+                }
+            })
+            return false
+  
+        });
+      
+        form.on('submit(reject)', function(data){
+            var admin = layui.admin
+            $(".layui-btn").attr("disabled",true);
+            admin.req({
+                url:"{:siteUrl('admin/commission/reject_submit','','web')}",
+                data:data.field,
+                type:"POST",
+                done:res=>{
+                	if(res.code == 0 ){
+                		layer.msg(res.msg,{icon: 1,time:3000},function(){
+                			window.location.href="{:siteUrl('admin/commission/wait','','web')}";
+                		});
+                	}
+                }
+            })
+            return false
+  
+        });
+        
+        form.on('submit(manual)', function(data){
+            var admin = layui.admin
+            $(".layui-btn").attr("disabled",true);
+            admin.req({
+                url:"{:siteUrl('admin/commission/manual_submit','','web')}",
+                data:data.field,
+                type:"POST",
+                done:res=>{
+                	if(res.code == 0 ){
+                		layer.msg(res.msg,{icon: 1,time:3000},function(){
+                			window.location.href="{:siteUrl('admin/commission/wait','','web')}";
+                		});
+                	}
+                }
+            })
+            return false
+  
+        });
+        
+
+        //表单取值
+        $('#LAY-component-form-getval').on('click', function(){
+            var data = form.val('example');
+            alert(JSON.stringify(data));
+        });
+        
+    });
+</script>
+</body>
+</html>

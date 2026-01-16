@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">资金管理</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebAppUrl('store_renew');}">续费记录</a></li>
+                            <li><a href="{php echo $this->createWebAppUrl('store_renew',array('act'=>'setmeal'));}">购买套餐</a></li>
+                            <li class="active"><a href="">{$model['name']}</a></li>
+                        </ul>
+                        <div class="tab-content">
+
+                            <div class="box box-primary">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">套餐详情</h3>
+                                    <div class="box-tools pull-right">
+                                    </div>
+                                </div><!-- /.box-header -->
+                                <div class="box-body no-padding">
+                                    <div class="mailbox-read-info">
+                                        <h3>
+                                            {$model['name']}
+                                        </h3>
+                                    </div><!-- /.mailbox-read-info -->
+                                    <div class="mailbox-controls with-border">
+                                        {if $model['is_hot'] == 1}
+                                        <span class="label bg-red">热门</span>
+                                        {else}
+                                        <span class="label bg-gray">普通</span>
+                                        {/if}
+                                        <a>发布时间：{$model['createtime']}&nbsp;&nbsp; 套餐金额：{$model['money']}元 &nbsp;&nbsp;续费天数：{$model['day']}天 &nbsp;&nbsp;活动数量：{php echo $model['create_num']==-1?'不限':$model['create_num']}&nbsp;&nbsp;</a>
+                                        <button class="btn btn-warning" id="buy"><i class="fa fa-cart-plus"></i> 点击购买</button>
+                                        <button class="btn btn-default" id="kefu" data-serviceid="{$model['service_id']}"><i class="fa fa-wechat"></i> 点击联系客服</button>
+                                    </div><!-- /.mailbox-controls -->
+                                    <div class="mailbox-read-message">
+                                        {php echo htmlspecialchars_decode($model['content'])}
+                                    </div><!-- /.mailbox-read-message -->
+                                </div><!-- /.box-body -->
+                                <div class="box-footer">
+                                    <div class="pull-right">
+                                        <button class="btn btn-default" onclick="javascript:window.history.back();"><i class="fa fa-reply"></i> 返回套餐列表</button>
+                                    </div>
+                                </div><!-- /.box-footer -->
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script id="kefutpl" type="text/html">
+    <table class="table table-hover">
+        <tr>
+            <th width="20%">客服昵称</th>
+            <td width="80%"><%= name %></td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">客服头像</th>
+            <td width="80%">
+                <img src="<%= headurl %>" alt="<%= name %>" width="100">
+            </td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">微信二维码</th>
+            <td width="80%">
+                <img src="<%= qrcode %>" alt="<%= name %>" width="100">
+            </td>
+        </tr>
+        <tr>
+            <th width="20%">手机号码</th>
+            <td width="80%"><%= mobile %></td>
+        </tr>
+    </table>
+</script>
+<script>
+    $(function () {
+        SelectNav("商家账户续费");
+
+        $("#kefu").click(function(){
+            var service_id = $(this).data('serviceid');
+            myrequire([ 'arttemplate'], function (template) {
+                var html = '';
+                $.ajax({
+                    type: "get",
+                    url: "{php echo $this->createWebAppUrl('store_renew', array('act' => 'getKefu'));}",
+                    async:false,
+                    data: { "service_id": service_id },
+                    success: function (data, status) {
+                        html = template("kefutpl", data);
+                    }
+                });
+
+                var footer = '<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                var modalobj = util.dialog('客服信息',html,footer,{containerName:'user-container'});
+                modalobj.modal({'keyboard': true});
+                modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                modalobj.modal('show');
+            });
+        });
+
+        $("#buy").click(function(){
+            location.href = "{php echo $this->createWebAppUrl('store_renew', array('act' => 'setmeal_order'));}&id={$model['id']}"
+        });
+
+    });
+</script>
+</body>
+</html>

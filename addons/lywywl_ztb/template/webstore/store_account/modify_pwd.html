@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                修改密码
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">商户信息</li>
+                <li class="active">修改密码</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebAppUrl('store_account');}">商户信息</a></li>
+                            <li class="active"><a href="#">修改密码</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content" id="form_content" method="post">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 修改登录密码</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="oldpassword" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>账户登录密码</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="oldpassword" maxlength="16"
+                                                       name="model[oldpassword]" datatype="*6-16"  nullmsg="请输入商户账号登录密码！" errormsg="密码范围在6~16位之间"  placeholder="请输入当前账号登录密码"
+                                                       type="password" value=""/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="password" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>变更登录密码</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="password" maxlength="16"
+                                                       name="model[password]" datatype="*6-16"  nullmsg="请输入新的登录帐号密码！" errormsg="密码范围在6~16位之间"  placeholder="请输入需要变更的新密码"
+                                                       type="password" value=""/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>请输入6-16位新密码，密码应该由数字和大小写英文字符组成</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="repassword" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>再次确认密码</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="repassword" maxlength="16"
+                                                       name="model[repassword]" datatype="*6-16"  recheck="model[password]" nullmsg="请再次输入变更后的新密码！" errormsg="请输入确认新密码，确认正确输入" placeholder="请再次输入变更的新密码"
+                                                       type="password" value=""/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>请再次输入新密码，以确认您的新密码无误</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <input type="hidden" name="token" value="{$_W['token']}"/>
+                                                <input type="hidden" name="submit" value="submit"/>
+                                                <button type="submit" class="btn btn-primary" id="SubmitBtn"><i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script>
+    $(function () {
+        SelectNav("商户信息配置");
+        myrequire(['validform'], function () {
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+                    }
+                }
+            });
+
+        });
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+{template 'user/common/header'}
+<?php
+load()->func('tpl');
+if($useWxAddress==1){
+//加载common文件注册jssdk
+load()->app('common');
+register_jssdk();
+}
+?>
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/util.js"></script>
+<script src="{MODULE_URL}resource/mobile/plugin/js/require.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js//lib/mui.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/common.js"></script>
+<style type="text/css">
+    <!--样式有冲突 只定义地址选择样式-->
+    .mui-poppicker.mui-active{-webkit-transform:translateY(0)}.mui-poppicker{position:fixed;z-index:999;border-top:solid 1px #ccc;bottom:0;-webkit-transform:translateY(300px)}.mui-backdrop{position:fixed;top:0;left:0;bottom:0;right:0;z-index:998;background-color:rgba(0,0,0,.3);overflow:hidden}.mui-poppicker-header{padding:6px;font-size:14px;color:#888}.mui-btn{position:relative;display:inline-block;padding:6px 12px;margin-bottom:0;font-size:14px;font-weight:400;line-height:1.42;color:#454545;text-align:center;white-space:nowrap;vertical-align:top;cursor:pointer;background-color:#fff;border:1px solid rgba(0,0,0,.2);border-top-left-radius:5px;border-top-right-radius:5px;border-bottom-right-radius:5px;border-bottom-left-radius:5px;border-radius:5px;-webkit-transition:all;transition:all;-webkit-transition-duration:.2s;transition-duration:.2s;-webkit-transition-timing-function:linear;transition-timing-function:linear}.mui-poppicker-header .mui-btn{font-size:12px;padding:5px 10px}.mui-poppicker-btn-cancel{float:left}.mui-poppicker-btn-ok{float:right}.mui-btn-blue,.mui-btn-primary{color:#fff;background-color:#04be02;border:1px solid #04be02}
+</style>
+<body>
+<form action="{php echo $this->createMobileUrl('user.user_address',array('act'=>'modify','store_id'=>$store_id));}" id="user_form" method="post">
+<section class="rel">
+    <ul class="editInfo addr_new mb24">
+        <li><span class="hd">收&nbsp;&nbsp;货&nbsp;&nbsp;人</span>
+            <div class="bd">
+                <input name="model[username]" type="text" datatype="*" maxlength="10" value="{$model['username']}" nullmsg="请输入收货人姓名！" placeholder="请输入收货人姓名">
+            </div>
+        </li>
+        <li><span class="hd">手机号码</span>
+            <div class="bd">
+                <input name="model[mobile]" type="tel"  datatype="m" maxlength="11" value="{$model['mobile']}" placeholder="请输入收货人手机号码" nullmsg="请输入收货人手机号码！">
+            </div>
+        </li>
+        <li><span class="hd">行政区域</span>
+            <div class="bd">
+                {php echo tpl_app_form_field_district('district', $model['district'])}
+            </div>
+            <i class="arrow"></i>
+        </li>
+        <li style="height:auto;"><span class="hd">详细地址</span>
+            <div class="bd">
+                <textarea name="model[address]" rows="2" datatype="*" nullmsg="请输入详细地址！" placeholder="请输入详细地址">{$model['address']}</textarea>
+            </div>
+        </li>
+        <li><span class="hd">邮政编码</span>
+            <div class="bd">
+                <input name="model[postcode]" type="number" maxlength="6" value="{$model['postcode']}" placeholder="请输入邮政编码">
+            </div>
+        </li>
+    </ul>
+    <div class="addr_switch">
+        <div class="fr">
+            <label class="labal"><input class="mui-switch" type="checkbox" name="model[is_default]" id="is_default" value="1" {if $model['is_default']==1}checked{/if} > </label>
+        </div>
+        <p class="font32">设为默认地址</p>
+        <p class="font28" style="color:#b4b4b4">注：每次下单时会默认使用该地址</p>
+    </div>
+    <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+    <section class="pd24 mt10"><input id="SubmitBtn" type="submit" class="button" value="{if $pid>0 || $draw_id>0}保存并使用{else}保存{/if}"/></section>
+</section>
+</form>
+<?php
+$url = $this->createMobileUrl('user.user_address',array('act'=>'index','store_id'=>$store_id));
+if($pid>0){
+$url = $this->createMobileUrl('user.order_intmall',array('act'=>'submit','store_id'=>$store_id,'pid'=>$pid));
+}else if($draw_id>0){
+$url = $this->createMobileUrl('user.order_obj',array('act'=>'submit','store_id'=>$store_id,'draw_id'=>$draw_id));
+}
+?>
+<script>
+    var useWxAddress='{$useWxAddress}';
+    if(useWxAddress==1){
+        wx.ready(function () {
+            wx.openAddress({
+                success : function(result) {
+                    $('[name="model[username]"]').val(result.userName);
+                    $('[name="model[mobile]"]').val(result.telNumber);
+                    $('.mui-district-picker-district').val(result.provinceName+" "+result.cityName+" "+result.countryName);
+                    $('[name="district[province]"]').val(result.provinceName);
+                    $('[name="district[city]"]').val(result.cityName);
+                    $('[name="district[district]"]').val(result.countryName);
+                    $('[name="model[address]"]').val(result.detailInfo);
+                    $('[name="model[postcode]"]').val(result.postalCode);
+                }
+            });
+        });
+        wx.error(function(result){
+            alert(JSON.stringify(result));
+        });
+    }
+
+    $(function () {
+        require(['{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js'], function () {
+            //为formContent 添加验证事件
+            $("#user_form").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                                , style: 'bottom:0;'
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (josnData) {
+                    layer.closeAll();
+                    if(josnData.status == 1){
+                        layer.open({
+                            content: josnData.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        setTimeout(function () {
+                            window.location.href = "{php echo $url}&addressid="+josnData.id;
+                        }, 2000);
+                    }else{
+                        layer.open({
+                            content: josnData.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+        });
+    });
+
+
+</script>
+</body>
+</html>

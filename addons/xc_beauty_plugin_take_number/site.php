@@ -1,0 +1,2 @@
+<?php
+ goto d9Lai; lfAlR: $xcmodule = 'xc_beauty'; goto sf814; d9Lai: defined('IN_IA') or exit('Access Denied'); goto aI6qG; sf814: include_once IA_ROOT . '/addons/' . $xcmodule . '/common/function.php'; goto ZmVWE; aI6qG: global $xcmodule, $_W, $_GPC; goto lfAlR; ZmVWE: class xc_beauty_plugin_take_numberModuleSite extends WeModuleSite { } ?>

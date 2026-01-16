@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>编辑用户</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+    <style>
+        form{
+            padding-right:15px ;
+        }
+    </style>
+</head>
+<body>
+<form class="layui-form " style="margin-top:21px;">
+
+	<input type="hidden" name="id" value="{$srdb['id']}">
+	
+  <div class="layui-form-item">
+    <label class="layui-form-label">用户头像</label>
+    <div class="layui-input-block">
+      <img id="showImg" style="width: 150px; margin-left:10px;cursor:pointer;" src="{$srdb['avatar']}"  >
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">用户昵称</label>
+    <div class="layui-input-block">
+      <input type="text" name="nickname" autocomplete="off" class="layui-input" value="{$srdb['nickname']}">
+    </div>
+  </div>
+  <div class="layui-form-item">        <label class="layui-form-label">是否会员</label>        <div class="layui-input-block">            <input type="radio" name="is_member" value="0" title="否" {if $srdb['is_member']==0 || empty($srdb['is_member'])} checked=""{/if}>            <input type="radio" name="is_member" value="1" title="会员" {if $srdb['is_member']==1} checked=""{/if}>        </div>    </div>    <div class="layui-form-item">        <label class="layui-form-label">到期时间</label>        <div class="layui-input-block">            <input type="text" class="layui-input" name="maturity_time" id="test5" placeholder="" value="{$srdb['maturity_time']}">        </div>    </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">余额</label>
+    <div class="layui-input-block">
+      <input type="text" name="balance" readonly="readonly" autocomplete="off" class="layui-input" value="{$srdb['balance']}">
+    </div>
+  </div>
+  
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit lay-filter="demo1">立即提交</button>
+      <input type="button" class="layui-btn layui-btn-primary" onclick="history.go(-1)" value="返回列表"> 
+    </div>
+  </div>
+  <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+<div class="layui-footer" style="margin-top:20px;display: flex;justify-content: center;align-items: flex-end;">
+	{include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}
+</div>
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['jquery','layer', 'index', 'table'], function(){
+    	var $ = layui.$
+    	, layer = layui.layer
+        , table = layui.table
+        , form = layui.form;
+    	
+    	form.on('submit(demo1)', function(data){            var admin = layui.admin            if(data.field.maturity_time=='1970-01-01' && data.field.is_member>0){                layer.msg('请选择会员到期时间',{icon: 2,time:2000});                return false            }            $.ajax({                url:"{:siteUrl('admin/user/edit_user','','web')}",                data:data.field,                type:"POST",                success: function(data){                    var res = JSON.parse(data);                	if(res.code == 0 ){                		layer.msg(res.msg,{icon: 1,time:2000},function(){                			window.location.href="{:siteUrl('admin/user/index','','web')}";                		});                	}else{                		layer.msg(res.msg,{icon: 2,time:2000},function(){                			window.location.href="{:siteUrl('admin/user/index','','web')}";                		});                	}                }            })            return false          });
+
+
+        //表单取值
+        $('#LAY-component-form-getval').on('click', function(){
+            var data = form.val('example');
+            alert(JSON.stringify(data));
+        });
+        
+    });
+</script>
+</body>
+</html>

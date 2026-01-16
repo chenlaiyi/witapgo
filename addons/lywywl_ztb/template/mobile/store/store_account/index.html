@@ -1,0 +1,612 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<!--CSS-->
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+<link href="{MODULE_URL}resource/mobile/plugin/css/common.min.css?v=20170802" rel="stylesheet">
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/util.js"></script>
+<script src="{MODULE_URL}resource/mobile/plugin/js/require.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js//lib/mui.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/common.js"></script>
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=F51571495f717ff1194de02366bb8da9&s=1"></script>
+<body>
+<!--中心区域-->
+<h2 class="fn title">商户基本信息</h2>
+<section class="bgfff">
+    <ul class="publish">
+        <li class="float">
+            <p>商家名称</p>
+            <section class="form_con selectBox"><span class="c9">{$store['name']}</span></section>
+        </li>
+        <li class="float">
+            <p>所属行业</p>
+            <section class="form_con selectBox"><span class="c9">{$store['industry_name']}</span></section>
+        </li>
+        <li class="float">
+            <p>手机号码</p>
+            <section class="form_con selectBox"><a href="{php echo $this->createMobileUrl('store.store_account',array('act'=>'modify_mobile'));}" class="c9 fr link">变更</a> <span class="c9">{$store['mobile']}</span> </section>
+        </li>
+        <li class="float">
+            <p>账户余额</p>
+            <section class="form_con selectBox"><a href="{php echo $this->createMobileUrl('store.store_bill');}" class="c9 fr link">明细</a><span class="c9">{$store['money']}</span></section>
+        </li>
+        {if $config['sms_obj']==1}
+        <li class="float">
+            <p>剩余短信</p>
+            <section class="form_con selectBox"><a href="{php echo $this->createMobileUrl('store.store_sms');}" class="c9 fr link">购买</a><a href="{php echo $this->createMobileUrl('store.sys_sms');}" class="c9 fr link_gray">日志</a><span class="c9">{$store['sms']}</span></section>
+        </li>
+        {/if}
+        <li class="float">
+            <p>服务到期</p>
+            <section class="form_con selectBox"><a href="{php echo $this->createMobileUrl('store.store_renew');}" class="c9 fr link">续费</a><span class="c9">{$store['endtime']}</span><span class="main_red ml10">{$serverDay}天</span> </section>
+        </li>
+        <li class="float">
+            <p></p>
+            <section class="form_con selectBox"><span class="c9">可创建活动数</span><span class="main_red ml10">{php echo $store['create_num']==-1?'不限':$store['create_num']}</span> </section>
+        </li>
+        <li class="float">
+            <p>微信账户</p>
+            <section class="form_con selectBox"><input class="editInput" type="text" id="openid" maxlength="28" value="{$store['openid']}" readonly><section class=" clearfix"><a href="javascript:;" class="c9 fr link clickBtn">变更</a></section></section>
+        </li>
+        <li class="float">
+            <p>所在区域</p>
+            <section class="form_con selectBox"><span class="c9">{$store['city']}</span></section>
+        </li>
+        <li class="float">
+            <p>帐号密码</p>
+            <section class="form_con selectBox"><a href="{php echo $this->createMobileUrl('store.store_account',array('act'=>'modify_pwd'));}" class="c9 fr link">修改密码</a><span class="c9">********</span></section>
+        </li>
+    </ul>
+</section>
+<h2 class="fn title">商户基本配置</h2>
+<form action="{php echo $this->createMobileUrl('store.store_account',array('act'=>'modify'));}" id="store_form" method="post">
+<section class="bgfff">
+    <ul class="publish">
+        <li>
+            <p>店铺商标LOGO<span></span></p>
+            <section class="form_con clearfix">
+                {php echo tpl_app_form_field_image('logo',$set_config['logo'] ,false);}
+            </section>
+        </li>
+        <li>
+            <p>公众号二维码<span></span></p>
+            <section class="form_con clearfix">
+                {php echo tpl_app_form_field_image('wx_qrcode',$set_config['wx_qrcode'] ,false);}
+            </section>
+        </li>
+        <li class="float">
+            <p>客服联系电话</p>
+            <section class="form_con selectBox">
+                <input class="form_float_txt" maxlength="20" id="tel" name="config[tel]" placeholder="请输入客服联系电话" type="text" value="{$set_config['tel']}"/>
+            </section>
+            <section class="font26 c9 lh15">
+                <strong>提示：</strong> 客服电话将浮动展示在活动的右侧，如不填写，系统将默认读取您注册账号的手机号码。
+            </section>
+        </li>
+        <li>
+            <p>余额能否提现</p>
+            <section class="form_con rel">
+                <section class="font26 c9 form_tips">开启：用户参与活动获得的账户余额可申请提现，关闭：用户账户余额只能线上参与或到店消费时抵扣</section>
+                        <span class="switch is_money_refund {if $set_config['is_money_refund']==1}switch_on{else}switch_off{/if}">
+                    <i class="slider"></i>
+                    <input type="hidden" name="config[is_money_refund]" value="{$set_config['is_money_refund']}"/>
+                    </span>
+            </section>
+        </li>
+        <li>
+            <p>红包发送失败</p>
+            <section class="form_con rel">
+                <section class="font26 c9 form_tips">选择微信红包发放失败时的处理方式，由于微信企业付款接口每天对同一用户转账次数过多后将被限制转账，造成红包发放失败，开启后当补发失败时将红包金额转为账户余额。</section>
+                <span class="switch is_mchpayfail_usermoney {if $set_config['is_mchpayfail_usermoney']==1}switch_on{else}switch_off{/if}">
+                    <i class="slider"></i>
+                    <input type="hidden" name="config[is_mchpayfail_usermoney]" value="{$set_config['is_mchpayfail_usermoney']}"/>
+                    </span>
+            </section>
+        </li>
+        <li class="float" id="money_refund_box" style="display: {if $set_config['is_money_refund'] == 0} none{/if};">
+            <p>最低提现金额</p>
+            <section class="form_con selectBox">
+                <input class="form_float_txt" id="min_refund_money"
+                       maxlength="10" name="config[min_refund_money]"
+                       placeholder="请输入最低提现金额"
+                       onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                       step="0.01" min="0"
+                       type="number" value="{$set_config['min_refund_money']}"/>
+            </section>
+            <section class="font26 c9 lh15">
+                <strong>提示：</strong> 平台限制单次最大提现金额<span class="main_red">{if empty($config['refund_max_money'])}5000.00{else}{$config['refund_max_money']}{/if}元</span>。
+            </section>
+        </li>
+        <li>
+            <p>商城余额支付</p>
+            <section class="form_con rel">
+                <section class="font26 c9 form_tips">选择信息开启/关闭状态，开启后用户账户余额可在积分商城中购买商品使用</section>
+                        <span class="switch switchopend {if $set_config['is_money_intmall']==1}switch_on{else}switch_off{/if}">
+                    <i class="slider"></i>
+                    <input type="hidden" name="config[is_money_intmall]" value="{$set_config['is_money_intmall']}"/>
+                    </span>
+            </section>
+        </li>
+        <li>
+            <p>活动余额支付</p>
+            <section class="form_con rel">
+                <section class="font26 c9 form_tips">选择信息开启/关闭状态，开启后用户账户余额可在商家活动中参与支付使用</section>
+                        <span class="switch switchopend {if $set_config['is_money_obj']==1}switch_on{else}switch_off{/if}">
+                    <i class="slider"></i>
+                    <input type="hidden" name="config[is_money_obj]" value="{$set_config['is_money_obj']}"/>
+                    </span>
+            </section>
+        </li>
+        <li>
+            <p>提现申请通知</p>
+            <section class="form_con rel">
+                <section class="font26 c9 form_tips">开启后用户提现时，将使用手机短信和微信模板信息的方式通知商家。</section>
+                <span class="switch is_refund_notify {if $set_config['is_refund_notify']==1}switch_on{else}switch_off{/if}">
+                    <i class="slider"></i>
+                    <input type="hidden" name="config[is_refund_notify]" value="{$set_config['is_refund_notify']}"/>
+                    </span>
+            </section>
+        </li>
+        <li class="float">
+            <p>商户安全密码</p>
+            <!--<section class="form_con selectBox">-->
+                <!--<input class="form_float_txt" maxlength="6" datatype="*" id="password"-->
+                       <!--name="config[password]" nullmsg="请输入商户安全密码！" placeholder="请输入商户安全密码"-->
+                       <!--type="password" value="{$set_config['password']}"/>-->
+            <!--</section>-->
+            <section class="form_con selectBox"><a href="{php echo $this->createMobileUrl('store.store_account',array('act'=>'modify_storepwd'));}" class="c9 fr link">{php echo empty($set_config['password'])?'设置':'更换' }</a><span class="c9">{php echo empty($set_config['password'])?'':'******' }</span></section>
+            <section class="font26 c9 lh15">
+                <strong>提示：</strong> 商户安全密码，可包含数字、字母等。限制长度为6。用于创建账户核销员工等操作时使用。
+            </section>
+        </li>
+        <li class="float">
+            <p>活动预览用户</p>
+            <section class="form_con selectBox">
+                <input class="form_float_txt" id="preview_openid" name="config[preview_openid]" type="text" value="{$set_config['preview_openid']}"/>
+            </section>
+            <section class="font26 c9 lh15">
+                <strong>提示：</strong> 发布活动平台未审核时，可提前预览活动内容是否有误,多个OPENID请用英文逗号,分隔。
+            </section>
+        </li>
+    </ul>
+</section>
+<h2 class="fn title">活动门店配置</h2>
+<section class="bgfff">
+    <ul class="publish">
+        <li id="StoreList">
+            <p class="mb24">商家门店位置 <button class="but_store fr pt5 bgGreen" id="addmapbtn" type="button">添加门店</button>
+            </p>
+            <section class="font26 c9 lh15">
+                <strong>提示：</strong> 以下所有信息为必填项,最多可设置5个。
+            </section>
+            {if !empty($default_store_map)}
+            {loop $default_store_map $index $item}
+            <section class="form_con clearfix addmap" style="margin-top: 0.32rem;">
+                <section class="txt_item">
+                    <input type="text"  name="default_store_map[{$index}][name]"  placeholder="请输入门店名称" value="{$item['name']}"  class="form_txt">
+                </section>
+                <section class="clearfix mb24">
+                    <section class="coordinate_w33 txt_item">
+                        <input type="text" name="default_store_map[{$index}][lng]" value="{$item['lng']}" placeholder="地理经度" class="form_txt">
+                    </section>
+                    <section class="coordinate_w33 txt_item">
+                        <input type="text" name="default_store_map[{$index}][lat]" value="{$item['lat']}" placeholder="地理纬度" class="form_txt">
+                    </section>
+                    <section class="select_coordinate clickBtn">
+                        <button class="but_store fr coordinate " type="button">选择坐标</button>
+                    </section>
+                </section>
+                <section class="txt_item">
+                    <input type="text" name="default_store_map[{$index}][address]" value="{$item['address']}" placeholder="请输入详情地址" class="form_txt">
+                </section>
+                <section class="clearfix">
+                    <section class="txt_item add_w fl">
+                        <input type="text" name="default_store_map[{$index}][tel]" value="{$item['tel']}" placeholder="请输入电话" class="form_txt">
+                    </section>
+                    <section class="select_coordinate ">
+                        <button class="but_store fr bgRed delmapitem">删除门店</button>
+                    </section>
+                </section>
+            </section>
+            {/loop}
+            {else}
+            <section class="form_con clearfix addmap" style="margin-top: 0.32rem;">
+                <section class="txt_item">
+                    <input type="text"  name="default_store_map[0][name]"  placeholder="请输入门店名称" value=""  class="form_txt">
+                </section>
+                <section class="clearfix mb24">
+                    <section class="coordinate_w33 txt_item">
+                        <input type="text" name="default_store_map[0][lng]" value="" placeholder="地理经度" class="form_txt">
+                    </section>
+                    <section class="coordinate_w33 txt_item">
+                        <input type="text" name="default_store_map[0][lat]" value="" placeholder="地理纬度" class="form_txt">
+                    </section>
+                    <section class="select_coordinate clickBtn">
+                        <button class="but_store fr coordinate " type="button">选择坐标</button>
+                    </section>
+                </section>
+                <section class="txt_item">
+                    <input type="text" name="default_store_map[0][address]" value="" placeholder="请输入详情地址" class="form_txt">
+                </section>
+                <section class="clearfix">
+                    <section class="txt_item add_w fl">
+                        <input type="text" name="default_store_map[0][tel]" value="" placeholder="请输入电话" class="form_txt">
+                    </section>
+                    <section class="select_coordinate ">
+                        <button class="but_store fr bgRed delmapitem">删除门店</button>
+                    </section>
+                </section>
+            </section>
+            {/if}
+        </li>
+    </ul>
+</section>
+<section class="buttonBox">
+    <input name="token" value="{$_W['token']}" type="hidden" />
+    <input type="hidden" name="submit" value="submit"/>
+    <section class="buttonFloat clickBtn">
+        <a href="{php echo $this->createMobileUrl('store.store_member',array('act'=>'index'))}" class="db font32" style="width: 50%;    float: left;   color: #fff;   border-radius: 0.6rem 0 0 0.6rem;    background: #f92f4a;">商家中心</a>
+        <button type="submit" class="db font32" id="SubmitBtn" style="width: 50%;   float: left;    background: #FFD112;    color: #0e0e0e;border-radius: 0 0.6rem 0.6rem 0;">确认保存</button>
+    </section>
+</section>
+</form>
+<!--弹出层-->
+<section class="mask">
+    <section class="content">
+        <h2 class="font32 fn">扫码获取OPENID</h2>
+        <img src="{php echo $this->createMobileUrl('store.store_account', array('act' => 'openidQrPreview'));}"  alt=""/>
+        <p class="font28 c6">请用需要绑定用户的微信浏览器打开！</p>
+    </section>
+</section>
+<script src="{__MOBILE_STORE_JS__}/popUp.js"></script>
+<script id="maptpl" type="text/html">
+    <section class="form_con clearfix addmap" style="margin-top: 0.32rem;">
+        <section class="txt_item">
+            <input type="text"  name="default_store_map[<%= count %>][name]"  placeholder="请输入门店名称" value=""  class="form_txt">
+        </section>
+        <section class="clearfix mb24">
+            <section class="coordinate_w33 txt_item">
+                <input type="text" name="default_store_map[<%= count %>][lng]" value="" placeholder="地理经度" class="form_txt">
+            </section>
+            <section class="coordinate_w33 txt_item">
+                <input type="text" name="default_store_map[<%= count %>][lat]" value="" placeholder="地理纬度" class="form_txt">
+            </section>
+            <section class="select_coordinate clickBtn">
+                <button class="but_store fr coordinate " type="button">选择坐标</button>
+            </section>
+        </section>
+        <section class="txt_item">
+            <input type="text" name="default_store_map[<%= count %>][address]" value="" placeholder="请输入详情地址" class="form_txt">
+        </section>
+        <section class="clearfix">
+            <section class="txt_item add_w fl">
+                <input type="text" name="default_store_map[<%= count %>][tel]" value="" placeholder="请输入电话" class="form_txt">
+            </section>
+            <section class="select_coordinate ">
+                <button class="but_store fr bgRed delmapitem">删除门店</button>
+            </section>
+        </section>
+    </section>
+</script>
+<script id="bdmaptpl" type="text/html">
+    <section class="bgfff">
+        <section style=" height:1.6rem;">
+            <section class="pd24 map_search clearfix">
+                <section class="txt_item w80 fl"> <input  id="txtSearchMap" type="text" placeholder="请输入地址来直接查找相关位置" class="form_txt"></section>
+                <section class="w20 fr"><button class="but_search"  id="btnSearchMap">搜索</button></section>
+            </section>
+        </section>
+        <!--这里是地图-->
+        <section class=" pd0_24 pd24" id="MapContact" style="width: 100%; box-sizing: border-box"></section>
+    </section>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeMap();">确定</a></section>
+</script>
+<script>
+    var selectlng = '';
+    var selectlat = '';
+    var mapBtn = '';
+    $(function(){
+        require(['{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js'], function () {
+            //为formContent 添加验证事件
+            $("#store_form").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                                , style: 'bottom:0;'
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if(data.status == 1){
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 2000);
+                    }else{
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+        });
+
+        $('#btnSetOpenid').click(function(){
+            var openid = $('#openid');
+            if(openid.val() == ''){
+                layer.open({
+                    content: '请填写微信OPENID'
+                    , skin: 'msg'
+                    , time: 2 //2秒后自动关闭
+                });
+                openid.focus();
+                return;
+            }
+            $.ajax({
+                type: "post",
+                dataType:'json',
+                url: "{php echo $this->createMobileUrl('store.store_account',array('act'=>'set_openid'));}",
+                data: {
+                    openid: openid.val()
+                },
+                success: function (data, status) {
+                    layer.open({
+                        content: data.msg
+                        , skin: 'msg'
+                        , time: 2 //2秒后自动关闭
+                    });
+                }
+            });
+        });
+        $(".is_money_refund").click(function(e) {
+            if($(this).hasClass("switch_on")){
+                $(this).removeClass("switch_on");
+                $(this).addClass("switch_off");
+                $(this).find("input").val(0);
+                $("#money_refund_box").hide();
+            }
+            else{
+                $(this).removeClass("switch_off");
+                $(this).addClass("switch_on");
+                $(this).find("input").val(1);
+                $("#money_refund_box").show();
+            }
+        });
+        $(".is_mchpayfail_usermoney").click(function(e) {
+            if($(this).hasClass("switch_on")){
+                $(this).removeClass("switch_on");
+                $(this).addClass("switch_off");
+                $(this).find("input").val(0);
+            }
+            else{
+                $(this).removeClass("switch_off");
+                $(this).addClass("switch_on");
+                $(this).find("input").val(1);
+            }
+        });
+        $(".is_refund_notify").click(function(e) {
+            if($(this).hasClass("switch_on")){
+                $(this).removeClass("switch_on");
+                $(this).addClass("switch_off");
+                $(this).find("input").val(0);
+            }
+            else{
+                $(this).removeClass("switch_off");
+                $(this).addClass("switch_on");
+                $(this).find("input").val(1);
+            }
+        });
+        $(".switchopend").click(function(e) {
+            if($(this).hasClass("switch_on")){
+                $(this).removeClass("switch_on");
+                $(this).addClass("switch_off");
+                $(this).find("input").val(0);
+            }
+            else{
+                $(this).removeClass("switch_off");
+                $(this).addClass("switch_on");
+                $(this).find("input").val(1);
+            }
+        });
+
+        //开启多门店添加门店信息
+        $("#addmapbtn").click(function () {
+            console.log(1);
+            var mapcount	= $(".addmap").length;
+            var obj = {};
+            obj.count = mapcount;
+            var html = template("maptpl",obj);
+            $("#StoreList").append(html);
+        });
+
+        //删除多门店信息
+        $(document).delegate(".delmapitem", "click", function() {
+            var list = $(this).parent().parent().parent().parent();
+            $(this).parent().parent().parent().remove();
+            list.children(".addmap").each(function (index) {
+                $(this).find("[name^='default_store_map[']").each(function () {
+                    var inputName = $(this).attr("name");
+                    $(this).attr("name", inputName.replace(/\[([\d]+)\]/g, "[" + index + "]"));
+                });
+            });
+        });
+
+        //地理位置拾取器
+        $('#StoreList').on('click','.coordinate',function(){
+            mapBtn = $(this);
+            var lng = parseFloat(mapBtn.parent().prev().prev().find(":text").val());
+            var lat = parseFloat(mapBtn.parent().prev().find(":text").val());
+
+            selectlng = lng;
+            selectlat = lat;
+
+            var html = template("bdmaptpl", []);
+            layer.open({
+                type: 1
+                ,content: html
+                ,anim: 'up'
+                ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+            });
+
+            var MapHeight = window.screen.height - $(".map_search").parent().height() - $(".buttonFloat").height();
+            var map = new BMap.Map("MapContact");
+            $("#MapContact").css('height', MapHeight+'px');
+            var localpoint;
+            if (isNaN(lng)) {
+                localpoint = new BMap.Point(116.403119, 39.912943);
+            } else {
+                localpoint = new BMap.Point(lng, lat);
+            }
+            map.centerAndZoom(localpoint, 13);
+            addMarker(localpoint);
+            map.addControl(new BMap.ScaleControl());
+            map.addControl(new BMap.OverviewMapControl());
+            map.addControl(new BMap.MapTypeControl());
+            map.enableScrollWheelZoom();
+            var opts = { type: BMAP_NAVIGATION_CONTROL_SMALL }
+            map.addControl(new BMap.NavigationControl(opts));
+
+            var xArr = [];//存放横坐标
+            var yArr = [];//存放纵坐标
+
+            map.addEventListener("touchstart", function (e) {
+                //手指触摸屏幕的时候清空两个数组
+                xArr.length = 0;
+                yArr.length = 0;
+            });
+
+            map.addEventListener("touchmove",function(e){
+                //如果滑动了屏幕，xArr和yArr将各存入两个坐标值，即始末坐标值
+                xArr.push(e.targetTouches[0].pageX);
+                yArr.push(e.targetTouches[0].pageY);
+            });
+
+            map.addEventListener("touchend", function (e) {
+                var far;
+                var flag = true;
+                //计算平移距离，区分滑动事件和点击事件
+                if((xArr.length > 1) && (yArr.length > 1)){
+                    far = (Math.abs(xArr[0]-xArr[1]))^2 + (Math.abs(yArr[0]-yArr[1]))^2;
+                    if(far > 0){
+                        flag = false;
+                    }
+                }
+                if(flag){
+                    var point = new BMap.Point(e.point.lng, e.point.lat);
+                    selectlng = e.point.lng;
+                    selectlat = e.point.lat;
+                    addMarker(point);
+                }
+            });
+
+            var loadCount = 1;
+            map.addEventListener("tilesloaded",function(){
+                if(loadCount == 1){
+                    map.setCenter(new BMap.Point(selectlng, selectlat));
+                }
+                loadCount = loadCount + 1;
+            });
+
+            function addMarker(point) {
+                var myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {
+                    anchor: new BMap.Size(10, 30),
+                    offset: new BMap.Size(10, 25),
+                    imageOffset: new BMap.Size(0, 0)
+                });
+                var marker = new BMap.Marker(point);
+                map.clearOverlays();
+                map.addOverlay(marker);
+            }
+
+            $(document).on("click", "#btnSearchMap", function(){
+                var LocalSearch = new BMap.LocalSearch(map, {
+                    renderOptions: { map: map }
+                });
+                LocalSearch.search($("#txtSearchMap").val());
+                LocalSearch.setSearchCompleteCallback(function () {
+                    var item = LocalSearch.getResults();
+                    selectlng = item.getPoi(0).point.lng;
+                    selectlat = item.getPoi(0).point.lat;
+                });
+            });
+
+            scroll.afterOpen();
+            //清空浏览器历史记录
+            window.history.pushState({title: "title",url:"#"}, "title", "#");
+            //监听浏览器后退事件
+            window.addEventListener("popstate",
+                function(e) {
+                    //后退关闭弹窗赋值
+                    closeMap(mapBtn);
+                }, false);
+        });
+    });
+    //关闭弹窗
+    function closeMap(){
+        layer.closeAll();
+        scroll.beforeClose();
+        mapBtn.parent().prev().prev().find(":text").val(selectlng);
+        mapBtn.parent().prev().find(":text").val(selectlat);
+    }
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                console.log("afterOpen");
+                console.log(scrollTop);
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top + 'px';
+            },
+            beforeClose: function () {
+                console.log("beforeClose");
+                console.log(scrollTop);
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+</script>
+
+</body>
+</html>

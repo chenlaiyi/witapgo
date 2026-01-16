@@ -1,0 +1,60 @@
+<form id="bdall_form" method="post" class="form-horizontal form" >
+    <input type="hidden" name="schoolid" id="sid" value="" />
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-6 col-sm-3 col-md-3 control-label">登录连接地址</label>
+                <div class="col-sm-5">
+                    <span class="form-control" style="border:unset">{$bdall_info['bdall_shorturl']}</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-6 col-sm-3 col-md-3 control-label">标题</label>
+                <div class="col-sm-5">
+                    <input type="text" name="bdalltitle" id="bdalltitle" class="form-control" value="{$bdall_info['bdall_title']}"/>
+                    <div class="help-block">不超过15个汉字</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-6 col-sm-3 col-md-3 control-label">密码</label>
+                <div class="col-sm-5" style="padding-right: 0px;">
+                    <input type="password" name="bdallpwd" id="bdallpwd" minlength="10" maxlength="16" class="form-control" value="{$bdall_info['bdall_pwdus']}"/>
+                    <div class="help-block">密码长度为6-16位</div>
+                </div>
+                <div class="help-block CgPwd" onclick="CGEPWD(this)"><i class="fa fa-eye-slash" ></i></div>
+
+            </div>
+            <div class="form-group">
+                <label class="col-xs-6 col-sm-3 col-md-3 control-label">展示中心坐标</label>
+                <div class="col-sm-9">
+                    {php echo tpl_form_field_coordinate('centerpoint', $bdall_info['centerpoint'])}
+                    <div class="help-block">汇总平台地图中心点坐标</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-6 col-sm-3 col-md-3 control-label">    选择统计学校</label>
+                <div class="col-sm-8">
+                    {loop $schoollist $row_s}
+                    <label  class="checkbox-inline" ><input type="checkbox"  name="ckslist[]"  value="{$row_s['id']}" {if strstr($bdall_info['bdall_in_school'],$row_s['id'])} checked {/if}>{$row_s['title']}</label>
+                    {/loop}
+                </div>
+                 
+            </div>
+            
+        </div>
+    </div>
+</form>
+
+
+<script>
+    function CGEPWD(e){
+        if($(e).find('i').hasClass('fa-eye-slash')){
+            $("#bdallpwd").attr('type','text')
+            $(e).find('i').attr('class','fa fa-eye')
+        }else{
+            $("#bdallpwd").attr('type','password')
+            $(e).find('i').attr('class','fa fa-eye-slash')
+        }
+        
+    }
+</script>

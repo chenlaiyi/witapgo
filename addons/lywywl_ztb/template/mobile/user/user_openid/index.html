@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+{template 'user/common/header'}
+<body class="bgf2">
+<!-- 中心区域 -->
+<section class="toux tc"><img src="{$userinfo['headimgurl']}"  alt="{$userinfo['nickname']}"/><h2 class="font32 fn tc">{$userinfo['nickname']}</h2></section>
+<section class="pd24" style="padding-top: 0px;">
+    <section class="openid font32 tc copy_text">{$userinfo['openid']}</section>
+    <h2 class="font32 fn tc pd24">微信OPENID</h2>
+    <section class="h24"></section>
+    <button type="button" class="Button" id="btnCopy" data-clipboard-action="copy" data-clipboard-target=".copy_text">点击复制</button>
+</section>
+<script src="{__PLUGIN__}/clipboard/clipboard.min.js"></script>
+<script type="text/javascript">
+    var btn = document.getElementById('btnCopy');
+    var clipboard = new Clipboard(btn);
+
+    clipboard.on('success', function (e) {
+        layer.open({ content: '内容已复制', skin: 'msg', time: 2 });
+    });
+
+    clipboard.on('error', function (e) {
+        layer.open({ content: '对不起，浏览器不支持，请手动复制内容！', skin: 'msg', time: 2 });
+    });
+</script>
+</body>
+</html>
+<!--bjgucG9zZ2UuY29t-->
+<!--ZTc2ZDAyODUtZDlmZC00MjE2LWExYWYtYTA5M2IyNDgyYTg0-->

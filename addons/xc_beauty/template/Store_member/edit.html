@@ -1,0 +1,716 @@
+{template 'common/header'}
+<link rel="stylesheet" type="text/css" href="../addons/{php echo $_GPC['m']}/resource/css/style.css" />
+<link rel="stylesheet" type="text/css" href="../addons/{php echo $_GPC['m']}/resource/swal/dist/sweetalert2.min.css" />
+<link rel="stylesheet" type="text/css" href="../addons/{php echo $_GPC['m']}/resource/bootstrap-select/bootstrap-select.min.css" />
+<style>
+    .pai2{display: none;}
+    #pcontents {line-height: 30px;}
+    #psortlist li {width: 420px;display: inline-block;margin-left: 1%;  }
+    .photos .control-label {height: 25px;line-height: 25px;  }
+    #templist a {margin-bottom: 5px;}
+    #templist a.btn + a.btn, #sysvar a.btn + a.btn {margin-left: 0px;  }
+    #userlist li{  width: 130px;  overflow: hidden;  }
+    #userlist li img{  width: 130px;}
+    .messagestep{  width: 33%;  float: left;  padding: 5px;  }
+    #opstep  canvas, #opstep  img{  max-width: 100%;  }
+    #userlist li{  float: left;  margin-right: 5px;  }
+    #userlist li  .input-group-addon{  font-size: 12px;  }
+</style>
+<div id="model" style="display: none;">
+    <div class="zuopin">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">作品封面(110*90)</label>
+            <div class="col-sm-8">
+                {php echo tpl_form_field_image('zuo_feng');}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">作品图片(自适应)</label>
+            <div class="col-sm-8">
+                {php echo tpl_form_field_multi_image('zuo_content');}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label"></label>
+            <div class="col-sm-8">
+                <button class="btn btn-default" type="button" onclick="zuo.parameter_add(this)">增加</button>
+                <button class="btn btn-danger" type="button" onclick="zuo.parameter_del(this)">删除</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            门店项目>编辑
+        </h3>
+    </div>
+    <div class="panel-body">
+        <form id="sign-form" class="form-horizontal" role="form" method="post" action="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'savemodel','version_id'=>$_GPC['version_id'])}" name="submit" style="padding: 20px 0;">
+            <div class="form-group">
+                <label for="name" class="col-sm-2 control-label">店员姓名</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  name="name" id="name" value="{$list['name']}">
+                    <input type="hidden" name="id" value="{$list['id']}">
+                    <input type="hidden" name="service">
+                    <input type="hidden" name="zuo_pin">
+                    <input type="hidden" name="cid">
+                    <input type="hidden" name="store">
+                    <input type="hidden" name="userlist">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">头像（100*100）</label>
+                <div class="col-sm-8">
+                    {php echo tpl_form_field_image('simg',$list['simg']);}
+                </div>
+            </div>
+            <div class="form-group store">
+                <label class="col-sm-2 control-label">门店选择</label>
+                <div class="col-sm-8">
+                    {if $list['store']}
+                    {loop $list['store'] $index $item}
+                    <div class="input-group" style="margin-bottom: 10px;">
+                        <input type="text" class="form-control" name="list" value="{$item['name']}" data-id="{$item['id']}" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default link" type="button" data-toggle="modal" data-target="#sort_link2">选择门店</button>
+                        </span>
+                        <span class="input-group-btn" onclick="param.parameter_add(this)">
+                            <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>
+                        </span>
+                        <span class="input-group-btn" onclick="param.parameter_del(this)">
+                            <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>
+                        </span>
+                    </div>
+                    {/loop}
+                    {else}
+                    <div class="input-group" style="margin-bottom: 10px;">
+                        <input type="text" class="form-control" name="list" value="">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default link" type="button" data-toggle="modal" data-target="#sort_link2">选择门店</button>
+                        </span>
+                        <span class="input-group-btn" onclick="param.parameter_add(this)">
+                            <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>
+                        </span>
+                        <span class="input-group-btn" onclick="param.parameter_del(this)">
+                            <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>
+                        </span>
+                    </div>
+                    {/if}
+                </div>
+            </div>
+            <script>
+                var param={
+                    parameter_add:function(objc){
+                        $(objc).parent().after('<div class="input-group" style="margin-bottom: 10px;"> ' +
+                                '<input type="text" class="form-control" name="list" value=""> '+
+                                '<span class="input-group-btn">' +
+                                '<button class="btn btn-default link" type="button" data-toggle="modal" data-target="#sort_link2">选择门店</button>' +
+                                '</span>'+
+                                '<span class="input-group-btn" onclick="param.parameter_add(this)"> ' +
+                                '<button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button> ' +
+                                '</span> ' +
+                                '<span class="input-group-btn" onclick="param.parameter_del(this)"> ' +
+                                '<button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button> ' +
+                                '</span> ' +
+                                '</div>')
+                    },
+                    parameter_del:function(objc){
+                        if($(objc).parent().siblings().length>0){
+                            $(objc).parent().remove();
+                        }
+                    }
+                }
+            </script>
+            {if $xc && $xc['status']==1}
+            {if $xc['type']==1}
+            <div class="form-group">
+                <label class="col-sm-2 control-label">联系电话</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  name="mobile" value="{$list['mobile']}" placeholder="必须为手机号（用于接收预约短信）">
+                </div>
+            </div>
+            {else if $xc['type']==2}
+            <div class="form-group" style="display: none" id="stepcontents">
+                <label class="control-label col-md-2 col-sm-3 col-xs-12">操作步骤</label>
+                <div class="col-md-10 col-sm-9 col-xs-12">
+                    <div id="opstep">
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2 col-sm-3 col-xs-12">信息接受人</label>
+                <div class="col-md-10 col-sm-9 col-xs-12">
+                    <ul id="userlist">
+
+                        {loop  $list["userlist"] $uxkey $uxval}
+                        <li data-openid="{$uxval['openid']}" data-nickname="{$uxval['nickname']}" data-headimgurl="{$uxval['headimgurl']}" ><img src="{$uxval['headimgurl']}">
+
+                            <div class="input-group">
+                                <span class="input-group-btn"> <button  class=" btn btn-default" type="button"><span><i class="fa fa-remove"></i></span></button></span>
+                                <span class="input-group-addon" style="width:100px;border-left:none;overflow: hidden;">{$uxval['nickname']}</span>
+
+                            </div>
+                        </li>
+                        {/loop}
+                    </ul>
+                    <div style="clear: both;"></div>
+                    <button type="button" class="btn btn-default"  id="btnop">增加接受人员</button>
+                </div>
+            </div>
+            <script>
+                var parameter = {
+                    parameter_add: function (objc) {
+                        $(objc).parent().after('<li class="input-group"> <input type="text" class="form-control"  data-name="attr"value=""> <input type="text" class="form-control" data-name="value" value=""> <span class="input-group-btn" onclick="parameter.parameter_add(this)"> <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button> </span> <span class="input-group-btn" onclick="parameter.parameter_del(this)"> <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button> </span></li>');
+                    },
+                    parameter_del: function (objc) {
+                        if ($(objc).parent().siblings().length > 0) {
+                            $(objc).parent().remove();
+                        }
+                    }
+                }
+            </script>
+            {/if}
+            {/if}
+            <div class="form-group">
+                <label class="col-sm-2 control-label">提成店员</label>
+                <div class="col-sm-8">
+                    <select id="store_manager" class="selectpicker show-tick form-control bs-select-hidden" data-live-search="true" name="store_manager" style="width: 50%;">
+                        <option data-id="-1" value="0" hassubinfo="true">请选择提成店员</option>
+                        {loop $user_list $index $vo}
+                        <option data-id="{$vo['shop_id']}" value="{$vo['openid']}" {if $vo['openid']==$list['store_manager']}selected{/if}>{$vo['nick']}</option>
+                        {/loop}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">买单提成</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="buy_fee" value="{$list['buy_fee']}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">%</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">服务方式</label>
+                <div class="col-sm-8">
+                    <label class="radio inline" style="width:60px;">
+                        <input type="checkbox" class="ui-radio" name="home" id="home" value="1" {if $list['home']==1}checked{/if}>上门服务
+                    </label>
+                    <label class="radio inline" style="width:60px;">
+                        <input type="checkbox" class="ui-radio" name="shop" id="shop" value="1" {if $list['shop']==1}checked{/if}>到店服务
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">职称</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  name="task" value="{$list['task']}">
+                </div>
+            </div>
+            <div class="form-group teacher">
+                <label  class="col-sm-2 control-label">服务项目</label>
+                <div class="col-sm-8">
+                    {if $list['service']}
+                    {loop $list['service'] $index $item}
+                    <div class="input-group" style="margin-bottom: 10px;">
+                        <input type="text" class="form-control" name="list" value="{$item['name']}" data-id="{$item['id']}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default link" type="button" data-toggle="modal" data-target="#sort_link">选择项目</button>
+                        </span>
+                        <input type="text" class="form-control" name="fee" value="{$item['fee']}" placeholder="提成金额">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">%</button>
+                        </span>
+                        <span class="input-group-btn" onclick="parameter.parameter_add(this)">
+                            <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>
+                        </span>
+                        <span class="input-group-btn" onclick="parameter.parameter_del(this)">
+                            <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>
+                        </span>
+                    </div>
+                    {/loop}
+                    {else}
+                    <div class="input-group" style="margin-bottom: 10px;">
+                        <input type="text" class="form-control" name="list" value="">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default link" type="button" data-toggle="modal" data-target="#sort_link">选择项目</button>
+                        </span>
+                        <input type="text" class="form-control" name="fee" value="" placeholder="提成金额">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">%</button>
+                        </span>
+                        <span class="input-group-btn" onclick="parameter.parameter_add(this)">
+                            <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>
+                        </span>
+                        <span class="input-group-btn" onclick="parameter.parameter_del(this)">
+                            <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>
+                        </span>
+                    </div>
+                    {/if}
+                </div>
+            </div>
+            <script>
+                var parameter={
+                    parameter_add:function(objc){
+                        $(objc).parent().after('<div class="input-group" style="margin-bottom: 10px;">' +
+                                '<input type="text" class="form-control" name="list" value="">' +
+                                '<span class="input-group-btn">' +
+                                '<button class="btn btn-default link" type="button" data-toggle="modal" data-target="#sort_link">选择项目</button> ' +
+                                '</span> ' +
+                                '<input type="text" class="form-control" name="fee" value="" placeholder="提成金额"> ' +
+                                '<span class="input-group-btn"> ' +
+                                '<button class="btn btn-default" type="button">%</button> ' +
+                                '</span> ' +
+                                '<span class="input-group-btn" onclick="parameter.parameter_add(this)"> ' +
+                                '<button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button> ' +
+                                '</span> ' +
+                                '<span class="input-group-btn" onclick="parameter.parameter_del(this)"> ' +
+                                '<button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button> ' +
+                                '</span> ' +
+                                '</div>')
+                    },
+                    parameter_del:function(objc){
+                        if($(objc).parent().siblings().length>0){
+                            $(objc).parent().remove();
+                        }
+                    }
+                }
+            </script>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">个人签名</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  name="tag" value="{$list['tag']}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">相关作品名称</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  name="title" value="{$list['title']}">
+                </div>
+            </div>
+            {if $list['zuo_pin']}
+            {loop $list['zuo_pin'] $index $item}
+            <div class="zuopin">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">作品封面(110*90)</label>
+                    <div class="col-sm-8">
+                        {php echo tpl_form_field_image('zuo_feng',$item['simg']);}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">作品图片(自适应)</label>
+                    <div class="col-sm-8">
+                        {php echo tpl_form_field_multi_image('zuo_content',$item['bimg']);}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label"></label>
+                    <div class="col-sm-8">
+                        <button class="btn btn-default" type="button" onclick="zuo.parameter_add(this)">增加</button>
+                        <button class="btn btn-danger" type="button" onclick="zuo.parameter_del(this)">删除</button>
+                    </div>
+                </div>
+            </div>
+            {/loop}
+            {else}
+            <div class="zuopin">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">作品封面(110*90)</label>
+                    <div class="col-sm-8">
+                        {php echo tpl_form_field_image('zuo_feng');}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">作品图片(自适应)</label>
+                    <div class="col-sm-8">
+                        {php echo tpl_form_field_multi_image('zuo_content');}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label"></label>
+                    <div class="col-sm-8">
+                        <button class="btn btn-default" type="button" onclick="zuo.parameter_add(this)">增加</button>
+                        <button class="btn btn-danger" type="button" onclick="zuo.parameter_del(this)">删除</button>
+                    </div>
+                </div>
+            </div>
+            {/if}
+            <script>
+                var zuo={
+                    parameter_add:function(objc){
+                        $(objc).parent().parent().parent().after($("#model").html());
+                    },
+                    parameter_del:function(objc){
+                        if($(objc).parent().parent().parent().siblings(".zuopin").length>0){
+                            $(objc).parent().parent().parent().remove();
+                        }
+                    }
+                }
+            </script>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">个人简介</label>
+                <div class="col-sm-8">
+                    <textarea type="text" class="form-control"  name="content" rows="10">{$list['content']}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">排班单双周</label>
+                <div class="col-sm-8">
+                    {if $list['pai_status']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="pai_status">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="pai_status" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">排班表<span class="pai2">（单周）</span></label>
+                <div class="col-sm-8">
+                    <select class="selectpicker show-tick form-control bs-select-hidden" data-live-search="true" name="pai1" style="width: 50%;">
+                        <option value="0" hassubinfo="true">请选择排班表</option>
+                        {loop $pai_list $index $vo}
+                        <option value="{$vo['id']}" {if $vo['id']==$list['pai1']}selected{/if}>{$vo['name']}</option>
+                        {/loop}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group pai2">
+                <label class="col-sm-2 control-label">排班表（双周）</label>
+                <div class="col-sm-8">
+                    <select class="selectpicker show-tick form-control bs-select-hidden" data-live-search="true" name="pai2" style="width: 50%;">
+                        <option value="0" hassubinfo="true">请选择排班表</option>
+                        {loop $pai_list $index $vo}
+                        <option value="{$vo['id']}" {if $vo['id']==$list['pai2']}selected{/if}>{$vo['name']}</option>
+                        {/loop}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">状态</label>
+                <div class="col-sm-8">
+                    {if $list['status']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="status">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="status" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">排序</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  name="sort" value="{$list['sort']}">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <input type="button" name="submit" class="btn btn-default" value="提交">
+                    <a class="btn btn-default" href="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'])}">返回</a>
+                    <input id="res" name="res" type="reset" style="display:none;" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal fade" id="sort_link"><div class="modal-dialog">
+    <style>
+        #sort_link .modal-body {padding: 10px 15px;}
+        #sort_link .tab-pane {margin-top: 5px; min-height: 400px; max-height: 400px; overflow-y: auto;}
+        #sort_tab{margin-bottom: 10px;}
+    </style>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">服务项目</h4>
+        </div>
+        <div class="modal-body">
+            <iframe width="100%" height="395" frameborder="no" border="0" scrolling="no" allowtransparency="yes" src="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'service')}"></iframe>
+        </div>
+        <div class="modal-footer">
+            <button data-dismiss="modal" class="btn btn-default" id="sort_close" type="button">关闭</button>
+        </div>
+        <script>
+            var sort_objc='';
+            $(function(){
+                $(".sort_customize").on('click','.sort_link',function(){
+                    var id=$(this).attr("data-id");
+                    if(id==2){
+                        $("#sort_link").find("#sort_tab li").eq(1).hide();
+                    }else{
+                        $("#sort_link").find("#sort_tab li").eq(1).show();
+                    }
+                    sort_objc=this;
+                });
+                $("#sort_link").find('#sort_tab a').click(function(e) {
+                    $('#tab').val($(this).attr('href'));
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
+            });
+        </script>
+    </div>
+</div></div>
+<div class="modal fade" id="sort_link2"><div class="modal-dialog">
+    <style>
+        #sort_link .modal-body {padding: 10px 15px;}
+        #sort_link .tab-pane {margin-top: 5px; min-height: 400px; max-height: 400px; overflow-y: auto;}
+        #sort_tab{margin-bottom: 10px;}
+    </style>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">适用门店</h4>
+        </div>
+        <div class="modal-body">
+            <iframe width="100%" height="395" frameborder="no" border="0" scrolling="no" allowtransparency="yes" src="{url 'site/entry/Service',array('m'=>$_GPC['m'],'op'=>'service','version_id'=>$_GPC['version_id'])}"></iframe>
+        </div>
+        <div class="modal-footer">
+            <button data-dismiss="modal" class="btn btn-default" id="sort_close2" type="button">关闭</button>
+        </div>
+        <script>
+            var sort_objc='';
+            $(function(){
+                $(".sort_customize").on('click','.sort_link',function(){
+                    var id=$(this).attr("data-id");
+                    if(id==2){
+                        $("#sort_link").find("#sort_tab li").eq(1).hide();
+                    }else{
+                        $("#sort_link").find("#sort_tab li").eq(1).show();
+                    }
+                    sort_objc=this;
+                });
+                $("#sort_link").find('#sort_tab a').click(function(e) {
+                    $('#tab').val($(this).attr('href'));
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
+            });
+        </script>
+    </div>
+</div></div>
+<script>
+    function choose(){
+        if($("input[name='pai_status']").is(":checked")){
+            $(".pai2").show();
+        }else{
+            $(".pai2").hide();
+        }
+    }
+    var objc="";
+    require(["../addons/{php echo $_GPC['m']}/resource/swal/dist/sweetalert2.min.js","../addons/{php echo $_GPC['m']}/resource/bootstrap-select/bootstrap-select.min.js"],function(){
+        $(function(){
+            choose();
+            $("#cid").change(function(){
+                var store=$("#cid  option:selected").val();
+                $("#store_manager").find("option").each(function(){
+                    var id=$(this).attr("data-id");
+                    if(id==-1 || id==store){
+                        $(this).show();
+                    }else{
+                        $(this).hide();
+                    }
+                });
+                $("#store_manager").val(0);
+                $("#store_manager").selectpicker('refresh');
+            });
+            $("body").on("click",'.link',function(){
+                objc=this;
+            });
+            $("input[name='pai_status']").change(function(){
+                choose();
+            });
+            $("input[name='submit']").click(function(){
+                getjson();
+                zuo_pin();
+                var data=$(".form-horizontal").serialize();
+                $.ajax({
+                    type:"post",
+                    url:"{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'savemodel','version_id'=>$_GPC['version_id'])}",
+                    data:data,
+                    dataType:'json',
+                    success:function(res){
+                        if(res.status==1){
+                            if($("input[name='id']").val()==""){
+                                $("input[name='res']").click();
+                                $("body").find(".img-responsive.img-thumbnail").attr("src","");
+                            }
+                            swal('操作成功!', '操作成功!', 'success');
+                        }else{
+                            swal('操作失败!', '操作失败!', 'error');
+                        }
+                    }
+                })
+            });
+        })
+    });
+    function getjson(){
+        var teacher=[];
+        $(".teacher").find("input[name='list']").each(function(){
+            var id=$(this).attr("data-id");
+            var name=$(this).val();
+            var fee=$(this).parent().find("input[name='fee']").val();
+            if(id!="" && name!=""){
+                var data={id:id,name:name,fee:fee};
+                teacher.push(data);
+            }
+        });
+        if(teacher.length>0){
+            $("input[name='service']").val(JSON.stringify(teacher));
+        }
+        var store=[];
+        $(".store").find(".input-group").each(function(){
+            var id=$(this).find("input[name='list']").attr("data-id");
+            var name=$(this).find("input[name='list']").val();
+            if(id!="" && name!=""){
+                var data={id:id,name:name};
+                store.push(data);
+            }
+        });
+        if(store.length>0){
+            $("input[name='cid']").val(store[0]['id']);
+            $("input[name='store']").val(JSON.stringify(store));
+        }
+
+        $userlist=[];
+        $("#userlist").find("li").each(function () {
+            var tmodel={};
+            tmodel["openid"]=$(this).attr("data-openid");
+            tmodel["headimgurl"]=$(this).attr("data-headimgurl");
+            tmodel["nickname"]=$(this).attr("data-nickname");
+            $userlist.push(tmodel);
+        });
+        if($userlist.length>0){
+            $("input[name='userlist']").val(JSON.stringify($userlist));
+        }
+    }
+
+    function zuo_pin(){
+        var list=[];
+        $("#sign-form").find(".zuopin").each(function(){
+            var data={};
+            var simg=$(this).find("input[name='zuo_feng']").val();
+            var bimg=[];
+            $(this).find("input[name='zuo_content[]']").each(function(){
+                bimg.push($(this).val());
+            });
+            if(simg!="" && bimg.length>0){
+                data.simg=simg;
+                data.bimg=bimg;
+                list.push(data);
+            }
+        });
+        if(list.length>0){
+            $("input[name='zuo_pin']").val(JSON.stringify(list));
+        }
+    }
+</script>
+<script>
+    $(function () {
+        opstepfun();
+        $("#userlist").on("click","button",function () {
+
+
+            $(this).closest("li").remove();
+
+        })
+        var autouser=-1;
+        $("#btnop").click(function () {
+            $("#stepcontents").show();
+            userlistupdate();
+            if(autouser==-1)
+            {
+                autouser=1;
+                setInterval(function () {
+                    userlistupdate()
+                },1000)
+            }
+        });
+    });
+    var guzhuer = '{$idata["erurl"]}';
+    var $mesaurl= {$mesaurl};
+    function userlistupdate() {
+        if($mesaurl["ident"]!="")
+        {
+            var $postmodel= {};
+            $postmodel["ident"]=  $mesaurl["ident"];
+            $.ajax({
+                type: "post",
+                url: "{php echo $this->createWebUrl('Web', array('op'=>'getnewuserlist'));}",
+                dataType: "json",
+                data: $postmodel,
+                success: function (msg) {
+
+
+                    if(msg["obj"].length>0){
+                        var phtml=[];
+                        for(var i=0;i<msg["obj"].length;i++)
+                        {
+
+                            phtml.push("<li  data-openid='"+msg["obj"][i]["openid"]+"' data-headimgurl='"+msg["obj"][i]["headimgurl"]+"' data-nickname='"+msg["obj"][i]["nickname"]+"'>")
+                            phtml.push("<img src='"+msg["obj"][i]["headimgurl"]+"'>");
+
+                            phtml.push('<div class="input-group">');
+                            phtml.push(' <span class="input-group-btn">    <button  class=" btn btn-default" type="button"><span><i class="fa fa-remove"></i></span></button></span>');
+                            phtml.push('<span class="input-group-addon" style="width:100px;border-left:none;overflow: hidden;">'+msg["obj"][i]["nickname"]+'</span>');
+                            phtml.push(' </div>');
+
+                            phtml.push("</li>")
+
+
+                        }
+
+                        $("#userlist").append(phtml.join(""));
+                    }
+
+
+                }
+            });
+        }
+    }
+
+    function  opstepfun() {
+
+        require(["jquery",'jquery.qrcode'], function ($, util) {
+            var  $htmlcontents=[];
+
+            $htmlcontents.push("<div  class='messagestep'>");
+            if(guzhuer=="")
+            {
+                $htmlcontents.push("<h2>暂未设定关注的公众号,如果你已经关注公众号请进行下一步,如果没有关注公众号请先关注公众号</h2>")
+            }
+            else
+            {
+                $htmlcontents.push('第一步：如果未关注公众号请先扫码关注公众号【下面二维码】<br/><img src="'+guzhuer+'" width="230">');
+            }
+            $htmlcontents.push("</div>");
+            $htmlcontents.push("<div  class='messagestep'>");
+            if($mesaurl["url"]!="")
+            {
+                $htmlcontents.push('第二步扫描下面二维码 <div id="er2" url="'+$mesaurl["url"]+'" width="230"></div> ');
+
+            }
+            $htmlcontents.push("</div>");
+
+            $htmlcontents.push("<div  class='messagestep'>确认保存</div>");
+            $("#opstep").append($htmlcontents.join(""));
+
+            $("#er2").html('').qrcode({
+                render: 'canvas',
+                width: 230,
+                height: 230,
+                text: $mesaurl["url"]
+            });
+
+        })
+
+
+
+
+
+    }
+</script>
+{template 'common/footer'}

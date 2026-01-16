@@ -1,0 +1,1290 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<link rel="stylesheet" href="{__PLUGIN__}/clipboard/clipboard.min.js">
+<style>
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {position: static}
+
+    .obj_preview ul { text-align: center; margin-top:0.4rem}
+    .obj_preview li{ width:90%; display:inline-block; font-size:0.3733333333333333rem; text-align:center; margin-top:0.4rem;}
+    .obj_preview li .ewm{ width:60%; display:block; margin:0 auto 0.32rem;}
+    .obj_preview .copybtn{ background:#e2e2e2; display:inline-block;  width: 46%; padding: 0.2rem 0rem; border-radius:0.6rem;}
+    .obj_preview .copyimg{height:0.6rem;line-height:0.6rem; display:inline-block; vertical-align:middle; margin-right:0.1333rem}
+
+</style>
+<body>
+<section class="rel" style="height: 1.08rem;">
+    <h2 class="screen fn font28 bgfff" style=" position: fixed;z-index: 10;width: 100%;">
+        <dl class="retrie">
+            <dt class="bor_b pd0_24">
+                <a id="filter" href="javascript:;" style="width:auto!important">筛选<i class="sortIconI"></i> </a>
+            </dt>
+            <dd class="default">
+                <form>
+                    <!--筛选弹出层-->
+                    <section class="interal_filter downlist">
+                        <ul class="form">
+                            <li><span>活动名称：</span><section><input type="text" placeholder="项目名称/项目编号/项目TOKEN" id="searchKey"></section></li>
+                            <li><span>活动类别：</span><section >
+                                <p class="select_box rel">
+                                    <select id="searchActivityType">
+                                        <option value="" selected="selected">请选择</option>
+                                        {loop  $activityTypes $index $activity}
+                                        <option value="{$index}" {if $index == $activityType}selected="selected"{/if}>{$activity}</option>
+                                        {/loop}
+                                    </select>
+                                </p>
+                            </section></li>
+                            <li><span>活动模板：</span><section >
+                                <p class="select_box rel">
+                                    <select id="searchObjTmp">
+                                        <option value="" selected="selected">请选择</option>
+                                        {loop $objTmpList $item}
+                                        <option value="{$item['id']}" {if $item['id'] == $tmp_id}selected="selected"{/if}>{$item['name']}</option>
+                                        {/loop}
+                                    </select>
+                                </p>
+                            </section></li>
+                            <li><span>活动状态：</span><section >
+                            <p class="select_box rel">
+                                <select id="searchStatus">
+                                    <option value="" selected="selected">请选择</option>
+                                    <option value="1">启用</option>
+                                    <option value="0">禁用</option>
+                                </select>
+                            </p>
+                        </section></li>
+                            <li><span>活动进度：</span><section >
+                                <p class="select_box rel">
+                                    <select id="searchProcess" selected="selected">
+                                        <option value="">请选择</option>
+                                        {loop $timetype $type $value}
+                                        <option value="{$type}">{$value}</option>
+                                        {/loop}
+                                    </select>
+                                </p>
+                            </section></li>
+                            <li><span>审核状态：</span><section >
+                                <p class="select_box rel">
+                                    <select id="SearchCheckStatus" selected="selected">
+                                        <option value="">请选择</option>
+                                        {loop $activityCheckStatus $type $value}
+                                        <option value="{$type}">{$value}</option>
+                                        {/loop}
+                                    </select>
+                                </p>
+                            </section></li>
+                        </ul>
+                        <section class="retrieval mt24 clearfix">
+                            <button type="reset" class="recharge_but font32"> 重置</button>
+                            <button type="button" class="submit_but font32" id="btnSearch"> 搜索</button>
+                        </section>
+                    </section>
+                </form>
+            </dd>
+        </dl>
+    </h2>
+</section>
+<!--中心区域-->
+<section class="h24"></section>
+<section class="pdBtm98">
+    <section id="ContentList">
+        <ul class="list-shop" id="LoadLists">
+
+        </ul>
+    </section>
+</section>
+<section class="buttonBox"></section>
+<section class="buttonFloat">
+    <a href="{php echo $this->createMobileUrl('store.store_member',array('act'=>'index'))}" class="db font32" style="width: 50%;    float: left;   color: #fff;   border-radius: 0.6rem 0 0 0.6rem;    background: #f92f4a;">商家中心</a>
+    <a href="{php echo $this->createMobileUrl('store.sys_tmp', array('act' => 'index' ));}" style="width: 50%;   float: left;    background: #FFD112;    color: #0e0e0e;border-radius: 0 0.6rem 0.6rem 0;" class="db font32">创建活动</a>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li data-id="<%= rows[i].id %>" data-token="<%= rows[i].token %>" data-links="<%= rows[i].links %>" data-tpl="<%= rows[i].activity_tables %>" data-title="<%=rows[i].title%>" data-updatetime="<%=rows[i].updatetime%>" data-check_status="<%=rows[i].check_status%>" data-check_statusname="<%=rows[i].check_statusname%>" data-check_note="<%= rows[i].check_note %>">
+        <a href="javascript:;" rel="external">
+        <figure class="f-yahei">
+            <div class="left"> <img src="<%= rows[i].pic_url %>"> </div>
+            <figcaption style="height: 1.0666rem;"><em class="font24" style="background: rgba(0,0,0,0.5);color: #fff;padding: 3px;border-radius: 5px;"><%= rows[i].activity_types_name %></em>&nbsp;<em class="font24" style="background: rgba(0,0,0,0.5);color: #fff;padding: 3px;border-radius: 5px;"><%= rows[i].check_statusname %></em>&nbsp;
+                {if $plug_rebate2}
+                <%if(rows[i].or_open_rebate2 == 0){%>
+                <em class="font24" style="background: #39cccc;color: #fff;padding: 3px;border-radius: 5px;">一级返利</em>&nbsp;
+                <%}else if(rows[i].or_open_rebate2 == 1){%>
+                <em class="font24" style="background: #dd4b39;color: #fff;padding: 3px;border-radius: 5px;">二级返利</em>&nbsp;
+                <%}%>
+                {/if}
+                {if $plug_ladder}
+                <%if(rows[i].or_open_ladder == 1){%>
+                <em class="font24" style="background: #dd4b39;color: #fff;padding: 3px;border-radius: 5px;">阶梯返利</em>&nbsp;
+                <%}%>
+                {/if}
+                <%= rows[i].title %>
+            </figcaption>
+            <p class="c9" >开始时间：<%= rows[i].start_time %></p>
+            <p class="c9">结束时间：<%= rows[i].end_time %></p>
+        </figure>
+        <section class="font28 count clearfix">
+            <%if(rows[i].activity_types==1){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].get_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==2){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">销售</span><strong class="ml10"><%= rows[i].buy_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==3){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">销售</span><strong class="ml10"><%= rows[i].buy_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==4){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].buy_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==5){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].join_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==6){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].get_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==7){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].get_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==8){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].get_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==9){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].get_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==10){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].get_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==11){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].get_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==12){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].get_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==13){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].get_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==14){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].get_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==15){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">销售</span><strong class="ml10"><%= rows[i].buy_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==16){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">销售</span><strong class="ml10"><%= rows[i].buy_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==17){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">销售</span><strong class="ml10"><%= rows[i].buy_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==18){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= (rows[i].get_num + rows[i].buy_num) %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==19){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].join_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==20){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">报名</span><strong class="ml10"><%= rows[i].buy_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==21){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">销售</span><strong class="ml10"><%= rows[i].buy_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==22){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">报名</span><strong class="ml10"><%= rows[i].join_num %></strong></p>
+            <%}%>
+            <%if(rows[i].activity_types==23){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].join_num %></strong></p>
+            <%}%>            
+			<%if(rows[i].activity_types==24){%>
+            <p><span class="c9">浏览</span><strong class="ml10"><%= rows[i].click_num %></strong></p>
+            <p><span class="c9">分享</span><strong class="ml10"><%= rows[i].repost_num %></strong></p>
+            <p><span class="c9">参与</span><strong class="ml10"><%= rows[i].join_num %></strong></p>
+            <%}%>
+        </section>
+    </a>
+        <section class="operation w33 clearfix font28 c9" style="text-align: right;padding-right: 0.1333rem;position: absolute;right: 0;top: 1.2rem;border: none;">
+            <%if(rows[i].status == 1){%>
+                <span class="switch switch_on swstatus" style="position:relative; vertical-align:middle; left:0"><i class="slider"></i></span>
+            <%}else{%>
+                <span class="switch switch_off swstatus" style="position:relative; vertical-align:middle; left:0"><i class="slider"></i></span>
+            <%}%>
+        </section>
+        <section class="operation w33 clearfix"> <a href="<%= getObjModifyUrl(rows[i].activity_tables,rows[i].id) %>" class="edit bor_r font28"><span>编辑</span></a> <a href="javascript:;" class="delete  bor_r  font28"><span>删除</span></a><a href="javascript:;" class="operate font28 clickBtn"><span>操作</span></a> </section>
+    </li>
+    <% } %>
+</script>
+<script id="obj_share_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p><img class="ewm" src="{php echo $this->createMobileUrl('store.obj_share', array('act' => 'objQrPreview' ));}&token=<%= token %>&id=<%= id %>"></p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify; padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">中奖记录</a>  <a href="{php echo $this->createMobileUrl('store.obj_share_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a><a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_share', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_soliciting_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p id="objqrcode">二维码生成中，请耐心等待！</p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;
+                padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.obj_soliciting_pay', array('act' => 'index'));}&aid=<%= id %>">购买日志</a> <a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">返利记录</a> <a href="{php echo $this->createMobileUrl('store.obj_soliciting_join', array('act' => 'index'));}&aid=<%= id %>">参与用户</a>  <a href="{php echo $this->createMobileUrl('store.obj_soliciting_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_soliciting', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_union_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p id="objqrcode">二维码生成中，请耐心等待！</p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;
+                padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.obj_union_writeoff', array('act' => 'index'));}&aid=<%= id %>">核销日志</a> <a href="{php echo $this->createMobileUrl('store.obj_union_cardbag', array('act' => 'index'));}&aid=<%= id %>">领券日志</a> <a href="{php echo $this->createMobileUrl('store.obj_union_pay', array('act' => 'index'));}&aid=<%= id %>">购买日志</a>  <a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">返利日志</a>  <a href="{php echo $this->createMobileUrl('store.obj_union_join', array('act' => 'index'));}&aid=<%= id %>">参与用户</a> <a href="{php echo $this->createMobileUrl('store.obj_union_store_wait', array('act' => 'index'));}&aid=<%= id %>">商家申请</a> <a href="{php echo $this->createMobileUrl('store.obj_union_store', array('act' => 'index'));}&aid=<%= id %>">商家管理</a> <a href="{php echo $this->createMobileUrl('store.obj_union_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_union', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_praise_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p id="objqrcode">二维码生成中，请耐心等待！</p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;
+                padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.obj_praise_click', array('act' => 'index'));}&aid=<%= id %>">点击记录</a> <a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">中奖记录</a> <a href="{php echo $this->createMobileUrl('store.obj_praise_join', array('act' => 'index'));}&aid=<%= id %>">参与用户</a>  <a href="{php echo $this->createMobileUrl('store.obj_praise_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a><a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_praise', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_fish_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p id="objqrcode">二维码生成中，请耐心等待！</p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;
+                padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.obj_fish_code', array('act' => 'index'));}&aid=<%= id %>">抽奖码管理</a> <a href="{php echo $this->createMobileUrl('store.obj_fish_join', array('act' => 'index'));}&aid=<%= id %>">参与用户</a> <a href="{php echo $this->createMobileUrl('store.obj_fish_store_wait', array('act' => 'index'));}&aid=<%= id %>">商家申请</a>  <a href="{php echo $this->createMobileUrl('store.obj_fish_store', array('act' => 'index'));}&aid=<%= id %>">商家管理</a><a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_fish', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_wheel_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p><img class="ewm" src="{php echo $this->createMobileUrl('store.obj_wheel', array('act' => 'objQrPreview' ));}&token=<%= token %>&id=<%= id %>"></p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;
+                padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">中奖记录</a><a href="{php echo $this->createMobileUrl('store.obj_wheel_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_wheel', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_9box_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p><img class="ewm" src="{php echo $this->createMobileUrl('store.obj_9box', array('act' => 'objQrPreview' ));}&token=<%= token %>&id=<%= id %>"></p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">中奖记录</a><a href="{php echo $this->createMobileUrl('store.obj_9box_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_9box', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_bag_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p><img class="ewm" src="{php echo $this->createMobileUrl('store.obj_bag', array('act' => 'objQrPreview' ));}&token=<%= token %>&id=<%= id %>">
+                </p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">中奖记录</a><a href="{php echo $this->createMobileUrl('store.obj_bag_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_bag', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_eggs_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p><img class="ewm" src="{php echo $this->createMobileUrl('store.obj_eggs', array('act' => 'objQrPreview' ));}&token=<%= token %>&id=<%= id %>">
+                </p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">中奖记录</a> <a href="{php echo $this->createMobileUrl('store.obj_eggs_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_eggs', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_opencard_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p>
+                    <img class="ewm" src="{php echo $this->createMobileUrl('store.obj_opencard', array('act' => 'objQrPreview' ));}&token=<%= token %>&id=<%= id %>">
+                </p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">中奖记录</a><a href="{php echo $this->createMobileUrl('store.obj_opencard_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_opencard', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_poker_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p>
+                    <img class="ewm" src="{php echo $this->createMobileUrl('store.obj_poker', array('act' => 'objQrPreview' ));}&token=<%= token %>&id=<%= id %>">
+                </p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">中奖纪录</a><a href="{php echo $this->createMobileUrl('store.obj_poker_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_poker', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_scratch_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p>
+                    <img class="ewm" src="{php echo $this->createMobileUrl('store.obj_scratch', array('act' => 'objQrPreview' ));}&token=<%= token %>&id=<%= id %>">
+                </p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;
+                padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">中奖记录</a><a href="{php echo $this->createMobileUrl('store.obj_scratch_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_scratch', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_shake_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p>                <img class="ewm" src="{php echo $this->createMobileUrl('store.obj_shake', array('act' => 'objQrPreview' ));}&token=<%= token %>&id=<%= id %>">
+                </p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">中奖记录</a><a href="{php echo $this->createMobileUrl('store.obj_shake_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_shake', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_tiger_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p>
+                    <img class="ewm" src="{php echo $this->createMobileUrl('store.obj_tiger', array('act' => 'objQrPreview' ));}&token=<%= token %>&id=<%= id %>">
+                </p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">中奖记录</a><a href="{php echo $this->createMobileUrl('store.obj_tiger_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_tiger', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_cut_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p id="objqrcode">二维码生成中，请耐心等待！</p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;
+                padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.obj_cut_pay', array('act' => 'index'));}&aid=<%= id %>">购买日志</a> <a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">返利记录</a> <a href="{php echo $this->createMobileUrl('store.obj_cut_join', array('act' => 'index'));}&aid=<%= id %>">参与用户</a> <a href="{php echo $this->createMobileUrl('store.obj_cut_help', array('act' => 'index'));}&aid=<%= id %>">砍价记录</a>  <a href="{php echo $this->createMobileUrl('store.obj_cut_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_cut', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_collage_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p id="objqrcode">二维码生成中，请耐心等待！</p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;
+                padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.obj_collage_pay', array('act' => 'index'));}&aid=<%= id %>">购买日志</a> <a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">返利记录</a> <a href="{php echo $this->createMobileUrl('store.obj_collage_join', array('act' => 'index'));}&aid=<%= id %>">参与用户</a>  <a href="{php echo $this->createMobileUrl('store.obj_collage_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_collage', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_ladder_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p id="objqrcode">二维码生成中，请耐心等待！</p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.obj_ladder_pay', array('act' => 'index'));}&aid=<%= id %>">购买日志</a> <a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">返利记录</a> <a href="{php echo $this->createMobileUrl('store.obj_ladder_join', array('act' => 'index'));}&aid=<%= id %>">参与用户</a>  <a href="{php echo $this->createMobileUrl('store.obj_ladder_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_ladder', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_vote_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p><img class="ewm" src="{php echo $this->createMobileUrl('store.obj_vote', array('act' => 'objQrPreview' ));}&token=<%= token %>&id=<%= id %>"></p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3" class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.obj_vote_click', array('act' => 'index'));}&aid=<%= id %>">投票记录</a><a href="{php echo $this->createMobileUrl('store.obj_vote_blacklist', array('act' => 'index'));}&aid=<%= id %>">黑&nbsp;&nbsp;名&nbsp;&nbsp;单</a> {if $config['is_show_gift']==1}<a href="{php echo $this->createMobileUrl('store.obj_vote_gift', array('act' => 'index'));}&aid=<%= id %>">礼物打赏</a>{/if} <a href="{php echo $this->createMobileUrl('store.obj_vote_player_wait', array('act' => 'index'));}&aid=<%= id %>">选手报名</a> <a href="{php echo $this->createMobileUrl('store.obj_vote_player', array('act' => 'index'));}&aid=<%= id %>">选手管理</a>  <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_vote', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_survey_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p><img class="ewm" src="{php echo $this->createMobileUrl('store.obj_survey', array('act' => 'objQrPreview' ));}&token=<%= token %>&id=<%= id %>"></p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;
+                padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>" style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">中奖记录</a><a href="{php echo $this->createMobileUrl('store.obj_survey_join', array('act' => 'index'));}&aid=<%= id %>">参与记录</a> <a href="{php echo $this->createMobileUrl('store.obj_survey_statistics', array('act' => 'index'));}&aid=<%= id %>">问卷统计</a> <a href="{php echo $this->createMobileUrl('store.obj_survey_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a><a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_survey', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_enroll_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p id="objqrcode">二维码生成中，请耐心等待！</p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>" style="background-color: #f1e0d3" class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.obj_enroll_pay', array('act' => 'index'));}&aid=<%= id %>">报名日志</a> <a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">返利记录</a> <a href="{php echo $this->createMobileUrl('store.obj_enroll_join', array('act' => 'index'));}&aid=<%= id %>">参与用户</a>  <a href="{php echo $this->createMobileUrl('store.obj_enroll_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_enroll', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_whole_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p id="objqrcode">二维码生成中，请耐心等待！</p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;
+                padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.obj_whole_pay', array('act' => 'index'));}&aid=<%= id %>">购买日志</a> <a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">返利记录</a> <a href="{php echo $this->createMobileUrl('store.obj_whole_join', array('act' => 'index'));}&aid=<%= id %>">参与用户</a> <a href="{php echo $this->createMobileUrl('store.obj_whole_group', array('act' => 'index'));}&aid=<%= id %>">拼团记录</a> <a href="{php echo $this->createMobileUrl('store.obj_whole_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_whole', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="obj_10second_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p><img class="ewm" src="{php echo $this->createMobileUrl('store.obj_10second', array('act' => 'objQrPreview' ));}&token=<%= token %>&id=<%= id %>"></p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.obj_10second_join', array('act' => 'index'));}&aid=<%= id %>">挑战记录</a><a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">中奖记录</a><a href="{php echo $this->createMobileUrl('store.obj_10second_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_10second', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+
+<script id="obj_laddercm_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p id="objqrcode">二维码生成中，请耐心等待！</p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix">
+        <a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a>
+        <a href="{php echo $this->createMobileUrl('store.obj_laddercm_pay', array('act' => 'index'));}&aid=<%= id %>">购买日志</a> 
+        <a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">返利记录</a> 
+        <a href="{php echo $this->createMobileUrl('store.obj_laddercm_join', array('act' => 'index'));}&aid=<%= id %>">拼团记录</a>  
+        <a href="{php echo $this->createMobileUrl('store.obj_laddercm_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> 
+        <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a>
+        <a href="{php echo $this->createMobileUrl('store.obj_laddercm', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a>
+        <a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a></section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+
+<script id="obj_voice_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p id="objqrcode">二维码生成中，请耐心等待！</p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix"><a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a><a href="{php echo $this->createMobileUrl('store.obj_voice_join', array('act' => 'index'));}&aid=<%= id %>">参与用户</a><a href="{php echo $this->createMobileUrl('store.obj_voice_join_log', array('act' => 'index'));}&aid=<%= id %>">语音识别记录</a><a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">中奖记录</a><a href="{php echo $this->createMobileUrl('store.obj_voice_writeoff', array('act' => 'index'));}&aid=<%= id %>">核销日志</a><a href="{php echo $this->createMobileUrl('store.obj_voice_store_wait', array('act' => 'index'));}&aid=<%= id %>">商家申请</a> <a href="{php echo $this->createMobileUrl('store.obj_voice_store', array('act' => 'index'));}&aid=<%= id %>">商家管理</a><a href="{php echo $this->createMobileUrl('store.obj_voice_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a><a href="{php echo $this->createMobileUrl('store.obj_voice', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a><a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a>{if $plug_bigscreen && $is_store_bigscreen}<a href="{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'projectIndex'));}&id=<%= id %>">数据投屏</a>{/if}</section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+
+<script id="obj_laddergg_tpl" type="text/html">
+    <section class="obj_preview">
+        <ul>
+            <li>
+                <p id="objqrcode">二维码生成中，请耐心等待！</p>
+                <p id="copytxt" style="word-wrap:break-word;word-break:break-all;text-align:justify;padding: 0.32rem;border-radius: 0.13rem;border: 2px dashed #000;"><%= links %></p>
+            </li>
+        </ul>
+        <section class="pd0_24 mt24" style="text-align: center;">
+            <a href="javascript:;" class="copybtn" onclick="copyTXT()"><img class="copyimg" src="{__MOBILE_STORE_IMG__}/link.png" alt="">复制链接</a>
+            <a href="<%= links %>"  style="background-color: #f1e0d3"  class="copybtn" ><img class="copyimg" src="{__MOBILE_STORE_IMG__}/activity.png" alt="">进入活动</a>
+        </section>
+    </section>
+    <section class="operate_centre pd24 tl clearfix">
+        <a href="{php echo $this->createMobileUrl('store.user_share', array('act' => 'index'));}&aid=<%= id %>">分享日志</a>
+        <a href="{php echo $this->createMobileUrl('store.obj_laddergg_pay', array('act' => 'index'));}&aid=<%= id %>">购买日志</a> 
+        <a href="{php echo $this->createMobileUrl('store.user_draw', array('act' => 'index'));}&aid=<%= id %>">返利记录</a> 
+        <a href="{php echo $this->createMobileUrl('store.obj_laddergg_join', array('act' => 'index'));}&aid=<%= id %>">拼团记录</a>  
+        <a href="{php echo $this->createMobileUrl('store.obj_laddergg_prize', array('act' => 'index'));}&aid=<%= id %>">奖项管理</a> 
+        <a href="{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'index'));}&aid=<%= id %>">溯源统计</a>
+        <a href="{php echo $this->createMobileUrl('store.obj_laddergg', array('act' => 'modify'));}&id=<%= id %>&iscopy=1">一键克隆</a>
+        <a href="javascript:;" data-title="<%=title%>" data-updatetime="<%=updatetime%>" data-check_status="<%=check_status%>" data-check_statusname="<%=check_statusname%>" data-check_note="<%= check_note %>" data-id="<%= id %>" class="check"><%if(check_status==0||check_status==3){%>提交审核<%}else{%>审核详情<%}%></a></section><br><br>
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</script>
+<script id="checktpl" type="text/html">
+    <section>
+        <ul class="publish bgfff">
+            <li class="float">
+                <p>活动名称</p>
+                <section class="form_con selectBox">
+                    <%=title%>
+                </section>
+            </li>
+            <li class="float">
+                <p>活动状态</p>
+                <section class="form_con selectBox">
+                    <%=check_statusname%>
+                </section>
+            </li>
+            <li class="float">
+                <p>处理时间</p>
+                <section class="form_con selectBox">
+                    <%=updatetime%>
+                </section>
+            </li>
+            <% if(check_status != 2){ %>
+            <li class="float">
+                <p>驳回原因</p>
+                <section class="form_con selectBox">
+                    <%=check_note%>
+                </section>
+            </li>
+            <% } %>
+        </ul>
+        <section class="btn-de">
+            <%if(check_status==0||check_status==3){%>
+            <button type="button" class="Button" id="btn_check" data-id="<%=id%>">提交</button>
+            <%}%>
+            <p class="mt40"> <a href="javascript:;" class="returnLink" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a> </p>
+        </section>
+    </section>
+</script>
+<script>
+    $(function(){
+        //点击筛选
+        $('#filter').click(function(){
+            var $filter = $(this);
+            if($filter.hasClass('up')){
+                $filter.removeClass('up');
+                $('.downlist').hide();
+            }else{
+                $filter.addClass('up');
+                $('.downlist').show();
+            }
+        });
+
+        //dropload
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //artTemplate扩展方法 返回活动链接
+        template.helper("getObjModifyUrl", function(objTable,id) {
+            var editUrl = "{php echo $this->createMobileUrl('store.objname', array('act' => 'modify'));}";
+            editUrl = editUrl.replace('objname', objTable) + '&id=' + id;
+            return editUrl;
+        });
+
+        //点击搜索
+        $('#btnSearch').click(function(){
+            //隐藏筛选弹框
+            $('#filter').removeClass('up');
+            $('.downlist').hide();
+
+            //筛选参数
+            window.searchKey = $('#searchKey').val();
+            window.searchStatus = $('#searchStatus').val();
+            window.searchObjTmp = $('#searchObjTmp').val();
+            window.searchActivityType  = $('#searchActivityType').val();
+            window.searchProcess = $('#searchProcess').val();
+            window.searchCheckStatus = $('#SearchCheckStatus').val();
+            window.delCount = 0;
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'getJsonList'));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "key":window.searchKey,
+                                "tmp_id":window.searchObjTmp,
+                                "activityType":window.searchActivityType,
+                                "status":window.searchStatus,
+                                "process":window.searchProcess,
+                                "check_status":window.searchCheckStatus
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                window.delCount = 0;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false)
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var html = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'getJsonList'));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "delCount":window.delCount,
+                                "key":window.searchKey,
+                                "tmp_id":window.searchObjTmp,
+                                "activityType":window.searchActivityType,
+                                "status":window.searchStatus,
+                                "process":window.searchProcess,
+                                "check_status":window.searchCheckStatus
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    threshold : 50
+                });
+            }
+
+        }).trigger("click");
+
+        //操作
+        $('#LoadLists').on('click','li .operate',function(event){
+             var data = $(this).parents('li').data();
+             var html = template(data.tpl + '_tpl', data);
+            //页面层
+            layer.open({
+                type: 1,
+                title: ""
+                ,content: html
+                ,anim: 'up'
+                ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+            });
+            scroll.afterOpen();
+            //清空浏览器历史记录
+            window.history.pushState({title: "title",url:"#"}, "title", "#");
+
+            //监听浏览器后退事件
+            window.addEventListener("popstate",
+                function(e) {
+                    //后退关闭弹窗
+                    closeWindows();
+                }, false);
+
+            //拓客活动生成二维码
+            if(data.tpl == 'obj_soliciting'){
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createMobileUrl('store.obj_soliciting', array('act' => 'objQrPreview'));}&id="+data.id,
+                    data: {},
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            $("#objqrcode").html('<img class="ewm" src="'+ data.path +'">');
+                        }
+                        else {
+                            $("#objqrcode").html(data.msg);
+                        }
+                    }
+                });
+
+            }else if(data.tpl == 'obj_union'){
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createMobileUrl('store.obj_union', array('act' => 'objQrPreview'));}&id="+data.id,
+                    data: {},
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            $("#objqrcode").html('<img class="ewm" src="'+ data.path +'">');
+                        }
+                        else {
+                            $("#objqrcode").html(data.msg);
+                        }
+                    }
+                });
+
+            }else if(data.tpl == 'obj_praise'){
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createMobileUrl('store.obj_praise', array('act' => 'objQrPreview'));}&id="+data.id,
+                    data: {},
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            $("#objqrcode").html('<img class="ewm" src="'+ data.path +'">');
+                        }
+                        else {
+                            $("#objqrcode").html(data.msg);
+                        }
+                    }
+                });
+
+            }else if(data.tpl == 'obj_fish'){
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createMobileUrl('store.obj_fish', array('act' => 'objQrPreview'));}&id="+data.id,
+                    data: {},
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            $("#objqrcode").html('<img class="ewm" src="'+ data.path +'">');
+                        }
+                        else {
+                            $("#objqrcode").html(data.msg);
+                        }
+                    }
+                });
+            } else if(data.tpl == 'obj_cut'){
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createMobileUrl('store.obj_cut', array('act' => 'objQrPreview'));}&id="+data.id,
+                    data: {},
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            $("#objqrcode").html('<img class="ewm" src="'+ data.path +'">');
+                        }
+                        else {
+                            $("#objqrcode").html(data.msg);
+                        }
+                    }
+                });
+            } else if(data.tpl == 'obj_collage'){
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createMobileUrl('store.obj_collage', array('act' => 'objQrPreview'));}&id="+data.id,
+                    data: {},
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            $("#objqrcode").html('<img class="ewm" src="'+ data.path +'">');
+                        }
+                        else {
+                            $("#objqrcode").html(data.msg);
+                        }
+                    }
+                });
+            } else if(data.tpl == 'obj_ladder'){
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createMobileUrl('store.obj_ladder', array('act' => 'objQrPreview'));}&id="+data.id,
+                    data: {},
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            $("#objqrcode").html('<img class="ewm" src="'+ data.path +'">');
+                        }
+                        else {
+                            $("#objqrcode").html(data.msg);
+                        }
+                    }
+                });
+            } else if(data.tpl == 'obj_enroll'){
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createMobileUrl('store.obj_enroll', array('act' => 'objQrPreview'));}&id="+data.id,
+                    data: {},
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            $("#objqrcode").html('<img class="ewm" src="'+ data.path +'">');
+                        }
+                        else {
+                            $("#objqrcode").html(data.msg);
+                        }
+                    }
+                });
+
+            } else if(data.tpl == 'obj_whole'){
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createMobileUrl('store.obj_whole', array('act' => 'objQrPreview'));}&id="+data.id,
+                    data: {},
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            $("#objqrcode").html('<img class="ewm" src="'+ data.path +'">');
+                        }
+                        else {
+                            $("#objqrcode").html(data.msg);
+                        }
+                    }
+                });
+            }else if(data.tpl == 'obj_laddercm'){
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createMobileUrl('store.obj_laddercm', array('act' => 'objQrPreview'));}&id="+data.id,
+                    data: {},
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            $("#objqrcode").html('<img class="ewm" src="'+ data.path +'">');
+                        }
+                        else {
+                            $("#objqrcode").html(data.msg);
+                        }
+                    }
+                });
+            }else if(data.tpl == 'obj_laddergg'){
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createMobileUrl('store.obj_laddergg', array('act' => 'objQrPreview'));}&id="+data.id,
+                    data: {},
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            $("#objqrcode").html('<img class="ewm" src="'+ data.path +'">');
+                        }
+                        else {
+                            $("#objqrcode").html(data.msg);
+                        }
+                    }
+                });
+            }else if(data.tpl == 'obj_voice'){
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createMobileUrl('store.obj_voice', array('act' => 'objQrPreview'));}&id="+data.id,
+                    data: {},
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            $("#objqrcode").html('<img class="ewm" src="'+ data.path +'">');
+                        }
+                        else {
+                            $("#objqrcode").html(data.msg);
+                        }
+                    }
+                });
+
+            }
+        });
+
+        //删除
+        $('#LoadLists').on('click','li .delete',function(){
+            var delid = $(this).parents('li').data('id');
+            $that = $(this);
+            //询问框
+            layer.open({
+                content: '您确定要删除活动吗？'
+                , btn: ['确定', '取消']
+                , yes: function (index) {
+                    $.ajax({
+                        type: "get",
+                        url: "{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'del'));}",
+                        data: {"id": delid},
+                        success: function (data, status) {
+                            if (data.status == 1) {
+                                layer.open({
+                                    content: data.msg
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                window.delCount= window.delCount+1;
+                                $that.parents('li').remove();
+                            }
+                            else {
+                                layer.open({
+                                    content:data.msg
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                            }
+                        }
+                    });
+                    layer.close(index);
+                }
+            });
+
+        });
+        //状态开关
+        $('#LoadLists').on('click','.swstatus',function(){
+            var switchobj = $(this);
+            var status = switchobj.hasClass("switch_on") ? 0 : 1;
+            var Rowid = switchobj.parents('li').data("id");
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: "{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'setStatus'));}",
+                data: {
+                    "id": Rowid,
+                    "status": status
+                },
+                success: function (jsonData, status) {
+                    if (jsonData.status == 1) {
+                        if(switchobj.hasClass("switch_on")){
+                            switchobj.removeClass("switch_on");
+                            switchobj.addClass("switch_off");
+                        }
+                        else{
+                            switchobj.removeClass("switch_off");
+                            switchobj.addClass("switch_on");
+                        }
+                    }
+                    else {
+                        layer.open({
+                            content: jsonData.msg
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                    }
+                }
+            });
+        });
+        //提交审核弹窗
+        $(document).delegate(".check", "click", function() {
+            var id = $(this).data("id");
+            var title = $(this).data("title");
+            var check_statusname = $(this).data("check_statusname");
+            var updatetime = $(this).data("updatetime");
+            var check_note = $(this).data("check_note");
+            var check_status = $(this).data("check_status");
+            var data={id:id,title:title,check_statusname:check_statusname,updatetime:updatetime,check_note:check_note,check_status:check_status};
+            var html = template('checktpl',data);
+            layer.open({
+                type: 1,
+                title: ""
+                ,content: html
+                ,anim: 'up'
+                ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+            });
+        });
+        //审核提交
+        $(document).delegate("#btn_check", "click", function() {
+            var id = $(this).data("id");
+            $.ajax({
+                type: "post",
+                dataType:'json',
+                url: "{php echo $this->createMobileUrl('store.obj_activity', array('act' => 'setCheckStatus'));}",
+                data: {
+                    id: id
+                },
+                success: function (data, status) {
+                    if (data.status == 1) {
+                        layer.open({
+                            content: data.msg
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        setTimeout(function () {window.location.reload()},2000)
+                    }
+                    else {
+                        layer.open({
+                            content: data.msg
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                    }
+                }
+            });
+        });
+    });
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+
+    //关闭弹窗
+    function closeWindows(){
+        layer.closeAll();
+        scroll.beforeClose();
+    }
+
+    //复制文本到剪切板
+    function copyTXT(){
+        var copyDOM = document.querySelector('#copytxt'); //指定的DOM元素
+        var range = document.createRange(); // 创建容器
+        range.selectNode(copyDOM); // 选中需要复制的节点
+        window.getSelection().addRange(range); // 执行选中元素
+        var successful = document.execCommand('copy');// 执行 copy 操作
+        try {
+            var msg = successful ? 'successful' : 'unsuccessful';
+            if(msg == 'successful'){
+                //提示
+                layer.open({
+                    content: '已复制到剪切板'
+                    ,skin: 'msg'
+                    ,time: 2 //2秒后自动关闭
+                });
+            }
+        } catch(err) {
+            console.log('unable to copy');
+        }
+        window.getSelection().removeAllRanges(); // 移除选中的元素
+    }
+
+</script>
+</body>
+</html>

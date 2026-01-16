@@ -1,0 +1,77 @@
+{loop $list_back $key $item}
+	{if $item['OldOrNew'] == 1}
+	<li class="list_box_li {if $item['end'] <TIMESTAMP}class_over{/if}" time="{$item['localtion']}" {if TIMESTAMP < $item['end']}onclick="goto_kcinfo({$item['id']})"{/if} ctype="{$Ctype}">
+		<div class="list_box_div">
+			<div class="list_left">
+				<img class="cImg_left" src="{if !empty($item['thumb'])}{php echo tomedia($item['thumb'])}{else}{php echo tomedia($school['logo'])}{/if}">
+			</div>
+			<div class="list_right">
+				<div class="kc_name" style="height: 15px;">
+					<p class="kc_name_content">{$item['name']}</p>
+				</div>
+				{if $item['fans_list'] || $item['all_number']}
+				<div class="fans_box">
+					<span class="zhuliclass">
+					{loop $item['fans_list'] $row}
+						<img class="zlheader" src="{$row['icon']}">
+					{/loop}	
+					</span>
+					<p class="fans_text_title">{$item['minge']}人/班</p>
+					<p class="fans_text_title">&nbsp;&nbsp;&nbsp;&nbsp;{$item['all_number']}人正在学</p>
+				</div>
+				{/if}
+				<div class="pay">
+					{if $item['sale_type'] == 0}
+						<p class="pay_cose">￥{$item['cose']}</p>
+					{else}
+						<p class="pay_cose">￥{$item['nowprice']}</p><p class="yuanjia">￥{$item['cose']}</p>
+					{/if}
+				</div>
+				{if $item['is_hot'] == 1}{if $item['end'] > TIMESTAMP}
+				<br><span style="background-color: #10b7a6;float: left;"class="label label-danger">精品课</span>
+				{/if}{/if}
+			</div>
+			{if $item['end'] <TIMESTAMP}<div class="class_over_tip marks text_center"><span></span></div>{/if}
+			{if $item['sale_type'] == 1}<div class="mark_group mark text_center"></div>{/if}
+			{if $item['sale_type'] == 2}<div class="mark_rush mark text_center"></div>{/if}
+		</div>
+	</li>
+	{elseif $item['OldOrNew'] == 0}
+	<li class="list_box_li {if $item['end'] <TIMESTAMP}class_over{/if}" time="{$item['localtion']}" {if TIMESTAMP < $item['end']}onclick="goto_kcinfo({$item['id']})"{/if} ctype="{$Ctype}">
+		<div class="list_box_div">
+			<div class="list_left">
+				<img class="cImg_left" src="{if !empty($item['thumb'])}{php echo tomedia($item['thumb'])}{else}{php echo tomedia($school['logo'])}{/if}">
+			</div>
+			<div class="list_right">
+				<div class="kc_name" style="height: 15px;">
+					<p class="kc_name_content">{$item['name']}</p>
+				</div>
+				{if $item['fans_list'] || $item['all_number']}
+				<div class="fans_box">
+					<span class="zhuliclass">
+					{loop $item['fans_list'] $row}
+						<img class="zlheader" src="{$row['icon']}">
+					{/loop}	
+					</span>
+					<p class="fans_text_title">{$item['minge']}人/班</p>
+					<p class="fans_text_title">&nbsp;&nbsp;&nbsp;&nbsp;{$item['all_number']}人正在学</p>
+				</div>
+				{/if}
+				<div class="pay">
+					{if $item['sale_type'] == 0}
+						<p class="pay_cose">￥{$item['cose']}</p>
+					{else}
+						<p class="pay_cose">￥{$item['nowprice']}</p><p class="yuanjia">￥{$item['cose']}</p>
+					{/if}
+				</div>
+				{if $item['is_hot'] == 1}{if $item['end'] > TIMESTAMP}
+				<br><span style="background-color: #10b7a6;float: left;"class="label label-danger">精品课</span>
+				{/if}{/if}
+			</div>
+			{if $item['end'] <TIMESTAMP}<div class="class_over_tip marks text_center"></div>{/if}
+			{if $item['sale_type'] == 1}<div class="mark_group mark text_center"></div>{/if}
+			{if $item['sale_type'] == 2}<div class="mark_rush mark text_center"></div>{/if}
+		</div>
+	</li>
+	{/if}
+{/loop}

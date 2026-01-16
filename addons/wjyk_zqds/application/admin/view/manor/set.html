@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>系统设置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+    <style>
+		.layui-form-label{
+			width:145px;
+        }
+		.layui-input-block{
+			margin-left:175px;
+		}
+        form{
+            padding-right:15px ;
+        }
+    </style>
+</head>
+<body>
+<form class="layui-form" style="margin-top:21px;">
+  <div class="layui-form-item">   <label class="layui-form-label">庄园激励广告ID</label>   <div class="layui-input-block">     <input type="text" name="index_advert"   placeholder="请输入庄园激励广告ID" autocomplete="off" class="layui-input" value="{$set['index_advert']}">   </div> </div>  <div class="layui-form-item">    <label class="layui-form-label">庄园看激励文字</label>    <div class="layui-input-block">        <input type="text" name="advert_text" autocomplete="off" class="layui-input" value="{$set['advert_text']}">    </div>  </div>      <div class="layui-form-item">    <label class="layui-form-label">每人每天可看视频数</label>    <div class="layui-input-block">        <input type="number" name="video_count" required lay-verify="required" autocomplete="off" class="layui-input" value="{$set['video_count']}">    </div>  </div>    <div class="layui-form-item">    <label class="layui-form-label">观看视频上限提示语</label>    <div class="layui-input-block">        <input type="text" name="video_notice" required lay-verify="required" autocomplete="off" class="layui-input" value="{$set['video_notice']}">    </div>  </div>  
+ <div class="layui-form-item">    <div class="layui-inline">      <label class="layui-form-label">看视频可得粮草</label>      <div class="layui-input-inline" style="width: 100px;">        <input type="text" name="min_integral"  autocomplete="off" class="layui-input" value="{$set['min_integral']}">      </div>      <div class="layui-form-mid">   -</div>      <div class="layui-input-inline" style="width: 100px;">        <input type="text" name="max_integral"  autocomplete="off" class="layui-input" value="{$set['max_integral']}">      </div>      <div class="layui-form-mid"> 可得粮草范围（最小值-最大值）</div>    </div>  </div>
+  <div class="layui-form-item">    <label class="layui-form-label">腾讯地图key</label>    <div class="layui-input-block">      <input type="text" name="key"  required lay-verify="required" placeholder="请输入腾讯地图key值" autocomplete="off" class="layui-input" value="{$set['key']}">      <div class="layui-form-mid layui-word-aux"><a href="https://lbs.qq.com" target="_blank">点击申请</a> 用于显示天气</div>    </div>  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">庄园规则</label>
+    <div class="layui-input-block">
+    	<script id="ueditor" name="rule" type="text/plain" >{$set['rule']|raw}</script>
+    </div>
+  </div>
+  
+
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit lay-filter="demo1">立即提交</button>
+    </div>
+  </div>
+  <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+<div class="layui-footer" style="margin-top:20px;display: flex;justify-content: center;align-items: flex-end;">
+	{include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}
+</div>
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="__PUBLIC__/static/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/static/ueditor/ueditor.all.js"></script>
+<script>
+	layui.config({
+	    base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+	}).extend({
+	    index: 'lib/index' //主入口模块
+	    	, layarea: '../layui/layui_exts/city-picker/layarea'
+	}).use(['jquery','layer', 'index', 'table','upload', 'layarea','layedit'], function(){
+		var $ = layui.$
+		, layer = layui.layer
+		, layedit = layui.layedit
+	    , table = layui.table
+	    , form = layui.form
+	    , layarea = layui.layarea
+	    , upload = layui.upload;
+		
+		var ue = UE.getEditor('ueditor', {
+         zIndex: 99,
+         maximumWords: 999,
+         scaleEnabled: true,
+         initialFrameWidth: 800,
+         initialFrameHeight: 300,
+         autoHeightEnabled: false,}
+         );
+		upload.render({
+            elem: '#test1'
+            ,url: "{:siteUrl('admin/index/upload','','web')}" //改成您自己的上传接口
+            ,done: function(res){
+                //如果上传失败
+                if(res.code < 0){
+                    return layer.msg('上传失败');
+                }else{
+                    $('#demo1').attr('src', res.msg); //图片链接（base64）
+                    $('#logo').val(res.msg);
+                }
+            }
+        });
+		
+		upload.render({
+            elem: '#test2'
+            ,url: "{:siteUrl('admin/index/upload','','web')}" //改成您自己的上传接口
+            ,done: function(res){
+                //如果上传失败
+                if(res.code < 0){
+                    return layer.msg('上传失败');
+                }else{
+                    $('#demo2').attr('src', res.msg); //图片链接（base64）
+                    $('#share_pic').val(res.msg);
+                }
+            }
+        });
+        
+      //监听提交
+        form.on('submit(demo1)', function(data){
+            var admin = layui.admin
+            admin.req({
+                url:"{:siteUrl('admin/manor/set_manor','','web')}",
+                data:data.field,
+                type:"POST",
+                done:res=>{
+                    if(res.code == 0 ){
+                		layer.msg("设置成功");
+                	}
+                }
+            })
+            return false
+        });
+      
+        $("#dian").click(function(){
+        	layer.open({
+                type:2,
+                area: ['800px', '500px'],
+                title:"支付配置",
+                yes: function(index, layero){
+                    //按钮【按钮一】的回调
+                	layer.close(index);
+                },
+                cancel: function(){ 
+                },
+                content:"{:siteUrl('admin/payconfig/index','','web')}",
+                success:function(){
+                }  
+            });
+       });
+        //表单取值
+        layui.$('#LAY-component-form-getval').on('click', function(){
+            var data = form.val('example');
+            alert(JSON.stringify(data));
+        });
+    });
+</script>
+</body>
+</html>

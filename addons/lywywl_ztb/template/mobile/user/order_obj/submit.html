@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'user/common/header'}
+<body>
+<section class="pay_tit font28 c9">收货地址</section>
+<section class="bg_fff f-yahei">
+    <a href="{php echo $this->createMobileUrl('user.user_address',array('act'=>'index','store_id'=>$store_id,'draw_id'=>$userDrawModel['id']))}" rel="external" class="item_addr clearfix">
+        {if $addressModel}
+        <div class="addr fl">
+            <p><span>{$addressModel['username']}</span><span class="pl15">{$addressModel['mobile']}</span></p>
+            <p>{$addressModel['province']}{$addressModel['city']}{$addressModel['county']}{$addressModel['address']}</p>
+        </div>
+        <span></span>
+        {else}
+        <div class="addr fl">
+            <p>请选择收货地址</p>
+        </div>
+        <span></span>
+        {/if}
+    </a>
+</section>
+<div class="h15"></div>
+<!--备注信息-->
+<section class="pay_tit font28 c9">备注信息</section>
+<section class="remark">
+    <textarea id="note" placeholder="请填写备注信息（100字内）" maxlength="100"></textarea>
+</section>
+<section class="pay_submit">
+    <input id="submit" type="button" class="button" value="确认订单"/>
+</section>
+<script type="text/javascript">
+    $(function () {
+        $("#submit").click(function(){
+            var draw_id = "{$userDrawModel['id']}";
+            var addressid = "{$addressid}";
+            var note = $("#note").val();
+            if(addressid==""){
+                layer.open({ content: '请选择收货地址！', skin: 'msg', time: 2 });
+                return;
+            }
+            $.ajax({
+                url: "{php echo $this->createMobileUrl('user.order_obj',array('act'=>'submit','store_id'=>$store_id))}",
+                type: "post",
+                dataType: "json",
+                data: {draw_id:draw_id,addressid:addressid,note:note},
+                success: function (result) {
+                    if (result.status === 1) {
+                        layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                        window.location.href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'index','store_id'=>$store_id))}";
+                        return true;
+                    } else {
+                        layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                        return false;
+                    }
+                }
+            });
+        })
+    })
+</script>
+</body>
+</html>

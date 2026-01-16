@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="referrer" content="origin">
+    <meta name="viewport"
+        content="width=device-width, viewport-fit=cover, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <title>商家服务</title>
+    <link href="style/paySuccess.css" rel="stylesheet">
+    <script type="text/javascript" charset="UTF-8" src="https://wx.gtimg.com/pay_h5/goldplan/js/jgoldplan-1.0.0.js">
+    </script>
+    
+    <script type="text/javascript" src="https://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <div class="order_box">
+       
+       
+    <div class="img_box">
+        <img src="images/gg_lz.jpg" style="width:320px;height:260px;">
+    </div>
+        <div class="btns">
+            <div id="backHome" class="btn home" onclick="shouye()">了解详情</div>
+        </div>
+    </div>
+
+    <script>
+        var homeLink = "https://mmc.itapgo.com/addons/weliam_smartcity/h5/#/pages/mainPages/index/diypage?i=3&aid=2443&type=8";//首页（例子）
+        function init(){
+             //初始化小票
+             var initData = {
+                action: 'onIframeReady',
+                displayStyle: 'SHOW_CUSTOM_PAGE'
+            }
+            var initPostData = JSON.stringify(initData)
+            parent.postMessage(initPostData, 'https://payapp.weixin.qq.com')
+
+            
+            console.log("初始化");
+           
+            
+        }
+        init();
+
+        //注册点击事件(去首页)
+        function shouye() {
+            var mchData = {
+                action: 'jumpOut',
+                jumpOutUrl: homeLink //跳转的页面
+            }
+            var postData = JSON.stringify(mchData)
+            parent.postMessage(postData, 'https://payapp.weixin.qq.com')
+            console.log("首页");
+
+        }
+    </script>
+</body>
+
+</html>

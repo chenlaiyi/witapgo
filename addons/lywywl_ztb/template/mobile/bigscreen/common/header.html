@@ -1,0 +1,32 @@
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{$titleName}活动进度数据大屏</title>
+  <link rel="stylesheet" href="{__BIG_SCREEN_CSS__}/public.css" />
+  <link rel="stylesheet" href="{__BIG_SCREEN_CSS__}/jquery.countdown.css" />
+  {if $color == 'blue'}
+  <link rel="stylesheet" href="{__BIG_SCREEN_CSS__}/blue.css" />
+  {else if $color == 'red'}
+  <link rel="stylesheet" href="{__BIG_SCREEN_CSS__}/red.css" />
+  {else if $color == 'purple'}
+  <link rel="stylesheet" href="{__BIG_SCREEN_CSS__}/purple.css" />
+  {else if $color == 'white'}
+  <link rel="stylesheet" href="{__BIG_SCREEN_CSS__}/white.css" />
+  {/if}
+  <script type="text/javascript" src={__BIG_SCREEN_JS__}/jquery.min.js></script>
+  <script type="text/javascript" src={__BIG_SCREEN_JS__}/echarts.min.js></script>
+  <script type="text/javascript" src={__BIG_SCREEN_JS__}/jquery.gridster.min.js></script>
+  <script type="text/javascript" src={__BIG_SCREEN_JS__}/jquery.SuperSlide.3.0.alpha.js></script>
+  <script type="text/javascript" src="{__BIG_SCREEN_JS__}/jquery.countdown.js"></script>
+  <script>
+
+    var ableShowFontColor = '#fff';
+    if("{$projectParams['color']}" == 'white'){
+      ableShowFontColor = '#000';
+    }
+
+    var requestTimer = {$projectRequestRate};
+    window.requestTimer = requestTimer * 1000;
+  </script>
+</head>

@@ -1,0 +1,32 @@
+<header class="c-header l-header">
+    <nav class="c-header_box">
+        <ul class="o-tab l-justify-flex">
+            {if $bgShowInfo['jsandxs']}
+            <li class="o-tab_item c-header_tab_item-l1 {if $_GPC['do'] == bdpeople } is-active {/if}" style="margin-left: 20%;">
+                <a id="btn_1" style="font-size: 0.28rem;" id="teastu" href="{php echo $this->createMobileUrl('bdpeople',array('op'=>'display','schoolid'=>$schoolid))}"  class="o-tab_text">教师与学生</a>
+                <!-- <a href="javascript:checknewinfo({$lasttime});" class="o-tab_text">教师与学生</a>-->
+            </li>
+            {/if}
+            {if $bgShowInfo['kq']}
+            <li class="o-tab_item c-header_tab_item-r1 {if $_GPC['do'] == bdcheck } is-active {/if}" style="margin-right: 10%;">
+                <a id="btn_2" style="font-size: 0.28rem;" href="{php echo $this->createMobileUrl('bdcheck',array('op'=>'display','schoolid'=>$schoolid))}" class="o-tab_text">&nbsp;&nbsp;&nbsp;考勤&nbsp;&nbsp;&nbsp;</a>
+            </li>
+            {/if}
+        </ul>
+    </nav>
+    <div class="c-header_title"><a id="btn_6" href="{php echo $this->createMobileUrl('bdindex',array('op'=>'display','schoolid'=>$schoolid))}">{$schoolset['bgtitle']}</a></div>
+    <nav class="c-header_box">
+        <ul class="o-tab l-justify-flex">
+            {if $bgShowInfo['jhgn']}
+            <li class="o-tab_item c-header_tab_item-r1 {if $_GPC['do'] == bdactivity } is-active {/if}" style="margin-left: 10%;">
+                <a id="btn_3" style="font-size: 0.28rem" href="{php echo $this->createMobileUrl('bdactivity',array('op'=>'display','schoolid'=>$schoolid))}" class="o-tab_text">交互功能</a>
+            </li>
+            {/if}
+            {if $bgShowInfo['cw']}
+            <li class="o-tab_item c-header_tab_item-r2 {if $_GPC['do'] == bdmoney } is-active {/if}" style="margin-right: 20%;">
+                <a id="btn_4" style="font-size: 0.28rem" href="{php echo $this->createMobileUrl('bdmoney',array('op'=>'display','schoolid'=>$schoolid))}" class="o-tab_text">&nbsp;&nbsp;&nbsp;财务&nbsp;&nbsp;&nbsp;</a>
+            </li>
+            {/if}
+        </ul>
+    </nav>
+</header>

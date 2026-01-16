@@ -1,0 +1,148 @@
+{template 'common/header'}
+<link rel="stylesheet" type="text/css" href="../addons/{php echo $_GPC['m']}/resource/css/style.css" />
+<link rel="stylesheet" type="text/css" href="../addons/{php echo $_GPC['m']}/resource/swal/dist/sweetalert2.min.css" />
+<style>
+    .type1,.type2,.type3,.type4{
+        display: none;
+    }
+</style>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            {$xtitle}
+        </h3>
+    </div>
+    <div class="panel-body">
+        {template 'Web/menu'}
+        <form class="form-horizontal" role="form" method="post" action="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'saverefund','version_id'=>$_GPC['version_id'])}" name="submit" style="padding: 20px 0;">
+            <div class="form-group">
+                <label for="name" class="col-sm-2 control-label">名称</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  name="name" id="name" value="{$list['name']}">
+                    <input type="hidden" name="id" value="{$list['id']}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">状态</label>
+                <div class="col-sm-8">
+                    {if $list['content']['status']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="status">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="status" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">消费金额</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  name="amount" id="amount" value="{$list['content']['amount']}" placeholder="">
+                    <span class="help-block">消费金额达到后分销功能开启，不填不限制</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">买单分销</label>
+                <div class="col-sm-8">
+                    {if $list['content']['buy_status']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="buy_status">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="buy_status" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">收银分销</label>
+                <div class="col-sm-8">
+                    {if $list['content']['shou_status']==1}
+                    <input type="checkbox" checked class="js-switch" value="1" name="shou_status">
+                    {else}
+                    <input type="checkbox" class="js-switch" name="shou_status" value="1">
+                    {/if}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">分销等级</label>
+                <div class="col-sm-8">
+                    <label class="radio inline">
+                        <input type="radio" class="ui-radio" name="level" id="level1" value="1" {if $list['content']['level']==1}checked{/if}>一级
+                    </label>
+                    <label class="radio inline">
+                        <input type="radio" class="ui-radio" name="level" id="level2" value="2" {if $list['content']['level']==2}checked{/if}>二级
+                    </label>
+                    <label class="radio inline">
+                        <input type="radio" class="ui-radio" name="level" id="level3" value="3" {if $list['content']['level']==3}checked{/if}>三级
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">分销方法</label>
+                <div class="col-sm-8">
+                    <label class="radio inline" style="width: 140px;">
+                        <input type="radio" class="ui-radio" name="type" id="type1" value="1" {if $list['content']['type']==1}checked{/if}>按订单金额的百分比
+                    </label>
+                    <label class="radio inline" style="width: 140px;">
+                        <input type="radio" class="ui-radio" name="type" id="type2" value="2" {if $list['content']['type']==2}checked{/if}>每单固定金额
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">一级分销</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  name="level_one" id="level_one" value="{$list['content']['level_one']}" placeholder="选择 按订单金额的百分比 单位（%） 选择 每单固定金额 单位（元）">
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">二级分销</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  name="level_two" id="level_two" value="{$list['content']['level_two']}" placeholder="选择 按订单金额的百分比 单位（%） 选择 每单固定金额 单位（元）">
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">三级分销</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  name="level_three" id="level_three" value="{$list['content']['level_three']}" placeholder="选择 按订单金额的百分比 单位（%） 选择 每单固定金额 单位（元）">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">起提金额</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  name="withdraw_amount" id="withdraw_amount" value="{$list['content']['withdraw_amount']}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">用户须知</label>
+                <div class="col-sm-8">
+                    <textarea rows="10" class="form-control" name="rules">{$list['content']['rules']}</textarea>
+                    <span class="help-block">全局配置和局部配置都存在时，优先局部配置</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <input type="button" name="submit" class="btn btn-default" value="提交">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    require(["../addons/{php echo $_GPC['m']}/resource/swal/dist/sweetalert2.min.js"],function(){
+        $(function(){
+            $("input[name='submit']").click(function(){
+                var data=$(".form-horizontal").serialize();
+                $.ajax({
+                    type:"post",
+                    url:"{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'saveshare','version_id'=>$_GPC['version_id'])}",
+                    data:data,
+                    dataType:'json',
+                    success:function(res){
+                        if(res.status==1){
+                            swal('操作成功!', '操作成功!', 'success');
+                        }else{
+                            swal('操作失败!', '操作失败!', 'error');
+                        }
+                    }
+                })
+            });
+        })
+    })
+</script>
+{template 'common/footer'}

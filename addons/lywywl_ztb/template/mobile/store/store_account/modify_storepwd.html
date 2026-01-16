@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<!--CSS-->
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+
+<body class="bgf2">
+<!--中心区域-->
+<section class="mt24">
+    <form id="modify_mobile" method="post">
+        <ul class="registerList">
+            <li>
+                <input class="regInput font32" type="text" value="{$store['mobile']}" disabled>
+            </li>
+            <li>
+                <input class="regInput font32" type="password" placeholder="请输入要设置的商户安全密码" name="storepwd" id="storepwd" maxlength="6" datatype="*6-6" nullmsg="请输入要设置的商户安全密码！" errormsg="请输入6位商户安全密码！">
+            </li>
+            <li class="codepd">
+                <input class="regInput font32" type="text" placeholder="请输入验证码" name="verifyCode" maxlength="6" datatype="n" nullmsg="请输入手机验证码！">
+                <button type="button" class="codeBtn" id="btnSendSmsCode">获取验证码</button>
+            </li>
+        </ul>
+        <section class="btn-de">
+            <input name="token" value="{$_W['token']}" type="hidden" />
+            <input type="hidden" name="submit" value="submit"/>
+            <input type="hidden" name="return_url" value="{$_GPC['return_url']}"/>
+            <button type="submit" class="Button" id="SubmitBtn">确认提交</button>
+        </section>
+    </form>
+</section>
+<script src="{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js"></script>
+<script>
+    $(function(){
+        //为formContent 添加验证事件
+        $("#modify_mobile").Validform({
+            tiptype: function (msg, o, cssctl) {
+                if (!o.obj.is("form")) {
+                    if (o.type == 2) {
+                        //loading带文字
+                        layer.open({
+                            type: 2
+                            , content: '数据提交中'
+                            , time: 999 //999秒后自动关闭
+                        });
+                    } else {
+                        layer.closeAll();
+                        layer.open({
+                            content: msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                    }
+                }
+            },
+            ajaxPost: true,
+            tipSweep: true,
+            beforeSubmit: function (curform) {
+                $("#SubmitBtn").attr("disabled", true);
+            },
+            callback: function (data) {
+                layer.closeAll();
+                if(data.status == 1){
+                    layer.open({
+                        content: data.msg
+                        , skin: 'msg'
+                        , time: 2 //2秒后自动关闭
+                        , style: 'bottom:0;'
+                    });
+
+                    setTimeout(function () {
+                        window.location.href = data.url;
+                    }, 2000);
+
+                }else{
+                    layer.open({
+                        content: data.msg
+                        , skin: 'msg'
+                        , time: 2 //2秒后自动关闭
+                        , style: 'bottom:0;'
+                    });
+                    $("#SubmitBtn").attr("disabled", false);
+                }
+            }
+        });
+
+        //发送短信验证码
+        $("#btnSendSmsCode").click(function () {
+            var storepwd = $("#storepwd");
+            if (storepwd.val() == "") {
+                layer.open({
+                    content: '请输入要设置的商户安全密码!'
+                    , skin: 'msg'
+                    , time: 2 //2秒后自动关闭
+                    , style: 'bottom:0;'
+                });
+                storepwd.focus();
+                return;
+            }
+            else {
+                $(this).attr("disabled", true);
+                var n = $(this).attr("time");
+                if (n == null || parseInt(n) <= 0) {
+                    $.ajax({
+                        url: "{php echo $this->createMobileUrl('store.store_account',array('act'=>'sendSmsCode2'));}",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "storepwd": $("#storepwd").val()
+                        },
+                        success: function (result) {
+                            if (result.status == 0) {
+                                layer.open({
+                                    content: result.msg
+                                    , skin: 'msg'
+                                    , time: 2 //2秒后自动关闭
+                                    , style: 'bottom:0;'
+                                });
+                                $("#btnSendSmsCode").removeAttr("disabled");
+                            } else {
+                                layer.open({
+                                    content: result.msg
+                                    , skin: 'msg'
+                                    , time: 2 //2秒后自动关闭
+                                    , style: 'bottom:0;'
+                                });
+                                SetTime(120);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    });
+
+    //短信发送计时
+    function SetTime(n) {
+        n--;
+        var a = $("#btnSendSmsCode");
+        if (n < 0) {
+            $("#btnSendSmsCode").html("获取验证码");
+            $("#btnSendSmsCode").removeAttr("disabled");
+        } else {
+            $("#btnSendSmsCode").attr("time", n).html(n + "秒重新获取");
+            setTimeout("SetTime(" + n + ")", 1000);
+        }
+    };
+
+</script>
+</body>
+</html>

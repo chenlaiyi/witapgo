@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+<link href="{MODULE_URL}resource/mobile/plugin/css/common.min.css?v=20170802" rel="stylesheet">
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/util.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/require.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/lib/mui.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/common.js"></script>
+<body>
+<form action="{php echo $this->createMobileUrl('store.user_account',array('act'=>'modify'));}" id="form_content" method="post">
+<!--中心区域-->
+<section class="">
+    <section class="bgfff">
+        <ul class="publish">
+            <li class="float">
+                <p>微信昵称</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" datatype="*" id="nickname" maxlength="100"
+                           name="model[nickname]" nullmsg="请输入用户微信昵称！" placeholder="请输入用户微信昵称"
+                           type="text" value="{$model['nickname']}"/>
+                </section>
+            </li>
+            <li>
+                <p>微信头像<span>(必填)</span></p>
+                <section class="form_con clearfix">
+                    <div class="mui-input-cell">
+                        <input type="hidden" id="model[headurl]" name="model[headurl]" value=""/>
+                        {php echo tpl_app_form_field_avatar('headurl',$model['headurl'],false);}
+                    </div>
+                </section>
+            </li>
+            <li class="float">
+                <p>微信OpenID</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" datatype="*" id="openid" maxlength="60"
+                           name="model[openid]" nullmsg="请输入用户微信OpenID！" placeholder="请输入用户微信OpenID"
+                           type="text" value="{$model['openid']}"/>
+                </section>
+            </li>
+            <li class="float">
+                <p>微信OauthID</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" datatype="*" id="oauthid" maxlength="60"
+                           name="model[oauthid]" nullmsg="请输入用户微信OauthID！" placeholder="请输入用户微信OauthID"
+                           type="text" value="{$model['oauthid']}"/>
+                </section>
+            </li>
+            <li class="float">
+                <p>用户性别</p>
+                <section class="form_con clearfix">
+                    <section class="input_item">
+                        <input type="radio" id="sex1" name="model[sex]" value="1" {if $model['sex']==1} checked {/if}>
+                        <label for="sex1"></label>
+                        <span>男士</span>
+                    </section>
+                    <section class="input_item">
+                        <input type="radio" id="sex2" name="model[sex]" value="2" {if $model['sex']==2} checked {/if}>
+                        <label for="sex2"></label>
+                        <span>女士</span>
+                    </section>
+                    <section class="input_item">
+                        <input type="radio" id="sex0" name="model[sex]" value="0" {if $model['sex']==0} checked {/if}>
+                        <label for="sex0"></label>
+                        <span>未知</span>
+                    </section>
+                </section>
+            </li>
+            <li class="float">
+                <p>所在区域</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt"  id="area" maxlength="100"
+                           name="model[area]"  placeholder="请输入用户所在行政区域"
+                           type="text" value="{$model['area']}"/>
+                </section>
+            </li>
+            <li class="float">
+                <p>手机号码</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" datatype="*" id="mobile" maxlength="100"
+                           name="model[mobile]" nullmsg="请输入用户手机号码！" placeholder="请输入用户手机号码"
+                           type="text" value="{$model['mobile']}"/>
+                </section>
+            </li>
+            <li class="float">
+                <p>账户余额</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" maxlength="10" name="model[money]"
+                           placeholder="请输入用户账户余额" datatype="*" nullmsg="请输入用户账户余额！"
+                           step="0.01" id="money"
+                           type="number" value="{$model['money']}" disabled="disabled"/>
+                    <span class="arrow_txt">元</span> </section>
+            </li>
+            <li class="float">
+                <p>账户积分</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt"
+                           maxlength="10" datatype="*" nullmsg="请输入用户账户积分！"
+                           name="model[score]" placeholder="请输入用户账户积分" id="score"
+                           onkeyup="this.value=this.value.replace(/\D/g,'')"
+                           onafterpaste="this.value=this.value.replace(/\D/g,'')"
+                           type="number" value="{$model['score']}" />
+                    <span class="arrow_txt">积分</span> </section>
+            </li>
+            <li>
+                <p>账户状态</p>
+                <section class="form_con rel">
+                    <section class="font26 c9 form_tips">选择账号开启/关闭状态，关闭后用户将被禁用登录系统参与活动</section>
+                    <span class="switch {if $model['status']==1}switch_on{else}switch_off{/if}">
+                        <i class="slider"></i>
+                        <input type="hidden" name="model[status]" value="{$model['status']}"/>
+                    </span>
+            </li>
+        </ul>
+    </section>
+</section>
+<section class="h24"></section>
+<section class="buttonBox">
+    <section class="buttonFloat clickBtn">
+        <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+        <input name="token" value="{$_W['token']}" type="hidden" />
+        <input type="hidden" name="submit" value="submit"/>
+        <a href="{php echo $this->createMobileUrl('store.user_account',array('act'=>'index'))}" class="db font32" style="width: 50%;    float: left;   color: #fff;   border-radius: 0.6rem 0 0 0.6rem;    background: #f92f4a;">返回列表</a>
+        <button type="submit" id="SubmitBtn" style="width: 50%;   float: left;    background: #FFD112;    color: #0e0e0e;border-radius: 0 0.6rem 0.6rem 0;">确认提交</button>
+    </section>
+</section>
+</form>
+<script>
+    $(function(){
+        require(['{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js'], function () {
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                                , style: 'bottom:0;'
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    //赋值头像
+                    $("input[name='model[headurl]']").val($("#headurl").val());
+
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if(data.status == 1){
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+
+                        setTimeout(function () {
+                            window.location.href = "{php echo $this->createMobileUrl('store.user_account',array('act'=>'index'));}";
+                        }, 2000);
+
+                    }else{
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+        });
+
+        $(".switch").click(function(e) {
+            if($(this).hasClass("switch_on")){
+                $(this).removeClass("switch_on");
+                $(this).addClass("switch_off");
+                $(this).find("input").val(0);
+            }
+            else{
+                $(this).removeClass("switch_off");
+                $(this).addClass("switch_on");
+                $(this).find("input").val(1);
+            }
+        });
+    });
+</script>
+</body>
+</html>

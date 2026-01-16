@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="referrer" content="origin">
+    <meta name="viewport"
+        content="width=device-width, viewport-fit=cover, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <title>商家服务</title>
+    <script type="text/javascript" charset="UTF-8" src="https://wx.gtimg.com/pay_h5/goldplan/js/jgoldplan-1.0.0.js">
+    </script>
+    
+    <script type="text/javascript" src="https://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+
+    <style>
+        body {
+            font-family: PingFang SC, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .order_box {
+            text-align: center;
+        }
+
+        .b_name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333333;
+            margin-top: 6px;
+        }
+
+        .col_box {
+            margin-top: 35px;
+        }
+
+        .col_box .col {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 14px;
+        }
+
+
+        .btns {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            margin-top: 31px;
+        }
+
+        .btns .btn {
+            width: 160px;
+            height: 35px;
+            line-height: 35px;
+            font-size: 14px;
+            border-radius: 39px;
+            border: 1px solid #CD2314;
+            box-sizing: border-box;
+            color: #CD2314;
+            margin: 0px auto;
+        }
+        .img_box {
+            margin-top: 1px;
+            width: auto;
+            height: 240px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="order_box">
+       
+       
+    <div class="img_box">
+        <img src="fzcenter_lxkq.jpg" style="width:320px;height:260px">
+    </div>
+        <div class="btns">
+            <div id="backHome" class="btn home" onclick="shouye()">前往预约</div>
+        </div>
+    </div>
+
+    <script>
+        var homeLink = "";//首页（例子）
+        function init(){
+             //初始化小票
+             var initData = {
+                action: 'onIframeReady',
+                displayStyle: 'SHOW_CUSTOM_PAGE'
+            }
+            var initPostData = JSON.stringify(initData)
+            parent.postMessage(initPostData, 'https://payapp.weixin.qq.com')
+
+            
+            console.log("初始化");
+           
+            
+        }
+        init();
+
+        //注册点击事件(去首页)
+        function shouye() {
+            var mchData = {
+                action: 'jumpOut',
+                jumpOutUrl: homeLink //跳转的页面
+            }
+            var postData = JSON.stringify(mchData)
+            parent.postMessage(postData, 'https://payapp.weixin.qq.com')
+            console.log("首页");
+
+        }
+    </script>
+</body>
+
+</html>

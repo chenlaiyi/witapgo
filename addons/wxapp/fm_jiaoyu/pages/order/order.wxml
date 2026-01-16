@@ -1,0 +1,6 @@
+<view wx:if="{{flag}}">
+    <web-view src="{{url}}#wechat_redirect"></web-view>
+</view>
+<view style="text-align:center;" wx:else>
+    <image src="../../img/hotel/time.gif" style="margin-top:40%;width:177px;height:175px;"></image>
+</view>

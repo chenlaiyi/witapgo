@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {if !empty($objModel)}
+                {$title} - {$objModel['title']}
+                {else}
+                {$title}
+                {/if}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">订单管理</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            {loop $orderObjWebStatus $index $value}
+                            <li class="{php echo $index==$status?'active':''}"><a href="{php echo $this->createWebAppUrl('order_obj', array('act' => 'index','status'=>$index));}">{$value}</a></li>
+                            {/loop}
+                        </ul>
+                        <div class="tab-content">
+                            {if $status==1}
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-truck"></i> 批量发货</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form class="form-horizontal" id="batchdeliver" method="post" action="{php echo $this->createWebAppUrl('order_obj', array('act'=>'batchdeliver'));}" enctype="multipart/form-data">
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <label for="inputFile" class="col-sm-1 control-label">选择文件</label>
+                                            <div class="col-sm-3">
+                                                <input type="file" id="inputFile" name="inputFile" accept=".xls,.xlsx" >
+                                            </div>
+                                            <div class="col-sm-8">
+                                                <strong class="text-danger">提示：</strong> 批量发货格式仅支持EXECL文件，请保证文件后缀为.xls,.xlsx ，导入文件模板请下载：<a href="{MODULE_URL}resource/template/demo/deliver.xlsx" target="_blank">点击下载</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="batchdeliver_btn" type="button" class="btn btn-sm btn-info">导入数据</button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置表单</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            {/if}
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchKey" class="col-sm-1 control-label">订单信息</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="SearchKey"
+                                                       placeholder="订单编号">
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchOpenID">购买用户</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="SearchOpenID"
+                                                       placeholder="OPENID">
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchTime">下单时间</label>
+                                            <div class="col-sm-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control pull-right" id="SearchTime"
+                                                           placeholder="开始时间 - 结束时间" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索
+                                            </button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置检索</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="box" class="table-responsive">
+                                <div id="toolbar" class="btn-group">
+                                    <button id="btn_export" type="button" class="btn btn-info">
+                                        <span class="fa fa-download" aria-hidden="true"></span>&nbsp;导出
+                                    </button>
+                                </div>
+                                <table id="tb_bandlist" class="table text-nowrap" data-reorderable-columns="true" ></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script id="fedextpl" type="text/html">
+    <form class="form-horizontal" name="form_content" id="form_content" method="post">
+        <div class=link-modal>
+            <div class="form-group">
+                <label for="fedex_id" class="col-sm-2 control-label">发货快递公司</label>
+                <div class="col-sm-10">
+                    <select id="fedex_id" class="form-control" style = "width: 100%;">
+                        <option value="0" data-code="">上门服务</option>
+                        {loop $fedexList $fedex}
+                        <option value="{$fedex['id']}" data-code="{$fedex['code']}">{$fedex['name']}</option>
+                        {/loop}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0px;">
+                <label for="fedex_number" class="col-sm-2 control-label">快递单号/信息</label>
+                <div class="col-sm-10">
+                    <input class="form-control" id="fedex_number" maxlength="50" placeholder="请输入快递单号或信息！"
+                           type="text" value=""/>
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<script>
+    $(function () {
+        SelectNav("活动订单管理");
+
+        require(["daterangepicker"], function () {
+            //时间搜索
+            $('#SearchTime').daterangepicker({
+                format: "YYYY/MM/DD"
+            });
+        });
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            myrequire(['bootstrap-table-zh-cn', 'bootstrap-table-editable','bootstrap-table-fixed-columns'], function () {
+                $(".select2").select2();
+                //1.初始化Table
+                var oTable = new TableInit();
+                oTable.Init();
+                //2.初始化Button的点击事件
+                var oButtonInit = new ButtonInit();
+                oButtonInit.Init();
+            });
+        });
+
+        //批量发货
+        $("#batchdeliver_btn").click(function(){
+            $("#batchdeliver_btn").attr('disabled',false);
+            $.ajax({
+                url: "{php echo $this->createWebAppUrl('order_obj', array('act'=>'batchdeliver'));}",
+                type: 'POST',
+                cache: false,
+                data: new FormData($("#batchdeliver")[0]),
+                dataType:'json',
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                    }
+                    $("#batchdeliver_btn").attr("disabled", false);
+                },
+                error: function (err) {
+                    Command: toastr["error"]('对不起，系统错误请稍后重试！', "错误提示");
+                    $("#batchdeliver_btn").attr("disabled", false);
+                }
+            });
+        });
+    });
+
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#tb_bandlist').bootstrapTable({
+                url: "{php echo $this->createWebAppUrl('order_obj', array('act' => 'getJsonList','status' => $status));}",         //请求后台的URL（*）
+                method: 'get',                      //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: true,                    //是否启用排序
+                sortName: "id",                   //排序字段
+                sortOrder: "desc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: false,                //是否启用点击选中行
+                height: 655,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                fixedColumns: true,                    //冻结列开启关闭
+                fixedNumber: 1,                        //冻结列数量
+                onLoadError: function () {  //加载失败时执行
+                    Command: toastr["error"]("对不起，网络繁忙，请稍后再试！", "错误提示");
+                },
+                rowStyle: function (row, index) {
+                    var style={css:{'line-height':'80px'}};
+                    return style;
+                },
+                columns: [{
+                    checkbox: true,
+                }, {
+                    field: 'id',
+                    title: '编号',
+                    titleTooltip: '当前信息的唯一编号，数据主键',
+                    sortable: true
+                }, {
+                    field: 'status',
+                    title: '订单状态',
+                    titleTooltip: '订单的当转状态',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(value == 1)  {
+                            return "<span class='label bg-red'>等待发货</span>";
+                        }else if(value == 2)  {
+                            return "<span class='label bg-aqua'>等待收货</span>";
+                        }else {
+                            return "<span class='label bg-green'>交易完成</span>";
+                        }
+                    }
+                }, {
+                    field: 'ordernumber',
+                    title: '订单编号',
+                    titleTooltip: '订单信息的唯一流水号',
+                    sortable: true,
+                }, {
+                    field: 'nickname',
+                    title: '微信昵称',
+                    titleTooltip: '注册用户的微信昵称',
+                }, {
+                    field: 'openid',
+                    title: 'OPENID',
+                    titleTooltip: '注册用户对于微信公众号的唯一身份标识',
+                    sortable: true,
+                }, {
+                    field: 'product_thumb',
+                    title: '商品封面',
+                    titleTooltip: '用户兑换商品的封面',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return " <img height='80' width='80' src='"+ value +"' alt='"+ row.product_title +"'>"
+                    }
+                }, {
+                    field: 'product_title',
+                    title: '商品名称',
+                    titleTooltip: '用户兑换商品的标题',
+                    sortable: true,
+                }, {
+                    field: 'activity_id',
+                    title: '参与活动',
+                    titleTooltip: '用户兑换奖品所参与的活动',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return  row.activity_name;
+                    }
+                }, {
+                    field: 'username',
+                    title: '收货人',
+                    titleTooltip: '收货人姓名',
+                    sortable: true,
+                }, {
+                    field: 'mobile',
+                    title: '联系电话',
+                    titleTooltip: '收货人联系电话',
+                    sortable: true,
+                },{
+                    field: 'county',
+                    title: '行政区域',
+                    titleTooltip: '收货地址所在行政区域',
+                    formatter: function (value, row, index) {
+                        return row.province + " - " + row.city +" - " + row.county;
+                    }
+                },{
+                    field: 'address',
+                    title: '详细地址',
+                    titleTooltip: '收货人收货的详细地址',
+                    sortable: true,
+                },{
+                    field: 'postcode',
+                    title: '邮政编码',
+                    titleTooltip: '搜索地址行政区域的邮政编码',
+                    sortable: true,
+                }, {
+                    field: 'createtime',
+                    title: '下单时间',
+                    titleTooltip: '创建信息的时间',
+                    sortable: true,
+                }, {
+                    field: 'updatetime',
+                    title: '状态变更时间',
+                    titleTooltip: '编辑信息的时间',
+                    sortable: true,
+                },  {
+                    field: 'action',
+                    title: '操作',
+                    titleTooltip: '点击下方按钮对信息进行操作',
+                    width: 120,
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                //search: params.search,
+                pageSize: params.limit,  //每页大小
+                page: params.offset / params.limit + 1,//页码
+                sortOrder: params.order,//排序
+                sortName: params.sort,//排序字段
+                key: $("#SearchKey").val(), //关键词
+                openid: $("#SearchOpenID").val(), //关键词
+                status: {$status}, //信息状态
+                timer: $("#SearchTime").val() //信息状态
+            };
+            return temp;
+        };
+        return oTableInit;
+    };
+
+    function operateFormatter(value, row, index) {
+        if(row.status==1)
+        {
+            return [
+                '<button class="details btn btn-success btn-xs" href="javascript:void(0)" title="修改">',
+                '<i class="fa fa-bars"></i>详情',
+                '</button>  ',
+                '<button class="deliver btn btn-info btn-xs" href="javascript:void(0)" title="发货">',
+                '<i class="fa fa-edit"></i>发货',
+                '</button>  ',
+            ].join('');
+        }
+        else
+        {
+            return [
+                '<button class="details btn btn-success btn-xs" href="javascript:void(0)" title="修改">',
+                '<i class="fa fa-bars"></i>详情',
+                '</button>  ',
+                '<button class="btn btn-info btn-xs disabled" href="javascript:void(0)" title="发货">',
+                '<i class="fa fa-edit"></i>发货',
+                '</button>  ',
+            ].join('');
+        }
+    }
+    window.operateEvents = {
+        'click .details': function (e, value, row, index) {
+            var editurl = "{php echo $this->createWebAppUrl('order_obj', array('act' => 'details'));}&id=$";
+            window.location.href = editurl.replace('$', row.id);
+        },
+        'click .deliver': function (e, value, row, index) {
+            var fedexHtml="";
+            myrequire([ 'arttemplate'], function (template) {
+                fedexHtml = template("fedextpl", []);
+                require(["jquery", "util"], function(){
+                    var footer = '<button type="button" class="btn btn-default" data-dismiss="modal" id="fedexBtn" data-ordernumber="'+ row.ordernumber +'">发货</button> <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                    var modalobj = util.dialog('订单发货操作',fedexHtml ,footer,{containerName:'fedex-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                    modalobj.modal('show');
+                });
+            });
+        }
+    };
+
+    //加载成功时执行
+    $('#tb_bandlist').on('load-success.bs.table column-switch.bs.table', function (data) {
+        $('#tb_bandlist').bootstrapTable('resetView');
+    });
+
+    var ButtonInit = function () {
+        var oInit = new Object();
+        var postdata = {};
+
+        oInit.Init = function () {
+            //查询操作
+            $("#btn_query").click(function () {
+                $("#tb_bandlist").bootstrapTable('refresh');
+            });
+            //导出操作
+            $("#btn_export").click(function(){
+                var timer = $("#SearchTime").val();
+                var key = $("#SearchKey").val();
+                var openid = $("#SearchOpenID").val();
+                var status = {$status};
+                //询问框
+                layer.open({
+                    content: '您确定要导出记录到Excel吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        layer.close(index);
+                        window.location.href = "{php echo $this->createWebAppUrl('order_obj', array('act' => 'exportData'));}&key="+ key +"&status="+ status +"&timer="+ timer +"&openid="+ openid;
+                    }
+                });
+            });
+
+            //确认发货
+            $(document).delegate("#fedexBtn", "click", function() {
+                var fedex_id=$("#fedex_id").val();
+                var fedex_name=$("#fedex_id").find("option:selected").text();
+                var fedex_code=$("#fedex_id").find("option:selected").data("code");
+                var fedex_number=$("#fedex_number").val();
+                var ordernumber = $(this).data("ordernumber");
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createWebAppUrl('order_obj', array('act' => 'deliver'));}",
+                    data: {
+                        ordernumber: ordernumber,
+                        fedex_id: fedex_id,
+                        fedex_name: fedex_name,
+                        fedex_code: fedex_code,
+                        fedex_number: fedex_number
+                    },
+                    dataType:'json',
+                    success: function (data, status) {
+                        if (data.status == 1) {
+                            Command: toastr["success"](data.msg, "成功提示");
+                            $("#tb_bandlist").bootstrapTable('refresh');
+                        }
+                        else {
+                            Command: toastr["error"](data.msg, "错误提示");
+                        }
+                    }
+                });
+            });
+        };
+        return oInit;
+    };
+
+</script>
+</body>
+</html>

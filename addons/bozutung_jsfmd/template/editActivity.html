@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li class="layui-this">
+						<a href="{php echo webUrl('editActivity')}">编辑活动</a>
+					</li>
+					<li>
+						<a href="{php echo webUrl('activityList')}">返回</a>
+					</li>
+				</ul>
+			</div>
+
+			<form class="layui-form fixed" action="" method="post" enctype="multipart/form-data" id="data-form">
+				<input type="hidden" name="id" value="{$oldData['id']}" />
+				<!-- 活动名 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">活动名</label>
+					<div class="layui-input-block">
+						<input type="text" name="activity" lay-verify="required" class="layui-input" value="{$oldData['name']}">
+					</div>
+				</div>
+				<!-- 门店 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">门店</label>
+					<div class="layui-input-block">
+						{loop $_W['list_store'] $index $item}
+							<input type="checkbox" name="store[]" value="{$item['id']}" lay-skin="primary"
+								title="{$item['name']}" {if $item['checked'] }checked{/if} >
+						{/loop}
+					</div>
+				</div>
+				<!-- 联系电话 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">联系电话</label>
+					<div class="layui-input-block">
+						<input type="text" name="tel" lay-verify="required" class="layui-input" value="{$oldData['tel']}">
+					</div>
+				</div>
+				<!-- 活动时间 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">活动时间</label>
+					<div class="layui-input-block">
+						<input type="text" name="time" class="layui-input" id="time-activity" placeholder="yyyy-MM-dd">
+					</div>
+				</div>
+				<!-- 活动详情 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">活动详情</label>
+					<div class="layui-input-block box-act-body">
+						{php echo tpl_ueditor('content', $oldData['content'])}
+					</div>
+				</div>
+				<!-- 展示图片 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">展示图片</label>
+					<div class="layui-input-block">
+						{php echo slwl_tpl_form_field_image('cover', $oldData['cover']);}
+						<div class="layui-form-mid layui-word-aux">推荐尺寸：345 x 130，或同比例</div>
+					</div>
+				</div>
+
+				<div class="layui-tab-content fixed" id="data-submit">
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="save">保存</button>
+							<button class="layui-btn" lay-submit lay-filter="save" data-type="saveAndAdd">保存并新增</button>
+							<a href="{php echo webUrl('activityList')}" class="layui-btn layui-btn-primary">取消</a>
+							<input type="hidden" name="token" value="{$_W['token']}" />
+						</div>
+					</div>
+				</div>
+			</form>
+			<script>
+				layui.use('laydate', function(){
+					var laydate = layui.laydate;
+
+					laydate.render({
+						elem: '#time-activity'
+						,type: 'date'
+						,format: 'yyyy-MM-dd'
+						,value: "{php echo date('Y-m-d', $oldData['time']); }"
+					});
+				});
+
+				layui.use('form', function(){
+					var form = layui.form;
+
+					form.on('submit(save)', function(data){
+						let subType = data.elem.dataset.type;
+						let url = "{php echo webUrl('editActivity')}";
+						var $obj = $(this);
+
+						if (!$obj.hasClass('lock')) {
+							$obj.addClass('lock'); // 不能再点击
+
+							$.ajax({
+								type: "POST",
+								url: url,
+								dataType: 'json',
+								data: data.field,
+								success: function (rs) {
+
+									if (rs.code == '0') {
+										layer.msg('保存成功' , {
+											time: 500
+										}, function () {
+											if (subType && subType.toString() === 'saveAndAdd') {
+												window.location.href = "{php echo webUrl('addActivity')}";
+											} else {
+												window.location.href = "{php echo webUrl('activityList')}";
+											}
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+										});
+									}
+									$obj.removeClass('lock');
+								},
+								error: function () {
+									layer.msg('保存过程发生错误，请与管理员联系', {
+										offset: '20%',
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						}
+
+						return false;
+					});
+				});
+			</script>
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

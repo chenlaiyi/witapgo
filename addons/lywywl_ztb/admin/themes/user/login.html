@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+	<title>{$config['name']} 系统管理平台 V1.2.5</title>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-title" content="{$config['name']} 系统管理平台 V1.2.5">
+	<link rel="shortcut icon" href="{if !empty($config['ico'])}{php echo tomedia($config['ico'])}{else}{$_W['siteroot']}addons/lywywl_ztb/resource/web/images/favicon.ico{/if}" />
+	<!-- 告诉浏览器响应屏幕宽度 -->
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+	<link href="{$_W['siteroot']}addons/lywywl_ztb/resource/plugin/bootstrap/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+	<link rel="stylesheet" href="{$_W['siteroot']}addons/lywywl_ztb/resource/plugin/font-awesome/font-awesome.min.css?v=4.4.0">
+	<link rel="stylesheet" href="{$_W['siteroot']}addons/lywywl_ztb/resource/web/css/zhutuike.css">
+	<link rel="stylesheet" href="{$_W['siteroot']}addons/lywywl_ztb/resource/plugin/iCheck/all.css">
+	<link rel="stylesheet" href="{$_W['siteroot']}addons/lywywl_ztb/resource/plugin/validform/5.3.2/Validform.css">
+	<!--[if lt IE 9]>
+	<script src="{$_W['siteroot']}addons/lywywl_ztb/resource/plugin/html5shiv/3.7.3/html5shiv.min.js"></script>
+	<script src="{$_W['siteroot']}addons/lywywl_ztb/resource/plugin/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body class="hold-transition login-page">
+<div id="bg">
+	<div class="wrapper">
+		<div class="login-box">
+			<div class="login-logo">
+				<img src="{if !empty($config['logo_big'])}{php echo tomedia($config['logo_big'])}{else}{$_W['siteroot']}addons/lywywl_ztb/resource/web/images/logo.png{/if}" width="200" height="50">
+			</div>
+			<div class="login-box-body">
+				<p class="login-box-msg" id="show_validate_error">{$config['name']} V1.2.8 正式版</p>
+				<form action="" id="admin_login" method="post">
+				<div class="form-group has-feedback">
+					<input type="text" class="form-control" placeholder="登录帐号" name="username" id="username" maxlength="16" autocomplete="off" value="" datatype="*1-16" nullmsg="请输入登录帐号！" errormsg="登录帐号最多不能超过16个字符！">
+					<span class="glyphicon glyphicon-user form-control-feedback"></span>
+				</div>
+				<div class="form-group has-feedback">
+					<input type="password" class="form-control" placeholder="登录密码" name="password" id="password" maxlength="16" value="" datatype="*6-16" nullmsg="请输入登录密码！" errormsg="密码范围在6~16位之间！">
+					<span class="glyphicon glyphicon-lock form-control-feedback"></span>
+				</div>
+				{if !empty($_W['setting']['copyright']['verifycode'])}
+				<div class="row">
+					<div class="col-xs-8">
+						<div class="form-group has-feedback">
+							<input type="text" class="form-control" placeholder="验  证  码" maxlength="4" name="verify" id="verify" datatype="*1-4" nullmsg="请输入验证码！" errormsg="验证码为4位！">
+							<span class="glyphicon glyphicon-barcode form-control-feedback"></span>
+						</div>
+					</div>
+					<div class="col-xs-4">
+						<a href="javascript:;" id="toggle"><img alt="点击图片更换验证码" id="imgverify" width="100%" height="30" src="./index.php?c=utility&a=code" ></a>
+					</div>
+				</div>
+				{/if}
+				<div class="row">
+					<div class="col-xs-8">
+						<div class="checkbox icheck text-sm">
+							<label>
+								<input type="checkbox" value="true" name="rember">
+								记住我 免登录
+							</label>
+						</div>
+					</div>
+					<div class="col-xs-4">
+						<input name="token" value="{$_W['token']}" type="hidden" />
+						<button type="submit" class="btn btn-primary btn-block btn-flat"> 登 录 </button>
+					</div>
+				</div>
+					<div class="social-auth-links text-center">
+						<p>- 忘记密码 -</p>
+						<a href="http://wpa.qq.com/msgrd?v=3&uin={$config['qq']}&site={$config['name']}&menu=yes" target="_blank" class="btn btn-block btn-social btn-primary btn-flat"><i class="fa fa-qq"></i><b>点击激活腾讯 Q Q 在线客服</b></a>
+					</div>
+					<!-- /.social-auth-links -->
+					<p class="text-sm text-center">找回密码请联系系统超管或电话联系管理员核实后重置</p>
+					<p class="text-sm text-center">TEL：{$config['tel']}</p>
+				</form>
+			</div>
+		</div>
+	</div>
+	<footer class="login-main-footer text-center text-sm navbar-fixed-bottom">
+		<p id="footerp">为了您在使用管理平台时获得最佳体验，请升级使用 IE8+ 或下载使用Chrome/Firefox浏览器。</p>
+		<p>{if empty($_W['setting']['copyright']['footerleft'])} Powered by <a href="http://www.we7.cc"><b>微擎</b></a> v{IMS_VERSION} © 2014-{php echo date('Y')} <a href="http://www.we7.cc">www.we7.cc</a>{else}{$_W['setting']['copyright']['footerleft']}{/if} {if !empty($_W['setting']['copyright']['icp'])}备案号：<a href="http://www.miitbeian.gov.cn" target="_blank">{$_W['setting']['copyright']['icp']}</a>{/if}</p>
+	</footer>
+	<canvas></canvas>
+	<canvas></canvas>
+	<canvas></canvas>
+</div>
+<script type="text/javascript" src="{$_W['siteroot']}addons/lywywl_ztb/resource/web/js/jQuery-2.1.4.min.js"></script>
+<script type="text/javascript" src="{$_W['siteroot']}addons/lywywl_ztb/resource/plugin/bootstrap/bootstrap.min.js"></script>
+<script src="{$_W['siteroot']}addons/lywywl_ztb/resource/plugin/iCheck/icheck.min.js"></script>
+<script src="{$_W['siteroot']}addons/lywywl_ztb/resource/plugin/validform/5.3.2/Validform_v5.3.2.js"></script>
+
+<script>
+	$(function () {
+		$('input').iCheck({
+			checkboxClass: 'icheckbox_square-blue',
+			radioClass: 'iradio_square-blue',
+			increaseArea: '20%' // optional
+		});
+
+		//为formContent 添加验证事件
+		$("#admin_login").Validform({
+			tiptype: function (msg, o, cssctl) {
+				var objtip = $("#show_validate_error");
+				cssctl(objtip, o.type);
+				objtip.text(msg);
+			},
+			ajaxPost: true,
+			callback: function (data) {
+				if (data.status == 0) {
+					$("#show_validate_error").addClass("Validform_checktip Validform_wrong");
+					$("#show_validate_error").text(data.msg);
+					$("#toggle").click();
+					return;
+				}
+				else {
+					$("#show_validate_error").addClass("Validform_checktip Validform_right");
+					$("#show_validate_error").text(data.msg);
+					if (data.url.length > 0) {
+						setTimeout(function () {
+							window.location.href = data.url;
+						}, 2000);
+					} else {
+						setTimeout(function () {
+							window.location.href = window.location.href;
+						}, 2000);
+					}
+
+				}
+			}
+		});
+	});
+
+	$('#toggle').click(function() {
+		$('#imgverify').prop('src', './index.php?c=utility&a=code&r='+Math.round(new Date().getTime()));
+		return false;
+	});
+
+	//判断客户端浏览器类型 手机端隐藏底部提示
+	var browser = {
+		versions: function () {
+			var u = navigator.userAgent, app = navigator.appVersion;
+			return {//移动终端浏览器版本信息
+				trident: u.indexOf('Trident') > -1, //IE内核
+				presto: u.indexOf('Presto') > -1, //opera内核
+				webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+				gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+				mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+				ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+				android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+				iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者QQHD浏览器
+				iPad: u.indexOf('iPad') > -1, //是否iPad
+				webApp: u.indexOf('Safari') == -1 //是否web应该程序，没有头部与底部
+			};
+		}(),
+		language: (navigator.browserLanguage || navigator.language).toLowerCase()
+	};
+	if (browser.versions.mobile == true || browser.versions.ios == true || browser.versions.android == true) {
+		$("#footerp").hide();//隐藏
+	}
+
+	//背景特效
+	(function ($) {
+		var canvas = $('#bg').children('canvas'),
+				background = canvas[0],
+				foreground1 = canvas[1],
+				foreground2 = canvas[2],
+				config = {
+					circle: {
+						amount: 18,
+						layer: 3,
+						color: [184, 199, 206],
+						alpha: 0.3
+					},
+					line: {
+						amount: 12,
+						layer: 3,
+						color: [255, 255, 255],
+						alpha: 0.3
+					},
+					speed: 0.5,
+					angle: 20
+				};
+
+		if (background.getContext) {
+			var bctx = background.getContext('2d'),
+					fctx1 = foreground1.getContext('2d'),
+					fctx2 = foreground2.getContext('2d'),
+					M = window.Math, // Cached Math
+					degree = config.angle / 360 * M.PI * 2,
+					circles = [],
+					lines = [],
+					wWidth, wHeight, timer;
+
+			requestAnimationFrame = window.requestAnimationFrame ||
+					window.mozRequestAnimationFrame ||
+					window.webkitRequestAnimationFrame ||
+					window.msRequestAnimationFrame ||
+					window.oRequestAnimationFrame ||
+					function (callback, element) { setTimeout(callback, 1000 / 60); };
+
+			cancelAnimationFrame = window.cancelAnimationFrame ||
+					window.mozCancelAnimationFrame ||
+					window.webkitCancelAnimationFrame ||
+					window.msCancelAnimationFrame ||
+					window.oCancelAnimationFrame ||
+					clearTimeout;
+
+			var setCanvasHeight = function () {
+				wWidth = $(window).width();
+				wHeight = $(window).height(),
+
+						canvas.each(function () {
+							this.width = wWidth;
+							this.height = wHeight;
+						});
+			};
+
+			var drawCircle = function (x, y, radius, color, alpha) {
+				var gradient = fctx1.createRadialGradient(x, y, radius, x, y, 0);
+				gradient.addColorStop(0, 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + alpha + ')');
+				gradient.addColorStop(1, 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + (alpha - 0.1) + ')');
+
+				fctx1.beginPath();
+				fctx1.arc(x, y, radius, 0, M.PI * 2, true);
+				fctx1.fillStyle = gradient;
+				fctx1.fill();
+			};
+
+			var drawLine = function (x, y, width, color, alpha) {
+				var endX = x + M.sin(degree) * width,
+						endY = y - M.cos(degree) * width,
+						gradient = fctx2.createLinearGradient(x, y, endX, endY);
+				gradient.addColorStop(0, 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + alpha + ')');
+				gradient.addColorStop(1, 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + (alpha - 0.1) + ')');
+
+				fctx2.beginPath();
+				fctx2.moveTo(x, y);
+				fctx2.lineTo(endX, endY);
+				fctx2.lineWidth = 3;
+				fctx2.lineCap = 'round';
+				fctx2.strokeStyle = gradient;
+				fctx2.stroke();
+			};
+
+			var drawBack = function () {
+				bctx.clearRect(0, 0, wWidth, wHeight);
+
+				var gradient = [];
+
+				gradient[0] = bctx.createRadialGradient(wWidth * 0.3, wHeight * 0.1, 0, wWidth * 0.3, wHeight * 0.1, wWidth * 0.9);
+				gradient[0].addColorStop(0, 'rgb(34, 45, 50)');
+				gradient[0].addColorStop(1, 'transparent');
+
+				bctx.translate(wWidth, 0);
+				bctx.scale(-1, 1);
+				bctx.beginPath();
+				bctx.fillStyle = gradient[0];
+				bctx.fillRect(0, 0, wWidth, wHeight);
+
+				gradient[1] = bctx.createRadialGradient(wWidth * 0.1, wHeight * 0.1, 0, wWidth * 0.3, wHeight * 0.1, wWidth);
+				gradient[1].addColorStop(0, 'rgb(55, 72, 80)');
+				gradient[1].addColorStop(0.8, 'transparent');
+
+				bctx.translate(wWidth, 0);
+				bctx.scale(-1, 1);
+				bctx.beginPath();
+				bctx.fillStyle = gradient[1];
+				bctx.fillRect(0, 0, wWidth, wHeight);
+
+				gradient[2] = bctx.createRadialGradient(wWidth * 0.1, wHeight * 0.5, 0, wWidth * 0.1, wHeight * 0.5, wWidth * 0.5);
+				gradient[2].addColorStop(0, 'rgb(26, 34, 38)');
+				gradient[2].addColorStop(1, 'transparent');
+
+				bctx.beginPath();
+				bctx.fillStyle = gradient[2];
+				bctx.fillRect(0, 0, wWidth, wHeight);
+			};
+
+			var animate = function () {
+				var sin = M.sin(degree),
+						cos = M.cos(degree);
+
+				if (config.circle.amount > 0 && config.circle.layer > 0) {
+					fctx1.clearRect(0, 0, wWidth, wHeight);
+					for (var i = 0, len = circles.length; i < len; i++) {
+						var item = circles[i],
+								x = item.x,
+								y = item.y,
+								radius = item.radius,
+								speed = item.speed;
+
+						if (x > wWidth + radius) {
+							x = -radius;
+						} else if (x < -radius) {
+							x = wWidth + radius
+						} else {
+							x += sin * speed;
+						}
+
+						if (y > wHeight + radius) {
+							y = -radius;
+						} else if (y < -radius) {
+							y = wHeight + radius;
+						} else {
+							y -= cos * speed;
+						}
+
+						item.x = x;
+						item.y = y;
+						drawCircle(x, y, radius, item.color, item.alpha);
+					}
+				}
+
+				if (config.line.amount > 0 && config.line.layer > 0) {
+					fctx2.clearRect(0, 0, wWidth, wHeight);
+					for (var j = 0, len = lines.length; j < len; j++) {
+						var item = lines[j],
+								x = item.x,
+								y = item.y,
+								width = item.width,
+								speed = item.speed;
+
+						if (x > wWidth + width * sin) {
+							x = -width * sin;
+						} else if (x < -width * sin) {
+							x = wWidth + width * sin;
+						} else {
+							x += sin * speed;
+						}
+
+						if (y > wHeight + width * cos) {
+							y = -width * cos;
+						} else if (y < -width * cos) {
+							y = wHeight + width * cos;
+						} else {
+							y -= cos * speed;
+						}
+
+						item.x = x;
+						item.y = y;
+						drawLine(x, y, width, item.color, item.alpha);
+					}
+				}
+
+				timer = requestAnimationFrame(animate);
+			};
+
+			var createItem = function () {
+				circles = [];
+				lines = [];
+
+				if (config.circle.amount > 0 && config.circle.layer > 0) {
+					for (var i = 0; i < config.circle.amount / config.circle.layer; i++) {
+						for (var j = 0; j < config.circle.layer; j++) {
+							circles.push({
+								x: M.random() * wWidth,
+								y: M.random() * wHeight,
+								radius: M.random() * (20 + j * 5) + (20 + j * 5),
+								color: config.circle.color,
+								alpha: M.random() * 0.2 + (config.circle.alpha - j * 0.1),
+								speed: config.speed * (1 + j * 0.5)
+							});
+						}
+					}
+				}
+
+				if (config.line.amount > 0 && config.line.layer > 0) {
+					for (var m = 0; m < config.line.amount / config.line.layer; m++) {
+						for (var n = 0; n < config.line.layer; n++) {
+							lines.push({
+								x: M.random() * wWidth,
+								y: M.random() * wHeight,
+								width: M.random() * (20 + n * 5) + (20 + n * 5),
+								color: config.line.color,
+								alpha: M.random() * 0.2 + (config.line.alpha - n * 0.1),
+								speed: config.speed * (1 + n * 0.5)
+							});
+						}
+					}
+				}
+
+				cancelAnimationFrame(timer);
+				timer = requestAnimationFrame(animate);
+				drawBack();
+			};
+
+			$(document).ready(function () {
+				setCanvasHeight();
+				createItem();
+			});
+			$(window).resize(function () {
+				setCanvasHeight();
+				createItem();
+			});
+		}
+	})(jQuery);
+</script>
+</body>
+</html>

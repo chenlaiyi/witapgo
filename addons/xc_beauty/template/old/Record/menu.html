@@ -1,0 +1,31 @@
+<ul class="nav nav-tabs">
+    <li role="presentation"><a href="{url 'site/entry/Record',array('m'=>$_GPC['m'],'version_id'=>$_GPC['version_id'])}">充值记录</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Record',array('m'=>$_GPC['m'],'op'=>'card','version_id'=>$_GPC['version_id'])}">充值卡购买记录</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Record',array('m'=>$_GPC['m'],'op'=>'buy','version_id'=>$_GPC['version_id'])}">买单记录</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Record',array('m'=>$_GPC['m'],'op'=>'withdraw','version_id'=>$_GPC['version_id'])}">提现申请</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Record',array('m'=>$_GPC['m'],'op'=>'share','version_id'=>$_GPC['version_id'])}">分佣记录</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Record',array('m'=>$_GPC['m'],'op'=>'count','version_id'=>$_GPC['version_id'])}">收入统计</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Record',array('m'=>$_GPC['m'],'op'=>'count_detail','version_id'=>$_GPC['version_id'])}">收入明细</a></li>
+    <li role="presentation"><a href="{url 'site/entry/Record',array('m'=>$_GPC['m'],'op'=>'count_store','version_id'=>$_GPC['version_id'])}">门店统计</a></li>
+</ul>
+<script type="text/javascript">
+
+    function  indexofleftdatda($str,findstr) {
+        var $navurl=$str;
+        var navstart=  $navurl.indexOf(findstr);
+        var navparalen= $navurl.length-navstart;
+        var navstrpara =  $navurl.substring(navstart,$navurl.length);
+        return navstrpara;
+    }
+    var  navstrpara= indexofleftdatda(location.href,"?");
+    $(".nav.nav-tabs").find("a").each(function () {
+        if(navstrpara.indexOf(indexofleftdatda($(this).attr("href"),"?"))>-1){
+            $(this).parent().addClass("active");
+            navstrpara="";
+            return false;
+        }
+    });
+    if(navstrpara!=""){
+        $(".nav.nav-tabs").find("li").eq(0).addClass("active");
+    }
+</script>

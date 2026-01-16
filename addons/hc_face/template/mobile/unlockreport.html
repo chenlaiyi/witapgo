@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="../addons/hc_face/template/mobile/js/jquery.js"></script>
+	<script src="../addons/hc_face/template/mobile/js/jquery.bxslider.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../addons/hc_face/template/mobile/css/unlockreport.css?{$_W['timestamp']}">
+	<title>{$res['name']}的{$title}</title>
+	<style type="text/css">
+		.fuck{
+			width:90vw;
+			margin:5vw auto;
+			display: block;
+		}
+	</style>
+<!-- 	<script type="text/javascript">
+		var con = "{$res['content']}";
+		if(con.length<=0){
+			window.location.reload();
+		}
+	</script> -->
+</head>
+<body>
+	<div class="container" style="background-color: {if empty($customize[page_show][color_bg])}#401D95{else}{$customize[page_show][color_bg]}{/if}"> 
+		<div class="result" style="margin-top:10vw;" style="background-color: {if empty($customize[page_show][color_report_bg])}#ffffff{else}{$customize[page_show][color_report_bg]}{/if}"> 
+			<div class="content_title" style="background-image: url({if empty($customize[page_show][img_report_title_bg])}../addons/hc_face/template/mobile/images/content_title.png{else}{php echo tomedia($customize[page_show][img_report_title_bg])}{/if})">
+				{$res['name']}的{$title}
+			</div>
+			<span class="content">{$res['content']}</span>
+		</div>
+		<img class="fuck" onclick="window.location.href='{php echo $this->createMobileUrl('distribution')}'" src="{if empty($customize[page_show][img_ad])}../addons/hc_face/template/mobile/images/ad.png{else}{php echo tomedia($customize[page_show][img_ad])}{/if}">
+		<!-- <div class="detail"></div> -->
+		<!-- <div class="suggest">
+			<div class="title">择业建议</div>
+			<div class="content">公职人员、金融、管理</div>
+		</div>
+		<div class="notice">
+			<p>事业变动年纪</p>
+			<p>30岁</p>
+		</div> -->
+	</div>
+</body>
+</html>

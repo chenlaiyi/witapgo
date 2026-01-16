@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+{template 'user/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<style>
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {position: static}
+    .tabContainer ul.tabHd li {
+        width: 33.33%;
+    }
+    .order_item .order_goods img{ width: 1.4rem; height: 1.4rem}
+    .order_item .order_goods{ min-height: 1.4rem; padding:0.3333333333333333rem 0.3333333333333333rem 0.3333333333333333rem 2rem}
+    .joiner{  padding: 0.32rem; border-radius: 0.13rem; }
+    .joiner ul{ padding-left:0.24rem }
+    .joiner ul li{ width:0.93rem; height:1.5rem; border-radius:.6rem; float:left; margin-left:-0.24rem;position: relative}
+    .joiner ul li span{ margin:0 0.16rem; display: block; overflow: hidden; height: 0.4rem; line-height: 0.4rem; text-align: center}
+    .joiner ul li img{	-webkit-border-radius: 0.6rem;	-moz-border-radius: 0.6rem;	border-radius: 0.6rem; width: 0.93rem; height: 0.93rem}
+    .joiner ul li em{ position: absolute; padding: 0 0.05rem; text-align: center; background:#fe7c22; border-radius:.6rem; background: #fe7c22; border: 1px solid #fff; color: #fff; top:-0.13rem; left: 0; font-size: 0.2rem}
+    .layui-m-layercont {padding: 20px 20px;line-height: 22px;text-align: center;}
+</style>
+<body>
+<!--选项卡-->
+<section class="tabContainer">
+    <ul id="tabHd" class="tabHd">
+        <li class="active" data-status=""><span>全部</span></li>
+        <li data-status="0"><span>未成团</span></li>
+        <li data-status="1"><span>已成团</span></li>
+    </ul>
+</section>
+<section id="ContentList">
+    <section id="LoadLists">
+
+    </section>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <section class="order_item">
+        <section class="order_num clearfix">
+            <span class="font28 c9">参团时间：<%= rows[i].createtime %></span>
+            <%if(rows[i].status==0){%>
+            <span class="fr font28 main_red">未成团</span>
+            <%}else{%>
+            <span class="fr font28 main_green">已成团</span>
+            <%}%>
+        </section>
+        <section class="order_goods">
+            <img src="<%= rows[i].activity_pic_url %>"/>
+            <h3><%= rows[i].activity_name %></h3>
+        </section>
+        <section class="joiner">
+            <%if(rows[i].status==0){%>
+            <p class="font28 mt20 fr">已参团<span class="main_red"> <%= rows[i].user.length %></span>/<%= rows[i].group_num %> 人</p>
+            <%}else{%>
+            <p class="font28 mt20 fr">已参团<span class="main_red"> <%= rows[i].user.length %></span>/<%= rows[i].user.length %> 人</p>
+            <%}%>
+            <ul class="clearfix c9">
+                <% for(var j = 0; j < rows[i].user.length; j++){ %>
+                    <%if(j < 8){%>
+                        <li>
+                            <img src="<%= rows[i].user[j].headurl %>">
+                            <span class="font22"><%= rows[i].user[j].nickname %></span>
+                            <%if(rows[i].user[j].is_heads == 1){%>
+                            <em class="font22">团长</em>
+                            <%}%>
+                        </li>
+                    <%}%>
+                <%}%>
+                <%if(rows[i].user.length > 8){%>
+                <li><img src="{__MOBILE_USER_IMG__}/more.png"></li>
+                <%}%>
+            </ul>
+        </section>
+        <section class="order_operate">
+            <%if(rows[i].is_del == 1){%>
+            <a href="javascript:delmsg();">查看活动</a>
+            <%}else{%>
+            <a href="{php echo $this->createMobileUrl('scan');}&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">查看活动</a>
+            <%}%>
+        </section>
+    </section>
+    <% } %>
+</script>
+<script>
+    $(function(){
+        //dropload
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //状态切换
+        $('.tabHd li').on('click',function(){
+            var status = $(this).data('status');
+            $(this).siblings().removeClass('active').end().addClass('active');
+
+            //筛选参数
+            window.searchStatus = status;
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('user.user_groupbuy', array('act' => 'getJsonList','store_id' => $store_id));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "status":window.searchStatus
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false)
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var html = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('user.user_groupbuy', array('act' => 'getJsonList','store_id' => $store_id));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "status":window.searchStatus
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    threshold : 50
+                });
+            }
+
+        });
+
+        $('.tabHd li')[0].click();
+    });
+
+    function delmsg(){
+        layer.open({
+            content: '对不起，活动已删除，无法查看详细！'
+            ,skin: 'msg'
+            ,time: 2 //2秒后自动关闭
+        });
+    }
+</script>
+</body>
+</html>

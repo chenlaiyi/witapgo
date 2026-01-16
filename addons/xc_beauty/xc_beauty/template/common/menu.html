@@ -1,0 +1,140 @@
+<div class="col-md-3 left_col">
+    <div class="left_col3 scroll-view">
+        <div class="navbar nav_title" style="border: 0;">
+            <a href="/index.php?c=module&a=welcome&m={php echo $_GPC['m']}&version_id=0"
+               class="site_title"><i class="fa fa-chevron-left"></i> <span>返回系统</span></a>
+
+        </div>
+        <span class="btn btn-default" id="btnfz" style="display: none">辅助功能  </span>
+
+        <div class="clearfix" style="text-align: center;"></div>
+        <!-- sidebar menu -->
+        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+            <div class="menu_section">
+                <ul class="nav side-menu menu_left">
+                    <li class="active"><a><i class="fa fa-home"></i> <span class="xtitleb">网站配置</span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="{php echo $this->createWebUrl('webconfig', array('op'=>'edit'));}"   data-unit="index"    target="iframecontents">网站配置</a></li>
+                            <li><a href="{php echo $this->createWebUrl('webconfig', array('op'=>'sms'));}"   data-unit="index"    target="iframecontents">消息配置</a></li>
+                            <li><a href="{php echo $this->createWebUrl('webconfig', array('op'=>'service_poster'));}"   data-unit="index"    target="iframecontents">海报配置</a></li>
+                            <li><a href="{php echo $this->createWebUrl('webconfig', array('op'=>'card'));}"   data-unit="index"    target="iframecontents">会员配置</a></li>
+                            <li><a href="{php echo $this->createWebUrl('webconfig', array('op'=>'store_manager'));}"   data-unit="index"    target="iframecontents">门店配置</a></li>
+                            <li><a href="{php echo $this->createWebUrl('webconfig', array('op'=>'sort'));}"   data-unit="index"    target="iframecontents">首页排版</a></li>
+                            <li><a href="{php echo $this->createWebUrl('banner', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">轮播图</a></li>
+                            <li><a href="{php echo $this->createWebUrl('nav', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">自定义导航</a></li>
+                        </ul>
+                    </li>
+                    <li><a><i class="fa fa-user"></i> <span class="xtitleb">用户列表</span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="{php echo $this->createWebUrl('user', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">用户列表</a></li>
+                            <li><a href="{php echo $this->createWebUrl('sub', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">子管理员</a></li>
+                        </ul>
+                    </li>
+                    <li><a><i class="fa fa-server"></i> <span class="xtitleb">产品管理</span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="{php echo $this->createWebUrl('service_class', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">产品分类</a></li>
+                            <li><a href="{php echo $this->createWebUrl('service', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">服务项目</a></li>
+                            <li><a href="{php echo $this->createWebUrl('mall', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">商城</a></li>
+                            <li><a href="{php echo $this->createWebUrl('times', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">预约时间</a></li>
+                        </ul>
+                    </li>
+                    <li><a><i class="fa fa-shopping-cart"></i> <span class="xtitleb">会员中心</span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="{php echo $this->createWebUrl('coupon', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">优惠券</a></li>
+                            <li><a href="{php echo $this->createWebUrl('prize', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">抽奖奖品</a></li>
+                            <li><a href="{php echo $this->createWebUrl('score', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">积分商城</a></li>
+                        </ul>
+                    </li>
+                    <li><a><i class="fa fa-shopping-cart"></i> <span class="xtitleb">分销配置</span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="{php echo $this->createWebUrl('webconfig', array('op'=>'share'));}"   data-unit="index"    target="iframecontents">分销配置</a></li>
+                            <li><a href="{php echo $this->createWebUrl('apply', array('op'=>'share'));}"   data-unit="index"    target="iframecontents">分销审核</a></li>
+                        </ul>
+                    </li>
+                    <li><a><i class="fa fa-star-o"></i> <span class="xtitleb">门店管理</span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="{php echo $this->createWebUrl('store', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">门店管理</a></li>
+                            <li><a href="{php echo $this->createWebUrl('store_service', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">门店项目</a></li>
+                            <li><a href="{php echo $this->createWebUrl('store_member', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">店员管理</a></li>
+                            <li><a href="{php echo $this->createWebUrl('store_pai', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">店员排班</a></li>
+                            <li><a href="{php echo $this->createWebUrl('package', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">门店套餐</a></li>
+                        </ul>
+                    </li>
+                    <li><a><i class="fa fa-hand-o-right"></i> <span class="xtitleb">订单管理</span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="{php echo $this->createWebUrl('order', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">产品订单</a></li>
+                            <li><a href="{php echo $this->createWebUrl('group', array('op'=>'index2'));}"   data-unit="index"    target="iframecontents">团购订单</a></li>
+                            <li><a href="{php echo $this->createWebUrl('store_order', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">预约订单</a></li>
+                            <li><a href="{php echo $this->createWebUrl('order', array('op'=>'mall'));}"   data-unit="index"    target="iframecontents">商城订单</a></li>
+                            <li><a href="{php echo $this->createWebUrl('order', array('op'=>'package'));}"   data-unit="index"    target="iframecontents">套餐订单</a></li>
+                            <li><a href="{php echo $this->createWebUrl('prize_order', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">中奖记录</a></li>
+                            <li><a href="{php echo $this->createWebUrl('refund', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">退款申请</a></li>
+                        </ul>
+                    </li>
+                    <li><a><i class="fa fa-reply"></i> <span class="xtitleb">消费记录</span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="{php echo $this->createWebUrl('record', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">充值记录</a></li>
+                            <li><a href="{php echo $this->createWebUrl('record', array('op'=>'card'));}"   data-unit="index"    target="iframecontents">充值卡记录</a></li>
+                            <li><a href="{php echo $this->createWebUrl('record', array('op'=>'buy'));}"   data-unit="index"    target="iframecontents">买单记录</a></li>
+                            <li><a href="{php echo $this->createWebUrl('record', array('op'=>'share'));}"   data-unit="index"    target="iframecontents">分佣记录</a></li>
+                            <li><a href="{php echo $this->createWebUrl('order', array('op'=>'package_log'));}"   data-unit="index"    target="iframecontents">套餐使用记录</a></li>
+                            <li><a href="{php echo $this->createWebUrl('order', array('op'=>'score'));}"   data-unit="index"    target="iframecontents">积分兑换记录</a></li>
+                        </ul>
+                    </li>
+                    <li><a><i class="fa fa-wechat"></i> <span class="xtitleb">提现申请</span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="{php echo $this->createWebUrl('record', array('op'=>'withdraw'));}"   data-unit="index"    target="iframecontents">分拥提现</a></li>
+                            <li><a href="{php echo $this->createWebUrl('record', array('op'=>'store'));}"   data-unit="index"    target="iframecontents">员工提现</a></li>
+                        </ul>
+                    </li>
+                    <li><a><i class="fa fa-neuter"></i> <span class="xtitleb">新人专区</span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="{php echo $this->createWebUrl('area', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">新人礼包</a></li>
+                            <li><a href="{php echo $this->createWebUrl('area_item', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">礼包内容</a></li>
+                        </ul>
+                    </li>
+                    <li><a><i class="fa fa-pie-chart"></i> <span class="xtitleb">配货中心</span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="{php echo $this->createWebUrl('pick_class', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">分类</a></li>
+                            <li><a href="{php echo $this->createWebUrl('pick', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">货品</a></li>
+                            <li><a href="{php echo $this->createWebUrl('pick_order', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">订单</a></li>
+                        </ul>
+                    </li>
+                    <li><a><i class="fa fa-adjust"></i> <span class="xtitleb">文章管理</span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="{php echo $this->createWebUrl('article', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">文章</a></li>
+                            <li><a href="{php echo $this->createWebUrl('discuss', array('op'=>'list'));}"   data-unit="index"    target="iframecontents">产品评论</a></li>
+                            <li><a href="{php echo $this->createWebUrl('discuss', array('op'=>'list2'));}"   data-unit="index"    target="iframecontents">技师评论</a></li>
+                            <li><a href="{php echo $this->createWebUrl('discuss', array('op'=>'mall'));}"   data-unit="index"    target="iframecontents">商城评论</a></li>
+                            <li><a href="{php echo $this->createWebUrl('discuss', array('op'=>'list3'));}"   data-unit="index"    target="iframecontents">客服记录</a></li>
+                        </ul>
+                    </li>
+                    <li><a><i class="fa fa-code-fork"></i> <span class="xtitleb">收入统计</span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="{php echo $this->createWebUrl('record', array('op'=>'count_store'));}"   data-unit="index"    target="iframecontents">门店统计</a></li>
+                            <li><a href="{php echo $this->createWebUrl('webhome', array('op'=>'count'));}"   data-unit="index"    target="iframecontents">统计报表</a></li>
+                        </ul>
+                    </li>
+                    <!--<li><a href="https://www.kancloud.cn/xcwlzz/meirong/951132" target="_blank"><i class="fa fa-magnet"></i> <span class="xtitleb">操作手册</span></a>-->
+                    <!--</li>-->
+                </ul>
+            </div>
+        </div>
+        <!-- /sidebar menu -->
+    </div>
+    <div class="left_col2 scroll-view">
+        <div class="navbar nav_title2">
+            <a><span></span></a>
+        </div>
+        <div class="clearfix" style="text-align: center;"></div>
+        <!-- sidebar menu -->
+        <div class="main_menu_side hidden-print main_menu">
+            <div class="menu_section">
+                <ul class="nav side-menu menu_right">
+
+                </ul>
+            </div>
+        </div>
+        <!-- /sidebar menu -->
+    </div>
+</div>

@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title} - {$objModel['title']}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">活动</li>
+                <li class="active">{$title}</li>
+                <li class="active">奖项</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebUrl('obj_scratch', array('act' => 'index'));}">返回活动</a></li>
+                            <li><a href="{php echo $this->createWebUrl('obj_scratch_prize', array('act' => 'index','aid' => $aid));}">奖项列表</a></li>
+                            <li class="active"><a href="#">{if !empty($model['id'])}编辑{else}创建{/if}奖项</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content" id="form_content" method="post">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> {if !empty($model['id'])}编辑{else}创建{/if}奖品信息</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="name" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>活动奖品名称</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="name" maxlength="100"
+                                                       name="model[name]" nullmsg="请输入活动奖品名称！" placeholder="请输入活动奖品名称"
+                                                       type="text" value="{$model['name']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请输入活动奖品名称，以便中奖后展示给用户。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动奖品类型</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" value="0" name="model[types]" id="types0"
+                                                           class="flat-blue obj_types" {if $model['types']==0} checked
+                                                    {/if}> 谢谢参与
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="1" name="model[types]" id="types1"
+                                                           class="flat-blue obj_types" {if $model['types']==1} checked
+                                                    {/if}> 账户积分
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="2" name="model[types]" id="types2"
+                                                           class="flat-blue obj_types" {if $model['types']==2} checked
+                                                    {/if}> 账户余额
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="3" name="model[types]" id="types3"
+                                                           class="flat-blue obj_types" {if $model['types']==3} checked
+                                                    {/if}> 微信红包
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="4" name="model[types]" id="types4"
+                                                           class="flat-blue obj_types" {if $model['types']==4} checked
+                                                    {/if}> 实物商品
+                                                </label>&nbsp;&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="5" name="model[types]" id="types5"
+                                                           class="flat-blue obj_types" {if $model['types']==5} checked
+                                                    {/if}> 商家卡券
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block">
+                                                    账户积分：用户抽奖后将获得一定数量的系统积分，用户可使用积分在商城中置换物品。<br>
+                                                    账户余额：用户抽奖后将获得指定金额并累加到账户余额，用户满足指定余额后可申请提现到微信。<br>
+                                                    微信红包：用户抽奖后将获得指定金额的现金红包，现金红包通过微信零钱的方式打给用户。<br>
+                                                    实物商品：用户抽奖后将获得实物奖品，用户可线下核销或填写发货地址等信息至后台物流奖品。<br>
+                                                    商家卡券：用户抽奖后将获得商家添加的卡券，用户可在卡包中查看并到店使用。<br>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div id="obj_types0" style="display: {if $model['types'] != 0} none{/if};">
+                                            <div class="form-group">
+                                                <label for="thinks_create_num" class="col-sm-2 control-label">
+                                                    <span class="text-red">(*)</span>活动奖品数量
+                                                </label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" datatype="n" id="thinks_create_num"
+                                                           maxlength="10"
+                                                           name="model[interim][thinks_create_num]" nullmsg="请输入奖品数量！"
+                                                           placeholder="请输入奖品数量"
+                                                           type="number"
+                                                           onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                           value="{php echo $model['types']==0 ? $model['number']:'0'}"/>
+                                                    <p class="help-block">请输入刮刮卡活动生成活动奖品的数量 单位：个</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="obj_types1" style="display: {if $model['types'] != 1} none{/if};">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span
+                                                        class="text-red">(*)</span>创建奖品方式</label>
+                                                <div class="col-sm-10">
+                                                    <label>
+                                                        <input type="radio" name="model[interim][score_create_types]"
+                                                               id="score_create_types0"
+                                                               class="flat-blue score_create_types" value="0" {if $model['create_types']==0}
+                                                        checked {/if}> 固定
+                                                    </label>&nbsp;&nbsp;
+                                                    <label>
+                                                        <input type="radio" name="model[interim][score_create_types]"
+                                                               id="score_create_types1"
+                                                               class="flat-blue score_create_types" value="1" {if $model['create_types']==1}
+                                                        checked {/if}> 随机
+                                                    </label>&nbsp;&nbsp;
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 固定和随机为生成奖品的两种方式，用户可根据活动场景自行选择生成方式</p>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="score_create_types0_box" style="display: {if $model['create_types'] != 0} none{/if};">
+                                                <label for="score" class="col-sm-2 control-label"><span
+                                                        class="text-red">(*)</span>奖项账户积分</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group">
+                                                        <input class="form-control" id="score"
+                                                               maxlength="10" name="model[score]"
+                                                               placeholder="请输入账户积分"
+                                                               onkeyup="this.value=this.value.replace(/\D/g,'')"
+                                                               onafterpaste="this.value=this.value.replace(/\D/g,'')"
+                                                               step="1" max="1000"
+                                                               type="number" value="{$model['score']}"/>
+                                                        <span class="input-group-addon">积分</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="score_create_types1_box" style="display: {if $model['create_types'] != 1} none{/if};">
+                                                <label for="min_score" class="col-sm-2 control-label"><span
+                                                        class="text-red">(*)</span>奖项账户积分</label>
+                                                <div class="col-sm-10">
+                                                    <div class="clearfix">
+                                                        <div class="col-sm-4" style="padding-left: 0">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">最小额度</span>
+                                                                <input class="form-control" id="min_score"
+                                                                       maxlength="10"
+                                                                       name="model[interim][min_score]" placeholder="请输入奖品积分"
+                                                                       min="1" max="1000" step="1"
+                                                                       type="number"
+                                                                       onkeyup="this.value=this.value.replace(/\D/g,'')"
+                                                                       onafterpaste="this.value=this.value.replace(/\D/g,'')"
+                                                                       value="{php echo $model['types']==1 && $model['create_types']==1 ? intval($model['min_score']):'1'}"/>
+                                                                <span class="input-group-addon">积分</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            <input type="text" id="sl0" data-slider-value="[0,1000]"
+                                                                   data-slider-step="1" data-slider-max="1000"
+                                                                   data-slider-min="1" value="" style="width:174px"
+                                                                   data-slider-id="aqua">
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">最大额度</span>
+                                                                <input class="form-control" id="max_score"
+                                                                       maxlength="10"
+                                                                       name="model[interim][max_score]" placeholder="请输入奖品积分"
+                                                                       min="1" max="1000" step="1"
+                                                                       type="number"
+                                                                       onkeyup="this.value=this.value.replace(/\D/g,'')"
+                                                                       onafterpaste="this.value=this.value.replace(/\D/g,'')"
+                                                                       value="{php echo $model['types']==1 && $model['create_types']==1 ? intval($model['max_score']):'1000'}" />
+                                                                <span class="input-group-addon">积分</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <p class="help-block">账户积分将随机生成，金额由“最小额度”和“最大额度”限制（单位：积分）
+                                                        注意：奖品最小为1积分 最大1000积分</p>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="score_create_num" class="col-sm-2 control-label">
+                                                    <span class="text-red">(*)</span>活动奖品数量
+                                                </label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" datatype="n" id="score_create_num"
+                                                           maxlength="10"
+                                                           name="model[interim][score_create_num]" nullmsg="请输入奖品数量！"
+                                                           placeholder="请输入奖品数量"
+                                                           type="number"
+                                                           onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                           value="{php echo $model['types']==1 ? $model['number']:'0'}"/>
+                                                    <p class="help-block">请输入分享活动生成活动奖品的数量 单位：个</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="obj_types2" style="display: {if $model['types'] != 2} none{/if};">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span
+                                                        class="text-red">(*)</span>创建奖品方式</label>
+                                                <div class="col-sm-10">
+                                                    <label>
+                                                        <input type="radio" name="model[interim][sys_create_types]"
+                                                               id="sys_create_types0"
+                                                               class="flat-blue sys_create_types" value="0" {if $model['create_types']==0}
+                                                        checked {/if}> 固定
+                                                    </label>&nbsp;&nbsp;
+                                                    <label>
+                                                        <input type="radio" name="model[interim][sys_create_types]"
+                                                               id="sys_create_types1"
+                                                               class="flat-blue sys_create_types" value="1" {if $model['create_types']==1}
+                                                        checked {/if}> 随机
+                                                    </label>&nbsp;&nbsp;
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 固定和随机为生成奖品的两种方式，用户可根据活动场景自行选择生成方式</p>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="sys_create_types0_box" style="display: {if $model['create_types'] != 0} none{/if};">
+                                                <label for="sys" class="col-sm-2 control-label"><span
+                                                        class="text-red">(*)</span>奖项账户余额</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group">
+                                                        <input class="form-control" id="sys"
+                                                               maxlength="10" name="model[sys]"
+                                                               placeholder="请输入红包金额"
+                                                               onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                               onblur = "this.value=FloatMoney(this.value)"
+                                                               step="0.01" max="1000"
+                                                               type="number" value="{$model['sys']}"/>
+                                                        <span class="input-group-addon">元</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="sys_create_types1_box" style="display: {if $model['create_types'] != 1} none{/if};">
+                                                <label for="min_sys" class="col-sm-2 control-label"><span
+                                                        class="text-red">(*)</span>奖项账户余额</label>
+                                                <div class="col-sm-10">
+                                                    <div class="clearfix">
+                                                        <div class="col-sm-4" style="padding-left: 0">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">最小额度</span>
+                                                                <input class="form-control" id="min_sys"
+                                                                       maxlength="10"
+                                                                       name="model[interim][min_sys]" placeholder="请输入红包金额"
+                                                                       min="0.01" max="1000" step="0.01"
+                                                                       type="number"
+                                                                       onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                                       onblur = "this.value=FloatMoney(this.value)"
+                                                                       value="{php echo $model['types']==2 && $model['create_types']==1 ? $model['min_sys']:'0.01'}"/>
+                                                                <span class="input-group-addon">元</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            <input type="text" id="sl1" data-slider-value="[0.01,1000]"
+                                                                   data-slider-step="0.01" data-slider-max="1000"
+                                                                   data-slider-min="0.01" value="" style="width:174px"
+                                                                   data-slider-id="aqua">
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">最大额度</span>
+                                                                <input class="form-control" id="max_sys"
+                                                                       maxlength="10"
+                                                                       name="model[interim][max_sys]" placeholder="请输入红包金额"
+                                                                       min="0.01" max="1000" step="0.01"
+                                                                       type="number"
+                                                                       onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                                       onblur = "this.value=FloatMoney(this.value)"
+                                                                       value="{php echo $model['types']==2 && $model['create_types']==1 ? $model['max_sys']:'1000'}"/>
+                                                                <span class="input-group-addon">元</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <p class="help-block">红包金额将随机生成，金额由“最小额度”和“最大额度”限制（单位：积分）
+                                                        注意：红包最小为0.01元 最大1000元</p>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="sys_create_num" class="col-sm-2 control-label">
+                                                    <span class="text-red">(*)</span>活动奖品数量
+                                                </label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" datatype="n" id="sys_create_num"
+                                                           maxlength="10"
+                                                           name="model[interim][sys_create_num]" nullmsg="请输入奖品数量！"
+                                                           placeholder="请输入奖品数量"
+                                                           type="number"
+                                                           onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                           value="{php echo $model['types']==2 ? $model['number']:'0'}"/>
+                                                    <p class="help-block">请输入分享活动生成活动奖品的数量 单位：个</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="obj_types3" style="display: {if $model['types'] != 3} none{/if};">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span
+                                                        class="text-red">(*)</span>创建奖品方式</label>
+                                                <div class="col-sm-10">
+                                                    <label>
+                                                        <input type="radio" name="model[interim][money_create_types]"
+                                                               id="money_create_types0"
+                                                               class="flat-blue money_create_types" value="0" {if $model['create_types']==0}
+                                                        checked {/if}> 固定
+                                                    </label>&nbsp;&nbsp;
+                                                    <label>
+                                                        <input type="radio" name="model[interim][money_create_types]"
+                                                               id="money_create_types1"
+                                                               class="flat-blue money_create_types" value="1" {if $model['create_types']==1}
+                                                        checked {/if}> 随机
+                                                    </label>&nbsp;&nbsp;
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 固定和随机为生成奖品的两种方式，用户可根据活动场景自行选择生成方式</p>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="money_create_types0_box" style="display: {if $model['create_types'] != 0} none{/if};">
+                                                <label for="money" class="col-sm-2 control-label"><span
+                                                        class="text-red">(*)</span>奖项微信红包</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group">
+                                                        <input class="form-control" id="money"
+                                                               maxlength="10" name="model[money]"
+                                                               placeholder="请输入红包金额"
+                                                               onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                               onblur = "this.value=FloatMoney(this.value)"
+                                                               step="0.01" max="1000"
+                                                               type="number" value="{$model['money']}"/>
+                                                        <span class="input-group-addon">元</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="money_create_types1_box" style="display: {if $model['create_types'] != 1} none{/if};">
+                                                <label for="min_money" class="col-sm-2 control-label"><span
+                                                        class="text-red">(*)</span>活动红包金额</label>
+                                                <div class="col-sm-10">
+                                                    <div class="clearfix">
+                                                        <div class="col-sm-4" style="padding-left: 0">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">最小额度</span>
+                                                                <input class="form-control" id="min_money"
+                                                                       maxlength="10"
+                                                                       name="model[interim][min_money]" placeholder="请输入红包金额"
+                                                                       min="0.3" max="1000" step="0.01"
+                                                                       type="number"
+                                                                       onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                                       onblur = "this.value=FloatMoney(this.value)"
+                                                                       value="{php echo $model['types']==3 && $model['create_types']==1 ? $model['min_money']:'0.30'}"/>
+                                                                <span class="input-group-addon">元</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            <input type="text" id="sl2" data-slider-value="[0.3,1000]"
+                                                                   data-slider-step="0.01" data-slider-max="1000"
+                                                                   data-slider-min="0.3" value="" style="width:174px"
+                                                                   data-slider-id="aqua">
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon">最大额度</span>
+                                                                <input class="form-control" id="max_money"
+                                                                       maxlength="10"
+                                                                       name="model[interim][max_money]" placeholder="请输入红包金额"
+                                                                       min="0.3" max="1000" step="0.01"
+                                                                       type="number"
+                                                                       onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                                       onblur = "this.value=FloatMoney(this.value)"
+                                                                       value="{php echo $model['types']==3 && $model['create_types']==1 ? $model['max_money']:'1000'}"/>
+                                                                <span class="input-group-addon">元</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <p class="help-block">红包金额将随机生成，金额由“最小额度”和“最大额度”限制（单位：积分）
+                                                        注意：红包最小为0.3元 最大1000元</p>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="money_create_num" class="col-sm-2 control-label">
+                                                    <span class="text-red">(*)</span>活动奖品数量
+                                                </label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" datatype="n" id="money_create_num"
+                                                           maxlength="10"
+                                                           name="model[interim][money_create_num]" nullmsg="请输入奖品数量！"
+                                                           placeholder="请输入奖品数量"
+                                                           type="number"
+                                                           onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                           value="{php echo $model['types']==3 ? $model['number']:'0'}"/>
+                                                    <p class="help-block">请输入分享活动生成活动奖品的数量 单位：个</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="obj_types4" style="display: {if $model['types'] != 4} none{/if};">
+                                            <div class="form-group">
+                                                <label for="product_create_num" class="col-sm-2 control-label">
+                                                    <span class="text-red">(*)</span>活动奖品数量
+                                                </label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" datatype="n" id="product_create_num"
+                                                           maxlength="10"
+                                                           name="model[interim][product_create_num]" nullmsg="请输入奖品数量！"
+                                                           placeholder="请输入奖品数量"
+                                                           type="number"
+                                                           onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                           value="{php echo $model['types']==4 ? $model['number']:'0'}"/>
+                                                    <p class="help-block">请输入分享活动生成活动奖品的数量 单位：个</p>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span class="text-red">(*)</span>商品详情介绍</label>
+                                                <div class="col-sm-10">
+                                                    {php echo tpl_ueditor('model[content]',$model['content']);}
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span class="text-red">(*)</span>奖品发放形式</label>
+                                                <div class="col-sm-10">
+                                                    <label>
+                                                        <input type="radio" value="0" name="model[writeoff_types]" id="writeoff_types0"
+                                                               class="flat-blue" {if $model['writeoff_types']==0} checked
+                                                        {/if}> 线下核销
+                                                    </label>&nbsp;&nbsp;
+                                                    <label>
+                                                        <input type="radio" value="1" name="model[writeoff_types]" id="writeoff_types1"
+                                                               class="flat-blue" {if $model['writeoff_types']==1} checked
+                                                        {/if}> 线上发货
+                                                    </label>&nbsp;&nbsp;
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="obj_types5" style="display: {if $model['types'] != 5} none{/if};">
+                                            <div class="form-group">
+                                                <label for="card_id" class="col-sm-2 control-label"><span
+                                                        class="text-red">(*)</span>奖项商家卡券</label>
+                                                <div class="col-sm-10">
+                                                    <select id="card_id" name="model[card_id]" class="form-control select2" style = "width: 100%;">
+                                                        <option value="">请选择</option>
+                                                        {loop $cardList $card}
+                                                        <option value="{$card['id']}" {if $card['id'] == $model['card_id']} selected="selected"{/if}>{$card['name']}</option>
+                                                        {/loop}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="card_create_num" class="col-sm-2 control-label">
+                                                    <span class="text-red">(*)</span>活动奖品数量
+                                                </label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" datatype="n" id="card_create_num"
+                                                           maxlength="10"
+                                                           name="model[interim][card_create_num]" nullmsg="请输入奖品数量！"
+                                                           placeholder="请输入奖品数量"
+                                                           type="number"
+                                                           onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                           value="{php echo $model['types']==5 ? $model['number']:'0'}"/>
+                                                    <p class="help-block">请输入分享活动生成活动奖品的数量 单位：个</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="surplus" class="col-sm-2 control-label"><span class="text-red">(*)</span>剩余奖品数量</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="surplus" maxlength="10"
+                                                       name="model[surplus]"  placeholder="请输入剩余奖品数量"
+                                                       type="number" value="{$model['surplus']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>添加时请填写奖品数量，用户中奖后会自动递减到0为止，则该奖品不会再出现。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="odds" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>奖项中奖概率
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="n" id="odds"
+                                                       maxlength="10"
+                                                       name="model[odds]" nullmsg="请输入奖项中奖概率！"
+                                                       placeholder="请输入奖项中奖概率"
+                                                       type="number"
+                                                       onkeyup="if(isNaN(this.value)){this.value='0';}"
+                                                       value="{$model['odds']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 奖项的几率总合等于100则百分比，等于1000则千分比以此类推。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动奖品封面</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('model[picurl]',$model['picurl']);}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>奖项中奖限制</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[limittypes]" id="limit_types2" class="flat-blue limit_types" value="2" {if $model['limittypes']==2} checked {/if}> 不做限制
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[limittypes]" id="limit_types0" class="flat-blue limit_types" value="0" {if $model['limittypes']==0} checked {/if}> 活动期间
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[limittypes]" id="limit_types1" class="flat-blue limit_types" value="1" {if $model['limittypes']==1} checked {/if}> 活动每天
+                                                </label>&nbsp;&nbsp;
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="limit_types_box" style="display: {if $model['limittypes'] == 2} none{/if};">
+                                            <label for="limit_num" class="col-sm-2 control-label"><span class="text-red">(*)</span>限制中奖次数</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="limit_num" maxlength="10"
+                                                       name="model[limitnum]"  placeholder="请输入活动红包默认领取次数"
+                                                       type="number" value="{$model['limitnum']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>请输入活动红包默认领取次数 设置后该奖品会限制用户中奖数量。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="display: {if $config['sms_obj']!=1}none{/if};">
+                                            <label class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>独立短信提醒</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[is_sms]" id="is_sms0" class="flat-blue obj_is_sms" value="0" {if $model['is_sms']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[is_sms]" id="is_sms1" class="flat-blue obj_is_sms" value="1" {if $model['is_sms']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启前请确保账户短信数量充足，短信不足将造成短信发送失败。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="sms_tmp_id_box" style="display: {if $model['is_sms'] == 0} none{/if};">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>中奖短信模板</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="sms_tmp" maxlength="70"
+                                                       name="model[sms_tmp]"  placeholder="请输入中奖短信模板！"
+                                                       type="text" value="{$model['sms_tmp']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>   请根据实际活动需求创建短信模板，最多70个字，系统提供标签将会在发送过程中自动替换。<code onclick="insertAtCursor('sms_tmp',this);">{{PRIZE}}</code>奖品名称 <code onclick="insertAtCursor('sms_tmp',this);">{{NICKNAME}}</code>微信昵称 <code onclick="insertAtCursor('sms_tmp',this);">{{OBJ}}</code>活动名称 <code onclick="insertAtCursor('sms_tmp',this);">{{WRITEOFFCODE}}</code>核销码</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="status2" class="col-sm-2 control-label">活动奖品状态</label>
+                                            <div class="col-sm-10">
+                                                <input data-off-text="关闭" data-on-text="开启" data-size="mini" id="status"
+                                                       type="checkbox" value="true" {if $model['status']==1}checked{/if}/>
+                                                <input id="status2" name="model[status]" type="hidden"
+                                                       value="{$model['status']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 选择分类开启/关闭状态，关闭分类后分类下商品将被禁用</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sort" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>活动奖品排序
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control"  datatype="n" id="sort" name="model[sort]" nullmsg="信息排序必须填写！" onKeyUp="if(isNaN(this.value)) this.value='0';" placeholder="请输入信息排序字段" type="text" value="{$model['sort']}">
+                                                <p class="help-block">请输入数字 例如：1|6|10等数字，注意：此字段只能为数字 信息将按照排序字段正序排列</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+                                                <input type="hidden" name="token" value="{$_W['token']}"/>
+                                                <input type="hidden" name="submit" value="submit"/>
+                                                <button type="submit" class="btn btn-primary" id="SubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script>
+    $(function () {
+        //设置选中导航
+        SelectNav("刮&nbsp;&nbsp;刮&nbsp;&nbsp;卡");
+
+        myrequire(['select2','bootstrap-switch', 'validform', 'icheck', 'bootstrap-slider'], function () {
+            $(".select2").select2();
+
+            //积分slider初始化
+            var sl0slider = $("#sl0").slider({
+                formater: function (value) {
+                    return Number(value) > 0 ? Number(value) : 1;
+                }
+            }).on('slide', function (ev) {
+                $("#min_score").val(ev.value[0]);
+                $("#max_score").val(ev.value[1]);
+            });
+            $("#min_score, #max_score").on("blur", function () {
+                var _max = $("#sl0").data("slider-max");
+                var _min = $("#sl0").data("slider-min");
+                value = [];
+                value[0] = Math.max(_min, Math.min(_max, $("#min_score").val()));
+                value[1] = Math.max(_min, Math.min(_max, $("#max_score").val()));
+                $("#min_score").val(Math.min(value[0], value[1]));
+                $("#max_score").val(Math.max(value[0], value[1]));
+                sl0slider.slider('setValue', value);
+            });
+
+            //系统余额slider初始化
+            var sl1slider = $("#sl1").slider({
+                formater: function (value) {
+                    return Number(value) > 0 ? Number(value.toFixed(2)) : 0.01;
+                }
+            }).on('slide', function (ev) {
+                $("#min_sys").val(ev.value[0].toFixed(2));
+                $("#max_sys").val(ev.value[1].toFixed(2));
+            });
+            $("#min_sys, #max_sys").on("blur", function () {
+                var _max = $("#sl1").data("slider-max");
+                var _min = $("#sl1").data("slider-min");
+                value = [];
+                value[0] = Math.max(_min, Math.min(_max, $("#min_sys").val()));
+                value[1] = Math.max(_min, Math.min(_max, $("#max_sys").val()));
+                $("#min_sys").val(Math.min(value[0], value[1]));
+                $("#max_sys").val(Math.max(value[0], value[1]));
+                sl1slider.slider('setValue', value);
+            });
+
+            //微信零钱slider初始化
+            var sl2slider = $("#sl2").slider({
+                formater: function (value) {
+                    return Number(value) > 0 ? Number(value.toFixed(2)) : 0.01;
+                }
+            }).on('slide', function (ev) {
+                $("#min_money").val(ev.value[0].toFixed(2));
+                $("#max_money").val(ev.value[1].toFixed(2));
+            });
+            $("#min_money, #max_money").on("blur", function () {
+                var _max = $("#sl2").data("slider-max");
+                var _min = $("#sl2").data("slider-min");
+                value = [];
+                value[0] = Math.max(_min, Math.min(_max, $("#min_money").val()));
+                value[1] = Math.max(_min, Math.min(_max, $("#max_money").val()));
+                $("#min_money").val(Math.min(value[0], value[1]));
+                $("#max_money").val(Math.max(value[0], value[1]));
+                sl2slider.slider('setValue', value);
+            });
+
+            //绑定更改状态操作
+            $('#status').bootstrapSwitch({
+                onSwitchChange: function (event, state) {
+                    var status = state ? 1 : 0;
+                    $("#status2").val(status);
+                }
+            });
+
+            //初始化icheck控件radio
+            $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+                checkboxClass: 'icheckbox_flat-blue',
+                radioClass: 'iradio_flat-blue'
+            });
+
+            //选择红包类型切换选项卡
+            $('.obj_types').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                toastr.clear();
+                var obj_types = $(this).val();
+                for (var i = 0; i < 10; i++) {
+                    if (i == obj_types) {
+                        $("#obj_types" + i).show();
+                    }
+                    else {
+                        $("#obj_types" + i).hide();
+                    }
+                }
+                if(obj_types==2||obj_types==3)
+                {
+                    Command: toastr["info"]('设置此奖项前请确认您的账户余额是否充足，余额不足将导致奖品发送失败！', "友情提示", {positionClass: 'toast-bottom-right',timeOut: 5000});
+                }
+            });
+
+            //积分半随机和全随机切换
+            $('.score_create_types').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var score_create_types = $(this).val();
+                if (score_create_types==0)
+                {
+                    $("#score_create_types0_box").show();
+                    $("#score_create_types1_box").hide();
+                }
+                else
+                {
+                    $("#score_create_types0_box").hide();
+                    $("#score_create_types1_box").show();
+                }
+            });
+
+            //系统余额半随机和全随机切换
+            $('.sys_create_types').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var sys_create_types = $(this).val();
+                if (sys_create_types==0)
+                {
+                    $("#sys_create_types0_box").show();
+                    $("#sys_create_types1_box").hide();
+                }
+                else
+                {
+                    $("#sys_create_types0_box").hide();
+                    $("#sys_create_types1_box").show();
+                }
+            });
+
+            //微信零钱半随机和全随机切换
+            $('.money_create_types').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var money_create_types = $(this).val();
+                if (money_create_types==0)
+                {
+                    $("#money_create_types0_box").show();
+                    $("#money_create_types1_box").hide();
+                }
+                else
+                {
+                    $("#money_create_types0_box").hide();
+                    $("#money_create_types1_box").show();
+                }
+            });
+
+            //选择领取红包方式选项卡
+            $('.limit_types').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                if(obj_types==2)
+                {
+                    $("#limit_types_box").hide();
+                }
+                else
+                {
+                    $("#limit_types_box").show();
+                }
+            });
+
+            //选择是否短信提醒选项卡
+            $('.obj_is_sms').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var obj_types = $(this).val();
+                if(obj_types==0)
+                {
+                    $("#sms_tmp_id_box").hide();
+                }
+                else
+                {
+                    $("#sms_tmp_id_box").show();
+                }
+            });
+
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createWebUrl('obj_scratch_prize', array('act' => 'index','aid' => $aid));}";
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+                    }
+                }
+            });
+
+        });
+
+    });
+
+    $(window).scroll(function () {
+        $(".edui-editor-toolbarbox").each(function () {
+            var zIndex = parseInt($(this).css('z-index')) || -1;
+            if(zIndex > 0){
+                $(this).addClass('edui-editor-toolbarbox2');
+            }else{
+                $(this).removeClass('edui-editor-toolbarbox2');
+            }
+        })
+    });
+    //光标处插入指定文本内容
+    function insertAtCursor(text, obj) {
+        var myField = document.getElementById(text);
+        var myValue = obj.innerHTML;
+        if (document.selection) {
+            //IE support
+            myField.focus();
+            sel = document.selection.createRange();
+            sel.text = myValue;
+            sel.select();
+        } else if (myField.selectionStart || myField.selectionStart == '0') {
+            //MOZILLA/NETSCAPE support
+            var startPos = myField.selectionStart;
+            var endPos = myField.selectionEnd;
+            var beforeValue = myField.value.substring(0, startPos);
+            var afterValue = myField.value.substring(endPos, myField.value.length);
+
+            myField.value = beforeValue + myValue + afterValue;
+
+            myField.selectionStart = startPos + myValue.length;
+            myField.selectionEnd = startPos + myValue.length;
+            myField.focus();
+        } else {
+            myField.value += myValue;
+            myField.focus();
+        }
+    }
+</script>
+</body>
+</html>

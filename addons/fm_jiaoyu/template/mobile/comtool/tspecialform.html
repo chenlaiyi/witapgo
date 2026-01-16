@@ -1,0 +1,27 @@
+{loop $list $v}
+<li class="main" time="{$v['location']}" style="display: block;" >
+    <div class="cutting"></div>
+    <div class="notifyTopBox" onclick="showInfo(`{$v['id']}`)">
+        <div class="notifyTopLeft">
+            <img src="{$v['icon']}">
+        </div>
+        <div class="notifyTopRight">
+            <div class="notifyTopRightTopBox" style="font-size: 12px;font-weight: inherit;">
+                <span class="JobTeacherBox" >姓名：{$v['name']}</span>
+            </div>
+            {if $v['status'] == 1}
+            <div class="notifyTopRightTopBox" style="font-size: 12px;font-weight: inherit;color:gray">
+                <span>处理人：{$v['tname']}</span><br>
+            </div>
+            <div class="notifyTopRightTopBox" style="font-size: 12px;font-weight: inherit;color:gray">
+                <span>处理时间：{$v['cltime']}</span>
+            </div>
+            {else}
+            <div class="notifyTopRightTopBox" style="font-size: 12px;font-weight: inherit;color:gray">
+                <span>状态:{$v['tname']}</span>
+            </div>
+            {/if}
+        </div>
+    </div>
+</li>
+{/loop}	

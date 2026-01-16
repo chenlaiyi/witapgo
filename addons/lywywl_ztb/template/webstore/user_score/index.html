@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">用户会员</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="">数据列表</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchKey" class="col-sm-1 control-label">用户信息</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="SearchKey"
+                                                       placeholder="微信昵称/OPENID" value="{$openid}">
+                                            </div>
+                                            <label for="SearchTypes" class="col-sm-1 control-label">变动类型</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchTypes">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $userScoreTypes $key $value}
+                                                    <option value="{$key}">{$value}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchTime">创建时间</label>
+                                            <div class="col-sm-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control pull-right" id="SearchTime"
+                                                           placeholder="开始时间 - 结束时间" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索
+                                            </button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置检索</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="box" class="table-responsive">
+                                <div id="toolbar" class="btn-group">
+                                    <button id="btn_export" type="button" class="btn btn-success">
+                                        <span class="fa fa-download" aria-hidden="true"></span>&nbsp;导出
+                                    </button>
+                                </div>
+                                <table id="tb_bandlist" class="table text-nowrap" data-reorderable-columns="true" ></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script>
+    $(function () {
+        SelectNav("用户积分流水");
+
+        require(["daterangepicker"], function () {
+            //时间搜索
+            $('#SearchTime').daterangepicker({
+                format: "YYYY/MM/DD"
+            });
+        });
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            myrequire(['bootstrap-table-zh-cn', 'bootstrap-table-editable','bootstrap-table-fixed-columns'], function () {
+                $(".select2").select2();
+                //1.初始化Table
+                var oTable = new TableInit();
+                oTable.Init();
+                //2.初始化Button的点击事件
+                var oButtonInit = new ButtonInit();
+                oButtonInit.Init();
+            });
+        });
+    });
+
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#tb_bandlist').bootstrapTable({
+                url: "{php echo $this->createWebAppUrl('user_score', array('act' => 'getJsonList'));}",         //请求后台的URL（*）
+                method: 'get',                      //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: true,                    //是否启用排序
+                sortName: "id",                   //排序字段
+                sortOrder: "desc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: false,                //是否启用点击选中行
+                height: 655,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                fixedColumns: true,                    //冻结列开启关闭
+                fixedNumber: 1,                        //冻结列数量
+                onLoadError: function () {  //加载失败时执行
+                    Command: toastr["error"]("对不起，网络繁忙，请稍后再试！", "错误提示");
+                },
+                rowStyle: function (row, index) {
+                    var style={css:{'line-height':'30px'}};
+                    return style;
+                },
+                columns: [{
+                    checkbox: true,
+                }, {
+                    field: 'id',
+                    title: '编号',
+                    titleTooltip: '当前信息的唯一编号，数据主键',
+                    sortable: true
+                }, {
+                    field: 'nickname',
+                    title: '微信昵称',
+                    titleTooltip: '注册用户的微信昵称',
+                    sortable: true,
+                }, {
+                    field: 'headurl',
+                    title: '微信头像',
+                    titleTooltip: '注册用户的微信昵称',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return " <img height='30' width='30' src='"+ value +"' alt='"+ row.nickname +"'>"
+                    }
+                }, {
+                    field: 'openid',
+                    title: 'OPENID',
+                    titleTooltip: '注册用户对于微信公众号的唯一身份标识',
+                    sortable: true,
+                }, {
+                    field: 'types',
+                    title: '变动类型',
+                    titleTooltip: '用户积分变动类型',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.types == 1){
+                            return "<span class='label bg-red'>"+row.types_name+"</span>";
+                        }else if(row.types == 2){
+                            return "<span class='label bg-green'>"+row.types_name+"</span>";
+                        }else if(row.types == 3){
+                            return "<span class='label bg-orange'>"+row.types_name+"</span>";
+                        }else if(row.types == 4){
+                            return "<span class='label bg-black'>"+row.types_name+"</span>";
+                        }else if(row.types == 5){
+                            return "<span class='label bg-blue'>"+row.types_name+"</span>";
+                        }else if(row.types == 6){
+                            return "<span class='label bg-aqua'>"+row.types_name+"</span>";
+                        }else {
+                            return "<span class='label bg-gray'>"+row.types_name+"</span>";
+                        }
+                    }
+                }, {
+                    field: 'activity_types',
+                    title: '活动类型',
+                    titleTooltip: '用户积分变动的活动类型',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return row.activity_types_name;
+                    }
+                }, {
+                    field: 'score',
+                    title: '变动积分',
+                    titleTooltip: '用户积分变动的金额',
+                    sortable: true,
+                }, {
+                    field: 'note',
+                    title: '备注信息',
+                    titleTooltip: '用户积分变动的备注信息',
+                    sortable: true,
+                }, {
+                    field: 'createtime',
+                    title: '创建时间',
+                    titleTooltip: '创建信息的时间',
+                    sortable: true,
+                }]
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                //search: params.search,
+                pageSize: params.limit,  //每页大小
+                page: params.offset / params.limit + 1,//页码
+                sortOrder: params.order,//排序
+                sortName: params.sort,//排序字段
+                key: $("#SearchKey").val(), //关键词
+                types: $("#SearchTypes").val(), //变动类型
+                timer: $("#SearchTime").val() //创建时间
+            };
+            return temp;
+        };
+        return oTableInit;
+    };
+
+    function operateFormatter(value, row, index) {
+        return [
+
+        ].join('');
+    }
+    window.operateEvents = {
+
+    };
+
+    //加载成功时执行
+    $('#tb_bandlist').on('load-success.bs.table column-switch.bs.table', function (data) {
+        $('#tb_bandlist').bootstrapTable('resetView');
+    });
+
+    var ButtonInit = function () {
+        var oInit = new Object();
+        var postdata = {};
+
+        oInit.Init = function () {
+
+            //查询操作
+            $("#btn_query").click(function () {
+                $("#tb_bandlist").bootstrapTable('refresh');
+            });
+            //导出操作
+            $("#btn_export").click(function(){
+                var timer = $("#SearchTime").val();
+                var key = $("#SearchKey").val();
+                var types = $("#SearchTypes").val();
+
+                //询问框
+                layer.open({
+                    content: '您确定要导出记录到Excel吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        layer.close(index);
+                        window.location.href = "{php echo $this->createWebAppUrl('user_score', array('act' => 'exportData'));}&key="+ key +"&timer="+ timer +"&types="+ types;
+                    }
+                });
+            });
+        };
+        return oInit;
+    };
+</script>
+</body>
+</html>

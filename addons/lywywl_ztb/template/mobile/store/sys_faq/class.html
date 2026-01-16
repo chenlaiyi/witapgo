@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<body>
+<!--中心区域-->
+<ul class="business_list fenlei bgfff">
+    {loop $classList $class}
+    <li><img src="{php echo tomedia($class['pic_url'])}" alt="{$class['name']}"/>
+        <a href="{php echo $this->createMobileUrl('store.sys_faq', array('act' => 'index','class_id' => $class['id']));}" class="font32 db">{$class['name']}<i class="arrow"></i></a>
+    </li>
+    {/loop}
+</ul>
+<section class="h24"></section>
+<section class="buttonBox">
+    <section class="buttonFloat">
+        <a href="{php echo $this->createMobileUrl('store.store_member',array('act'=>'index'))}" class="db font32 yellowBtn" style="background: #FFD112;">商家中心</a>
+    </section>
+</section>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li class="layui-this">
+						<a href="{php echo webUrl('editCoach')}">编辑教练/老师</a>
+					</li>
+					<li>
+						<a href="{php echo webUrl('coachList')}">返回</a>
+					</li>
+				</ul>
+			</div>
+
+			<form class="layui-form fixed" action="" method="post" enctype="multipart/form-data" id="data-form">
+				<input type="hidden" name="id" value="{$oldData['id']}" />
+				<!-- 昵称 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">昵称</label>
+					<div class="layui-input-block">
+						<input type="text" name="coach" lay-verify="required" class="layui-input" value="{$oldData['name']}">
+					</div>
+				</div>
+				<!-- 门店 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">门店</label>
+					<div class="layui-input-block">
+						{loop $_W['list_store'] $index $item}
+							<input type="checkbox" name="store[]" value="{$item['id']}" lay-skin="primary"
+								title="{$item['name']}" {if $item['checked'] }checked{/if} >
+						{/loop}
+					</div>
+				</div>
+				<!-- 简短描述 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">简短描述</label>
+					<div class="layui-input-block">
+						<textarea name="simple" class="layui-textarea" lay-verify="required">{$oldData['simple']}</textarea>
+					</div>
+				</div>
+				<!-- 专业资质 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">专业资质</label>
+					<div class="layui-input-block">
+						<textarea name="zizhi" class="layui-textarea" lay-verify="required">{$oldData['zizhi']}</textarea>
+					</div>
+				</div>
+				<!-- 说说 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">说说</label>
+					<div class="layui-input-block">
+						<textarea name="speech" class="layui-textarea" lay-verify="required">{$oldData['speech']}</textarea>
+					</div>
+				</div>
+				<!-- 头像 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">头像</label>
+					<div class="layui-input-block">
+						{php echo slwl_tpl_form_field_image('avatar', $oldData['avatar']);}
+						<div class="layui-form-mid layui-word-aux">推荐尺寸：57 x 57，或同比例</div>
+					</div>
+				</div>
+				<!-- 展示视频 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">展示视频</label>
+					<div class="layui-input-block">
+						{php echo slwl_tpl_form_field_video('video', $oldData['video']);}
+					</div>
+				</div>
+				<!-- 私教 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">私教</label>
+					<div class="layui-input-block">
+						<input type="radio" name="private" value="1" title="是" {if $oldData['private'] == 1}checked{/if}>
+						<input type="radio" name="private" value="0" title="否" {if $oldData['private'] == 0}checked{/if}>
+					</div>
+				</div>
+				<!-- 私教微信 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">私教微信</label>
+					<div class="layui-input-block">
+						<input type="text" name="wechat" class="layui-input" value="{$oldData['wechat']}">
+					</div>
+				</div>
+				<!-- 私教电话 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">私教电话</label>
+					<div class="layui-input-block">
+						<input type="text" name="tel" class="layui-input" value="{$oldData['tel']}">
+					</div>
+				</div>
+				<!-- 私教价格 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">私教价格</label>
+					<div class="layui-input-block">
+						<input type="text" name="price" class="layui-input" value="{$oldData['price']}">
+					</div>
+				</div>
+				<!-- 私教起售节数 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">私教起售节数</label>
+					<div class="layui-input-block">
+						<input type="text" name="course_num_lower" class="layui-input" value="{$oldData['course_num_lower']}">
+					</div>
+				</div>
+				<!-- 私教擅长项目 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">私教擅长项目</label>
+					<div class="layui-input-block">
+						<textarea name="strong_points" class="layui-textarea">{$oldData['strong_points']}</textarea>
+						<div class="layui-form-mid layui-word-aux">使用|分隔</div>
+					</div>
+				</div>
+				<!-- 详细介绍 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">详细介绍</label>
+					<div class="layui-input-block box-act-body">
+						{php echo tpl_ueditor('details', $oldData['details'])}
+					</div>
+				</div>
+				<!-- 使用详情替换旧的显示 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">使用详情替换旧的显示</label>
+					<div class="layui-input-block">
+						<input type="radio" name="details_enabled" value="1" title="是" {if $oldData['details_enabled'] == 1}checked{/if}>
+						<input type="radio" name="details_enabled" value="0" title="否" {if $oldData['details_enabled'] == 0}checked{/if}>
+					</div>
+				</div>
+
+				<div class="layui-tab-content fixed" id="data-submit">
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="save">保存</button>
+							<button class="layui-btn" lay-submit lay-filter="save" data-type="saveAndAdd">保存并新增</button>
+							<a href="{php echo webUrl('coachList')}" class="layui-btn layui-btn-primary">取消</a>
+							<input type="hidden" name="token" value="{$_W['token']}" />
+						</div>
+					</div>
+				</div>
+			</form>
+			<script>
+				layui.use('laydate', function(){
+					var laydate = layui.laydate;
+
+					laydate.render({
+						elem: '#time-end'
+						,type: 'datetime'
+						,format: 'yyyy-MM-dd'
+						,value: "{php echo date('Y-m-d H:i:s', time()); }"
+					});
+				});
+
+				layui.use('form', function(){
+					var form = layui.form;
+
+					form.on('submit(save)', function(data){
+						let subType = data.elem.dataset.type;
+						let url = "{php echo webUrl('editCoach')}";
+						var $obj = $(this);
+
+						if (!$obj.hasClass('lock')) {
+							$obj.addClass('lock'); // 不能再点击
+
+							$.ajax({
+								type: "POST",
+								url: url,
+								dataType: 'json',
+								data: data.field,
+								success: function (rs) {
+
+									if (rs && rs.code.toString() === '0') {
+										layer.msg('保存成功' , {
+											time: 500
+										}, function () {
+											if (subType && subType.toString() === 'saveAndAdd') {
+												window.location.href = "{php echo webUrl('addCoach')}";
+											} else {
+												window.location.href = "{php echo webUrl('coachList')}";
+											}
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+										});
+									}
+									$obj.removeClass('lock');
+								},
+								error: function () {
+									layer.msg('保存过程发生错误，请与管理员联系', {
+										offset: '20%',
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						}
+
+						return false;
+					});
+				});
+			</script>
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

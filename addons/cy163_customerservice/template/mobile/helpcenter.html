@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title>常见问题</title>
+	<link rel="stylesheet" href="{NEWSTATIC_ROOT}/jqueryweui/css/weui.min.css"/>
+	<link rel="stylesheet" href="{NEWSTATIC_ROOT}/jqueryweui/css/jquery-weui.min.css"/>
+	<link rel="stylesheet" href="{NEWSTATIC_ROOT}/common.css?v=20200113"/>
+	<script>
+        var deviceWidth = document.documentElement.clientWidth;
+        document.documentElement.style.fontSize = deviceWidth / 7.5 + 'px';
+    </script>
+	{php echo register_jssdk(false);}
+	<style>
+	body{
+	  background: #f5f5f5;padding-bottom:1rem;
+	}
+
+	.list{line-height:0.3rem;border-top:solid 1px #F5F5F5;padding:0.3rem;background: #fff;}
+	.list .text{flex:1;color:#292929;font-size:0.3rem;}
+	.list .rightimg{width:0.3rem;height:0.3rem;}
+	</style>
+</head>
+
+<body ontouchstart>
+{loop $helplist $row}
+	{if $row['url'] == ""}
+	<a class="list flex" href="{php echo $this->createMobileUrl('wenzhangdetail',array('id'=>$row['id']))}">
+	{else}
+	<a class="list flex" href="{$row['url']}">
+	{/if}
+	  <div class="text">{$row['title']}</div>
+	  <img src="{NEWSTATIC_ROOT}/jt-you.png" class="rightimg" />
+	</a>
+{/loop}
+
+<div id="footer" class="flex">
+	<div class="item now">
+		<a href="{php echo $this->createMobileUrl('chosekefu');}">
+			{if $this->module['config']['footer1thumb']}
+			<img src="{php echo tomedia($this->module['config']['footer1thumb'])}" />
+			{else}
+			<img src="{NEWSTATIC_ROOT}/footer1.png" />
+			{/if}
+			<div class="text">{if $this->module['config']['footertext1']}{php echo $this->module['config']['footertext1']}{else}客服{/if}</div>
+		</a>
+	</div>
+	{if $this->module['config']['isgroupon'] == 1}
+	<div class="item">
+		<a href="{php echo $this->createMobileUrl('groupcenter');}">
+			{if $this->module['config']['footer2thumb']}
+			<img src="{php echo tomedia($this->module['config']['footer2thumb'])}" />
+			{else}
+			<img src="{NEWSTATIC_ROOT}/footer2.png" />
+			{/if}
+			<div class="text">{if $this->module['config']['footertext2']}{php echo $this->module['config']['footertext2']}{else}群聊{/if}</div>
+		</a>
+	</div>
+	{/if}
+	{if $this->module['config']['footer4on'] == 1}
+		<div class="item">
+			<a href="{php echo $this->module['config']['footer4url'];}">
+				<img src="{php echo tomedia($this->module['config']['footer4thumb']);}" />
+				<div class="text">{php echo $this->module['config']['footertext3'];}</div>
+			</a>
+		</div>
+	{/if}
+	{if $this->module['config']['footer5on'] == 1}
+		<div class="item">
+			<a href="{php echo $this->module['config']['footer5url'];}">
+				<img src="{php echo tomedia($this->module['config']['footer5thumb']);}" />
+				<div class="text">{php echo $this->module['config']['footertext4'];}</div>
+			</a>
+		</div>
+	{/if}
+</div>
+<script type="text/javascript" src="{NEWSTATIC_ROOT}/jqueryweui/js/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="{NEWSTATIC_ROOT}/jqueryweui/js/fastclick.js"></script>
+<script type="text/javascript" src="{NEWSTATIC_ROOT}/jqueryweui/js/jquery-weui.min.js"></script>
+<script>
+$(function(){
+	FastClick.attach(document.body);
+});
+</script>
+</body>
+</html>

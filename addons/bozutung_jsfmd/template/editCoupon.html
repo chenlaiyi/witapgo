@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li class="layui-this">
+						<a href="{php echo webUrl('editCoupon')}">编辑优惠券</a>
+					</li>
+					<li>
+						<a href="{php echo webUrl('couponList')}">返回</a>
+					</li>
+				</ul>
+			</div>
+
+			<form class="layui-form fixed" action="" method="post" enctype="multipart/form-data" id="data-form">
+				<input type="hidden" name="id" value="{$oldData['id']}" />
+				<!-- 排序 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">排序</label>
+					<div class="layui-input-block">
+						<input type="text" name="sort" class="layui-input"
+							placeholder="数字越大越靠前" value="{$oldData['sort']}">
+					</div>
+				</div>
+				<!-- 优惠券描述 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">优惠券描述</label>
+					<div class="layui-input-block">
+						<input type="text" name="description" lay-verify="required" class="layui-input" value="{$oldData['description']}">
+					</div>
+				</div>
+				<!-- 截止时间 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">截止时间</label>
+					<div class="layui-input-block">
+						<input type="text" name="end_time" class="layui-input" id="time-end" placeholder="yyyy-MM-dd HH:mm">
+					</div>
+				</div>
+				<!-- 使用优惠券的最低金额 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">使用优惠券的最低金额</label>
+					<div class="layui-input-block">
+						<input type="text" name="reach" lay-verify="required" class="layui-input" value="{$oldData['reach']}">
+					</div>
+				</div>
+				<!-- 减去金额 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">减去金额</label>
+					<div class="layui-input-block">
+						<input type="text" name="minus" lay-verify="required" class="layui-input" value="{$oldData['minus']}">
+					</div>
+				</div>
+				<!-- 参与的最高人数 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">参与的最高人数</label>
+					<div class="layui-input-block">
+						<input type="text" name="max" lay-verify="required" class="layui-input" value="{$oldData['max']}">
+					</div>
+				</div>
+				<!-- 背景图片 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">背景图片</label>
+					<div class="layui-input-block">
+						{php echo slwl_tpl_form_field_image('bg_image', $oldData['bg_image'])}
+						<div class="layui-form-mid layui-word-aux">推荐尺寸：144 x 90，或同比例</div>
+					</div>
+				</div>
+
+				<div class="layui-tab-content fixed" id="data-submit">
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="save">保存</button>
+							<button class="layui-btn" lay-submit lay-filter="save" data-type="saveAndAdd">保存并新增</button>
+							<a href="{php echo webUrl('couponList')}" class="layui-btn layui-btn-primary">取消</a>
+							<input type="hidden" name="token" value="{$_W['token']}" />
+						</div>
+					</div>
+				</div>
+			</form>
+			<script>
+				layui.use('laydate', function(){
+					var laydate = layui.laydate;
+
+					laydate.render({
+						elem: '#time-end'
+						,type: 'datetime'
+						,format: 'yyyy-MM-dd'
+						,value: "{php echo date('Y-m-d H:i:s', $oldData['end_time'])}"
+					});
+				});
+
+				layui.use('form', function(){
+					var form = layui.form;
+
+					form.on('submit(save)', function(data){
+						let subType = data.elem.dataset.type;
+						let url = "{php echo webUrl('editCoupon')}";
+						var $obj = $(this);
+
+						if (!$obj.hasClass('lock')) {
+							$obj.addClass('lock'); // 不能再点击
+
+							$.ajax({
+								type: "POST",
+								url: url,
+								dataType: 'json',
+								data: data.field,
+								success: function (rs) {
+									if (rs && rs.code.toString() === '0') {
+										layer.msg('保存成功' , {
+											time: 500
+										}, function () {
+											if (subType && subType.toString() === 'saveAndAdd') {
+												window.location.href = "{php echo webUrl('addCoupon')}";
+											} else {
+												window.location.href = "{php echo webUrl('couponList')}";
+											}
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+										});
+									}
+									$obj.removeClass('lock');
+								},
+								error: function () {
+									layer.msg('保存过程发生错误，请与管理员联系', {
+										offset: '20%',
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						}
+
+						return false;
+					});
+				});
+			</script>
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

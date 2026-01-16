@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+{php include $this->template('hide_url');}
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="no">
+<meta name="format-detection" content="telephone=no">
+<title>{$school['title']}</title>
+<link rel="stylesheet" type="text/css" href="{MODULE_URL}public/mobile/css/new_yab1.css?v=1?v=1111" />
+{php echo register_jssdks();}
+<script type="text/javascript" src="{MODULE_URL}public/mobile/js/jquery-1.11.3.min.js?v=4.8"></script>
+<script type="text/javascript" src="{MODULE_URL}public/mobile/js/clipboard.min.js?v=4.8"></script>
+<script type="text/javascript" src="{MODULE_URL}public/mobile/js/color_base.js?v=4.8"></script>
+<style>
+.add_link_box{ width:100%;position: absolute;left:0;top:60px;bottom:0;z-index: 9999;background-color:rgba(0,0,0,0.5);display: none} .add_link_info_wrap{padding:0 10px;margin:0 auto;display: -webkit-box;-webkit-box-orient:vertical;-webkit-box-pack: center;-webkit-box-align: center;height:100%;} .my_add_link_inner{width: 100%;height:190px;background-color: #fff;border-radius: 10px;padding: 10px 0;} .my_add_link_inner h3{text-align: center;color:#666;} .add_link_wrap{height:35px;line-height: 35px;overflow: hidden;padding: 10px; } .my_link_title {width: 80px;float: left;color: #666666;} .my_add_link_txt{height:35px;line-height: 35px;box-sizing: border-box;width:70%;outline: none;border:1px solid #dcdcdc;border-radius: 3px;float:left;} .add_link_btn_wrap{padding: 10px;overflow:hidden;} .add_link_btn_sure {float: left;width: 40%;height: 35px;line-height: 35px;background: #06c1ae;font-size: 16px;border-radius: 20px;color: #fff;border: none;padding: 0;margin: 0 5%;outline: none;} #add_link_btn_cancel {background: #ffb24e;} .link_title {text-align: center;color: #333333;font-size: 16px;margin-top: 2px;} .main {margin: 10px 10px;box-shadow: 0 1px 9px #dcdcdc;background: #FFF;padding: 0;border-radius: 10px;padding-bottom: 10px;} .main_text a {cursor: pointer !important;text-decoration: underline !important;color: #0094ff;} .main img {margin-top: 0px;} .common_no_audit_status {background-color: initial;} .baby_diary_img_list {margin-left: 5px;margin-top: 5px;padding-bottom: 10px;} .baby_diary_img_listOther {margin-left: 0;margin-top: 10px;padding-left: 12px;} .baby_diary_img_list li {width: 32.5%;height: 70px;overflow: hidden;box-sizing: border-box;padding: 2px;float: left;margin: 0;} .notifyImgItem {width: 30.5% !important;position: relative;} .btn_closeImg {position: absolute;width: 10px;top: 0;right: 4px;} .F_div {right: 30px;bottom:75px} .baby_diary_img_listOther {padding-left: 10px;border-bottom: 1px solid #f0f0f2;} #notifyContent {padding: 10px;background-color: white;border: 1px solid #f0f0f2;} .main_text p, .main_text a {display: inline-block;} .main, .linkDataUrl {cursor: pointer !important;} .linkDataUrl {text-decoration: underline !important;} .pv-img {position: relative;} .imgDesc {position: absolute;right: 15px;height: 20px;line-height: 20px;font-size: 16px;color: white;text-align: right;z-index: 99;} p img {margin: 10px 0 !important;} .slide_left_menu_bg.show_menu_bg {display: block;-webkit-animation-name: fadeIn;animation-name: fadeIn;-webkit-animation-duration: 600ms;animation-duration: 600ms;-webkit-animation-fill-mode: both;/* animation-fill-mode: both; */} .slide_left_menu_bg_other.show_menu_bg {display: block;-webkit-animation-name: fadeIn;animation-name: fadeIn;-webkit-animation-duration: 600ms;animation-duration: 600ms;-webkit-animation-fill-mode: both;/* animation-fill-mode: both; */} .slide_left_menu_bg {width: 100%;z-index: 998;background: rgba(0, 0, 0, 0.5);position: fixed;min-height: 100%;top: 0;left: 0;zoom: 1;overflow: hidden;display: none;height: 100%;z-index: 1000;overflow-y: scroll;} .slide_left_menu_bg_other {width: 100%;z-index: 998;background: rgba(0, 0, 0, 0.5);position: fixed;min-height: 100%;top: 0;left: 0;zoom: 1;overflow: hidden;display: none;height: 100%; z-index: 1000;overflow-y: scroll;display: none;} .slide_left_menu {width: 50%!important;right: 0;background-color: #fff;z-index: 999;min-height: 100%;position: absolute;} .slide_left_menu_ul_other {width: 100%;border: 1px solid #ccc;border-left: none;border-right: none;box-sizing: border-box;padding: 0 10px;} .slide_left_menu_ul_other li {height: 50px;line-height: 50px;border-bottom: 1px solid #ccc;font-size: 16px;width: 100%;box-sizing: border-box;padding: 0 10px 0 10px;overflow: hidden; position: relative;} .slide_left_menu_ul_other li.act {background: url({MODULE_URL}public/mobile/img/be_choose_icon.png) right center no-repeat;background-size: 16px;background-origin: content-box;-moz-background-origin: content-box;-webkit-background-origin: content-box;} .slide_left_menu_ul li.act {background: url({MODULE_URL}public/mobile/img/be_choose_icon_02.png) right center no-repeat;background-size: 16px;background-origin: content-box;-moz-background-origin: content-box;-webkit-background-origin: content-box;} .slide_left_menu_ul_other li:last-of-type {border-bottom: none;} .slide_left_menu_ul_other li .user_img {width: 50px;height: 50px;position: absolute;left: -5px;top: 0;box-sizing: border-box;padding: 10px;} .slide_left_menu_ul_other li .user_img img {width: 100%;height: 100%;border-radius: 50%;} .slide_left_menu_ul_other li .change_user {width: 40px;height: 100%;position: absolute;right: 0;top: 0;background: url({MODULE_URL}public/mobile/img/be_choose_icon.png) center no-repeat;background-size: 30px;} .slide_left_menu_til {height: 40px;line-height: 40px;box-sizing: border-box;padding: 0 40px 0 15px;position: relative;font-size: 16px;} .slide_left_menu_ul {width: 100%;border: 1px solid #ccc;border-left: none;border-right: none;box-sizing: border-box;padding: 0 10px;} .slide_left_menu_ul li {height: 50px;line-height: 50px;/*border-bottom: 1px solid #ccc;*/font-size: 16px;width: 100%;box-sizing: border-box;padding: 0 10px 0 50px;overflow: hidden; position: relative;} .hederRightBox {width: 21px;height: 100%;display: inline-block;position: absolute;right: 20px;} .hederRightBox a {width: 100%;height: 21px;display: inline-block;position: absolute;top: 50%;transform: translateY(-50%);-webkit-transform: translateY(-50%);-moz-transform: translateY(-50%);-ms-transform: translateY(-50%);-o-transform: translateY(-50%);} .audit_statusNew, .audit_statusPass, .audit_statusPassReject {width: 50px;height: 20px;position: absolute;top: 0;right: 0;font-size: 11px;display: -webkit-box;display: -moz-box; display: -ms-flexbox;display: -webkit-flex;display: flex;-webkit-box-align: center;-moz-box-align: center;-ms-flex-align: center;-webkit-align-items: center;align-items: center; -webkit-box-pack: center;-moz-box-pack: center;-ms-flex-pack: center;-webkit-justify-content: center;justify-content: center;border-top-right-radius: 10px;border-bottom-left-radius: 10px;} .audit_statusPass {background-color: #ddd;color: white;} .audit_statusNew {background-color: #ff9f22;color: white;} .tips_bubbling {position: absolute;width: 18px;height: 18px;font-size: 11px;border-radius: 50% 50%;background-color: #ff0000;margin-top: -25px;line-height: 17px;color: #fff;} .tips_lef {margin-left: -47px;} .tips_rih {margin-left: 28px;} #xytz{border-radius: 25px 0 0 25px;} #bjtz{border-radius: 0 25px 25px 0;} #qbyd{position: absolute;right: 12px;font-size: 12px;color: #30c6e1;} .redtip{display:block;background:#f00;border-radius:50%;width:8px;height:8px;top:0px;right:0px;margin-right: -7px;margin-left: 5px;} .press{background-color: #f0f0f2;width: 76%;margin-left: 10px;margin-top: 5px;position: relative;height: 20px;border-radius: 18px;line-height: 20px;font-size: 11px;color: #fff;font-weight: bold;overflow: hidden;} .footer_press{background-color: #30c6e1;position: absolute;border-radius: 16px;text-align: center;} .zsjd{width: 17%;font-size: 12px;margin-left: 5px;margin-top: 5px;} .btnXGBox {top: -6%;     width: 40px;     height: 26px;     background-color: #57c354;     border-radius: 13%;     font-size: 14px;     color: #fff;     text-align: center;     position: absolute;     right: 12px;     font-weight: bold;     line-height: 26px;} .family{text-align: center;width: 100%;} .family img{width: 60%;} .popContentBox {position: absolute;width: 88%;margin-left: 6%;max-height: 90%;top: 43%;transform: translateY(-50%);-webkit-transform: translateY(-50%);-moz-transform: translateY(-50%);-ms-transform: translateY(-50%); -o-transform: translateY(-50%);z-index: 101;background-color: white;border-radius: 10px;} .popUpBox1 { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; animation-name: popFadeIn; -webkit-animation-name: popFadeIn; -ms-animation-name: popFadeIn; -moz-animation-name: popFadeIn; -o-animation-name: popFadeIn; -webkit-animation-duration: 600ms; animation-duration: 600ms; -webkit-animation-fill-mode: both; z-index: 102; } .btnshare {width: 100px;height: 31px;font-size: 14px;color: white;text-align: center;line-height: 31px;border-radius: 20px;background: #06c1ae;margin-left: 47px;} .share_coment{width: 100%;background-color: #f1efef;margin-left: 5%;width: 90%;padding: 8px;} .btnshareCancel { width: 100px; height: 31px; font-size: 14px; color: white; text-align: center; line-height: 31px; border-radius: 20px; background: #ff9f22; margin-left: 24px; margin-right: 10px; } .tuangou { height: 20px; background: #9834e2; color: white; display: -webkit-box; display: -moz-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-box-align: center; -moz-box-align: center; -ms-flex-align: center; -webkit-align-items: center; align-items: center; font-size: 11px; margin-left: 5px; padding: 0 4px; border-radius: 5px; } .header_box{ width: 100%; height: auto; top: 0; background-color: #fff; } .header_conet{ padding:10px; } .circlewrap { position: relative; display: inline-block; }  .bigcircle { width: 5rem; height: 5rem; }  .circlebg, .leftcircle, .rightcircle, .circlebgtop, .number { position: absolute; left: 0; right: 0; top: 0; bottom: 0; margin: auto; z-index: 2; border-radius: 50%; }  .circlebg { width: 100%; height: 100%; background-color: #e6e6e6; }  .circlebgtop { z-index: 3; background-color: #e6e6e6; }  .leftcircle, .rightcircle, .circletop { height: 100%; width: 100%; }  .bigcircle .leftcircle, .bigcircle .circlebgtop, .bigcircle .rightcircle { clip: rect(0, 3rem, 6rem, 0); }  .number { z-index: 4; background-color: #fff; text-align: center; }  .bigcircle .number { height: 4.4rem; width: 4.4rem; font-size: 1.2rem; line-height: 3.2 }  .circle { -webkit-transform-origin: center; } .chengji{ text-align: center; display: inline-block; width: 100%;} .left_blur{text-align: center; position: relative; height: 117px;} .rihgt_blur {position: relative; height: 117px;} .leftspan { position: absolute; width: 56px;} .rihgtspan { width: 56px; position: absolute; } 
+.paiminginfo { font-size: 12px; color: #999999; margin-top: 3px; }
+.paiming{ font-size: 15px; color: #46a0d4; width: 51px; float: right; margin-right: 8px; text-decoration:underline; background: url({MODULE_URL}public/mobile/img/manual_to_icon.png) no-repeat; background-size: 7px; background-position: 42px 5px; }
+.popUpBox2 { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; animation-name: popFadeIn; -webkit-animation-name: popFadeIn; -ms-animation-name: popFadeIn; -moz-animation-name: popFadeIn; -o-animation-name: popFadeIn; -webkit-animation-duration: 600ms; animation-duration: 600ms; -webkit-animation-fill-mode: both; z-index: 102; }
+.btnpmCancel { width: 100px; height: 31px; font-size: 14px; color: white; text-align: center; line-height: 31px; border-radius: 20px; background: #ff9f22; margin-left: 37%; margin-right: 10px; }
+.popContentBox1 { position: absolute; width: 95%; margin-left: 2.5%; max-height: 90%; top: 47%; transform: translateY(-50%); -webkit-transform: translateY(-50%); -moz-transform: translateY(-50%); -ms-transform: translateY(-50%); -o-transform: translateY(-50%); z-index: 101; background-color: white; border-radius: 10px; }
+.poptitle1 { width: 90%; margin-left: 5%; font-size: 16px; color: #333333; text-align: center; padding: 5px 0; border-bottom: 1px solid #e0dddd; }
+.pm_list{ width: 100%; background-color: #f3f3f3; }
+.pm_top{ width: 100%; background-color: #fff; padding-bottom: 10px; }
+.top_left{ width: 22%; float: left; }
+.pm_top_icon{ width: 43px; border-radius: 43px; margin-left: 7px; }
+.left_name{ font-size: 16px; margin-left: 5px; }
+.rihgt_text{ color: #656161; float: right; }
+.secnd_line{ font-size: 11px; margin-top: 7px; padding: 5px; }
+.left_icon{ padding-left: 15px; color: #30c6e1; }
+.rihgt_text{ float: right; }
+.rihgt_top_text{ float: right; color: #6f6a6a; font-size: 12px; }
+.rihgt_bot_text{ float: right; color: #ccc; }
+.pm_bot{ width: 100%; background-color: #fff; margin-top: 4px; max-height: 300px; overflow-y: scroll; }
+.bot_list{ list-style: none; padding: 8px; height: 51px; }
+.bot_left{ width: 16%; float: left; }
+.bot_right{ border-bottom: 1px solid #ccc; width: 73%; float: right; }
+.pmicon{background: url({MODULE_URL}public/mobile/img/paihang.png) no-repeat;background-size: 11px 9px;background-position-x: 1px;background-position-y: 3px;}
+.no1{background: url({MODULE_URL}public/mobile/img/ico_no_1.png) no-repeat;background-size: 16px; }
+.no2{background: url({MODULE_URL}public/mobile/img/ico_no_2.png) no-repeat;background-size: 16px; }
+.no3{background: url({MODULE_URL}public/mobile/img/ico_no_3.png) no-repeat;background-size: 16px; }
+.pm_no{ width: 21px; height: 29px; float: left; margin-top: 13px; margin-left: 5px; text-align: center; }
+.xskc { height: 20px; background: #06c1ae; color: white; display: -webkit-box; display: -moz-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-box-align: center; -moz-box-align: center; -ms-flex-align: center; -webkit-align-items: center; align-items: center; font-size: 11px; margin-left: 5px; padding: 0 4px; border-radius: 5px; }
+.xxkc { height: 20px; background: #2e2e2e; color: white; display: -webkit-box; display: -moz-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-box-align: center; -moz-box-align: center; -ms-flex-align: center; -webkit-align-items: center; align-items: center; font-size: 11px; margin-left: 5px; padding: 0 4px; border-radius: 5px; }
+.conent_load{width: 15px; height: 19px; display: inline-block; background: url({MODULE_URL}public/mobile/img/gh_xh_wating.gif) no-repeat center center / 15px 19px; margin-left: 10px;}.coments{width:100%;height: auto;} 
+.aui-course-button { padding-top: 10px; text-align: right;border-top: 1px solid #f0f0f2;}
+.aui-course-button button { border-radius: 3px; font-size: 12px; padding: 5px 14px; position: relative;    margin-right: 10px; }
+.wiat_but{color:#444;background:#fff;border: 1px solid #f0f0f2;}
+.red_but{color:#fff;background:#fe5a69;border: 0px solid #cccccc;}
+.bluefont{color:#8a8989}
+.pt_midbox{width: 100%;height: 30px;text-align: right;}
+.pt_midboxspan{margin-left: 65%;font-size:13px;margin-top: 6px;}
+</style>
+</head>
+<body>
+<div class="header_box">
+	<div class="header_conet">您的推广任务:<span>{$list['allstks']}个</span>试听课，<span>{$list['allzsks']}个</span>正式课</div>
+	<div class="chengji">
+		<div class="left_blur" style="float: left;width: 31%;">
+			<div class="circlewrap bigcircle">
+				<div class="circlebg"></div>
+				<div class="circlebgtop"></div>
+				<div class="leftcircle circle"></div>
+				<div class="rightcircle"></div>
+				<div class="number " data-val="{$allbilis}">{$allbili}%</div>
+			</div><div class="blank"></div>
+			<span style="margin-left: -26px; " class="leftspan">总进度</span>
+		</div>
+		<div class="rihgt_blur" style="float: left;width: 31%;">
+			<div class="circlewrap bigcircle">
+				<div class="circlebg"></div>
+				<div class="circlebgtop"></div>
+				<div class="leftcircle circle"></div>
+				<div class="rightcircle"></div>
+				<div class="number " data-val="{$zsbilis}">{$zsbili}%</div>
+			</div><div class="blank"></div>
+			<span class="rihgtspan" style="margin-left: -26px;">正式课</span>
+		</div>
+		<div class="rihgt_blur" style="float: left;width: 31%;">
+			<div class="circlewrap bigcircle">
+				<div class="circlebg"></div>
+				<div class="circlebgtop"></div>
+				<div class="leftcircle circle"></div>
+				<div class="rightcircle"></div>
+				<div class="number " data-val="{$stbilis}">{$stbili}%</div>
+			</div><div class="blank"></div>
+			<span class="rihgtspan" style="margin-left: -26px;">试听课</span>
+		</div>
+	</div>
+</div>
+<div class="blank"></div>
+<div class="head_box">
+	<ul class="head_title">
+		<li class="act" id="xytz"><a>正式课</a>{if $list['allzsks']}<span class="tips_bubbling tips_lef"><span>{$list['allzsks']}</span></span>{/if}</li>
+		<li class="" id="bjtz"><a>试听课</a>{if $list['allstks']}<span class="tips_bubbling tips_rih"><span>{$list['allstks']}</span></span>{/if}</li>
+	</ul>
+	<div class="blank"></div>
+</div>
+<div class="listContent">
+{if $list['list']}
+{loop $list['list'] $row}
+	<div {if $row['kcinfo']['is_try'] ==2}class="zs"{else}class="st" style="display:none"{/if}><!--试听课任务列表-->
+		<li class="main" time="{$row['id']}" id="{$row['id']}" style="display: block;">
+			<div class="tongzhi">
+				<span class="tongzhiTitle">{$row['kcinfo']['name']}</span>
+				<span class="common_audit_status">总报{$row['bmmuber']}人</span>
+				{if TIMESTAMP > $row['kcinfo']['start'] && TIMESTAMP > $row['kcinfo']['end']}<div class="audit_statusPass">结束</div>{/if}
+				{if TIMESTAMP > $row['kcinfo']['start'] && $row['kcinfo']['end'] > TIMESTAMP}<div class="audit_statusNew">进行中</div>{/if}
+				{if $row['kcinfo']['start'] > TIMESTAMP && $row['kcinfo']['end'] > TIMESTAMP}<div class="audit_statusNew">未开始</div>{/if}
+			</div>
+			<div class="cutting"></div>
+			<div class="notifyTopBox">
+				<div class="notifyTopLeft">
+					<img src="{php echo tomedia($row['kcinfo']['thumb'])}" class="teacherImgError" />
+				</div>
+				<div class="notifyTopRight">
+					<div class="notifyTopRightTopBox">
+						<span class="teacherInfo">主讲:{$row['midteacher']}</span>
+						{if $row['kcinfo']['sale_type'] == 1}<div class="tuangou">团购</div>{/if}
+						{if $row['kcinfo']['sale_type'] == 2}<div class="JobLeaderBox">助力</div>{/if}
+						{if $row['kcinfo']['kc_type'] == 1}<div class="xxkc">线上课</div>{else}<div class="xskc">线下课</div>{/if}
+					</div>
+					<p class="notifyCreateTime">有效期&nbsp;{php echo date('Y-m-d',$row['kcinfo']['start'])}至{php echo date('Y-m-d',$row['kcinfo']['end'])}</p>
+					<p class="paiminginfo">共有{$row['proce']['teams']}人接受任务</p>
+				</div>
+			</div>
+			<div class="tongzhi_footer" style="border-top: 0px solid #f0f0f2;margin-bottom: 8px;">
+				<div class="zsjd">已邀{$row['proce']['allfans']}人</div>
+				<div class="press">
+					<span style="width: {$row['proce']['mybilis']}%;" class="footer_press">{$row['proce']['allfans']}/{$row['proce']['count']}人</span>
+				</div>
+			</div>
+			<div class="aui-course-button">
+				{if $row['tgset']['show_ranking'] == 1}<button class="wiat_but mb_marsk" onclick="shouwpmlist({$row['kcinfo']['id']});return false;">排行榜</button>{/if}
+				{if TIMESTAMP < $row['kcinfo']['end']}<button class="wiat_but mb_marsk" onclick="showerwTP({$row['kcinfo']['id']});return false;">生成海报</button>{/if}
+				<button class="wiat_but mb_marsk" {if $row['kcinfo']['is_try'] == 1}onclick="gotolist_zs({$row['kcinfo']['id']})"{else}onclick="gotolist_zs({$row['kcinfo']['id']})"{/if}>报名详情</button>
+			</div>
+		</li>
+	</div>
+{/loop}
+{/if}	
+</div>
+<!--邀请卡弹框-->
+<div class="popUpBox" style="display: none">
+	<div class="trackMatte"></div>
+	<div class="popContentBox">
+		<input type="hidden" id="kcid" value="" />
+		<div class="poptitle">
+		生成邀请卡
+		<p class="notifyCreateTime">长按保存您的邀请卡，邀请好友一起学习</p>
+		</div>
+		<div class="sectionContBox">
+			<div class="family" id="family">
+			</div>
+			<div class="btnBox">
+				<div class="btnPass" onclick="fx();">营销短语</div>
+				<div class="btnPass" onclick="refrash_pop();">刷新</div>
+				<div class="btnCancel">关闭</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--文案弹框-->
+<div class="popUpBox1" style="z-index:102;display: none">
+	<div class="trackMatte"></div>
+	<div class="popContentBox" style="z-index:103;">
+		<input type="hidden" id="share_kcid" value="" />
+		<div class="poptitle">
+		复制文案
+		<p class="notifyCreateTime">将文字和图片一起分享,成功率翻10倍！</p>
+		</div>
+		<div class="sectionContBox" style="text-align: left;">
+			<div class="share_coment" id="share_coment">3天速成英语口语，旅游交流无忧，突破交流障碍，出国旅行吃穿住玩，搭车，飞机，签证，路人交流用语</div>
+			<div class="btnBox" style="margin-top: 41px;">
+				<div class="btnshare" data-clipboard-action="copy" data-clipboard-target="#share_coment" onclick="">复制文案</div>
+				<div class="btnshareCancel">关闭</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--排名弹框 暂未启用-->
+<!--排名弹框-->
+<div class="popUpBox2" style="z-index:102;display: none">
+	<div class="trackMatte"></div>
+	<div class="popContentBox1" style="z-index:103;">
+		<div class="poptitle1">推广排名</div>
+		<div class="sectionContBox" style="text-align: left;">
+			<div class="pm_list" id="pm_list">
+				<div class="pm_top">
+					<div class="top_left">
+						<img src="{if $teacher['thumb']}{php echo tomedia($teacher['thumb'])}{else}{php echo tomedia($teacher['fans']['tag']['avatar']);}{/if}" class="pm_top_icon" />
+					</div>
+					<div class="top_right">
+						<div class="frist_line">
+							<span class="left_name">{$teacher['tname']}</span>
+						</div>
+						<div class="secnd_line">
+							<span class="left_icon pmicon">第<span class="bluefont" id="my_rank"></span>名 | 已邀请<span class="bluefont" id="mycount"></span>人</span>
+						</div>
+					</div>
+				</div>
+				<div class="pm_bot" id="rank_list_box">
+
+				</div>
+			</div>
+		</div>
+		<div class="btnBox" style="margin-top: 10px;">
+			<div class="btnpmCancel mb_marsk">关闭</div>
+		</div>
+	</div>
+</div>
+{php include $this->template('port');} 
+<script type="text/javascript">
+$('.bigcircle').drawCircle(true);
+function gotolist(kcid){
+	jTips("数据加载中！···");
+	location.href = "{php echo $this->createMobileUrlS('hooktea', array('goto' => 'kcbmlist', 'schoolid' => $schoolid), true)}"+ '&kcid=' + kcid;
+}
+function gotolist_zs(kcid){
+	jTips("数据加载中！···");
+	location.href = "{php echo $this->createMobileUrlS('hooktea', array('goto' => 'kcbmlist_zs', 'schoolid' => $schoolid), true)}"+ '&kcid=' + kcid;
+}
+var xytz = document.getElementById('xytz'); 
+var bjtz = document.getElementById('bjtz'); 
+$("#xytz").click(function () {
+	xytz.className = 'act'; 
+	bjtz.className = '';
+	$(".zs").show();
+	$(".st").hide();
+}); 
+$("#bjtz").click(function () {
+	bjtz.className = 'act';
+	xytz.className = '';
+	$(".zs").hide();
+	$(".st").show();
+});
+$('.btnCancel').click(function() {
+	$('.popUpBox').hide();
+	$('html,body').removeClass('popNoscroll');
+});
+$('.btnshareCancel').click(function() {
+	$('.popUpBox1').hide();
+});
+
+var clipboard = new ClipboardJS('.btnshare');
+clipboard.on('success', function(e) {
+    jTips('复制成功，快去分享吧！');
+	$('.popUpBox1').hide();
+	console.log(e);
+});
+clipboard.on('error', function(e) {
+	jTips('复制失败，请手动复制！');
+	console.log(e);
+});
+
+//打开分享卡
+function showerwTP(kcid){
+	$('.popUpBox').slideDown(200);
+	$('#share_kcid').val(kcid)
+	$('#family').empty()
+	let loadcont = "<div class='conent_load'></div>";
+	$('#family').append(loadcont);//加载动画
+	$.ajax({
+		url: "{php echo $this->createMobileUrls('kcajax', array('op' => 'get_mysherecard'), true)}",
+		type: "post",
+		dataType: "json",
+		data: {
+			userid: "{$it['id']}",
+			openid:"{$it['openid']}",
+			tid:"{$it['tid']}",
+			kcid:kcid,
+			schoolid:"{$schoolid}"
+		},
+		success: function (data) {
+			if(data.result){
+				$('#family').empty()
+				let picurl = decodeURIComponent(data.pic)
+				let contet = '<img onclick="wxImageShow(this);" src="'+picurl+'" />';
+				$('#family').append(contet)
+			}else{
+				$('#family').empty()
+				jTips(data.msg);
+			}
+		}
+	});
+}
+//刷新海报
+function refrash_pop(){
+	$('#family').empty()
+	let loadcont = "<div class='conent_load'></div>";
+	$('#family').append(loadcont);//加载动画
+	$.ajax({
+		url: "{php echo $this->createMobileUrls('kcajax', array('op' => 'get_mysherecard'), true)}",
+		type: "post",
+		dataType: "json",
+		data: {
+			userid: "{$it['id']}",
+			openid:"{$it['openid']}",
+			tid:"{$it['tid']}",
+			refrash:"refrash",
+			kcid:$('#share_kcid').val(),
+			schoolid:"{$schoolid}"
+		},
+		success: function (data) {
+			if(data.result){
+				$('#family').empty()
+				let picurl = decodeURIComponent(data.pic)
+				let contet = '<img onclick="wxImageShow(this);" src="'+picurl+'" />';
+				$('#family').append(contet)
+			}else{
+				$('#family').empty()
+				jTips(data.msg);
+			}
+		}
+	});
+}
+function fx(){
+	e = window.event;
+	e.stopPropagation();
+	e.preventDefault();
+	$.ajax({
+		url: "{php echo $this->createMobileUrls('kcajax', array('op' => 'get_kc_tgword'), true)}",
+		type: "post",
+		dataType: "json",
+		data: {
+			kcid:$('#share_kcid').val(),
+			schoolid:"{$schoolid}"
+		},
+		success: function (data) {
+			if(data.result){
+				$('#share_coment').empty()
+				$('#share_coment').text(data.shareword)
+				$('.popUpBox1').show();
+			}else{
+				jTips(data.msg);
+			}
+		}
+	});
+};
+function shouwpmlist(kcid){
+	e = window.event;
+	e.stopPropagation();
+	e.preventDefault();
+	set_rank_list(kcid)
+	$('.popUpBox2').show();
+};
+function set_rank_list(kcid){
+	$('#rank_list_box').empty();
+	html = "<div class='loadmark fans_loading text_center'></div>";
+	$('#rank_list_box').append(html);
+	$.ajax({
+		url: "{php echo $this->createMobileUrls('kcajax', array('op'=>'show_rank_list'))}",
+		dataType: 'json',
+		data:{
+			weid:"{$weid}",
+			schoolid:"{$schoolid}",
+			kcid:kcid,
+			tid:"{$it['tid']}"
+		},
+		success:function(data){
+			if(data.result){
+				$('#rank_list_box').empty();
+				$('#my_rank').text(data.myrank.myrank)
+				$('#mycount').text(data.myrank.mycount)
+				var datas = data.newrank
+				
+				var htmls = '';
+				for (var i in datas) {
+					var background = '';
+					if(datas[i].oushu){
+						var background = "style='background-color: #f9f9f9;'";
+					}
+					if(datas[i].rank >= 4){
+						var rankdiv = '<span class="pm_no">'+datas[i].rank+'</span>'
+					}else{
+						var rankdiv = '<span class="pm_no no'+datas[i].rank+'"></span>'
+					}
+					htmls +='<li class="bot_list" '+background+'>'+rankdiv+''+
+							'	<div class="bot_left">'+
+							'		<img src="'+datas[i].icon+'" class="pm_top_icon" />'+
+							'	</div>'+
+							'	<div class="bot_right">'+
+							'		<div class="frist_line">'+
+							'			<span class="left_name">'+datas[i].name+'</span>'+
+							'			<span class="rihgt_top_text">完成'+datas[i].pro.bili+'%</span>'+
+							'		</div>'+
+							'		<div class="secnd_line">'+
+							'			<span class="left_icon pmicon">第'+datas[i].rank+'名</span>'+
+							'			<span class="rihgt_bot_text">邀请<span class="bluefont">'+datas[i].count+'</span>人</span>'+
+							'		</div>'+
+							'	</div>'+
+							'</li>';	
+				}
+				$('#rank_list_box').html(htmls);
+			}else{
+				alert(data.msg);
+			}
+		}
+	});
+}
+$('.btnpmCancel').click(function() {
+	$('.popUpBox2').hide();
+	$('html,body').removeClass('popNoscroll');
+});
+$(".trackMatte").on("click",function(){
+	e = window.event;
+	e.stopPropagation();
+	e.preventDefault();
+	$('.popUpBox').slideUp(200);
+	$('.popUpBox1').slideUp(200);
+	$('.popUpBox2').slideUp(200);
+	$('html,body').removeClass('popNoscroll');
+})
+//显示大图
+function wxImageShow(elm){
+	var srcList = new Array();
+	var pic = $(elm).attr("src")
+	srcList.push(pic);
+	WeixinApi.imagePreview(pic, srcList);
+}
+var WeixinApi = (function () {
+	return {
+        imagePreview    :imagePreview
+    }; 
+    "use strict";
+    function imagePreview(curSrc,srcList) {
+        if(!curSrc || !srcList || srcList.length == 0) {
+            return;
+        }
+        WeixinJSBridge.invoke('imagePreview', {
+            'current' : curSrc,
+            'urls' : srcList
+        });
+    }
+    return {
+        version         :"2.5",
+        imagePreview    :imagePreview
+    };
+})();
+</script>
+{php include $this->template('newfooter');} 
+</body>
+</html>

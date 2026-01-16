@@ -1,0 +1,551 @@
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <div class="user-panel">
+            <div class="pull-left info">
+                <a href="{php echo $this->createWebUrl('home');}" style="font-size: 16px;" title="首页"><i class="fa fa-home"></i>&nbsp;</a>
+                <a href="javascript:window.location.reload();" style="font-size: 16px;" title="刷新"><i class="fa fa-refresh"></i>&nbsp;</a>
+                <a href="javascript:window.history.back();" style="font-size: 16px;" title="后退"><i class="fa fa-backward"></i>&nbsp;</a>
+                <a href="javascript:window.history.forward();" style="font-size: 16px;" title="前进"><i class="fa fa-forward"></i>&nbsp;</a>
+            </div>
+        </div>
+        <form action="#" method="get" class="sidebar-form">
+            <div class="input-group">
+                <input type="text" name="nav_key" id="nav_key" class="form-control" placeholder="搜索">
+            <span class="input-group-btn">
+                <button type="button" name="nav_key_btn" id="nav_key_btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+            </span>
+            </div>
+        </form>
+        <ul class="sidebar-menu">
+            <li class="header" id="search_header">导航菜单</li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-gear"></i> <span>系统</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-home"></i> <span>商户</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-sitemap"></i> <span>模板</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-trophy"></i> <span>活动</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-group"></i> <span>会员</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-shopping-cart"></i> <span>商城</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-legal"></i> <span>订单</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-shield"></i> <span>日志</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+            </li>
+            {if $_W['role']=='founder'}
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-cubes"></i> <span>应用</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+            </li>
+            {/if}
+            <li class="header">快捷操作</li>
+
+            {if empty($admin)}
+            <li><a href="./index.php?c=user&amp;a=profile&amp;"><i class="fa fa-circle-o text-aqua"></i><span>修改密码</span></a></li>
+            {else}
+            <li><a href="{php echo $this->createWebUrl('sys_edit_pwd');}"><i class="fa fa-circle-o text-aqua"></i><span>修改密码</span></a></li>
+            {/if}
+
+            <li><a href="{url 'user/logout'}" ><i class="fa fa-circle-o text-red"></i><span>退出系统</span></a></li>
+        </ul>
+    </section> 
+</aside>
+<aside class="main-subsidebar">
+    <section class="sidebar sub-sidebar">
+        <div class="sub-hader">
+            功能列表
+        </div>
+        <nav class="sub_nav">
+            <ul style="padding: 0; display:none;" data-parent="系统">
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('home');}">控制面板</a>
+                </li>
+                {if checkPermission('sys_config') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_config');}">系统配置</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_admin') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_admin');}">系统账号</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_setmeal') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_setmeal');}">充值套餐</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_rategroup') == 1 && getPluginStatus($_W['uniacid'],'lywywl_ztb_plugin_rategroup')}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_rategroup');}">费率分组</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_service') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_service');}">在线客服</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_fedex') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_fedex');}">物流公司</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_audio_class') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_audio_class');}">背景音乐</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_audio_class') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_effect_class');}">背景特效</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_gift_class') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_gift_class');}">礼物赠品</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_invest') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_invest');}">招商咨询</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_complain') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_complain');}">投诉中心</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_faq_class') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_faq_class');}">帮助中心</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_slide') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_slide');}">滑块广告</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_notice') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_notice');}">通知公告</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_sitemap') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_sitemap');}">链接清单</a>
+                </li>
+                {/if}
+            </ul>
+            <ul style="padding: 0; display:none;" data-parent="商户">
+                {if checkPermission('store_account') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('store_account');}">平台商家</a>
+                </li>
+                {/if}
+                {if checkPermission('store_renew') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('store_renew');}">套餐购买</a>
+                </li>
+                {/if}
+                {if checkPermission('store_bill') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('store_bill');}">商家资金</a>
+                </li>
+                {/if}
+                {if checkPermission('store_card') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('store_card');}">商家卡券</a>
+                </li>
+                {/if}
+                {if checkPermission('store_staff') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('store_staff');}">商家员工</a>
+                </li>
+                {/if}
+                {if checkPermission('store_refund') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('store_refund');}">商家提现</a>
+                </li>
+                {/if}
+                {if checkPermission('invite_store') == 1 && getPluginStatus($_W['uniacid'],'lywywl_ztb_plugin_storeinvite')}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('invite_store');}">商家分销</a>
+                </li>
+                {/if}
+            </ul>
+            <ul style="padding: 0; display:none;" data-parent="模板">
+                {if checkPermission('sys_tmp') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_tmp');}">模板列表</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_activity') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_activity');}">模板活动</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_home') == 1 && getPluginStatus($_W['uniacid'],'lywywl_ztb_plugin_home')}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_home');}">聚合首页</a>
+                </li>
+                {/if}
+            </ul>
+            <ul style="padding: 0; display:none;" data-parent="活动">
+                {if checkPermission('obj_9box') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_9box');}">九&nbsp;&nbsp;宫&nbsp;&nbsp;格</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_bag') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_bag');}">抢&nbsp;&nbsp;福&nbsp;&nbsp;袋</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_eggs') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_eggs');}">砸&nbsp;&nbsp;金&nbsp;&nbsp;蛋</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_fish') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_fish');}">锦鲤抽奖</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_opencard') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_opencard');}">翻&nbsp;&nbsp;卡&nbsp;&nbsp;牌</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_poker') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_poker');}">幸运扑克</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_praise') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_praise');}">集赞拓客</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_scratch') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_scratch');}">刮&nbsp;&nbsp;刮&nbsp;&nbsp;卡</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_shake') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_shake');}">摇&nbsp;&nbsp;一&nbsp;&nbsp;摇</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_share') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_share');}">分享红包</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_soliciting') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_soliciting');}">红包拓客</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_tiger') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_tiger');}">水&nbsp;&nbsp;果&nbsp;&nbsp;机</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_union') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_union');}">联盟拓客</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_wheel') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_wheel');}">大&nbsp;&nbsp;转&nbsp;&nbsp;盘</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_cut') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_cut');}">助力砍价</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_collage') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_collage');}">经典拼团</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_ladder') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_ladder');}">阶梯拼团</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_vote') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_vote');}">全民投票</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_survey') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_survey');}">问卷调查</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_enroll') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_enroll');}">报名拓客</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_whole') == 1 && getPluginStatus($_W['uniacid'],'lywywl_ztb_plugin_wholegroup')}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_whole');}">全民拼团</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_10second') == 1 && getPluginStatus($_W['uniacid'],'lywywl_ztb_plugin_10second')}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_10second');}">挑战10秒</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_laddercm') == 1 && getPluginStatus($_W['uniacid'],'lywywl_ztb_plugin_laddercm')}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_laddercm');}">进阶团</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_voice') == 1 && getPluginStatus($_W['uniacid'],'lywywl_ztb_plugin_voice')}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_voice');}">语音红包</a>
+                </li>
+                {/if}
+                {if checkPermission('obj_laddergg') == 1 && getPluginStatus($_W['uniacid'],'lywywl_ztb_plugin_laddergg')}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('obj_laddergg');}">团中团</a>
+                </li>
+                {/if}
+            </ul>
+            <ul style="padding: 0; display:none;" data-parent="会员">
+                {if checkPermission('user_account') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('user_account');}">会员用户</a>
+                </li>
+                {/if}
+                {if checkPermission('user_bill') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('user_bill');}">资金流水</a>
+                </li>
+                {/if}
+                {if checkPermission('user_score') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('user_score');}">积分流水</a>
+                </li>
+                {/if}
+                {if checkPermission('user_address') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('user_address');}">收货地址</a>
+                </li>
+                {/if}
+                {if checkPermission('user_refund') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('user_refund');}">申请提现</a>
+                </li>
+                {/if}
+                {if checkPermission('user_refundtool') == 1 && getPluginStatus($_W['uniacid'], 'lywywl_ztb_plugin_refundtool')}
+                    <li>
+                        <i></i>
+                        <a href="{php echo $this->createWebUrl('user_reimburse');}">退款申请</a>
+                    </li>
+                {/if}
+                {if checkPermission('user_blacklist') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('user_blacklist');}">黑&nbsp;&nbsp;名&nbsp;&nbsp;单</a>
+                </li>
+                {/if}
+            </ul>
+            <ul style="padding: 0; display:none;" data-parent="商城">
+                {if checkPermission('intmall_class') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('intmall_class');}">商品分类</a>
+                </li>
+                {/if}
+                {if checkPermission('intmall_product') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('intmall_product');}">商城商品</a>
+                </li>
+                {/if}
+                {if checkPermission('intmall_collect') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('intmall_collect');}">商品收藏</a>
+                </li>
+                {/if}
+            </ul>
+            <ul style="padding: 0; display:none;" data-parent="订单">
+                {if checkPermission('user_draw') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('user_draw');}">中奖返利</a>
+                </li>
+                {/if}
+                {if checkPermission('order_obj') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('order_obj');}">活动订单</a>
+                </li>
+                {/if}
+                {if checkPermission('order_intmall') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('order_intmall');}">商城订单</a>
+                </li>
+                {/if}
+            </ul>
+            <ul style="padding: 0; display:none;" data-parent="日志">
+                {if checkPermission('store_pay') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('store_pay');}">商家支付</a>
+                </li>
+                {/if}
+                {if checkPermission('user_pay') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('user_pay');}">用户支付</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_reissue') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_reissue');}">红包补发</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_sms') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_sms');}">短信日志</a>
+                </li>
+                {/if}
+                {if checkPermission('user_share') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('user_share');}">分享日志</a>
+                </li>
+                {/if}
+                {if checkPermission('sys_prize_log') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('sys_prize_log');}">奖项日志</a>
+                </li>
+                {/if}
+            </ul>
+            {if $_W['role']=='founder'}
+            <ul style="padding: 0; display:none;" data-parent="应用">
+                {if checkPermission('plugins_market') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('plugins_market');}">应用市场</a>
+                </li>
+                {/if}
+                {if checkPermission('plugins_owner') == 1}
+                <li>
+                    <i></i>
+                    <a href="{php echo $this->createWebUrl('plugins_owner');}">已购应用</a>
+                </li>
+                {/if}
+            </ul>
+            {/if}
+        </nav>
+    </section>
+</aside>
+<script>
+    $(".sub_nav ul").each(function(){
+        if($(this).find("li").length == 0){
+            var pname = $(this).data("parent");
+            $(".sidebar-menu .treeview").each(function(){
+                var navName = $(this).find('span').html();
+                if(pname == navName){
+                    $(this).hide();
+                }
+            });
+        }
+    });
+</script>

@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {template 'common/edithead'}
+    <!--微擎 -->
+    <!--这个放在最后一切平白安全-->
+    <script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+    <style>
+        .type1,.type2,.type3,.type4{  display: none;}
+        .parameter{overflow: hidden;}
+        .parameter>input:nth-child(1){width: 50%;float: left;}
+        .parameter>input:nth-child(2){width: 50%;float: left;}
+        .parameter+.parameter{margin-top: 5px;}
+    </style>
+</head>
+<body class="nav-md" style="min-width: 800px">
+<div>
+    <div class="container xc_edit_from" >
+        <div class="main_container" style="overflow-x: hidden;min-height: calc(100vh - 20px);;background-color: white;width: 100%;">
+            <div class="col-md-12 col-xs-12">
+                <div class="x_panel">
+                    {template 'mymanage/webconfig/nav3'}
+                    <div class="x_content">
+                        <br/>
+                        <form class="form-horizontal" role="form" method="post" action="" name="submit" style="padding: 20px 0;">
+                            <input type="hidden" name="xkey" value="{$xkey}">
+                            <input type="hidden" name="xc[recharge]">
+                            <input type="hidden" name="xc[level]">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">会员卡（未激活）</label>
+                                <div class="col-sm-8">
+                                    {php echo tpl_form_field_image('xc[card]',$xc['card']);}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">会员卡（已激活）</label>
+                                <div class="col-sm-8">
+                                    {php echo tpl_form_field_image('xc[card_on]',$xc['card_on']);}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">会员卡使用须知</label>
+                                <div class="col-sm-8">
+                                    <textarea rows="10" class="form-control" name="xc[card_rules]">{$xc['card_rules']}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">验证码功能</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" class="js-switch" value="1" name="xc[code_status]"
+                                           data-value="{$xc['code_status']}" data-field="status" onchange="smsChange();" />
+                                </div>
+                            </div>
+                            <div class="code_status">
+                                <div class="form-group verification">
+                                    <label  class="col-sm-2 control-label">验证码短信接口</label>
+                                    <div class="col-sm-8">
+                                        <label class="radio inline">
+                                            <input type="radio" class="ui-radio" name="xc[type]" id="type1" value="1" {if $xc['type']==1}checked{/if}>阿里云
+                                        </label>
+                                        <label class="radio inline">
+                                            <input type="radio" class="ui-radio" name="xc[type]" id="type2" value="2" {if $xc['type']==2}checked{/if}>聚合数据
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group type1">
+                                    <label  class="col-sm-2 control-label">AccessKeyId</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control"  name="xc[AccessKeyId]" id="AccessKeyId" value="{$xc['AccessKeyId']}">
+                                    </div>
+                                </div>
+                                <div class="form-group type1">
+                                    <label  class="col-sm-2 control-label">AccessKeySecret</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control"  name="xc[AccessKeySecret]" id="AccessKeySecret" value="{$xc['AccessKeySecret']}">
+                                    </div>
+                                </div>
+                                <div class="form-group type1">
+                                    <label  class="col-sm-2 control-label">短信签名</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control"  name="xc[sign]" id="sign" value="{$xc['sign']}">
+                                    </div>
+                                </div>
+                                <div class="form-group type1">
+                                    <label  class="col-sm-2 control-label">模版CODE</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control"  name="xc[code]" id="code" value="{$xc['code']}">
+                                        <span class="help-block">模板变量：验证码为${code}</span>
+                                    </div>
+                                </div>
+                                <div class="form-group type2">
+                                    <label  class="col-sm-2 control-label">APPKEY</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control"  name="xc[key]" id="key" value="{$xc['key']}">
+                                    </div>
+                                </div>
+                                <div class="form-group type2">
+                                    <label  class="col-sm-2 control-label">短信模板ID</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control"  name="xc[tpl_id]" id="tpl_id" value="{$xc['tpl_id']}">
+                                        <span class="help-block">模板变量：验证码为#code#</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">充值选项</label>
+                                <div class="col-sm-8">
+                                    {if $xc['recharge']}
+                                    {loop $xc['recharge'] $index $item}
+                                    <div class="input-group parameter">
+                                        <input type="text" class="form-control" name="r_price" value="{$item['r_price']}" placeholder="充值价格">
+                                        <input type="text" class="form-control" name="g_price" value="{$item['g_price']}" placeholder="赠送价格">
+                        <span class="input-group-btn" onclick="parameter.parameter_add(this)">
+                            <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>
+                        </span>
+                        <span class="input-group-btn" onclick="parameter.parameter_del(this)">
+                            <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>
+                        </span>
+                                    </div>
+                                    {/loop}
+                                    {else}
+                                    <div class="input-group parameter">
+                                        <input type="text" class="form-control" name="r_price" value="" placeholder="充值价格">
+                                        <input type="text" class="form-control" name="g_price" value="" placeholder="赠送价格">
+                        <span class="input-group-btn" onclick="parameter.parameter_add(this)">
+                            <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>
+                        </span>
+                        <span class="input-group-btn" onclick="parameter.parameter_del(this)">
+                            <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>
+                        </span>
+                                    </div>
+                                    {/if}
+                                </div>
+                            </div>
+                            <script>
+                                var parameter={
+                                    parameter_add:function(objc){
+                                        $(objc).parent().after('<div class="input-group parameter"> ' +
+                                                '<input type="text" class="form-control" name="r_price" value="" placeholder="充值价格"> ' +
+                                                '<input type="text" class="form-control" name="g_price" value="" placeholder="赠送价格"> ' +
+                                                '<span class="input-group-btn" onclick="parameter.parameter_add(this)"> ' +
+                                                '<button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button> ' +
+                                                '</span> ' +
+                                                '<span class="input-group-btn" onclick="parameter.parameter_del(this)"> ' +
+                                                '<button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button> ' +
+                                                '</span> ' +
+                                                '</div>');
+                                    },
+                                    parameter_del:function(objc){
+                                        if($(objc).parent().siblings().length>0){
+                                            $(objc).parent().remove();
+                                        }
+                                    }
+                                }
+                            </script>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">提现功能</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" class="js-switch" value="1" name="xc[withdraw]"
+                                           data-value="{$xc['withdraw']}" data-field="status" onchange="cardChange();" />
+                                </div>
+                            </div>
+                            <div class="form-group withdraw_status">
+                                <label class="col-sm-2 control-label">起提金额</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="xc[withdraw_amount]" id="withdraw_amount" value="{$xc['withdraw_amount']}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">积分功能</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" class="js-switch" value="1" name="xc[score_status]"
+                                           data-value="{$xc['score_status']}" data-field="status" onchange="cardChange();" />
+                                </div>
+                            </div>
+                            <div class="score_status">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">积分图标(50*50)</label>
+                                    <div class="col-sm-8">
+                                        {php echo tpl_form_field_image('xc[score_icon]',$xc['score_icon']);}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">积分获得</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">实付金额</button>
+                        </span>
+                                            <input type="text" class="form-control" placeholder="单位（元）" name="xc[score_attr]" value="{$xc['score_attr']}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">元倍数 获</button>
+                        </span>
+                                            <input type="text" class="form-control" name="xc[score_value]" value="{$xc['score_value']}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">积分</button>
+                        </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">积分同步</label>
+                                    <div class="col-sm-8">
+                                        {if $xc['tong_bu']==1}
+                                        <button class="btn btn-default tong_bu_jie" type="button">解除同步</button>
+                                        {else}
+                                        <button class="btn btn-default tong_bu" type="button" data-status="-1">清空同步</button>
+                                        <button class="btn btn-default tong_bu" type="button" data-status="1">转移同步</button>
+                                        {/if}
+                                        <input type="hidden" name="xc[tong_bu]" value="{$xc['tong_bu']}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">折扣功能</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" class="js-switch" value="1" name="xc[discount_status]"
+                                           data-value="{$xc['discount_status']}" data-field="status" onchange="cardChange();" />
+                                </div>
+                            </div>
+                            <div class="discount_status">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">折扣图标(50*50)</label>
+                                    <div class="col-sm-8">
+                                        {php echo tpl_form_field_image('xc[discount_icon]',$xc['discount_icon']);}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">折扣</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="xc[discount]" value="{$xc['discount']}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">折</button>
+                        </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">生日功能</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" class="js-switch" value="1" name="xc[birth_status]"
+                                           data-value="{$xc['birth_status']}" data-field="status" onchange="cardChange();" />
+                                </div>
+                            </div>
+                            <div class="birth_status">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">生日提醒功能</label>
+                                    <div class="col-sm-8">
+                                        <input type="checkbox" class="js-switch" value="1" name="xc[birth_notice_status]"
+                                               data-value="{$xc['birth_notice_status']}" data-field="status" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">生日提醒时间</label>
+                                    <div class="col-sm-8">
+                                        {php echo tpl_form_field_clock('xc[birth_notice_time]',$xc['birth_notice_time']);}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">生日礼包</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group ">
+                                            <input type="hidden" name="xc[birth_id]" value="{$xc['birth_id']}">
+                                            <input type="text" class="form-control"  name="xc[birth_name]" value="{$xc['birth_name']}" readonly>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default link" type="button" data-toggle="modal" data-target="#sort_link">选择礼包</button>
+                                        </span>
+                                        </div>
+                                        <span class="help-block">会员等级关闭时生效</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">会员等级功能</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" class="js-switch" value="1" name="xc[level_status]"
+                                           data-value="{$xc['level_status']}" data-field="status" onchange="cardChange();" />
+                                </div>
+                            </div>
+                            <div class="form-group level_status">
+                                <label class="col-sm-2 control-label">会员等级</label>
+                                <div class="col-sm-8">
+                                    {if $xc['level']}
+                                    {loop $xc['level'] $index $item}
+                                    <div class="input-group level">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button">名称</button>
+                                        </span>
+                                        <input type="text" class="form-control" name="level_name" value="{$item['name']}" placeholder="等级名称">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button">折扣</button>
+                                        </span>
+                                        <input type="text" class="form-control" name="level_price" value="{$item['price']}" placeholder="会员折扣">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button">消费金额</button>
+                                        </span>
+                                        <input type="text" class="form-control" name="level_amount" value="{$item['amount']}" placeholder="消费金额">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button">生日礼包</button>
+                                        </span>
+                                        <input type="hidden" name="level_birth" value="{$item['birth']}">
+                                        <input type="text" class="form-control" name="level_birth_name" value="{$item['birth_name']}" readonly placeholder="">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default link" type="button" data-toggle="modal" data-target="#sort_link">选择</button>
+                                        </span>
+                                        <span class="input-group-btn" onclick="level.level_add(this)">
+                                            <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>
+                                        </span>
+                                        <span class="input-group-btn" onclick="level.level_del(this)">
+                                            <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>
+                                        </span>
+                                    </div>
+                                    {/loop}
+                                    {else}
+                                    <div class="input-group level">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button">名称</button>
+                                        </span>
+                                        <input type="text" class="form-control" name="level_name" placeholder="等级名称">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button">折扣</button>
+                                        </span>
+                                        <input type="text" class="form-control" name="level_price" placeholder="会员折扣">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button">消费金额</button>
+                                        </span>
+                                        <input type="text" class="form-control" name="level_amount" placeholder="消费金额">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button">生日礼包</button>
+                                        </span>
+                                        <input type="hidden" name="level_birth" value="">
+                                        <input type="text" class="form-control" name="level_birth_name" value="" readonly placeholder="">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default link" type="button" data-toggle="modal" data-target="#sort_link">选择</button>
+                                        </span>
+                                        <span class="input-group-btn" onclick="level.level_add(this)">
+                                            <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>
+                                        </span>
+                                        <span class="input-group-btn" onclick="level.level_del(this)">
+                                            <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>
+                                        </span>
+                                    </div>
+                                    {/if}
+                                </div>
+                            </div>
+                            <script>
+                                var level={
+                                    level_add:function(objc){
+                                        $(objc).parent().after('<div class="input-group level">' +
+                                                '<span class="input-group-btn">' +
+                                                '<button class="btn btn-default" type="button">名称</button>' +
+                                                '</span><input type="text" class="form-control" name="level_name" placeholder="等级名称">' +
+                                                '<span class="input-group-btn">' +
+                                                '<button class="btn btn-default" type="button">折扣</button>' +
+                                                '</span><input type="text" class="form-control" name="level_price" placeholder="会员折扣">' +
+                                                '<span class="input-group-btn">' +
+                                                '<button class="btn btn-default" type="button">消费金额</button>' +
+                                                '</span><input type="text" class="form-control" name="level_amount" placeholder="消费金额">' +
+                                                '<span class="input-group-btn">' +
+                                                '<button class="btn btn-default" type="button">生日礼包</button>' +
+                                                '</span>' +
+                                                '<input type="hidden" name="level_birth" value="">' +
+                                                '<input type="text" class="form-control" name="level_birth_name" value="" readonly placeholder="">' +
+                                                '<span class="input-group-btn">' +
+                                                '<button class="btn btn-default link" type="button" data-toggle="modal" data-target="#sort_link">选择</button>' +
+                                                '</span>' +
+                                                '<span class="input-group-btn" onclick="level.level_add(this)">' +
+                                                '<button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>' +
+                                                '</span>' +
+                                                '<span class="input-group-btn" onclick="level.level_del(this)">' +
+                                                '<button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>' +
+                                                '</span>' +
+                                                '</div>');
+                                    },
+                                    level_del:function(objc){
+                                        if($(objc).parent().siblings().length>0){
+                                            $(objc).parent().remove();
+                                        }
+                                    }
+                                }
+                            </script>
+                            <div class="form-group xc_btn_row">
+                                <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-5 col-sm-offset-5  col-md-xs-5 ">
+                                    <input type="button" name="submit" class="btn btn-default" value="提交">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="modal fade" id="giveBox">
+    <div class="modal-dialog">
+        <style>
+            #giveBox {height: 100%;padding: 0;}
+            #giveBox .modal-dialog {margin: 0;min-width: 100%;max-width: 100%;height: 100%;width: 100%;top: 0;}
+            #giveBox .modal-dialog .modal-content {max-width: 100%;max-height: 100%;height: 100%;}
+            #giveBox .modal-body {padding: 0 15px;}
+            #giveBox #giveBoxTab {margin-bottom: 10px;}
+            #giveBox .modal-footer {position: absolute;bottom: 0;left: 0;width: 100%;}
+        </style>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-dismiss="modal" class="close" type="button">×</button>
+                <h4 class="modal-title">生日礼包</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" id="giveBoxTab">
+                    <li role="presentation" class="active"><a href="#birth">生日礼包</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="birth">
+                        <iframe width="100%" style="height: 75vh;" frameborder="no" scrolling="no" allowtransparency="yes" src="{php echo $this->createWebUrl('link',array('op'=>'birth'));}"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+            </div>
+            <script>
+                $(function () {
+                    $("#giveBox").find('#giveBoxTab a').click(function (e) {
+                        var id = $(this).attr("href");
+                        $(this).parent().addClass("active").siblings().removeClass("active");
+                        $(id).addClass("active").siblings().removeClass("active");
+                        if($(id).find("iframe").attr("src")==""){
+                            $(id).find("iframe").attr("src",$(id).find("iframe").attr("data-link"));
+                        }
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</div>
+{template 'common/editfoot'}
+<script>
+    var obj="";
+    $(function(){
+        smsChange();
+        cardChange();
+        //短信验证
+        $("input[name='xc[type]']").change(function(){
+            smsChange();
+        });
+        $("input[name='submit']").click(function(){
+            getjson();
+            getjson2();
+            var data=$(".form-horizontal").serialize();
+            $.ajax({
+                type:"post",
+                url:"{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'card_save','version_id'=>$_GPC['version_id'])}",
+                data:data,
+                dataType:'json',
+                success:function(res){
+                    if(res.status==1){
+                        swal('操作成功!', '操作成功!', 'success');
+                    }else{
+                        swal('操作失败!', '操作失败!', 'error');
+                    }
+                }
+            })
+        });
+        $("body").on('click','.tong_bu',function(){
+            var status=$(this).attr("data-status");
+            var that=this;
+            swal('同步中...', '请不要跳转', '');
+            $.ajax({
+                type:"post",
+                url:"{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'tong_bu','version_id'=>$_GPC['version_id'])}",
+                data:{status:status},
+                dataType:'json',
+                success:function(res){
+                    if(res.status==1){
+                        swal('同步成功!', '同步成功!', 'success');
+                        $(that).parent().append('<button class="btn btn-default tong_bu_jie" type="button">解除同步</button>');
+                        $(that).parent().find(".tong_bu").remove();
+                        $("input[name='xc[tong_bu]']").val(1);
+                    }else{
+                        swal('同步失败!', '同步失败!', 'success');
+                    }
+                }
+            });
+        });
+        $("body").on('click','.tong_bu_jie',function(){
+            var that=this;
+            $.ajax({
+                type:"post",
+                url:"{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'tong_bu_jie','version_id'=>$_GPC['version_id'])}",
+                data:{status:status},
+                dataType:'json',
+                success:function(res){
+                    if(res.status==1){
+                        swal('解除成功!', '解除成功!', 'success');
+                        $(that).parent().append('<button class="btn btn-default tong_bu" type="button" data-status="-1">清空同步</button><button class="btn btn-default tong_bu" type="button" data-status="1">转移同步</button>');
+                        $(that).parent().find(".tong_bu_jie").remove();
+                        $("input[name='xc[tong_bu]']").val(-1);
+                    }else{
+                        swal('解除失败!', '解除失败!', 'success');
+                    }
+                }
+            });
+        });
+        $(".link").click(function(){
+            obj=this;
+            $('#giveBox').modal('show');
+        });
+    });
+    function getjson(){
+        var recharge=[];
+        $("body").find(".parameter").each(function(){
+            var r_price=$(this).find("input[name='r_price']").val();
+            var g_price=$(this).find("input[name='g_price']").val();
+            if(r_price!=""){
+                var data={};
+                data.r_price=r_price;
+                data.g_price=g_price;
+                recharge.push(data);
+            }
+        });
+        if(recharge.length>0){
+            $("input[name='xc[recharge]']").val(JSON.stringify(recharge));
+        }
+    }
+    function getjson2(){
+        var level=[];
+        $("body").find(".level").each(function(){
+            var name=$(this).find("input[name='level_name']").val();
+            var price=$(this).find("input[name='level_price']").val();
+            var amount=$(this).find("input[name='level_amount']").val();
+            var birth=$(this).find("input[name='level_birth']").val();
+            var birth_name=$(this).find("input[name='level_birth_name']").val();
+            if(name!="" && price!="" && amount!="" && amount!=null){
+                var data={};
+                data.name=name;
+                data.price=price;
+                data.amount=amount;
+                data.birth=birth;
+                data.birth_name=birth_name;
+                level.push(data);
+            }
+        });
+        if(level.length>0){
+            $("input[name='xc[level]']").val(JSON.stringify(level));
+        }
+    }
+
+    function smsChange(){
+        if($("input[name='xc[code_status]']").is(":checked")){
+            $(".code_status").show();
+            if($("#type1").is(":checked")){
+                $(".type1").show();
+                $(".type4").show();
+            }else{
+                $(".type1").hide();
+            }
+            if($("#type2").is(":checked")){
+                $(".type2").show();
+                $(".type4").show();
+            }else{
+                $(".type2").hide();
+            }
+        }else{
+            $(".code_status").hide();
+        }
+    }
+
+    function cardChange(){
+        if($("input[name='xc[level_status]']").is(":checked")){
+            $(".level_status").show();
+        }else{
+            $(".level_status").hide();
+        }
+        if($("input[name='xc[birth_status]']").is(":checked")){
+            $(".birth_status").show();
+        }else{
+            $(".birth_status").hide();
+        }
+        if($("input[name='xc[discount_status]']").is(":checked")){
+            $(".discount_status").show();
+        }else{
+            $(".discount_status").hide();
+        }
+        if($("input[name='xc[score_status]']").is(":checked")){
+            $(".score_status").show();
+        }else{
+            $(".score_status").hide();
+        }
+        if($("input[name='xc[withdraw]']").is(":checked")){
+            $(".withdraw_status").show();
+        }else{
+            $(".withdraw_status").hide();
+        }
+    }
+</script>
+</body>
+</html>

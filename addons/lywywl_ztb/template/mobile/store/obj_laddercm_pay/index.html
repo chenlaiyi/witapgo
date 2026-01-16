@@ -1,0 +1,457 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<style>
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {position: static}
+</style>
+<body class="bgf2">
+<section class="rel" style="height: 1.08rem;">
+    <h2 class="screen fn font28 bgfff" style=" position: fixed;z-index: 10;width: 100%;">
+        <dl class="retrie">
+            <dt class="bor_b pd0_24">
+                {if $objModel['is_fedex']==0}
+                <a id="writeoff" href="javascript:;" style="width:auto!important; float:right !important"><i class="sortIconI"></i> 核销 </a>
+                {/if}
+                <a id="filter" href="javascript:;" style="width:auto!important">筛选<i class="sortIconI"></i> </a>
+            </dt>
+            <dd class="default">
+                <form>
+                    <!--筛选弹出层-->
+                    <section class="interal_filter downlist">
+                        <ul class="form">
+                            <li><span>用户信息：</span><section><input type="text" placeholder="OPENID" id="searchKey" value="{$openid}"></section></li>
+                            <li><span>核销状态：</span><section >
+                                <p class="select_box rel">
+                                    <select id="searchStatus">
+                                        <option value="" selected="selected">请选择</option>
+                                        <option value="0">未核销</option>
+                                        <option value="1">已核销</option>
+                                    </select>
+                                </p>
+                            </section></li>
+                            {if $config['store_settlement_types'] == 1}
+                            <li><span>结算状态：</span><section >
+                                <p class="select_box rel">
+                                    <select id="searchSettlement">
+                                        <option value="" selected="selected">请选择</option>
+                                        <option value="0">未结算</option>
+                                        <option value="1">已结算</option>
+                                    </select>
+                                </p>
+                            </section></li>
+                            {/if}
+                            <li><span>邀 请 人：</span><section><input type="text" placeholder="邀请人OPENID" id="searchShareOpenid"></section></li>
+                            <li><span>支付编号：</span><section><input type="text" placeholder="购买订单支付编号" id="searchPaynumber"></section></li>
+                        </ul>
+                        <section class="retrieval mt24 clearfix">
+                            <button type="reset" class="recharge_but font32"> 重置</button>
+                            <button type="button" class="submit_but font32" id="btnSearch"> 搜索</button>
+                        </section>
+                    </section>
+                </form>
+                <form>
+                    <!--核销弹出层-->
+                    <section class="interal_filter writelist">
+                        <ul class="form">
+                            <li><span>核 销 码：</span><section><input type="text" placeholder="请输入用户提供的核销码" id="writeKey" value=""></section></li>
+                        </ul>
+                        <section class="retrieval mt24 clearfix">
+                            <button type="reset" class="recharge_but font32"> 重置</button>
+                            <button type="button" class="submit_but font32" id="btnWrite"> 核销</button>
+                        </section>
+                    </section>
+                </form>
+            </dd>
+        </dl>
+    </h2>
+</section>
+<section class=" bgfff clearfix">
+    <ul class="leiji">
+        <li class="bor_r bor_b"><h4 class="fn font26">购买数量</h4><p class="font34 mt20">{$total}个</p></li>
+        <li class="bor_b"><h4 class="fn font26">微信支付</h4><p class="font34 mt20">{$wxpaytotal}元</p></li>
+        <li class="bor_r bor_b"><h4 class="fn font26">余额支付</h4><p class="font34 mt20">{$syspaytotal}元</p></li>
+        <li class="bor_b"><h4 class="fn font26">支付金额</h4><p class="font34 mt20">{php echo ($wxpaytotal+$syspaytotal)}元</p></li>
+        {if $config['store_settlement_types'] == 1}
+        <li class="bor_r bor_b"><h4 class="fn font26">已结金额</h4><p class="font34 mt20">{$settlementtotal}元</p></li>
+        <li class="bor_b"><h4 class="fn font26">待结金额</h4><p class="font34 mt20">{php echo ($endmoneytotal - $settlementtotal)}元</p></li>
+        {/if}
+    </ul>
+</section>
+<section class="mt24" id="ContentList">
+    <ul class="mtaff lottery" id="LoadLists">
+
+    </ul>
+</section>
+<section class="h24"></section>
+<section class="buttonBox">
+    <section class="buttonFloat">
+        <a href="{php echo $this->createMobileUrl('store.obj_activity',array('act'=>'index'))}" class="db font32 yellowBtn" style="background: #FFD112;">活动列表</a>
+    </section>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="infotpl" type="text/html">
+    <section class="pd24">
+        <ul class="font30" style="line-height: 0.64rem;">
+            <li class="clearfix"><span class="fr font28"><%= openid %></span><span class="font28">购买用户OPENID：</span></li>
+            <li class="clearfix"><span class="fr font28"><%= nickname %></span><span class="font28">购买用户昵称：</span></li>
+            <%if(pay_openid!=""){%>
+            <li class="clearfix"><span class="fr font28"><%= pay_openid %></span><span class="font28">邀请人OPENID：</span></li>
+            <li class="clearfix"><span class="fr font28"><%= pay_nickname %></span><span class="font28">邀请人昵称：</span></li>
+            <%}%>
+            <li class="clearfix"><span class="fr font28"><%= pay_number %></span><span class="font28">支付编号：</span></li>
+            <li class="clearfix"><span class="fr font28"><%= paymoney %>元</span><span class="font28">微信支付：</span></li>
+            <li class="clearfix"><span class="fr font28"><%= mymoney %>元</span><span class="font28">余额抵扣：</span></li>
+            <li class="clearfix"><span class="fr font28"><%= endmoney %>元</span><span class="font28">结算金额：</span></li>
+            <li class="clearfix">
+                <%if(is_settlement==0){%>
+                <span class="fr font28 main_red">未结算</span>
+                <%}else{%>
+                <span class="fr font28 main_green">已结算</span>
+                <%}%>
+                <span class="font28">结算状态：</span></li>
+            <li class="clearfix">
+                <%if(status==0){%>
+                <span class="fr font28 main_red">待核销</span>
+                <%}else{%>
+                <span class="fr font28 main_green">已核销</span>
+                <%}%>
+                <span class="font28">核销状态：</span></li>
+            <%if(writeoff_types==1){%>
+            <li class="clearfix"><span class="fr font28"><%= ordernumber %></span><span class="font28">发货编号：</span></li>
+            <%}%>
+            <li class="clearfix"><span class="fr font28"><%= admins %></span><span class="font28">核销员工：</span></li>
+            <li class="clearfix">
+                <span class="fr font28">
+                    <%if(status==1){%>
+                        <%= updatetime %>
+                    <%}%>
+            </span>
+                <span class="font28">核销时间：</span>
+            </li>
+            <li class="clearfix"><span class="fr font28" style="width:6.72rem; text-align: right"><%= register_data %></span><span class="font28">登记信息：</span></li>
+            <li class="clearfix"><span class="fr font28"><%= createtime %></span><span class="font28">购买时间：</span></li>
+        </ul>
+        <section class="buttonFloat"><a href="javascript:;" class="db font32 yellowBtn" style="background: #FFD112;" onclick="closeWindows();">返回</a></section>
+    </section>
+</script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li data-json="<%= toJsonStr(rows[i]) %>">
+        <section class="get_time bor_b"><span class="font26 c9">购买时间：<%= rows[i].createtime %></span>
+            <%if(rows[i].status==0){%>
+            <span class="fr font28 main_red">待核销</span>
+            <%}else{%>
+            <span class="fr font28 main_green">已核销</span>
+            <%}%>
+        </section>
+        <section class="staff_info" style="padding-bottom: 0.64rem">
+            <section class="info_box">
+                <img class="tx" src="<%= rows[i].headurl %>" alt="<%= rows[i].nickname %>">
+                <figcaption class="font18 tc"><%= rows[i].nickname %></figcaption>
+            </section>
+            <h2 class="fn clearfix"><span class="mr10"><%= rows[i].paynumber %> <%= rows[i].endmoney %>元</span></h2>
+            <p>OPENID：<%= rows[i].openid %></p>
+        </section>
+        <%if(rows[i].pay_openid!=""){%>
+        <section class="hexiao_centre">
+            <section class="user_info" style="margin-top: inherit;"><img src="<%= rows[i].pay_headurl %>" alt="<%= rows[i].pay_nickname %>">
+                <p class="font24 c6">邀请人：<%= rows[i].pay_nickname %></p>
+                <p class="font24 c9">OPENID：<%= rows[i].pay_openid %></p>
+            </section>
+        </section>
+        <%}%>
+    </li>
+    <% } %>
+</script>
+<script>
+    $(function () {
+        //点击筛选
+        $('#filter').click(function(){
+            var $filter = $(this);
+            if($filter.hasClass('up')){
+                $filter.removeClass('up');
+                $('.downlist').hide();
+            }else{
+                $filter.addClass('up');
+                $('.downlist').show();
+            }
+        });
+
+        //点击筛选
+        $('#writeoff').click(function(){
+            var $writeoff = $(this);
+            if($writeoff.hasClass('up')){
+                $writeoff.removeClass('up');
+                $('.writelist').hide();
+            }else{
+                $writeoff.addClass('up');
+                $('.writelist').show();
+            }
+        });
+
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //artTemplate扩展方法 json对象转json字符串
+        template.helper("toJsonStr", function(jsonObj) {
+            return JSON.stringify(jsonObj);
+        });
+
+        //点击搜索
+        $('#btnSearch').click(function() {
+            //隐藏筛选弹框
+            $('#filter').removeClass('up');
+            $('.downlist').hide();
+
+            //筛选参数
+            window.searchKey = $('#searchKey').val();
+            window.searchShareOpenid = $('#searchShareOpenid').val();
+            window.searchPaynumber = $('#searchPaynumber').val();
+            window.searchStatus = $('#searchStatus').val();
+            window.searchSettlement = $('#searchSettlement').val();
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.obj_laddercm_pay', array('act' => 'getJsonList','aid' => $aid,'share_openid' => $share_openid));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "openid":window.searchOpenid,
+                                "share_openid":window.searchShareOpenid,
+                                "status":window.searchStatus,
+                                "is_settlement":window.searchSettlement,
+                                "key":window.searchKey
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                window.delCount = 0;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false);
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var result = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.obj_laddercm_pay', array('act' => 'getJsonList','aid' => $aid,'share_openid' => $share_openid));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "openid":window.searchOpenid,
+                                "share_openid":window.searchShareOpenid,
+                                "status":window.searchStatus,
+                                "is_settlement":window.searchSettlement,
+                                "key":window.searchKey
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    threshold : 50
+                });
+            }
+
+        }).trigger("click");
+
+        //绑定详情
+        $('#LoadLists').on('click','li',function(){
+            var json = $(this).data('json');
+            var html = template("infotpl", json);
+            layer.open({
+                type: 1
+                ,content: html
+                ,anim: 'up'
+                ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+            });
+            scroll.afterOpen();
+            //清空浏览器历史记录
+            window.history.pushState({title: "title",url:"#"}, "title", "#");
+            //监听浏览器后退事件
+            window.addEventListener("popstate",
+                function(e) {
+                    //后退关闭弹窗
+                    closeWindows();
+                }, false);
+        });
+
+        //点击核销
+        $('#btnWrite').click(function() {
+            //隐藏筛选弹框
+            $('#writeoff').removeClass('up');
+            $('.writelist').hide();
+
+            var writeoffcode=$("#writeKey").val();
+            if(typeof writeoffcode == "undefined" || writeoffcode == null || writeoffcode == ""){
+                layer.open({
+                    content: '请输入有效的奖品核销码！'
+                    ,skin: 'msg'
+                    ,time: 2 //2秒后自动关闭
+                });
+                return false;
+            }
+            $.ajax({
+                type: "post",
+                url: "{php echo $this->createMobileUrl('store.obj_laddercm_pay', array('act' => 'writeOff','aid' => $aid));}",
+                data: {code: writeoffcode},
+                dataType:'json',
+                beforeSend: function (XHR) {
+                    //loading带文字
+                    layer.open({
+                        type: 2
+                        , content: '数据验证中，请耐心等待！'
+                        ,shadeClose:false
+                    });
+                },
+                success: function (result, status) {
+                    if (result.status === 1) {
+                        var html = "<img src='"+result.pic_url+"' style='max-width: 150px;max-height: 150px;' alt=''><br/><span>"+result.name+"</span>";
+                        if (result.is_expires == 1) {
+                            html = html + "<br/><span style='color: #dd4b39;'>已超过有效期："+ result.expires_time +"，请谨慎操作！</span>";
+                        }
+                        layer.open({
+                            title: [
+                                "核销商品信息",
+                                'background-color:#fee002; color:#000;'
+                            ],
+                            content: html,
+                            btn: ['核销','取消'],
+                            yes:function (index) {
+                                $.ajax({
+                                    url: "{php echo $this->createMobileUrl('store.obj_laddercm_pay',array('act'=>'confirmWriteOff','aid' => $aid))}",
+                                    type: "post",
+                                    dataType: "json",
+                                    data: {code: writeoffcode},
+                                    success: function (result) {
+                                        if (result.status === 1) {
+                                            layer.closeAll();
+                                            layer.open({content: result.msg,skin: 'msg',time: 2});
+                                            setTimeout(function () {window.location.reload();}, 2000);
+                                        } else {
+                                            layer.closeAll();
+                                            layer.open({content: result.msg,skin: 'msg',time: 2});
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }else {
+                        layer.closeAll();
+                        layer.open({content: result.msg,skin: 'msg',time: 2 //2秒后自动关闭
+                        });
+                    }
+                }
+            });
+        });
+    });
+
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+
+    //关闭关闭弹窗
+    function closeWindows(){
+        layer.closeAll();
+        scroll.beforeClose();
+    }
+</script>
+</body>
+</html>

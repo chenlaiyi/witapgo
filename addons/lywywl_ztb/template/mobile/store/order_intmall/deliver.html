@@ -1,0 +1,22 @@
+<!--中心区域-->
+<section class="fahuo">
+    <ul>
+        <li>
+            <h2 class="fn font32">发货快递公司</h2>
+            <section class="rel">
+                <select class="select" id="fedex_id">
+                    <option value="0" data-code="">上门服务</option>
+                    {loop $fedexList $fedex}
+                    <option value="{$fedex['id']}" data-code="{$fedex['code']}">{$fedex['name']}</option>
+                    {/loop}
+                </select>
+                <i class="arrow"></i></section>
+        </li>
+        <li>
+            <h2 class="fn font32">快递单号</h2>
+            <input type="hidden" id="fedex_ordernumber" value="{$model['ordernumber']}">
+            <input class="regInput font32" type="text" id="fedex_number" placeholder="请输入快递单号 上门服务可不填写！">
+        </li>
+    </ul>
+    <button type="" class="buttonFloat font32" id="fedexBtn">确认发货</button>
+</section>

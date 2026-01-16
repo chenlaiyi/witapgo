@@ -1,0 +1,393 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name = "format-detection" content ="telephone=no">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>{$title}</title>
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_TMP_CSS__}/base.css?v=20200331">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_PLUGIN__}/home/css/index.css?v=20200219">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_CSS__}/swiper.min.css">
+    <!-- 移动端适配 -->
+    <script>
+        var html = document.querySelector('html');
+        changeRem();
+        window.addEventListener('resize', changeRem);
+
+        function changeRem() {
+            var width = html.getBoundingClientRect().width;
+            html.style.fontSize = width / 10 + 'px';
+        }
+    </script>
+    <script src="{__MOBILE_USER_JS__}/jquery-2.1.4.min.js"></script>
+    <script src="{__MOBILE_USER_JS__}/jquery.flexslider-min.js"></script>
+    <script src="{__PLUGIN__}/layer/mobile/2.0/layer.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script>
+        // jssdk config 对象
+        jssdkconfig = {php echo json_encode($_W['account']['jssdkconfig']);} || {};
+        // 是否启用调试
+        jssdkconfig.debug = false;
+        jssdkconfig.jsApiList = [
+            'checkJsApi',
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'getLocation',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'hideMenuItems'
+        ];
+        wx.config(jssdkconfig);
+        wx.error(function (res) {
+            layer.open({ content: '对不起，微信JSSDK信息验证失败！', skin: 'msg', time: 2 });
+        });
+        wx.ready(function () {
+            var title = "{php echo replaceShareInfo($config['share_title'])}";
+            var imgUrl = "{php echo $config['share_thumb'] ? tomedia($config['share_thumb']) : getMemberAvatar()}";
+            var link = "{php echo replaceDieDomain($config, __MURL('user.home_activity', array('act' => 'index'), true, true),0,0,0);}";
+            var desc = "{php echo replaceShareInfo($config['share_desc'])}";
+
+            if (wx.onMenuShareTimeline) {
+                //转发到朋友圈
+                wx.onMenuShareTimeline({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                //转发给朋友
+                wx.onMenuShareAppMessage({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    type: 'link',
+                    dataUrl: '',
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareQQ({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareWeibo({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+            }
+            else{
+                //新版发送朋友圈
+                wx.updateTimelineShareData({
+                    title: title, // 分享标题
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+                wx.updateAppMessageShareData({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+            }
+        });
+    </script>
+    <link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+    <script src="{__MOBILE_STORE_JS__}/swiper.jquery.min.js"></script>
+    <link rel="stylesheet" href="{__PLUGIN__}/clipboard/clipboard.min.js">
+</head>
+<body>
+<section class="schAreaWrap" >
+    <section class="schArea clearfix">
+        <dl>
+            <dt><img src="{php echo tomedia($config['squarelogo'])}"></dt>
+            <dd>{$config['name']}</dd>
+        </dl>
+        <section class="schBox">
+            <input type="button" class="schBtn">
+            <input type="text" placeholder="搜索商家" class="schBox" id="schBox" value="">
+            </section>
+    </section>
+</section>
+<section class="qiehuan">
+    <h1 class="title01 fn">
+        <a href="javascript:void(0);" class="attrLi selected" data-rec="1">推荐商家</a>
+        <a href="javascript:void(0);" class="attrLi" data-rec="0">全部商家</a>
+    </h1>
+</section>
+<input type="hidden" id="recValue" value="0">
+
+<section class="pd24 bgfff ">
+    <!--活跃商家-->
+    <section class="shangJiaList" id="ContentList">
+        <ul id="LoadLists">
+
+        </ul>
+    </section>
+</section>
+
+<!--底部导航-->
+<footer class="clearfix">
+    <section>
+        <ul>
+            {if $is_show_activity == 1}
+            <li style="width:{$navWidth}%;"><a href="{php echo $this->createMobileUrl('user.home_activity',array('act'=>'index'))}"><img src="{php echo tomedia(getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_activity_icon'))}">
+                <h4 class="fn">{php echo getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_activity_name')}</h4></a>
+            </li>
+            {/if}
+            {if $is_show_nearby == 1}
+            <li style="width:{$navWidth}%;"><a href="{php echo $this->createMobileUrl('user.home_nearby',array('act'=>'index'))}"><img src="{php echo tomedia(getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_nearby_icon'))}">
+                <h4 class="fn">{php echo getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_nearby_name')}</h4></a>
+            </li>
+            {/if}
+            {if $is_show_store == 1}
+            <li style="width:{$navWidth}%;"><a href="{php echo $this->createMobileUrl('user.home_store',array('act'=>'index'))}"><img src="{php echo tomedia(getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_store_onicon'))}">
+                <h4 class="fn">{php echo getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_store_name')}</h4></a>
+            </li>
+            {/if}
+            {if $is_show_join == 1}
+            <li style="width:{$navWidth}%;"><a href="{php echo $this->createMobileUrl('user.home_join',array('act'=>'index'))}"><img src="{php echo tomedia(getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_join_icon'))}">
+                <h4 class="fn">{php echo getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_join_name')}</h4></a>
+            </li>
+            {/if}
+        </ul>
+    </section>
+</footer>
+<section class="forceAttention" style="display:none;">
+    <section class="mask"></section>
+    <section class="attentionCon">
+        <section class="wechatInfo">
+            <h4>商家二维码</h4>
+            <section class="wechatCode"><img src="" id="QrImages"></section>
+            <p>长按识别图中二维码</p>
+            <section class="finger"><img src="{__MOBILE_TMP_IMG__}/finger.png"></section>
+        </section>
+        <img src="{__MOBILE_TMP_IMG__}/close.png" class="followClose"> </section>
+</section>
+
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li>
+        <div class="main">
+            <%if(rows[i].is_store_qr==1){%>
+            <span class="ewm"><img src="{__MOBILE_USER_PLUGIN__}/home/images/ewm.png" alt=""></span>
+            <span class="shangJia Qrcode" data-qr="<%=rows[i].store_qr%>"> <img src="<%=rows[i].store_logo%>" alt=""></span>
+            <%}else{%>
+            <span class="shangJia" > <img src="<%=rows[i].store_logo%>" alt=""></span>
+            <%}%>
+        </div>
+        <figure>
+            <figcaption class="font32"><a href="<%=rows[i].links%>"><%=rows[i].name%></a></figcaption>
+            <section class="font26">
+                <p class="c6 mt10 ">累计<span class=" c0"> <%=rows[i].count%> </span>个促销活动 <span class=" main_red"> <%=rows[i].going%> </span>个进行中</p>
+                <p class="c6 mt10 ">浏览：<em class="main_red "><%=rows[i].click%></em><span class="ml15">转发：<em class="main_red "><%=rows[i].repost%></em></span></p>
+                <p class="c9 mt10"><a href="<%=rows[i].links%>" style="width: 2.3rem;text-align: center;padding: 0.2rem 0;background: #fee002;position: absolute;bottom: 0;right: 0;border-radius: 0.66rem;font-size: 0.34rem;">查看详情</a></p>
+            </section>
+        </figure>
+    </li>
+    <% } %>
+</script>
+<script>
+    $(function(){
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //点击属性
+        $('.attrLi').click(function() {
+            $("#recValue").val($(this).data('rec'));
+            $(".attrLi").removeClass("selected");
+            $(this).addClass('selected');
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+
+            //artTemplate扩展方法 json对象转json字符串
+            template.helper("toJsonStr", function(jsonObj) {
+                return JSON.stringify(jsonObj);
+            });
+
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('user.home_store', array('act' => 'getJsonList'));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "is_vip":$("#recValue").val()
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                window.delCount = 0;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false);
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var result = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('user.home_store', array('act' => 'getJsonList'));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "is_vip":$("#recValue").val()
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    threshold : 50
+                });
+            }
+
+        });
+
+        $(".selected").trigger("click");
+
+        //点击搜索
+        $(".schBtn").click(function () {
+            var schValue = $("#schBox").val();
+            if(typeof schValue == "undefined" || schValue == null || schValue == ""){
+                layer.open({ content: '请输入要搜索的关键词！', skin: 'msg', time: 2 });
+                return false;
+            }else{
+                window.location.href="{php echo $this->createMobileUrl('user.home_sch_store',array('act'=>'index'))}&keyword="+schValue;
+            }
+        });
+
+        //查看二维码
+        $('#LoadLists').on('click','.Qrcode',function(){
+            var thisobj = $(this);
+            var imageurl = thisobj.attr("data-qr");
+            $("#QrImages").attr("src",imageurl);
+            setTimeout(function(){
+                $(".forceAttention").show();
+                $(".attentionCon").css("margin-top",($(window).height()-$(".attentionCon").height())/2+"px");
+            },200);
+        });
+        $(".forceAttention .followClose").click(function(e) {
+            $(".forceAttention").hide();
+        });
+
+    });
+
+    /**
+     * 处理iOS 微信客户端6.7.4 键盘收起页面未下移bug
+     */
+    if(/iphone|ipod|ipad/i.test(navigator.appVersion)){
+        document.addEventListener("blur", function(event) {
+            // 这里加了个类型判断，因为a等元素也会触发blur事件
+            if(['input', 'textarea'].includes(event.target.localName)){
+                document.body.scrollIntoView(false);
+            }
+        }, true);
+    }
+</script>
+</body>
+</html>

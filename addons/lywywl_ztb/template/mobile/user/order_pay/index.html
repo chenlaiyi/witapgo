@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'user/common/header'}
+<body>
+<!--支付-->
+<section class="pay_tit font28 c9">订单需支付</section>
+<section class="pay rel">
+    <img class=" mr10" src="{__MOBILE_USER_IMG__}/pay.png"  alt=""/>
+    <h2>积分已支付<em class="main_red"> {$orderIntmallModel['score']}</em></h2>
+    <p class="font24 c6">账户积分{$userModel['score']}</p>
+</section>
+{if $orderIntmallModel['sys_money']>0}
+<section class="pay rel">
+    <img class=" mr10" src="{__MOBILE_USER_IMG__}/yue.png"  alt=""/>
+    <h2>余额已抵扣<em class="main_red">￥{$orderIntmallModel['sys_money']}</em></h2>
+    <p class="font24 c6">账户余额{$userModel['money']}</p>
+</section>
+{/if}
+{if $orderIntmallModel['pay_money']>0}
+<section class="pay rel" id="wxPay">
+    <img class=" mr10" src="{__MOBILE_USER_IMG__}/weixin.png"  alt=""/>
+    <h2>微信需支付<em class="main_red">￥{$orderIntmallModel['pay_money']}</em></h2>
+    <p class="font24 c6">&nbsp;</p>
+</section>
+{/if}
+<section class="pay_submit">
+    <input id="submit" type="button" class="button" value="确认支付"/>
+</section>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+<script type="text/javascript">
+    $('#submit').click(function(){
+        $.ajax({
+            url: "{php echo $this->createMobileUrl('user.order_pay',array('act'=>'getPayNumber','store_id'=>$store_id))}",
+            type: "post",
+            dataType: "json",
+            data: {ordernumber:"{$orderIntmallModel['ordernumber']}"},
+            success: function (result) {
+                if (result.status === 1) {
+                    /* {if empty($config['pay_domain']) } */
+                    if (typeof WeixinJSBridge == "undefined"){
+                        if( document.addEventListener ){
+                            document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+                        }else if (document.attachEvent){
+                            document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+                            document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+                        }
+                    }else{
+                        jsApiCall(result);
+                    }
+                    /*{else}*/
+                    window.location.href="{php echo $config['pay_domain'] . 'app' . substr(__MURL('user.order_pay', array('act' => 'wxPay','store_id'=>$store_id)), 1)}&paynumber="+result.paynumber;
+                    /*{/if}*/
+                } else {
+                    layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                }
+            }
+        });
+    });
+
+    //调用微信JS api 支付
+    function jsApiCall(data){
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            JSON.parse(data.jsApiData),
+            function(res){
+                WeixinJSBridge.log(res.err_msg);
+                if (res.err_msg == 'get_brand_wcpay_request:ok') {
+                    layer.open({content: '支付成功,跳转中！', skin: 'msg', time: 2});
+                    setTimeout(function () {
+                        window.location.href = "{php echo $this->createMobileUrl('user.order_pay',array('act'=>'ok','store_id'=>$store_id))}";
+                    }, 3000);
+                }else if(res.err_msg=='get_brand_wcpay_request:cancel'){
+                    layer.open({content: '取消支付', skin: 'msg', time: 2});
+                }else{
+                    layer.open({content: res.err_desc + res.err_msg, skin: 'msg', time: 2});
+                }
+            }
+        );
+    }
+</script>
+</body>
+</html>

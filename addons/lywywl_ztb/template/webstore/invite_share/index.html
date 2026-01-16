@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">分销管理</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="">分享链接</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="box">
+                                        <div class="box-header with-border">
+                                            <h3 class="box-title"><i class="fa fa-tablet"></i> 移动端分享链接</h3>
+                                            <div class="box-tools pull-right">
+                                                <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                        class="fa fa-minus"></i></button>
+                                                <button class="btn btn-box-tool" data-widget="remove"><i
+                                                        class="fa fa-times"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="box-body">
+                                            <div style="text-align:center;">
+                                                {if $create_qr_types == 1}
+                                                <p><img src="{php echo $this->createWebAppUrl('invite_share', array('act' => 'qrPreview','ispc' => false ));}"></p>
+                                                {else}
+                                                <p><img src="{$file_h5_path}" width="240"></p>
+                                                {/if}
+                                                <p></p>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" class="form-control" value="{php echo replaceDieDomain($config, __MURL('store.register', array('act' => 'index','invite_sid'=>$store['id']), true, true),0,0,0)}">
+                                                    <span class="input-group-btn">
+                                <button class="btn btn-info btn-flat btn_copy_links_mobile" type="button" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button>
+                            </span>
+                                                </div>
+                                                <p></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="box">
+                                        <div class="box-header with-border">
+                                            <h3 class="box-title"><i class="fa fa-tv"></i> 电脑端分享链接</h3>
+                                            <div class="box-tools pull-right">
+                                                <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                        class="fa fa-minus"></i></button>
+                                                <button class="btn btn-box-tool" data-widget="remove"><i
+                                                        class="fa fa-times"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="box-body">
+                                            <div style="text-align:center;">
+                                                {if $create_qr_types == 1}
+                                                <p><img src="{php echo $this->createWebAppUrl('invite_share', array('act' => 'qrPreview','ispc' => true ));}"></p>
+                                                {else}
+                                                <p><img src="{$file_pc_path}" width="240"></p>
+                                                {/if}
+                                                <p></p>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" class="form-control" value="{php echo replaceDieDomain($config, __PURL('register', array('act' => 'index','invite_sid'=>$store['id']), true, true),0,0,0)}">
+                                                    <span class="input-group-btn">
+                                <button class="btn btn-info btn-flat btn_copy_links_pc" type="button" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button>
+                            </span>
+                                                </div>
+                                                <p></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script>
+
+    $(function () {
+        SelectNav("专属分享链接");
+
+        require(["clipboard"], function (Clipboard) {
+            //复制预览网址
+            new Clipboard('.btn_copy_links_mobile', {
+                text: function(trigger) {
+                    $("#copyTarget").text("{php echo replaceDieDomain($config, __MURL('store.register', array('act' => 'index','invite_sid'=>$store['id']), true, true),0,0,0)}");  /*放入目标对象*/
+                    return trigger.getAttribute('aria-label');
+                }
+            });
+            new Clipboard('.btn_copy_links_pc', {
+                text: function(trigger) {
+                    $("#copyTarget").text("{php echo replaceDieDomain($config, __PURL('register', array('act' => 'index','invite_sid'=>$store['id']), true, true),0,0,0)}");  /*放入目标对象*/
+                    return trigger.getAttribute('aria-label');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

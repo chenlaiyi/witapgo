@@ -1,0 +1,1133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.we7.cc" versionCode="0.8,1.0">
+	<application setting="false">
+		<name><![CDATA[赚钱大师]]></name>
+		<identifie><![CDATA[wjyk_zqds]]></identifie>
+		<version><![CDATA[5.2.3]]></version>
+		<type><![CDATA[business]]></type>
+		<ability><![CDATA[赚钱大师]]></ability>
+		<description><![CDATA[赚钱大师]]></description>
+		<author><![CDATA[魔方资源网]]></author>
+		<url><![CDATA[www.mofangmall.com]]></url>
+	</application>
+
+	<platform>
+		<subscribes>
+		</subscribes>
+
+		<handles>
+			<message type="text" />
+		</handles>
+
+		<rule embed="false" /> 
+		<card embed="false" />
+		<oauth type="1" />
+		
+		<supports>
+			<item type="wxapp" />
+		</supports>
+		<plugins>
+			<item name="wjyk_zqds_plugin_cps" />
+			<item name="wjyk_zqds_plugin_film" />
+			<item name="wjyk_zqds_plugin_digital" />
+			<item name="wjyk_zqds_plugin_news" />
+			<item name="wjyk_zqds_plugin_takeout" />
+			<item name="wjyk_zqds_plugin_manor" />
+			<item name="wjyk_zqds_plugin_chwl" />
+		</plugins>
+	</platform>
+
+	<bindings>
+		<cover>
+			<entry title="首页" do="/wjyk_zqds/pages/index/index" state="" direct="false"/>
+		</cover>
+		<menu call="__call"> 
+		</menu>
+	</bindings>
+
+	<permissions>
+	</permissions>
+
+	<install><![CDATA[
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_address` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `uid` varchar(155) NOT NULL,
+  `consignee` varchar(155) NOT NULL COMMENT '收货人姓名',
+  `consignee_phone` varchar(155) NOT NULL COMMENT '收货人电话',
+  `province` varchar(100) NOT NULL COMMENT '省',
+  `city` varchar(100) NOT NULL COMMENT '市',
+  `county` varchar(100) NOT NULL COMMENT '区',
+  `location` varchar(255) NOT NULL COMMENT '省/市/区',
+  `detail` varchar(255) NOT NULL COMMENT '详细地址',
+  `is_default` smallint(1) NOT NULL DEFAULT '2' COMMENT '1-默认，2-非默认',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='收货地址表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_background` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `type` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-本地，2-自制',
+  `url` text COMMENT 'url',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='背景图表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_banner` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `b_type` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-首页轮播图，2-商城轮播图 3-电影票轮播图  4-CPS轮播图',
+  `type` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-本小程序链接，2-外部小程序链接',
+  `pic_url` text NOT NULL COMMENT '图片路径',
+  `color` varchar(255) NOT NULL COMMENT '背景颜色',
+  `url` text NOT NULL COMMENT '跳转链接',
+  `appid` varchar(255) NOT NULL COMMENT '小程序id',
+  `is_display` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-显示，2-隐藏',
+  `sort` int(10) NOT NULL DEFAULT '0' COMMENT '排序，数值越高，越在前显示',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='轮播图表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_bottom` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL COMMENT '菜单名称',
+  `url` text COMMENT '跳转链接',
+  `icon` text NOT NULL COMMENT '图标',
+  `icon_checked` text NOT NULL COMMENT '选中后图标',
+  `is_display` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-显示，2-隐藏',
+  `sort` int(10) NOT NULL DEFAULT '0' COMMENT '排序，数值越高，越在前显示',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='底部菜单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_brokerage_card` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `pid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `use_count` int(10) DEFAULT '1' COMMENT '使用限制',
+  `card_no` varchar(255) DEFAULT NULL COMMENT '编号',
+  `label` varchar(255) DEFAULT NULL COMMENT '标签',
+  `count` int(10) NOT NULL COMMENT '天数',
+  `card` varchar(50) DEFAULT NULL COMMENT '卡密',
+  `is_status` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-未使用  2-已使用',
+  `createtime` int(10) NOT NULL,
+  `usetime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='分销卡密表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_brokerage_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `order_number` varchar(255) DEFAULT NULL COMMENT '订单编号',
+  `desc` varchar(255) DEFAULT '观看视频广告' COMMENT '描述',
+  `uid` int(11) NOT NULL,
+  `pid` int(11) NOT NULL,
+  `type` smallint(1) DEFAULT '1' COMMENT '1-看视频  2-购买vip  3-购买数字商品  4-购买电影  5-购买话费',
+  `cps_type` varchar(255) DEFAULT '0' COMMENT '类型 1: 美团外卖   2：美团优选 3：美团分销 4：饿了么 5：多多频道 6：肯德基   7：麦当劳   8：百果园 9：奈雪的茶 10：瑞幸咖啡 11：星巴克 12：喜茶  13：京东  14：滴滴  15-拼多多 16-唯品会  17-淘宝',
+  `total` decimal(20,2) NOT NULL COMMENT '订单总额',
+  `money` decimal(20,2) NOT NULL COMMENT '金额',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='佣金记录表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_brokerage_set` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `is_open` smallint(1) NOT NULL DEFAULT '2' COMMENT '1-开启，2-隐藏',
+  `is_level` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-一级，2-二级，3-三级',
+  `oneLevel` decimal(10,2) DEFAULT '0.00' COMMENT '一级分销比例',
+  `twoLevel` decimal(10,2) DEFAULT '0.00' COMMENT '二级分销比例',
+  `vip_rebate` decimal(10,2) DEFAULT '0.00' COMMENT '购买VIP分销比例',
+  `digital_rebate` decimal(10,2) DEFAULT '0.00' COMMENT '购买数字商品分销比例',
+  `film_rebate` decimal(10,2) DEFAULT '0.00' COMMENT '购买电影分销比例',
+  `invite_get` decimal(10,2) DEFAULT '0.00' COMMENT '邀请好友得',
+  `background` text COMMENT '海报背景图',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='佣金设置表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_card` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `goodsid` int(11) NOT NULL COMMENT '商品id',
+  `serial` varchar(155) NOT NULL COMMENT '序列号/卡密',
+  `is_status` smallint(1) NOT NULL DEFAULT '1' COMMENT ' 1-待使用  2-已使用',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商品卡密表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_category` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `pid` int(11) NOT NULL,
+  `name` varchar(20) NOT NULL COMMENT '分类名称',
+  `text` varchar(20) NOT NULL COMMENT '分类描述',
+  `pic_url` text NOT NULL COMMENT '分类图片',
+  `is_display` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-显示，2-隐藏',
+  `is_recommend` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-推荐，2-不推荐',
+  `sort` int(10) NOT NULL DEFAULT '0' COMMENT '排序，数值越高，越在前显示',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商城分类表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_commission` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `cashno` varchar(50) NOT NULL COMMENT '提现单号',
+  `cash_type` smallint(1) NOT NULL DEFAULT '2' COMMENT '1-收款码提现，2-提现到微信',
+  `commission_wait` decimal(20,2) NOT NULL COMMENT '申请佣金',
+  `commission_actual` decimal(20,2) DEFAULT NULL COMMENT '实际佣金',
+  `exchange` varchar(20) DEFAULT NULL COMMENT '兑换比例',
+  `cash_charge` varchar(20) DEFAULT NULL COMMENT '提现手续费比例%',
+  `service_charge` decimal(20,2) DEFAULT NULL COMMENT '提现手续费金额',
+  `pay_qrcode` text COMMENT '收款码',
+  `zfb_account` text COMMENT '支付宝账号',
+  `is_status` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-待审核，2-已打款，3-已驳回',
+  `createtime` int(10) NOT NULL COMMENT '申请时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='提现记录表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_commission_set` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `is_open` smallint(1) NOT NULL DEFAULT '2' COMMENT '1-开启，2-隐藏',
+  `cash_type` smallint(1) NOT NULL DEFAULT '2' COMMENT '1-收款码提现，2-提现到微信',
+  `exchange` varchar(20) DEFAULT NULL COMMENT '兑换比例',
+  `cash_limit` varchar(20) DEFAULT NULL COMMENT '提现额度',
+  `cash_charge` varchar(20) DEFAULT NULL COMMENT '提现手续费',
+  `day_count` varchar(20) DEFAULT NULL COMMENT '每日提现次数',
+  `day_amount` varchar(20) DEFAULT NULL COMMENT '每日提现数额',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_digital_navigation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `pid` varchar(255) NOT NULL COMMENT '分类id',
+  `name` varchar(255) NOT NULL COMMENT '名称',
+  `desc` varchar(255) NOT NULL COMMENT '描述',
+  `type` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-本小程序链接，2-外部小程序链接  3-看视频',
+  `pic_url` text NOT NULL COMMENT '图片路径',
+  `url` text NOT NULL COMMENT '跳转链接',
+  `appid` varchar(255) NOT NULL COMMENT '小程序id',
+  `is_display` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-显示，2-隐藏',
+  `sort` int(10) NOT NULL DEFAULT '0' COMMENT '排序，数值越高，越在前显示',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数字商品导航表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_goods` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `categoryid` int(11) NOT NULL COMMENT '门店id',
+  `icon` text NOT NULL COMMENT '商品封面图',
+  `name` varchar(155) NOT NULL COMMENT '商品名称',
+  `price` decimal(10,2) DEFAULT '0.00' COMMENT '价格',
+  `integral` decimal(10,2) DEFAULT '0.00' COMMENT '积分',
+  `deduction` decimal(10,2) DEFAULT '0.00' COMMENT '可抵扣金额',
+  `type` smallint(1) DEFAULT '1' COMMENT '1-实物  2-虚拟产品',
+  `virtual_type` varchar(155) DEFAULT NULL COMMENT '虚拟商品类型',
+  `payment_type` smallint(1) DEFAULT '1' COMMENT '支付方式 1-积分   2-积分+现金  3-现金',
+  `pic_url` text NOT NULL COMMENT '图片',
+  `is_display` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-上架   2-下架',
+  `is_recommend` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-推荐，2-不推荐',
+  `sold` int(10) NOT NULL DEFAULT '0' COMMENT '已售',
+  `inventory` int(10) NOT NULL DEFAULT '0' COMMENT '库存',
+  `purchase` int(10) DEFAULT '0' COMMENT '限购数量',
+  `sort` int(10) NOT NULL DEFAULT '0' COMMENT '排序，数值越高，越在前显示',
+  `detail` text COMMENT '详情',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商品表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_goods_order` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `uid` varchar(155) NOT NULL,
+  `goodsid` varchar(30) DEFAULT NULL COMMENT '商品id',
+  `goods_type` varchar(155) NOT NULL DEFAULT '1' COMMENT '商品类型1-实物  2-虚拟产品',
+  `goods_virtual_type` varchar(155) NOT NULL COMMENT '虚拟商品类型',
+  `serial` varchar(155) DEFAULT NULL COMMENT '序列号/卡密',
+  `goods_name` varchar(155) NOT NULL COMMENT '商品名称',
+  `goods_price` decimal(10,2) NOT NULL COMMENT '商品价格',
+  `deduction` decimal(10,2) DEFAULT '0.00' COMMENT '抵扣金额',
+  `goods_pic` text NOT NULL COMMENT '商品图片',
+  `goods_integral` decimal(10,2) NOT NULL COMMENT '商品积分',
+  `logno` varchar(30) NOT NULL COMMENT '订单编号',
+  `count` int(10) NOT NULL COMMENT '数量',
+  `consignee` varchar(155) NOT NULL COMMENT '收货人姓名',
+  `consignee_phone` varchar(155) NOT NULL COMMENT '收货人电话',
+  `province` varchar(100) NOT NULL COMMENT '(省)',
+  `city` varchar(100) NOT NULL COMMENT '（市）',
+  `county` varchar(100) NOT NULL COMMENT '（区）',
+  `location` varchar(255) NOT NULL COMMENT '省/市/区',
+  `detail` varchar(255) NOT NULL COMMENT '详细地址',
+  `integral` decimal(10,2) NOT NULL COMMENT '积分',
+  `total` decimal(10,2) NOT NULL COMMENT '总价(实付)',
+  `express_no` varchar(155) DEFAULT NULL COMMENT '快递编号',
+  `express_name` varchar(155) DEFAULT NULL COMMENT '快递公司',
+  `payment_type` smallint(1) DEFAULT '1' COMMENT '支付方式 1-积分   2-积分+现金  3-现金',
+  `is_status` smallint(1) NOT NULL DEFAULT '1' COMMENT ' 0-已取消 1-待付款  2-待发货  3-待收货  4-已完成（已收货）',
+  `remark` text COMMENT '备注',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商城订单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_goods_set` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `top_background` text NOT NULL COMMENT '商城首页背景图',
+  `hot` text NOT NULL COMMENT '热门搜索',
+  `hot_background` text NOT NULL COMMENT '热销商品背景图',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='商城设置表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_home` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `popular_pic` text COMMENT '首页活动图',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='首页设置表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_hot` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `b_type` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-数字商品  2-CPS',
+  `name` varchar(255) NOT NULL COMMENT '名称',
+  `desc` varchar(255) NOT NULL COMMENT '描述',
+  `type` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-本小程序链接，2-外部小程序链接',
+  `pic_url` text NOT NULL COMMENT '图片路径',
+  `url` text NOT NULL COMMENT '跳转链接',
+  `appid` varchar(255) NOT NULL COMMENT '小程序id',
+  `is_display` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-显示，2-隐藏',
+  `sort` int(10) NOT NULL DEFAULT '0' COMMENT '排序，数值越高，越在前显示',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='首页热门专区表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_huafei_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL COMMENT '用户id',
+  `price` decimal(10,2) DEFAULT '0.00' COMMENT '支付金额',
+  `money` decimal(10,2) DEFAULT '0.00' COMMENT '充值金额',
+  `mobile` varchar(100) NOT NULL COMMENT '手机号码',
+  `orderid` varchar(100) NOT NULL COMMENT '订单编号',
+  `type` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-慢充，2-快充',
+  `is_status` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-待充值，2-已成功，3-失败  4-已退款',
+  `way` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-自动充值   2-手动充值',
+  `fail_msg` varchar(100) NOT NULL COMMENT '失败原因',
+  `is_member` smallint(1) DEFAULT '0' COMMENT '0-非会员  1-会员',
+  `createtime` int(10) NOT NULL,
+  `integral` varchar(100) DEFAULT '' COMMENT '抵扣积分',
+  `exchange` varchar(100) DEFAULT '' COMMENT '抵扣比例',
+  `pay_status` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-待支付，2-已支付',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='话费充值记录表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_huafei_set` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `is_open` smallint(1) NOT NULL DEFAULT '2' COMMENT '是否开启   1-开启，2-隐藏',
+  `type` varchar(100) DEFAULT '' COMMENT '1-慢充   2-快充',
+  `way` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-自动充值   2-手动充值  3-代理充值',
+  `app_key` varchar(100) NOT NULL COMMENT '平台编码',
+  `app_secret` varchar(100) NOT NULL COMMENT '平台秘钥',
+  `appid` varchar(255) DEFAULT NULL COMMENT '代理appid',
+  `appsecret` varchar(255) DEFAULT NULL COMMENT '代理appsecret',
+  `discount` decimal(10,2) DEFAULT '0.00' COMMENT '慢充充值折扣',
+  `quick_discount` decimal(10,2) DEFAULT '0.00' COMMENT '快充充值折扣',
+  `not_discount` decimal(10,2) DEFAULT '0.00' COMMENT '非会员慢充充值折扣',
+  `not_quick_discount` decimal(10,2) DEFAULT '0.00' COMMENT '非会员快充充值折扣',
+  `huafei_rebate` decimal(10,2) DEFAULT '0.00' COMMENT '购买话费分销比例',
+  `notice` text COMMENT '提示',
+  `createtime` int(10) NOT NULL,
+  `discount_open` smallint(1) DEFAULT '2' COMMENT '1-开启  2-关闭',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='话费设置表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_integral` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `max` int(10) NOT NULL COMMENT '最大金币数',
+  `min` int(10) NOT NULL COMMENT '最小金币数',
+  `odds` decimal(10,2) DEFAULT '0.00' COMMENT '几率',
+  `count` int(10) NOT NULL COMMENT '观看视频数',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='积分设置表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_integral_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `cid` varchar(155) NOT NULL COMMENT '下级id',
+  `uid` int(11) NOT NULL COMMENT '用户id',
+  `money` decimal(10,2) NOT NULL COMMENT '金额',
+  `text` text NOT NULL COMMENT '描述',
+  `type` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-收入，2-支出',
+  `condition` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-观看视频  2-分销  3-邀请好友 4-签到 5-后台充值 6-庄园  7-任务中心  8-看新闻  ',
+  `createtime` int(10) NOT NULL,
+  `order_number` varchar(155) NOT NULL DEFAULT '' COMMENT '支出订单编号',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='积分记录表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_jtk_didi` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `sid` varchar(255) DEFAULT '' COMMENT '用户uid,自定义跟单参数',
+  `order_no` varchar(255) DEFAULT '' COMMENT '订单号',
+  `jtk_share_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% （实际佣金比率 = 比例x100）',
+  `jtk_share_fee` varchar(255) DEFAULT '' COMMENT '订单返佣金额',
+  `pay_time` varchar(255) DEFAULT '' COMMENT '订单支付成功时间',
+  `order_status` varchar(255) DEFAULT '' COMMENT '订单状态 2:已付款 8:已退款',
+  `pay_price` varchar(255) DEFAULT '' COMMENT '付款金额',
+  `title` varchar(255) DEFAULT '' COMMENT '标题',
+  `status` varchar(255) DEFAULT '' COMMENT '1.已预估归因 2.预估订单已推送 3.预估订单推送失败 4.结算提交 5.结算提交失败 6.结算取消 7.结算成功 8.结算失败',
+  `is_risk` varchar(255) DEFAULT '' COMMENT '是否被风控 0-否 1-是',
+  `rebate_status` smallint(1) DEFAULT '0' COMMENT '0-未返佣   1-已返佣',
+  `rebate_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% ',
+  `rebate_integral` varchar(255) DEFAULT '' COMMENT '订单返佣积分',
+  `createtime` int(10) NOT NULL,
+  `pid` varchar(255) DEFAULT '' COMMENT '上级id',
+  `partner_rebate_rate` varchar(255) DEFAULT '' COMMENT '上级佣金比例，0.1 则代表10% ',
+  `partner_rebate_integral` varchar(255) DEFAULT '' COMMENT '上级订单返佣积分',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聚推客滴滴打车/加油/货运订单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_jtk_ele` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `tk_create_time` varchar(255) DEFAULT '' COMMENT '订单创建的时间',
+  `tk_paid_time` varchar(255) DEFAULT '' COMMENT '订单付款时间',
+  `tk_earning_time` varchar(255) DEFAULT '' COMMENT '订单结算时间',
+  `trade_id` varchar(255) DEFAULT '' COMMENT '订单号，此订单号唯一',
+  `trade_parent_id` varchar(255) DEFAULT '' COMMENT '订单号,此订单号不唯一，和买家后台一致',
+  `jtk_share_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% （实际佣金比率 = 比例x100）',
+  `jtk_share_fee` varchar(255) DEFAULT '' COMMENT '订单返佣金额',
+  `alipay_total_price` varchar(255) DEFAULT '' COMMENT '买家拍下付款的金额',
+  `item_img` varchar(255) DEFAULT '' COMMENT '商品图片',
+  `tk_status` varchar(255) DEFAULT '' COMMENT '3：订单结算，12：订单付款， 13：订单失效，14：订单成功',
+  `refund_tag` varchar(255) DEFAULT '' COMMENT '0: 代表正常 1:代表完成后用户又发起维权，维权订单饿了么将无法结算，固佣金为0',
+  `item_title` varchar(255) DEFAULT '' COMMENT '商品标题',
+  `click_time` varchar(255) DEFAULT '' COMMENT '通过推广链接达到商品、店铺详情页的点击时间',
+  `item_category_name` varchar(255) DEFAULT '' COMMENT '商品所属的根类目，即一级类目的名称',
+  `seller_nick` varchar(255) DEFAULT '' COMMENT '店铺名称',
+  `sid` varchar(255) DEFAULT '' COMMENT '用户uid',
+  `type` varchar(255) DEFAULT '' COMMENT '1：外卖 2：生鲜',
+  `modified_time` varchar(255) DEFAULT '' COMMENT '更新时间',
+  `rebate_status` smallint(1) DEFAULT '0' COMMENT '0-未返佣   1-已返佣',
+  `rebate_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% ',
+  `rebate_integral` varchar(255) DEFAULT '' COMMENT '订单返佣积分',
+  `createtime` int(10) NOT NULL,
+  `pid` varchar(255) DEFAULT '' COMMENT '上级id',
+  `partner_rebate_rate` varchar(255) DEFAULT '' COMMENT '上级佣金比例，0.1 则代表10% ',
+  `partner_rebate_integral` varchar(255) DEFAULT '' COMMENT '上级订单返佣积分',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聚推客饿了么订单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_jtk_heytea` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `order_no` varchar(255) DEFAULT '' COMMENT '订单号',
+  `sid` varchar(255) DEFAULT '' COMMENT '用户uid,自定义跟单参数',
+  `order_status` varchar(255) DEFAULT '' COMMENT '订单状态 UNPAID-待支付,DEALING-下单中,ARRIVED-已送达,CANCELED-已取消（超时未支付）,REFUNDED-已退款',
+  `jtk_share_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% （实际佣金比率 = 比例x100）',
+  `jtk_share_fee` varchar(255) DEFAULT '' COMMENT '订单返佣金额',
+  `product_detail` varchar(255) DEFAULT '' COMMENT '产品名称*单价 元 *数量 份',
+  `settle_price` varchar(255) DEFAULT '' COMMENT '结算价格(单位:元)小数点后两位',
+  `restaurant_address` varchar(255) DEFAULT '' COMMENT '餐厅地址',
+  `pay_time` varchar(255) DEFAULT '' COMMENT '订单支付成功时间',
+  `order_time` varchar(255) DEFAULT '' COMMENT '订单创建时间',
+  `modify_time` varchar(255) DEFAULT '' COMMENT '订单更新时间',
+  `refund_time` varchar(255) DEFAULT '' COMMENT '订单退款变更时间',
+  `rebate_status` smallint(1) DEFAULT '0' COMMENT '0-未返佣   1-已返佣',
+  `rebate_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% ',
+  `rebate_integral` varchar(255) DEFAULT '' COMMENT '订单返佣积分',
+  `createtime` int(10) NOT NULL,
+  `pid` varchar(255) DEFAULT '' COMMENT '上级id',
+  `partner_rebate_rate` varchar(255) DEFAULT '' COMMENT '上级佣金比例，0.1 则代表10% ',
+  `partner_rebate_integral` varchar(255) DEFAULT '' COMMENT '上级订单返佣积分',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聚推客连锁餐饮-喜茶订单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_jtk_jd` (
+  `id` varchar(255) NOT NULL DEFAULT '' COMMENT '标记唯一订单行：订单+sku维度的唯一标识',
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `orderId` varchar(255) DEFAULT '' COMMENT '订单号',
+  `sid` varchar(255) DEFAULT '' COMMENT '用户uid,自定义跟单参数',
+  `jtk_share_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% （实际佣金比率 = 比例x100）',
+  `jtk_share_fee` varchar(255) DEFAULT '' COMMENT '订单返佣金额',
+  `orderTime` varchar(255) DEFAULT '' COMMENT '下单时间',
+  `finishTime` varchar(255) DEFAULT '' COMMENT '完成时间',
+  `modifyTime` varchar(255) DEFAULT '' COMMENT '更新时间',
+  `validCode` varchar(255) DEFAULT '' COMMENT '订单状态 -1：未知,2.无效-拆单,3.无效-取消,4.无效-京东帮帮主订单,5.无效-账号异常,6.无效-赠品类目不返佣,7.无效-校园订单,8.无效-企业订单,9.无效-团购订单,11.无效-乡村推广员下单,13.无效-违规订单,14.无效-来源与备案网址不符,15.待付款,16.已付款,17.已完成（购买用户确认收货）,20.无效-此复购订单对应的首购订单无效,21.无效-云店订单，22. 无效-PLUS会员佣金比例为0',
+  `validCodeDesc` varchar(255) DEFAULT '' COMMENT '订单状态 描述',
+  `skuId` varchar(255) DEFAULT '' COMMENT '商品ID',
+  `skuName` varchar(255) DEFAULT '' COMMENT '商品名称',
+  `skuNum` varchar(255) DEFAULT '' COMMENT '商品数量',
+  `skuReturnNum` varchar(255) DEFAULT '' COMMENT '商品已退货数量',
+  `skuFrozenNum` varchar(255) DEFAULT '' COMMENT '商品售后中数量',
+  `price` varchar(255) DEFAULT '' COMMENT '商品单价',
+  `subsidy_money` varchar(255) DEFAULT '' COMMENT '额外奖励金额',
+  `estimateCosPrice` varchar(255) DEFAULT '' COMMENT '预估计佣金额：由订单的实付金额拆分至每个商品的预估计佣金额，不包括运费，以及京券、东券、E卡、余额等虚拟资产支付的金额。该字段仅为预估值，实际佣金以actualCosPrice为准进行计算',
+  `actualCosPrice` varchar(255) DEFAULT '' COMMENT '实际计算佣金的金额。订单完成后，会将误扣除的运费券金额更正。如订单完成后发生退款，此金额会更新',
+  `payMonth` varchar(255) DEFAULT '' COMMENT '预估结算时间，订单完成后才会返回，格式：yyyyMMdd，默认：0。表示最新的预估结算日期。当payMonth为当前的未来时间时，表示该订单可结算；当payMonth为当前的过去时间时，表示该订单已结算',
+  `rebate_status` smallint(1) DEFAULT '0' COMMENT '0-未返佣   1-已返佣',
+  `rebate_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% ',
+  `rebate_integral` varchar(255) DEFAULT '' COMMENT '订单返佣积分',
+  `createtime` int(10) NOT NULL,
+  `pid` varchar(255) DEFAULT '' COMMENT '上级id',
+  `partner_rebate_rate` varchar(255) DEFAULT '' COMMENT '上级佣金比例，0.1 则代表10% ',
+  `partner_rebate_integral` varchar(255) DEFAULT '' COMMENT '上级订单返佣积分',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聚推客京东订单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_jtk_kfc` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `order_no` varchar(255) DEFAULT '' COMMENT '订单号',
+  `sid` varchar(255) DEFAULT '' COMMENT '用户uid,自定义参数',
+  `order_status` varchar(255) DEFAULT '' COMMENT '订单状态 UNPAID－未支付（通用），PAYED-已支付（外卖）,WAIT_OUT_MEAL-待出餐（自助），OUT_MEAL-已出餐（自助），WAITING_RECEIVED-商家待接单（外卖），RECEIVED_ORDER-商家已接单（外卖），SENDING-送餐中（外卖），REFUNDED-已退款（通用），COMPLETE-已完成（外卖），FAIL-已失败（通用）',
+  `jtk_share_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% （实际佣金比率 = 比例x100）',
+  `jtk_share_fee` varchar(255) DEFAULT '' COMMENT '订单返佣金额',
+  `product_detail` varchar(255) DEFAULT '' COMMENT '产品名称*单价 元 *数量 份',
+  `settle_price` varchar(255) DEFAULT '' COMMENT '结算价格(单位:元)小数点后两位',
+  `pay_time` varchar(255) DEFAULT '' COMMENT '订单支付成功时间',
+  `order_time` varchar(255) DEFAULT '' COMMENT '订单创建时间',
+  `update_time` varchar(255) DEFAULT '' COMMENT '订单更新时间',
+  `rebate_status` smallint(1) DEFAULT '0' COMMENT '0-未返佣   1-已返佣',
+  `rebate_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% ',
+  `rebate_integral` varchar(255) DEFAULT '' COMMENT '订单返佣积分',
+  `createtime` int(10) NOT NULL,
+  `pid` varchar(255) DEFAULT '' COMMENT '上级id',
+  `partner_rebate_rate` varchar(255) DEFAULT '' COMMENT '上级佣金比例，0.1 则代表10% ',
+  `partner_rebate_integral` varchar(255) DEFAULT '' COMMENT '上级订单返佣积分',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聚推客连锁餐饮-肯德基订单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_jtk_luckin` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `order_no` varchar(255) DEFAULT '' COMMENT '订单号',
+  `sid` varchar(255) DEFAULT '' COMMENT '用户uid,自定义跟单参数',
+  `order_status` varchar(255) DEFAULT '' COMMENT '订单状态 UNPAID-待支付,DEALING-下单中,ARRIVED-已送达,CANCELED-已取消（超时未支付）,REFUNDED-已退款',
+  `jtk_share_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% （实际佣金比率 = 比例x100）',
+  `jtk_share_fee` varchar(255) DEFAULT '' COMMENT '订单返佣金额',
+  `product_detail` varchar(255) DEFAULT '' COMMENT '产品名称*单价 元 *数量 份',
+  `settle_price` varchar(255) DEFAULT '' COMMENT '结算价格(单位:元)小数点后两位',
+  `restaurant_address` varchar(255) DEFAULT '' COMMENT '餐厅地址',
+  `pay_time` varchar(255) DEFAULT '' COMMENT '订单支付成功时间',
+  `order_time` varchar(255) DEFAULT '' COMMENT '订单创建时间',
+  `modify_time` varchar(255) DEFAULT '' COMMENT '订单更新时间',
+  `refund_time` varchar(255) DEFAULT '' COMMENT '订单退款变更时间',
+  `rebate_status` smallint(1) DEFAULT '0' COMMENT '0-未返佣   1-已返佣',
+  `rebate_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% ',
+  `rebate_integral` varchar(255) DEFAULT '' COMMENT '订单返佣积分',
+  `createtime` int(10) NOT NULL,
+  `pid` varchar(255) DEFAULT '' COMMENT '上级id',
+  `partner_rebate_rate` varchar(255) DEFAULT '' COMMENT '上级佣金比例，0.1 则代表10% ',
+  `partner_rebate_integral` varchar(255) DEFAULT '' COMMENT '上级订单返佣积分',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聚推客连锁餐饮-瑞幸咖啡订单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_jtk_mcdonald` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `order_no` varchar(255) DEFAULT '' COMMENT '订单号',
+  `sid` varchar(255) DEFAULT '' COMMENT '用户uid,自定义跟单参数',
+  `order_status` varchar(255) DEFAULT '' COMMENT '订单状态 FAIL-已失败 OUT_MEAL-已出餐 REFUNDED－已退款 PAYED－已支付 UNPAID－未支付',
+  `jtk_share_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% （实际佣金比率 = 比例x100）',
+  `jtk_share_fee` varchar(255) DEFAULT '' COMMENT '订单返佣金额',
+  `order_time` varchar(255) DEFAULT '' COMMENT '订单创建时间',
+  `product_detail` varchar(255) DEFAULT '' COMMENT '产品名称*单价 元 *数量 份',
+  `settle_price` varchar(255) DEFAULT '' COMMENT '结算价格(单位:元)小数点后两位',
+  `restaurant_address` varchar(255) DEFAULT '' COMMENT '餐厅地址',
+  `code` varchar(255) DEFAULT '' COMMENT '取餐码,仅出餐成功有数据,有多个时中间用英文逗号隔开',
+  `pay_time` varchar(255) DEFAULT '' COMMENT '订单支付成功时间',
+  `out_meal_time` varchar(255) DEFAULT '' COMMENT '订单出餐成功时间',
+  `refund_time` varchar(255) DEFAULT '' COMMENT '订单退款成功时间',
+  `update_time` varchar(255) DEFAULT '' COMMENT '订单状态变更时间',
+  `rebate_status` smallint(1) DEFAULT '0' COMMENT '0-未返佣   1-已返佣',
+  `rebate_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% ',
+  `rebate_integral` varchar(255) DEFAULT '' COMMENT '订单返佣积分',
+  `createtime` int(10) NOT NULL,
+  `pid` varchar(255) DEFAULT '' COMMENT '上级id',
+  `partner_rebate_rate` varchar(255) DEFAULT '' COMMENT '上级佣金比例，0.1 则代表10% ',
+  `partner_rebate_integral` varchar(255) DEFAULT '' COMMENT '上级订单返佣积分',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聚推客连锁餐饮-麦当劳订单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_jtk_meituan` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `orderid` varchar(255) DEFAULT '' COMMENT '订单ID',
+  `paytime` varchar(255) DEFAULT '' COMMENT '订单支付时间',
+  `payprice` varchar(255) DEFAULT '' COMMENT '订单支付金额',
+  `jtk_share_fee` varchar(255) DEFAULT '' COMMENT '订单返佣金额',
+  `jtk_share_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% （实际佣金比率 = 比例x100）',
+  `smstitle` varchar(255) DEFAULT '' COMMENT '订单标题',
+  `sid` varchar(255) DEFAULT '' COMMENT '用户uid,渠道方用户唯一标识',
+  `quantity` varchar(255) DEFAULT '' COMMENT '退款笔数',
+  `refundtime` varchar(255) DEFAULT '' COMMENT '退款时间',
+  `money` varchar(255) DEFAULT '' COMMENT '退款金额',
+  `refund_money` varchar(255) DEFAULT '' COMMENT '退佣金额',
+  `status` varchar(255) DEFAULT '' COMMENT '订单状态(1-已提交（已付款）、8-已完成（确认收货）、9-已退款)',
+  `type` varchar(255) DEFAULT '' COMMENT '订单类型（活动名称）4-外卖 6-闪购 8-优选 2-酒店',
+  `modtime` varchar(255) DEFAULT '' COMMENT '订单更新时间',
+  `year` varchar(255) DEFAULT '' COMMENT '订单所属年份',
+  `month` varchar(255) DEFAULT '' COMMENT '订单所属月份',
+  `rebate_status` smallint(1) DEFAULT '0' COMMENT '0-未返佣   1-已返佣',
+  `rebate_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% ',
+  `rebate_integral` varchar(255) DEFAULT '' COMMENT '订单返佣积分',
+  `createtime` int(10) NOT NULL,
+  `pid` varchar(255) DEFAULT '' COMMENT '上级id',
+  `partner_rebate_rate` varchar(255) DEFAULT '' COMMENT '上级佣金比例，0.1 则代表10% ',
+  `partner_rebate_integral` varchar(255) DEFAULT '' COMMENT '上级订单返佣积分',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聚推客美团联盟订单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_jtk_nayuki` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `order_no` varchar(255) DEFAULT '' COMMENT '订单号',
+  `sid` varchar(255) DEFAULT '' COMMENT '用户uid,自定义跟单参数',
+  `order_status` varchar(255) DEFAULT '' COMMENT '订单状态 UNPAID-待支付,DEALING-下单中,ARRIVED-已送达,CANCELED-已取消（超时未支付）,REFUNDED-已退款',
+  `jtk_share_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% （实际佣金比率 = 比例x100）',
+  `jtk_share_fee` varchar(255) DEFAULT '' COMMENT '订单返佣金额',
+  `product_detail` varchar(255) DEFAULT '' COMMENT '产品名称*单价 元 *数量 份',
+  `settle_price` varchar(255) DEFAULT '' COMMENT '结算价格(单位:元)小数点后两位',
+  `address` varchar(255) DEFAULT '' COMMENT '餐厅地址',
+  `order_time` varchar(255) DEFAULT '' COMMENT '订单创建时间',
+  `rebate_status` smallint(1) DEFAULT '0' COMMENT '0-未返佣   1-已返佣',
+  `rebate_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% ',
+  `rebate_integral` varchar(255) DEFAULT '' COMMENT '订单返佣积分',
+  `createtime` int(10) NOT NULL,
+  `pid` varchar(255) DEFAULT '' COMMENT '上级id',
+  `partner_rebate_rate` varchar(255) DEFAULT '' COMMENT '上级佣金比例，0.1 则代表10% ',
+  `partner_rebate_integral` varchar(255) DEFAULT '' COMMENT '上级订单返佣积分',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聚推客连锁餐饮-奈雪的茶订单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_jtk_pagoda` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `order_no` varchar(255) DEFAULT '' COMMENT '订单号',
+  `sid` varchar(255) DEFAULT '' COMMENT '用户uid,自定义跟单参数',
+  `order_status` varchar(255) DEFAULT '' COMMENT '订单状态 UNPAID-待支付,DEALING-下单中,ARRIVED-已送达,CANCELED-已取消（超时未支付）,REFUNDED-已退款',
+  `jtk_share_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% （实际佣金比率 = 比例x100）',
+  `jtk_share_fee` varchar(255) DEFAULT '' COMMENT '订单返佣金额',
+  `product_detail` varchar(255) DEFAULT '' COMMENT '产品名称*单价 元 *数量 份',
+  `settle_price` varchar(255) DEFAULT '' COMMENT '结算价格(单位:元)小数点后两位',
+  `restaurant_address` varchar(255) DEFAULT '' COMMENT '餐厅地址',
+  `pay_time` varchar(255) DEFAULT '' COMMENT '订单支付成功时间',
+  `order_time` varchar(255) DEFAULT '' COMMENT '订单创建时间',
+  `modify_time` varchar(255) DEFAULT '' COMMENT '订单更新时间',
+  `refund_time` varchar(255) DEFAULT '' COMMENT '订单退款变更时间',
+  `rebate_status` smallint(1) DEFAULT '0' COMMENT '0-未返佣   1-已返佣',
+  `rebate_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% ',
+  `rebate_integral` varchar(255) DEFAULT '' COMMENT '订单返佣积分',
+  `createtime` int(10) NOT NULL,
+  `pid` varchar(255) DEFAULT '' COMMENT '上级id',
+  `partner_rebate_rate` varchar(255) DEFAULT '' COMMENT '上级佣金比例，0.1 则代表10% ',
+  `partner_rebate_integral` varchar(255) DEFAULT '' COMMENT '上级订单返佣积分',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聚推客连锁餐饮-百果园订单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_jtk_pdd` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `goods_name` varchar(255) DEFAULT '' COMMENT '商品名称',
+  `goods_thumbnail_url` varchar(255) DEFAULT '' COMMENT '商品图片',
+  `goods_quantity` varchar(255) DEFAULT '' COMMENT '商品购买数量',
+  `order_amount` varchar(255) DEFAULT '' COMMENT '商品支付金额，单位元',
+  `sid` varchar(255) DEFAULT '' COMMENT '用户uid,自定义参数',
+  `order_create_time` varchar(255) DEFAULT '' COMMENT '订单创建时间',
+  `order_group_success_time` varchar(255) DEFAULT '' COMMENT '成团时间',
+  `order_modify_at` varchar(255) DEFAULT '' COMMENT '最后更新时间',
+  `order_pay_time` varchar(255) DEFAULT '' COMMENT '支付时间',
+  `order_verify_time` varchar(255) DEFAULT '' COMMENT '审核时间',
+  `order_sn` varchar(255) DEFAULT '' COMMENT '订单号',
+  `order_status` varchar(255) DEFAULT '' COMMENT '订单状态： -1 未支付; 0-已支付；1-已成团；2-确认收货；3-审核成功；4-审核失败（不可提现）；5-已经结算；8-非多多进宝商品（无佣金订单）',
+  `order_status_desc` varchar(255) DEFAULT '' COMMENT '订单状态描述',
+  `jtk_share_fee` varchar(255) DEFAULT '' COMMENT '订单返佣金额',
+  `jtk_share_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% （实际佣金比率 = 比例x100）',
+  `resource_type` varchar(255) DEFAULT '' COMMENT '频道id 4 :限时秒杀、39997 :充值中心、39996 :百亿补贴、39999 :40000 :领券中心、50005 :火车票',
+  `resource_name` varchar(255) DEFAULT '' COMMENT '频道说明',
+  `price_compare_status` varchar(255) DEFAULT '' COMMENT '0: 正常 1：比价',
+  `rebate_status` smallint(1) DEFAULT '0' COMMENT '0-未返佣   1-已返佣',
+  `rebate_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% ',
+  `rebate_integral` varchar(255) DEFAULT '' COMMENT '订单返佣积分',
+  `createtime` int(10) NOT NULL,
+  `pid` varchar(255) DEFAULT '' COMMENT '上级id',
+  `partner_rebate_rate` varchar(255) DEFAULT '' COMMENT '上级佣金比例，0.1 则代表10% ',
+  `partner_rebate_integral` varchar(255) DEFAULT '' COMMENT '上级订单返佣积分',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聚推客多多订单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_jtk_pubmeituan` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `orderid` varchar(255) DEFAULT '' COMMENT '订单ID',
+  `sid` varchar(255) DEFAULT '' COMMENT '用户uid,自定义跟单参数',
+  `uniqueItemId` varchar(255) DEFAULT '' COMMENT '唯一子订单Id',
+  `jtk_share_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% （实际佣金比率 = 比例x100）',
+  `jtk_share_fee` varchar(255) DEFAULT '' COMMENT '订单返佣金额',
+  `orderPayTime` varchar(255) DEFAULT '' COMMENT '订单支付时间',
+  `refundtime` varchar(255) DEFAULT '' COMMENT '退款时间',
+  `actualOrderAmount` varchar(255) DEFAULT '' COMMENT '订单实际支付总价格，单位元，保留两位小数',
+  `shopName` varchar(255) DEFAULT '' COMMENT '订单名称',
+  `orderTypeName` varchar(255) DEFAULT '' COMMENT '订单类型',
+  `orderType` varchar(255) DEFAULT '' COMMENT '订单类型 1: 团单 2：代金券 3：买单 4：智能支付 5：扫码支付 6：第三方团单 7：预定 8：范商品 9：外卖 10：酒店 11：闪购 12：门票',
+  `itemBizStatus` varchar(255) DEFAULT '' COMMENT '1: 支付成功 2：核销成功 3：结算成功 99：无效订单 999：未知状态',
+  `billingDate` varchar(255) DEFAULT '' COMMENT '账期时间',
+  `modifyTime` varchar(255) DEFAULT '' COMMENT '最后更新时间',
+  `verifyTime` varchar(255) DEFAULT '' COMMENT '核验时间',
+  `rebate_status` smallint(1) DEFAULT '0' COMMENT '0-未返佣   1-已返佣',
+  `rebate_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% ',
+  `rebate_integral` varchar(255) DEFAULT '' COMMENT '订单返佣积分',
+  `createtime` int(10) NOT NULL,
+  `pid` varchar(255) DEFAULT '' COMMENT '上级id',
+  `partner_rebate_rate` varchar(255) DEFAULT '' COMMENT '上级佣金比例，0.1 则代表10% ',
+  `partner_rebate_integral` varchar(255) DEFAULT '' COMMENT '上级订单返佣积分',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聚推客美团分销联盟订单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_jtk_set` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `is_open` smallint(1) NOT NULL DEFAULT '2' COMMENT '是否开启   1-开启，2-隐藏',
+  `apikey` varchar(50) NOT NULL COMMENT '聚推客接口秘钥',
+  `cps_rebate` decimal(10,2) DEFAULT '0.00' COMMENT '自购分销比例',
+  `partner_rebate` decimal(10,2) DEFAULT '0.00' COMMENT '上级分销比例',
+  `not_cps_rebate` decimal(10,2) DEFAULT '0.00' COMMENT '非会员自购分销比例',
+  `not_partner_rebate` decimal(10,2) DEFAULT '0.00' COMMENT '非会员上级分销比例',
+  `jd_top` text COMMENT '京东高佣顶部图',
+  `createtime` int(10) NOT NULL,
+  `mtyx_top` text COMMENT '美团优选顶部图',
+  `pub_id` varchar(50) NOT NULL COMMENT '聚推客身份ID',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聚推客设置表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_jtk_spk` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `order_no` varchar(255) DEFAULT '' COMMENT '订单号',
+  `sid` varchar(255) DEFAULT '' COMMENT '用户uid,自定义跟单参数',
+  `order_status` varchar(255) DEFAULT '' COMMENT '订单状态 UNPAID-待支付,DEALING-下单中,ARRIVED-已送达,CANCELED-已取消（超时未支付）,REFUNDED-已退款',
+  `jtk_share_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% （实际佣金比率 = 比例x100）',
+  `jtk_share_fee` varchar(255) DEFAULT '' COMMENT '订单返佣金额',
+  `product_detail` varchar(255) DEFAULT '' COMMENT '产品名称*单价 元 *数量 份',
+  `settle_price` varchar(255) DEFAULT '' COMMENT '结算价格(单位:元)小数点后两位',
+  `restaurant_address` varchar(255) DEFAULT '' COMMENT '餐厅地址',
+  `pay_time` varchar(255) DEFAULT '' COMMENT '订单支付成功时间',
+  `order_time` varchar(255) DEFAULT '' COMMENT '订单创建时间',
+  `modify_time` varchar(255) DEFAULT '' COMMENT '订单更新时间',
+  `refund_time` varchar(255) DEFAULT '' COMMENT '订单退款变更时间',
+  `rebate_status` smallint(1) DEFAULT '0' COMMENT '0-未返佣   1-已返佣',
+  `rebate_rate` varchar(255) DEFAULT '' COMMENT '佣金比例，0.1 则代表10% ',
+  `rebate_integral` varchar(255) DEFAULT '' COMMENT '订单返佣积分',
+  `createtime` int(10) NOT NULL,
+  `pid` varchar(255) DEFAULT '' COMMENT '上级id',
+  `partner_rebate_rate` varchar(255) DEFAULT '' COMMENT '上级佣金比例，0.1 则代表10% ',
+  `partner_rebate_integral` varchar(255) DEFAULT '' COMMENT '上级订单返佣积分',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聚推客连锁餐饮-星巴克订单表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_member` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `name` varchar(50) DEFAULT NULL COMMENT '会员名称',
+  `month` int(11) DEFAULT '0' COMMENT '月',
+  `price` float(11,2) DEFAULT '0.00' COMMENT '价格',
+  `integral` float(11,2) DEFAULT '0.00' COMMENT '可用积分',
+  `deduction` float(11,2) DEFAULT '0.00' COMMENT '可抵扣金额',
+  `sort` int(11) DEFAULT '1' COMMENT '排序',
+  `createtime` int(10) DEFAULT NULL COMMENT '加入时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='会员表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_member_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `type` smallint(1) DEFAULT '1' COMMENT '1-购买  2-卡密',
+  `uid` int(11) NOT NULL COMMENT '用户id',
+  `price` float(11,2) DEFAULT '0.00' COMMENT '金额',
+  `integral` float(11,2) DEFAULT '0.00' COMMENT '可用积分',
+  `deduction` float(11,2) DEFAULT '0.00' COMMENT '可抵扣金额',
+  `count` int(10) NOT NULL COMMENT '天数',
+  `level_name` varchar(100) NOT NULL COMMENT '会员名称',
+  `label` varchar(255) DEFAULT NULL COMMENT '卡密标签',
+  `card` varchar(50) DEFAULT NULL COMMENT '卡密',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='会员充值记录表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_member_set` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `explain` text COMMENT '会员说明',
+  `invite` text COMMENT '邀请玩法',
+  `createtime` int(10) DEFAULT NULL COMMENT '加入时间',
+  `my_pic` text COMMENT '我的图片',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='会员设置表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_module_plugin` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `pid` int(11) NOT NULL,
+  `is_open` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-开启，2-关闭',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='模块插件表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_navigation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `title` varchar(255) NOT NULL COMMENT '标题',
+  `name` varchar(255) NOT NULL COMMENT '名称',
+  `desc` varchar(255) NOT NULL COMMENT '描述',
+  `type` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-本小程序链接，2-外部小程序链接  3-看视频',
+  `pic_url` text NOT NULL COMMENT '图片路径',
+  `url` text NOT NULL COMMENT '跳转链接',
+  `appid` varchar(255) NOT NULL COMMENT '小程序id',
+  `is_display` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-显示，2-隐藏',
+  `sort` int(10) NOT NULL DEFAULT '0' COMMENT '排序，数值越高，越在前显示',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='首页导航表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_note` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `is_open` smallint(1) NOT NULL DEFAULT '2' COMMENT '1-开启，2-隐藏',
+  `type` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-助通云，2-阿里云',
+  `uniacid` int(11) NOT NULL,
+  `user` varchar(50) NOT NULL,
+  `pass` varchar(50) NOT NULL,
+  `message` varchar(255) NOT NULL COMMENT '短信内容',
+  `keyId` varchar(50) NOT NULL,
+  `keySecret` varchar(50) NOT NULL,
+  `signName` varchar(50) NOT NULL,
+  `templateCode` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='短信配置表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_payconfig` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `type` smallint(1) DEFAULT '1' COMMENT '1-微信支付  2-微信支付子商户',
+  `service_appid` varchar(50) NOT NULL COMMENT '服务商appid',
+  `service_mchid` varchar(50) NOT NULL COMMENT '服务商支付商户号',
+  `appid` varchar(50) NOT NULL,
+  `mchid` varchar(50) NOT NULL,
+  `api_key` varchar(50) NOT NULL,
+  `cert` smallint(1) DEFAULT NULL,
+  `key` smallint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='支付配置表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_picture` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `b_type` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-首页图片，2-CPS图片',
+  `type` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-本小程序链接，2-外部小程序链接',
+  `pic_url` text NOT NULL COMMENT '图片路径',
+  `url` text NOT NULL COMMENT '跳转链接',
+  `appid` varchar(255) NOT NULL COMMENT '小程序id',
+  `is_display` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-显示，2-隐藏',
+  `sort` int(10) NOT NULL DEFAULT '0' COMMENT '排序，数值越高，越在前显示',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='首页图片表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_plugin` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL COMMENT '名称',
+  `identifie` varchar(255) NOT NULL COMMENT '内容',
+  `summary` varchar(255) NOT NULL COMMENT '简介',
+  `is_open` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-关闭，2-开启',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='插件表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_popular` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `pic_url` text COMMENT '图片路径',
+  `url` text COMMENT '跳转链接',
+  `appid` varchar(255) NOT NULL COMMENT '小程序id',
+  `type` varchar(255) DEFAULT '' COMMENT '类型 ',
+  `is_display` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-显示，2-隐藏',
+  `sort` int(10) NOT NULL DEFAULT '0' COMMENT '排序，数值越高，越在前显示',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='首页热门活动表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_signin_set` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `is_open` smallint(1) NOT NULL DEFAULT '2' COMMENT '1-开启，2-隐藏',
+  `get` int(10) DEFAULT '0' COMMENT '签到可得',
+  `cumsum` int(10) DEFAULT '0' COMMENT '签到累加',
+  `max` int(10) DEFAULT '0' COMMENT '签到最大',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='签到设置表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_system` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL COMMENT '所属公众号ID',
+  `logo` text COMMENT '系统logo',
+  `name` varchar(100) DEFAULT NULL COMMENT '系统名称',
+  `phone` varchar(30) DEFAULT NULL COMMENT '客服电话',
+  `integral_name` varchar(100) DEFAULT NULL COMMENT '金币名称',
+  `max_integral` int(10) NOT NULL COMMENT '看视频得最大积分',
+  `min_integral` int(10) NOT NULL COMMENT '看视频得最小积分',
+  `share_pic` text COMMENT '分享图片',
+  `share_title` varchar(255) DEFAULT NULL COMMENT '分享标题',
+  `index_banner` varchar(255) DEFAULT NULL COMMENT '首页激励广告',
+  `notice_banner` varchar(255) DEFAULT NULL COMMENT '公告下方banner广告',
+  `bottom_banner` varchar(255) DEFAULT NULL COMMENT '首页底部banner广告',
+  `index_grid` varchar(255) DEFAULT NULL COMMENT '首页原生单格子广告',
+  `video_banner` varchar(255) DEFAULT NULL COMMENT '视频结束banner广告',
+  `cate_banner` varchar(255) DEFAULT NULL COMMENT '分类banner广告',
+  `mall_banner` varchar(255) DEFAULT NULL COMMENT '商城首页banner广告',
+  `detail_banner` varchar(255) DEFAULT NULL COMMENT '商品详情banner广告',
+  `my_banner` varchar(255) DEFAULT NULL COMMENT '我的页面banner广告',
+  `help_banner` varchar(255) DEFAULT NULL COMMENT '帮助中心banner广告',
+  `brokerage_banner` varchar(255) DEFAULT NULL COMMENT '分销中心banner广告',
+  `table_plaque` varchar(255) DEFAULT NULL COMMENT '全局插屏广告',
+  `person` int(10) DEFAULT '0' COMMENT '平台参与人数',
+  `sent` int(10) DEFAULT '0' COMMENT '平台已发放金币',
+  `video_count` int(10) DEFAULT '0' COMMENT '每天可观看视频数量',
+  `video_interval` int(10) DEFAULT '5' COMMENT '观看视频间隔',
+  `video_notice` varchar(255) DEFAULT NULL COMMENT '观看视频数量上限提示语',
+  `index_kan` text COMMENT '首页看视频背景图',
+  `index_pai` text COMMENT '首页排行榜背景图',
+  `index_tui` text COMMENT '首页分享推广背景图',
+  `video_background` text COMMENT '看视频倒计时背景图',
+  `ranking` text COMMENT '排行榜顶部背景图',
+  `help` text COMMENT '帮助中心',
+  `kf_open` smallint(1) NOT NULL DEFAULT '2' COMMENT '1-开启，2-隐藏',
+  `course` text COMMENT '新手教程',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统设置表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_takeout_set` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `is_open` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-开启，2-隐藏',
+  `apikey` varchar(50) NOT NULL COMMENT '订单侠接口秘钥',
+  `index_meituan` text COMMENT '首页美团背景图',
+  `index_elm` text COMMENT '首页饿了么背景图',
+  `meituan_pic` text COMMENT '美团详情背景图',
+  `meituan_rule` text COMMENT '美团活动规则',
+  `elm_pic` text COMMENT '饿了么详情背景图',
+  `elm_rule` text COMMENT '饿了么活动规则',
+  `sg_pic` text COMMENT '美团闪购详情背景图',
+  `sg_rule` text COMMENT '美团闪购活动规则',
+  `sc_pic` text COMMENT '饿了么商超详情背景图',
+  `sc_rule` text COMMENT '饿了么商超活动规则',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='外卖配置表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_task_set` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) DEFAULT NULL COMMENT '公众号id',
+  `is_open` smallint(1) NOT NULL DEFAULT '2' COMMENT '1-开启，2-隐藏',
+  `advert_icon` text COMMENT '观看广告图标',
+  `advert_name` varchar(255) DEFAULT NULL COMMENT '观看广告文字',
+  `advert_count` int(3) DEFAULT '0' COMMENT '每日观看广告数量',
+  `advert_integral` int(3) DEFAULT '0' COMMENT '每日观看广告数量可获得金豆',
+  `manor_icon` text COMMENT '喂牛图标',
+  `manor_name` varchar(255) DEFAULT NULL COMMENT '喂牛文字',
+  `manor_count` int(3) DEFAULT '0' COMMENT '每日喂牛次数',
+  `manor_integral` int(3) DEFAULT '0' COMMENT '每日喂牛次数可获得金豆',
+  `invite_icon` text COMMENT '邀请好友图标',
+  `invite_name` varchar(255) DEFAULT NULL COMMENT '邀请好友文字',
+  `invite_count` int(3) DEFAULT '0' COMMENT '邀请好友次数',
+  `invite_integral` int(3) DEFAULT '0' COMMENT '邀请好友可获得金豆',
+  `huafei_icon` text COMMENT '充话费图标',
+  `huafei_name` varchar(255) DEFAULT NULL COMMENT '充话费文字',
+  `huafei_count` int(3) DEFAULT '0' COMMENT '充话费次数',
+  `huafei_integral` int(3) DEFAULT '0' COMMENT '充话费可获得金豆',
+  `news_icon` text COMMENT '观看新闻图标',
+  `news_name` varchar(255) DEFAULT NULL COMMENT '观看新闻文字',
+  `news_count` int(3) DEFAULT '0' COMMENT '观看新闻次数',
+  `news_integral` int(3) DEFAULT '0' COMMENT '观看新闻可获得金豆',
+  `createtime` int(10) NOT NULL,
+  `takeout_desc` varchar(255) NOT NULL COMMENT '外卖描述文字',
+  `invite_desc` varchar(255) NOT NULL COMMENT '邀请好友描述文字',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务中心配置表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_upload` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `type` smallint(1) NOT NULL DEFAULT '1' COMMENT '1-本地，2-七牛云  3-阿里云  4-腾讯云',
+  `accesskey` varchar(255) NOT NULL COMMENT '七牛云accesskey',
+  `secretkey` varchar(255) NOT NULL COMMENT '七牛云secretkey',
+  `bucket` varchar(255) NOT NULL COMMENT '七牛云bucket',
+  `url` varchar(255) NOT NULL COMMENT '七牛云url',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='上传配置表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `pid` varchar(155) NOT NULL,
+  `uniacid` int(11) NOT NULL,
+  `avatar` varchar(255) NOT NULL,
+  `nickname` varchar(255) NOT NULL,
+  `openid` varchar(155) NOT NULL,
+  `balance` decimal(20,2) DEFAULT '0.00' COMMENT '余额',
+  `qrcode` text COMMENT '分销二维码',
+  `pay_qrcode` text COMMENT '收款码',
+  `zfb_account` text COMMENT '支付宝账号',
+  `sign_time` varchar(255) NOT NULL COMMENT '上次签到时间',
+  `sign_day` int(10) DEFAULT '0' COMMENT '已签到天数',
+  `is_member` smallint(1) DEFAULT '0' COMMENT '0非会员',
+  `maturity_time` int(10) DEFAULT '0' COMMENT '到期时间',
+  `relation_id` varchar(255) NOT NULL DEFAULT '' COMMENT '淘宝渠道id',
+  `createtime` int(10) NOT NULL,
+  `is_block` smallint(1) DEFAULT '0' COMMENT '0未拉黑  1-已拉黑',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
+
+
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_wxapp` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `sort` int(11) DEFAULT '0',
+  `icon` text COMMENT '图标',
+  `name` varchar(100) NOT NULL COMMENT '名称',
+  `appid` varchar(255) NOT NULL COMMENT 'appid',
+  `path` varchar(255) NOT NULL COMMENT '路径',
+  `createtime` int(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='小程序表';
+
+INSERT INTO ims_wjyk_zqds_plugin VALUES 
+('1','0','外卖配置','wjyk_zqds_plugin_takeout','外卖配置','2','0');
+INSERT INTO ims_wjyk_zqds_plugin VALUES 
+('2','0','我的庄园','wjyk_zqds_plugin_manor','我的庄园','2','0');
+INSERT INTO ims_wjyk_zqds_plugin VALUES 
+('3','0','新闻资讯','wjyk_zqds_plugin_news','新闻资讯','2','0');
+INSERT INTO ims_wjyk_zqds_plugin VALUES 
+('4','0','数字商品','wjyk_zqds_plugin_digital','数字商品','2','0');
+INSERT INTO ims_wjyk_zqds_plugin VALUES 
+('5','0','电影票','wjyk_zqds_plugin_film','电影票','2','0');
+INSERT INTO ims_wjyk_zqds_plugin VALUES 
+('6','0','聚合电商','wjyk_zqds_plugin_cps','聚合电商','2','0');
+INSERT INTO ims_wjyk_zqds_plugin VALUES 
+('7','0','吃喝玩乐','wjyk_zqds_plugin_chwl','吃喝玩乐','2','0');
+]]></install>
+	<uninstall><![CDATA[DROP TABLE IF EXISTS `ims_wjyk_zqds_address`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_background`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_banner`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_bottom`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_brokerage_card`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_brokerage_log`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_brokerage_set`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_card`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_category`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_commission`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_commission_set`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_digital_navigation`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_goods`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_goods_order`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_goods_set`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_home`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_hot`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_huafei_log`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_huafei_set`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_integral`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_integral_log`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_jtk_didi`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_jtk_ele`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_jtk_heytea`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_jtk_jd`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_jtk_kfc`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_jtk_luckin`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_jtk_mcdonald`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_jtk_meituan`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_jtk_nayuki`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_jtk_pagoda`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_jtk_pdd`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_jtk_pubmeituan`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_jtk_set`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_jtk_spk`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_member`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_member_log`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_member_set`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_module_plugin`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_navigation`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_note`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_payconfig`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_picture`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_plugin`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_popular`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_signin_set`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_system`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_takeout_set`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_task_set`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_upload`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_user`;
+DROP TABLE IF EXISTS `ims_wjyk_zqds_wxapp`;
+]]></uninstall>
+	<upgrade><![CDATA[ru_rpgrade.php]]></upgrade>
+
+</manifest>

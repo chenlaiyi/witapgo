@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {template 'common/edithead'}
+    <!--微擎 -->
+    <!--这个放在最后一切平白安全-->
+    <script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+</head>
+<body class="nav-md" style="min-width: 800px">
+<div>
+    <div class="container xc_edit_from" >
+        <div class="main_container" style="overflow-x: hidden;min-height: calc(100vh - 20px);background-color: white;width: 100%;">
+            <div class="col-md-12 col-xs-12">
+                <div class="x_panel">
+                    {template 'mymanage/webconfig/nav4'}
+                    <div class="x_content">
+                        <br/>
+                        <form class="form-horizontal" role="form" method="post" action="{url 'site/entry/announcement',array('m'=>$_GPC['m'],'op'=>'savemodel','version_id'=>$_GPC['version_id'])}" name="submit" style="padding: 20px 0;">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">权限</label>
+                                <div class="col-sm-10">
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="code_he" value="1" {if $xc['code_he']==1}checked{/if}>仅扫码核销订单
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="tui" value="1" {if $xc['tui']==1}checked{/if}>退款
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="apply_share" value="1" {if $xc['apply_share']==1}checked{/if}>分销审核
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="count" value="1" {if $xc['count']==1}checked{/if}>顶部月收入统计
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="user" value="1" {if $xc['user']==1}checked{/if}>客户会员数据
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="search" value="1" {if $xc['search']==1}checked{/if}>搜索
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="code" value="1" {if $xc['code']==1}checked{/if}>扫一扫
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="pay_yin" value="1" {if $xc['pay_yin']==1}checked{/if}>收银台
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="pay_code" value="1" {if $xc['pay_code']==1}checked{/if}>收款码
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="recharge" value="1" {if $xc['recharge']==1}checked{/if}>会员充值
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="buy" value="1" {if $xc['buy']==1}checked{/if}>下单
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="order" value="1" {if $xc['order']==1}checked{/if}>订单
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="online" value="1" {if $xc['online']==1}checked{/if}>预约
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="prize" value="1" {if $xc['prize']==1}checked{/if}>奖品
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="yin_record" value="1" {if $xc['yin_record']==1}checked{/if}>收银记录
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="recharge_record" value="1" {if $xc['recharge_record']==1}checked{/if}>充值记录
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="order_count" value="1" {if $xc['order_count']==1}checked{/if}>收入统计
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="pei" value="1" {if $xc['pei']==1}checked{/if}>配货
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="mall_order" value="1" {if $xc['mall_order']==1}checked{/if}>商城订单
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="member_ti" value="1" {if $xc['member_ti']==1}checked{/if}>员工提成
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="store_ti" value="1" {if $xc['store_ti']==1}checked{/if}>收入提现
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="col-sm-2 control-label">提现手续费</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="withdraw_fee" value="{$xc['withdraw_fee']}" placeholder="提现手续费">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button">%</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <input type="button" name="submit" class="btn btn-default" value="提交">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{template 'common/editfoot'}
+<script>
+    $(function(){
+        $("input[name='submit']").click(function(){
+            var data=$(".form-horizontal").serialize();
+            $.ajax({
+                type:"post",
+                url:"{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'store_manager_save','version_id'=>$_GPC['version_id'])}",
+                data:data,
+                dataType:'json',
+                success:function(res){
+                    if(res.status==1){
+                        swal('操作成功!', '操作成功!', 'success');
+                    }else{
+                        swal('操作失败!', '操作失败!', 'error');
+                    }
+                }
+            })
+        });
+    })
+</script>
+</body>
+</html>

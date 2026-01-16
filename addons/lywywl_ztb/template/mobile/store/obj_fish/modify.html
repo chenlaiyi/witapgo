@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+<link href="{MODULE_URL}resource/mobile/plugin/css/common.min.css?v=20170802" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_CSS__}/animate.min.css">
+<style type="text/css">
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {position: static}
+    /**定义编辑器冲突样式**/
+    .Eleditor-area{min-height: 200px;}
+    .Eleditor-controller{z-index:12;}
+    .Eleditor-controller .webuploader-pick{color:#000;}
+    .Eleditor-controller ul li{padding:0 0 0 10%;border-bottom: 1px solid #ddd !important;}
+    .Eleditor-textEditor{z-index:13;}
+    .buttonFloat{z-index: 10;}
+    #contentEditor_miaoshu img,#contentEditor_shop img,#contentEditor_rule img,#contentEditor_goods img,#contentEditor5 img{  width: 100%;  }
+    .Eleditor-controller{  z-index: 30;  }
+    .Eleditor-textStyle .Eleditor-textStyle-item-upImg{  display: none;  }
+    /**自定义海报**/
+    .btn-poster {padding: 4px 10px;height: 30px;position: relative;cursor: pointer;color: #888;background: #fafafa;border: 1px solid #ddd;border-radius: 4px;}
+    .bg-poster {width: 100%;}
+    .drag {position: absolute;}
+    .drag img {width:100%; height:100%;}
+    .drag .text {width:100%; height:100%;}
+    .layui-m-layercont {padding: 20px;}
+    .layui-m-layercont .layui-custom-content button {float: left;position: relative;cursor: pointer;color: #000;border-radius: 4px;font-size: 0.42rem;height: 20px;padding: 4px 10px;background: #fafafa;border: 1px solid #ddd;}
+    .layui-m-layercont .layui-custom-content span{display: block;float: left;width:60px;height: 40px;line-height: 40px;}
+    .popup{ position:fixed; width:100%; height:100%; top:0; left:0; z-index:10;  background-color: #fff;}
+    .edit_poster{padding: 0rem 0.2rem;border: none;background: #3ca73f;color: #fff;border-radius: 0.1333rem;font-size: 0.4rem;line-height: 0.92rem;}
+    .edit_color{width: 18px;height: 18px;padding: 0;border: 1px #000 solid;line-height: 0;vertical-align: middle;cursor: pointer;float: left;margin-top: 10px;margin-left: 10px;}
+    /*提示code颜色*/
+    .publish code {color: #c7254e;}
+</style>
+<script src="{__MOBILE_STORE_JS__}/Eleditor.min.js"></script>
+<script src="{__MOBILE_STORE_JS__}/webuploader.min.js"></script>
+<link href="{__MOBILE_STORE_CSS__}/jquery.cxcolor.css" rel="stylesheet">
+<script src="{__MOBILE_STORE_JS__}/jquery.cxcolor.js"></script>
+<link href="{__MOBILE_STORE_CSS__}/LCalendar.css" rel="stylesheet">
+<script src="{__MOBILE_STORE_JS__}/LCalendar.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/template/tmp/{$tmpModel['resource']}/init.js?v=20200815"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/util.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/require.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/lib/mui.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/common.js"></script>
+<body class="bgf2" style="{$tmpModel['body_style']}">
+<div class="moneybox" id="leafContainer"></div>
+<form id="form_content" method="post">
+    {$tmpModel['baner_html']}
+    <section class="pt20">
+        <div class="objbox bgfff">
+            <div class="title">活动样式设置<span class="fr">-折叠</span></div>
+            <ul class="publish">
+                <li class="float">
+                    <p>头图模式</p>
+                    <section class="form_con clearfix">
+                        <section class="input_item">
+                            <input type="radio" value="0" name="model[banner_types]" id="banner_types0" class="banner_types" {if $model['banner_types']==0} checked {/if}>
+                            <label for="banner_types0"></label>
+                            <span>多图轮播</span>
+                        </section>
+                        <section class="input_item">
+                            <input type="radio" value="1" name="model[banner_types]" id="banner_types1" class="banner_types" {if $model['banner_types']==1} checked {/if}>
+                            <label for="banner_types1"></label>
+                            <span>单张头图</span>
+                        </section>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong>  请根据实际需求选择头部图片模式，多图轮播：指定区域内多张图片轮播，
+                        {if strpos($tmpModel['resource'],'tmpc') === false }
+                         {if ((int)str_replace("tmp","",$tmpModel['resource']))>91}
+                            建议宽度750 高度不限
+                         {else}
+                            图片建议大小640*360；
+                         {/if}
+                        {else}
+                            图片建议大小640*360；
+                        {/if}；单张头图：可自定义整个头部，图片可自适应展示。
+                    </section>
+                </li>
+                <li id="banner_types0_box" style="display: {if $model['banner_types'] == 1} none{/if};">
+                    <p>页面头图<span></span></p>
+                    <section class="form_con clearfix">
+                        <div class="mui-input-cell">
+                            {php echo tpl_app_form_field_image('multi_banner_url',$model['multi_banner_url'],true);}
+                        </div>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 请上传设置活动头部图片 {if strpos($tmpModel['resource'],'tmpc') === false }
+                         {if ((int)str_replace("tmp","",$tmpModel['resource']))>91}
+                            建议宽度750 高度不限
+                         {else}
+                            图片建议大小640*360；
+                         {/if}
+                        {else}
+                            图片建议大小640*360；
+                        {/if}
+                    </section>
+                </li>
+                <li id="banner_types1_box" style="display: {if $model['banner_types'] == 0} none{/if};">
+                    <p>页面头图<span></span></p>
+                    <section class="form_con clearfix">
+                        <div class="mui-input-cell">
+                            {php echo tpl_app_form_field_image('single_banner_url',$model['banner_url'],false);}
+                        </div>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 请上传设置活动头部图片
+                    </section>
+                </li>
+                <li class="float" style="display: none;">
+                    <p>背景颜色</p>
+                    <section class="form_con selectBox">
+                        <input id="bg_color" name="model[bg_color]" class="input_cxcolor"
+                               type="text" readonly  value="{$model['bg_color']}">
+                    </section>
+                </li>
+            </ul>
+        </div>
+        <div class="objbox bgfff">
+            <div class="title">创建活动信息<span class="fr">-折叠</span></div>
+            <ul class="publish">
+                <li class="float">
+                    <p>活动名称</p>
+                    <section class="form_con selectBox">
+                        <input class="form_float_txt" datatype="*" id="title" maxlength="200"
+                               name="model[title]" nullmsg="请输入拓客活动名称！" placeholder="请输入拓客活动名称"
+                               type="text" value="{$model['title']}"/>
+                    </section>
+                </li>
+                <li>
+                    <p>活动封面图片<span></span></p>
+                    <section class="form_con clearfix">
+                        <div class="mui-input-cell">
+                            <input type="hidden" id="model[pic_url]" name="model[pic_url]" value=""/>
+                            {php echo tpl_app_form_field_image('pic_url',$model['pic_url'],false);}
+                        </div>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 请上传活动封面图片,将展示在活动列表和用户参与记录中;建议尺寸200*200px
+                    </section>
+                </li>
+                <li>
+                    <p>活动状态</p>
+                    <section class="form_con rel">
+                        <section class="font26 c9 form_tips">选择信息开启/关闭状态，关闭后该信息将被禁用</section>
+                        <span class="switch {if $model['status']==1}switch_on{else}switch_off{/if}">
+                    <i class="slider"></i>
+                    <input type="hidden" name="model[status]" value="{$model['status']}"/>
+                    </span>
+                    </section>
+                </li>
+                <li class="float">
+                    <p>锦鲤数量</p>
+                    <section class="form_con selectBox">
+                        <input class="form_float_txt" datatype="n" id="winer_num" maxlength="200" type="number"
+                               onkeyup="if(isNaN(this.value)){this.value='0';}"
+                               name="model[winer_num]" nullmsg="请输入抽取锦鲤数量！" placeholder="请输入抽取锦鲤数量" value="{$model['winer_num']}"/>
+                    </section>
+                </li>
+                <li>
+                    <p>活动规则/活动内容<span></span></p>
+                    <section class="form_con clearfix">
+                        <section class="txt_item">
+                            <textarea rows = "3" name="model[content]" id="content" class="form_area" style="display: none;" placeholder = "请输入活动规则/活动内容..." >{$model['content']}</textarea>
+                            <div id="contentEditor"></div>
+                        </section>
+                    </section>
+                </li>
+                <li class="float">
+                    <p>咨询电话</p>
+                    <section class="form_con selectBox">
+                        <input class="form_float_txt" id="tel" maxlength="200"
+                               name="model[tel]" placeholder="请输入咨询电话"
+                               type="text" value="{$model['tel']}"/>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong>如不填写活动咨询电话，默认使用系统客服电话或商家联系电话。
+                    </section>
+                </li>
+            </ul>
+        </div>
+        <div class="objbox bgfff">
+            <div class="title">活动分享设置<span class="fr">-折叠</span></div>
+            <ul class="publish">
+                <li class="float">
+                    <p>分享标题</p>
+                    <section class="form_con selectBox">
+                        <input class="form_float_txt" id="share_title" maxlength="200"
+                               name="model[share_title]" placeholder="请输入活动分享标题"
+                               type="text" value="{$model['share_title']}"/>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 填写<code onclick="insertAtCursor('share_title',this);">{##NICKNAME##}</code>系统会自动替换为分享用户的昵称。
+                    </section>
+                </li>
+                <li>
+                    <p>分享图标<span></span></p>
+                    <section class="form_con clearfix">
+                        <div class="mui-input-cell">
+                            <input type="hidden" id="model[share_thumb]" name="model[share_thumb]" value=""/>
+                            {php echo tpl_app_form_field_image('share_thumb',$model['share_thumb'],false);}
+                        </div>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 分享图片可不设置 不设置将用分享者头像
+                    </section>
+                </li>
+                <li>
+                    <p>分享描述<span></span></p>
+                    <section class="form_con clearfix">
+                        <section class="txt_item">
+                            <textarea rows = "3" style="width: 100%" name="model[share_desc]" id="share_desc" class="form_area" placeholder = "请输入活动分享描述..." >{$model['share_desc']}</textarea>
+                        </section>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 填写<code onclick="insertAtCursor('share_desc',this);">{##NICKNAME##}</code>系统会自动替换为分享用户的昵称,活动分享描述请不要将内容换行，系统将自动过滤到换行符。
+                    </section>
+                </li>
+            </ul>
+        </div>
+        <div class="objbox bgfff">
+            <div class="title">活动数据伪造<span class="fr">-折叠</span></div>
+            <ul class="publish">
+                <li class="float">
+                    <p>曝光人数</p>
+                    <section class="form_con selectBox">
+                        <input class="form_float_txt" datatype="n" id="bogus_click_num"
+                               maxlength="10"
+                               name="model[bogus_click_num]" nullmsg="请输入伪造曝光人数！"
+                               placeholder="请输入伪造曝光人数"
+                               type="number"
+                               onkeyup="if(isNaN(this.value)){this.value='0';}"
+                               value="{$model['bogus_click_num']}"/>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 请输入伪造曝光人数 0表示不伪造 展示人数=伪造人数+实际人数
+                    </section>
+                </li>
+                <li class="float">
+                    <p>转发人数</p>
+                    <section class="form_con selectBox">
+                        <input class="form_float_txt" datatype="n" id="bogus_repost_num"
+                               maxlength="10"
+                               name="model[bogus_repost_num]" nullmsg="请输入伪造转发人数！"
+                               placeholder="请输入伪造转发人数"
+                               type="number"
+                               onkeyup="if(isNaN(this.value)){this.value='0';}"
+                               value="{$model['bogus_repost_num']}"/>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 请输入伪造转发人数 0表示不伪造 展示转发人数=伪造人数+实际人数
+                    </section>
+                </li>
+                <li class="float">
+                    <p>参与人数</p>
+                    <section class="form_con">
+                        <input class="form_float_txt"  datatype="n" id="bogus_join_num"
+                               maxlength="10" name="model[bogus_join_num]" nullmsg="请输入伪造参与人数！" placeholder="请输入伪造参与人数"
+                               type="number"  onkeyup="if(isNaN(this.value)){this.value='0';}"
+                               value="{$model['bogus_join_num']}"/>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 请输入伪造参与人数 0表示不伪造 展示参与人数=伪造人数+实际人数
+                    </section>
+                </li>
+            </ul>
+        </div>
+        <div class="objbox bgfff">
+            <div class="title">活动栏目设置<span class="fr">-折叠</span></div>
+            <ul class="publish">
+                <li class="float">
+                    <p>展示参与纪录</p>
+                    <section class="form_con clearfix">
+                        <section class="input_item">
+                            <input type="radio" value="0" name="model[is_show_join]" id="is_show_join0" class="is_show_join" {if $model['is_show_join']==0} checked {/if}>
+                            <label for="is_show_join0"></label>
+                            <span>关闭</span>
+                        </section>
+                        <section class="input_item">
+                            <input type="radio" value="1" name="model[is_show_join]" id="is_show_join1" class="is_show_join" {if $model['is_show_join']==1} checked {/if}>
+                            <label for="is_show_join1"></label>
+                            <span>开启</span>
+                        </section>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong>  开启后界面中将展示18位最新参与的用户，开启伪造数据不满18位，系统将从用户表中随机抽取18人显示。
+                    </section>
+                </li>
+            </ul>
+        </div>
+        <div class="objbox bgfff">
+            <div class="title">活动参与限制<span class="fr">-折叠</span></div>
+            <ul class="publish">
+                <li class="float">
+                    <p>开始日期</p>
+                    <section class="form_con selectBox">
+                        <section>
+                            <input class="form_float_txt" id="start_time" name="model[start_time]" placeholder="请选择日期" type="text" value="{$model['start_time']}" datatype="*" nullmsg="请选择活动开始日期！" readonly="true">
+                        </section>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 请选择拓客活动的开始时间，活动只有在启动时间内有效。
+                    </section>
+                </li>
+                <li class="float">
+                    <p>结束日期</p>
+                    <section class="form_con selectBox">
+                        <section>
+                            <input class="form_float_txt" id="end_time" name="model[end_time]" placeholder="请选择日期" type="text" value="{$model['end_time']}" datatype="*" nullmsg="请选择活动结束日期！" readonly="true">
+                        </section>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 请选择拓客活动的结束时间，活动只有在启动时间内有效。
+                    </section>
+                </li>
+                <li class="float">
+                    <p>限制邀请</p>
+                    <section class="form_con">
+                        <input class="form_float_txt"  datatype="n" id="max_invite"
+                               maxlength="10" name="model[max_invite]" nullmsg="请输入邀请参与限制！" placeholder="请输入邀请参与限制"
+                               type="number"  onkeyup="if(isNaN(this.value)){this.value='0';}"
+                               value="{$model['max_invite']}"/>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 请输入邀请参与限制 即用户邀请其他用户参与可最多获得的抽奖码
+                    </section>
+                </li>
+                <li class="float">
+                    <p>信息登记</p>
+                    <section class="form_con clearfix">
+                        <section class="input_item">
+                            <input type="radio" value="1" name="model[is_register]" class="is_register" id="is_register1" {if $model['is_register']==1} checked {/if}>
+                            <label for="is_register1"></label>
+                            <span>登记参与</span>
+                        </section>
+                        <section class="input_item">
+                            <input type="radio" value="0" name="model[is_register]" class="is_register" id="is_register0" {if $model['is_register']==0} checked {/if}>
+                            <label for="is_register0"></label>
+                            <span>无需登记</span>
+                        </section>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong>  请选择用户参与活动是否需要登记个人信息。
+                    </section>
+                </li>
+                <li id="FieldList" style="display: {if $model['is_register'] == 0} none{/if};">
+                    <p class="mb24">登记字段<button class="but_store fr pt5 bgGreen" id="addregfieldbtn" type="button">添加字段</button></p>
+                    {if !empty($model['id'])}
+                    {loop $model['register_field'] $index $item}
+                    <section class="form_con clearfix addfield" style="margin-top: 0.32rem;">
+                        {if $item['Name']=="Mobile"}
+                        <section class="clearfix mb24">
+                            <section class="selectBox txt_item fl" style="width: 48%;margin-right:4%">
+                                <select name="model[register_field][{$index}][Type]" class="font28" style = "width: 100%;">
+                                    <option value="text" {if $item['Type']=='text'} selected {/if}>文本字段</option>
+                                    <option value="number" {php echo $index<2?"disabled":""} {if $item['Type']=='number'} selected {/if}>数字字段</option>
+                                    <option value="radio" {php echo $index<2?"disabled":""} {if $item['Type']=='radio'} selected {/if}>单选按钮</option>
+                                    <option value="checkbox" {php echo $index<2?"disabled":""} {if $item['Type']=='checkbox'} selected {/if}>复选按钮</option>
+                                    <option value="select" {php echo $index<2?"disabled":""} {if $item['Type']=='select'} selected {/if}>下拉列表</option>
+                                    <option value="textarea" {php echo $index<2?"disabled":""} {if $item['Type']=='textarea'} selected {/if}>文本域</option>
+                                </select>
+                            </section>
+                            {if $config['sms_obj']==1}
+                            <section class="input_item fr" style="width: 48%;margin-right:0%">
+                                <input type="checkbox" name="model[register_field][{$index}][IsSmsCk]" id="model[register_field][{$index}][IsSmsCk]" {php echo $item['IsSmsCk']==1?"checked":""} value="1" />
+                                <label for="model[register_field][{$index}][IsSmsCk]"></label>
+                                <span>短信验证</span>
+                            </section>
+                            {/if}
+                        </section>
+                        {else}
+                        <section class="clearfix selectBox txt_item mb24">
+                            <select name="model[register_field][{$index}][Type]" class="font28" style = "width: 100%;">
+                                <option value="text" {if $item['Type']=='text'} selected {/if}>文本字段</option>
+                                <option value="number" {php echo $index<2?"disabled":""} {if $item['Type']=='number'} selected {/if}>数字字段</option>
+                                <option value="radio" {php echo $index<2?"disabled":""} {if $item['Type']=='radio'} selected {/if}>单选按钮</option>
+                                <option value="checkbox" {php echo $index<2?"disabled":""} {if $item['Type']=='checkbox'} selected {/if}>复选按钮</option>
+                                <option value="select" {php echo $index<2?"disabled":""} {if $item['Type']=='select'} selected {/if}>下拉列表</option>
+                                <option value="textarea" {php echo $index<2?"disabled":""} {if $item['Type']=='textarea'} selected {/if}>文本域</option>
+                            </select>
+                        </section>
+                        {/if}
+                        <section class="clearfix mb24">
+                            <section class="coordinate_w33 txt_item"  style="width: 48%;margin-right:4%">
+                                <input  type="text" name="model[register_field][{$index}][Explain]" value="{$item['Explain']}" placeholder="请输入名称" class="form_txt">
+                            </section>
+                            <section class="coordinate_w33 txt_item" style="width: 48%;margin-right:0%">
+                                <input {php echo $index<2?"readonly":""} type="text" name="model[register_field][{$index}][Name]" value="{$item['Name']}" placeholder="请输入字段(仅支持英文)" onkeyup="value=value.replace(/[^a-zA-Z]/g,'')" class="form_txt">
+                            </section>
+                        </section>
+                        <section class="clearfix">
+                            <section class="txt_item add_w fl">
+                                <input   type="text" name="model[register_field][{$index}][Tips]" value="{$item['Tips']}" placeholder="请输入提示信息/配置项" class="form_txt">
+                            </section>
+                            <section class="select_coordinate ">
+                                <button class="but_store fr bgRed {php echo $index<2?"":"delfielditem"}" {php echo $index<2?"disabled":""}>删除字段</button>
+                            </section>
+                        </section>
+                    </section>
+                    {/loop}
+                    {else}
+                    <section class="form_con clearfix addfield" style="margin-top: 0.32rem;">
+                        <section class="clearfix selectBox txt_item mb24">
+                            <select name="model[register_field][0][Type]" class="font28">
+                                <option value="text" selected>文本字段</option>
+                                <option value="number" disabled>数字字段</option>
+                                <option value="radio" disabled>单选按钮</option>
+                                <option value="checkbox" disabled>复选按钮</option>
+                                <option value="select" disabled>下拉列表</option>
+                                <option value="textarea" disabled>文本域</option>
+                            </select>
+                        </section>
+                        <section class="clearfix mb24">
+                            <section class="coordinate_w33 txt_item" style="width: 48%;margin-right:4%">
+                                <input type="text" name="model[register_field][0][Explain]" value="您的称呼" placeholder="请输入名称" class="form_txt">
+                            </section>
+                            <section class="coordinate_w33 txt_item" style="width: 48%;margin-right:0%">
+                                <input readonly type="text" name="model[register_field][0][Name]" value="Name" placeholder="请输入字段(仅支持英文)" onkeyup="value=value.replace(/[^a-zA-Z]/g,'')" class="form_txt">
+                            </section>
+                        </section>
+                        <section class="clearfix">
+                            <section class="txt_item add_w fl">
+                                <input type="text" name="model[register_field][0][Tips]" value="请输入您的称呼" placeholder="请输入提示信息/配置项" class="form_txt">
+                            </section>
+                            <section class="select_coordinate ">
+                                <button class="but_store fr bgRed" type="button" disabled>删除字段</button>
+                            </section>
+                        </section>
+                    </section>
+                    <section class="form_con clearfix addfield" style="margin-top: 0.32rem;">
+                        <section class="clearfix mb24">
+                            <section class="selectBox txt_item fl" style="width: 48%;margin-right:4%">
+                                <select name="model[register_field][1][Type]" class="font28">
+                                    <option value="text" selected>文本字段</option>
+                                    <option value="number" disabled>数字字段</option>
+                                    <option value="radio" disabled>单选按钮</option>
+                                    <option value="checkbox" disabled>复选按钮</option>
+                                    <option value="select" disabled>下拉列表</option>
+                                    <option value="textarea" disabled>文本域</option>
+                                </select>
+                            </section>
+                            {if $config['sms_obj']==1}
+                            <section class="input_item fr" style="width: 48%;margin-right:0%">
+                                <input type="checkbox" name="model[register_field][1][IsSmsCk]" id="model[register_field][1][IsSmsCk]" value="1" />
+                                <label for="model[register_field][1][IsSmsCk]"></label>
+                                <span>短信验证</span>
+                            </section>
+                            {/if}
+                        </section>
+                        <section class="clearfix mb24">
+                            <section class="coordinate_w33 txt_item" style="width: 48%;margin-right:4%">
+                                <input type="text" name="model[register_field][1][Explain]" value="手机号码" placeholder="请输入名称" class="form_txt">
+                            </section>
+                            <section class="coordinate_w33 txt_item" style="width: 48%;margin-right:0%">
+                                <input readonly type="text" name="model[register_field][1][Name]" value="Mobile" placeholder="请输入字段(仅支持英文)" onkeyup="value=value.replace(/[^a-zA-Z]/g,'')" class="form_txt">
+                            </section>
+                        </section>
+                        <section class="clearfix">
+                            <section class="txt_item add_w fl">
+                                <input type="text" name="model[register_field][1][Tips]" value="请输入您的手机号码" placeholder="请输入提示信息/配置项" class="form_txt">
+                            </section>
+                            <section class="select_coordinate ">
+                                <button class="but_store fr bgRed" type="button" disabled>删除字段</button>
+                            </section>
+                        </section>
+                    </section>
+                    {/if}
+                </li>
+                <li class="float" id="FieldExp" style="display: {if $model['is_register'] == 0} none{/if};">
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong>  添加所有字段信息为必填字段，请按照要求填写，如不清楚请咨询在线客服。
+                        <br>具体设置如下：
+                        <br>文本字段：适用于用户填写文本内容信息，例如：名称，标题，电话，传真等信息
+                        <br>数字字段：适用于用户填写数字内容信息，例如：年龄，数量等信息
+                        <br>单选按钮：适用于用户单选内容信息，例如：性别 ，请填写至“提示信息/配置项”格式如下：男,女
+                        <br>复选按钮：适用于用户多选内容信息，例如：爱好 ，请填写至“提示信息/配置项”格式如下：音乐,足球,画画
+                        <br>下拉列表：适用于用户多选项单选内容信息，例如：行业 ，请填写至“提示信息/配置项”格式如下：教育行业,餐饮行业,医疗行业
+                        <br>文本域：适用于用户较多用户信息填充，例如：备注，个人简介等信息
+                    </section>
+                </li>
+                <li class="float">
+                    <p>领取区域</p>
+                    <section class="form_con selectBox">
+                        <input class="form_float_txt" id="area_limit" maxlength="255" name="model[area_limit]"  placeholder="请输入允许参与活动的区域名称！" type="text" value="{$model['area_limit']}"/>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 请填写允许参与活动的区域名称，例如：北京,上海,湖南,海南,海口等等,不要加省，市，县。多个地区用","分割。
+                    </section>
+                </li>
+            </ul>
+        </div>
+        <div class="objbox bgfff"  style="display: {if $config['sms_obj']!=1}none{/if};">
+            <div class="title">中奖通知设置<span class="fr">-折叠</span></div>
+            <ul class="publish">
+                <li class="float">
+                    <p>短信提醒</p>
+                    <section class="form_con clearfix">
+                        <section class="input_item">
+                            <input type="radio" value="0" name="model[is_sms]" id="is_sms0" class="is_sms" {if $model['is_sms']==0} checked {/if}>
+                            <label for="is_sms0"></label>
+                            <span>关闭</span>
+                        </section>
+                        <section class="input_item">
+                            <input type="radio" value="1" name="model[is_sms]" id="is_sms1" class="is_sms" {if $model['is_sms']==1} checked {/if}>
+                            <label for="is_sms1"></label>
+                            <span>开启</span>
+                        </section>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 开启前请确保账户短信数量充足，短信不足将造成短信发送失败。
+                    </section>
+                </li>
+                <li class="float" id="sms_tmp_box" style="display: {if $model['is_sms'] == 0} none{/if};">
+                    <p>短信模板</p>
+                    <section class="form_con selectBox">
+                        <input class="form_float_txt" id="sms_tmp" maxlength="200"
+                               name="model[sms_tmp]"  placeholder="请输入中奖短信模板！"
+                               type="text" value="{$model['sms_tmp']}"/>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 请根据实际活动需求创建短信模板，系统提供标签将会在发送过程中自动替换。<code onclick="insertAtCursor('sms_tmp',this);">{{PRIZE}}</code>奖品名称 <code onclick="insertAtCursor('sms_tmp',this);">{{NICKNAME}}</code>微信昵称 <code onclick="insertAtCursor('sms_tmp',this);">{{OBJ}}</code>活动名称 <code onclick="insertAtCursor('sms_tmp',this);">{{WRITEOFFCODE}}</code>核销码
+                    </section>
+                </li>
+            </ul>
+        </div>
+        <div class="objbox bgfff">
+            <div class="title">开屏广告设置<span class="fr">-折叠</span></div>
+            <ul class="publish">
+                <li class="float">
+                    <p>广告开关</p>
+                    <section class="form_con clearfix">
+                        <section class="input_item">
+                            <input type="radio" value="0" name="model[is_show_ads]" id="is_show_ads0" class="is_show_ads" {if $model['is_show_ads']==0} checked {/if}>
+                            <label for="is_show_ads0"></label>
+                            <span>关闭</span>
+                        </section>
+                        <section class="input_item">
+                            <input type="radio" value="1" name="model[is_show_ads]" id="is_show_ads1" class="is_show_ads" {if $model['is_show_ads']==1} checked {/if}>
+                            <label for="is_show_ads1"></label>
+                            <span>开启</span>
+                        </section>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 开启后用户首次进入首页会弹出开屏广告，为提升用户体验关闭后再次进入将不再展示。
+                    </section>
+                </li>
+                <li class="ads_open_box" style="display: {if $model['is_show_ads'] != 1} none{/if};">
+                    <p>广告图片<span></span></p>
+                    <section class="form_con clearfix">
+                        <div class="mui-input-cell">
+                            <input type="hidden" id="model[ads_url]" name="model[ads_url]" value=""/>
+                            {php echo tpl_app_form_field_image('ads_url',$model['ads_url'],false);}
+                        </div>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 请按根据情况上传图片 建议尺寸518*740
+                    </section>
+                </li>
+                <li class="float ads_open_box" style="display: {if $model['is_show_ads'] != 1} none{/if};">
+                    <p>链接地址</p>
+                    <section class="form_con selectBox">
+                        <input class="form_float_txt" id="ads_link" maxlength="250"
+                               name="model[ads_link]"  placeholder="请输入广告链接地址"
+                               type="text" value="{$model['ads_link']}"/>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 请输入完整链接地址，以http://或https://开头，例如：http://www.baidu.com/
+                    </section>
+                </li>
+                <li class="float ads_open_box" style="display: {if $model['is_show_ads'] != 1} none{/if};">
+                    <p>展示时间</p>
+                    <section class="form_con selectBox">
+                        <input class="form_float_txt"  datatype="n" id="show_ads_time"
+                               name="model[show_ads_time]" placeholder="请输入广告展示时间"
+                               onKeyUp="if(isNaN(this.value)) this.value='0';"
+                               type="number" value="{$model['show_ads_time']}">
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 请输入开屏广告展示时间，开启后广告时间必填且大于零，单位：秒
+                    </section>
+                </li>
+            </ul>
+        </div>
+        {if ($plug_appad && $plug_appad_act==1)}
+        <div class="objbox bgfff">
+            <div class="title">劫流广告设置<span class="fr">-折叠</span></div>
+            <ul class="publish">
+                <li class="float">
+                    <p>广告开关</p>
+                    <section class="form_con clearfix">
+                        <section class="input_item">
+                            <input type="radio" value="0" name="model[is_open_appad]" id="is_open_appad0" class="is_open_appad" {if $model['is_open_appad']==0} checked {/if}>
+                            <label for="is_open_appad0"></label>
+                            <span>关闭</span>
+                        </section>
+                        <section class="input_item">
+                            <input type="radio" value="1" name="model[is_open_appad]" id="is_open_appad1" class="is_open_appad" {if $model['is_open_appad']==1} checked {/if}>
+                            <label for="is_open_appad1"></label>
+                            <span>开启</span>
+                        </section>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 开启后用户访问活动点击页面任意位置，再访问第三方常用APP（抖音、快手、火山、淘宝等）后将弹出设定的口令广告。
+                    </section>
+                </li>
+                <li class="float appad_open_box" style="display: {if $model['is_open_appad'] != 1} none{/if};">
+                    <p>劫流口令<span></span></p>
+                    <section class="form_con clearfix">
+                        <section class="txt_item">
+                            <textarea rows = "3" name="model[appad_password]" id="appad_password" class="form_area" placeholder = "请输入劫流口令,多个口令请用“*”分割..." >{$model['appad_password']}</textarea>
+                        </section>
+                    </section>
+                    <section class="font26 c9 lh15">
+                        <strong>提示：</strong> 支持多个平台口令同时存在，例如：抖音（找到您的广告视频 -> 点击右侧分享 -> 点击复制链接 -> 内容粘贴至此处）；淘宝（找到您的商家门店 -> 点击右上角分享 -> 点击复制链接 -> 内容粘贴至此处）；其他第三方平台以此类推；
+                    </section>
+                </li>
+            </ul>
+        </div>
+        {/if}
+        <div class="objbox bgfff">
+            <div class="title">分享海报设置<span class="fr">-折叠</span></div>
+            <ul class="publish">
+                <li>
+                    <p>海报背景<span></span></p>
+                    <section class="form_con clearfix">
+                        <div class="mui-input-cell">
+                            <input type="hidden" id="model[qr_url]" name="model[qr_url]" value=""/>
+                            {php echo tpl_app_form_field_image('qr_url',$model['qr_url'],false);}
+                        </div>
+                    </section>
+                </li>
+                <li>
+                    <p>海报设计<span></span></p>
+                    <section class="form_con clearfix">
+                        <button id="btn_poster_edit" class="edit_poster" type="button">编辑海报</button>
+                    </section>
+                </li>
+                <li>
+                    <p>海报预览<span></span></p>
+                    <section class="form_con clearfix">
+                        <div class="mui-input-cell pt20">
+                            <div id="poster" class="rel">
+                                <img src="{php echo tomedia($model['qr_url'])}" id="qr_bg" class='bg-poster' />
+                                {if !empty($model['qr_content'])}
+                                {loop $model['qr_content'] $key $d}
+                                <div class="drag" data-type="{$d['type']}" data-index="{php echo $key+1}" data-left="{$d['left']}" data-top="{$d['top']}" data-width="{$d['width']}" data-height="{$d['height']}" data-src="{$d['src']}" data-size="{$d['size']}" data-color="{$d['color']}">
+                                    {if $d['type']=='qr'}
+                                    <img src="../addons/lywywl_ztb/resource/plugin/poster/qr.png" />
+                                    {elseif $d['type']=='head'}
+                                    <img src="../addons/lywywl_ztb/resource/plugin/poster/head.png" />
+                                    {elseif $d['type']=='nickname'}
+                                    <div class="text">微信昵称</div>
+                                    {/if}
+                                </div>
+                                {/loop}
+                                {/if}
+                            </div>
+                        </div>
+                    </section>
+                </li>
+            </ul>
+        </div>
+    </section>
+    <section class="h24"></section>
+    <section class="buttonBox">
+        <section class="buttonFloat clickBtn">
+            <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+            <input type="hidden" id="effect_id" name="model[effect_id]" value="{$model['effect_id']}"/>
+            <input type="hidden" id="audio_id" name="model[audio_id]" value="{$model['audio_id']}" />
+            <input type="hidden" id="audio_url" name="model[audio_url]" value="{$model['audio_url']}" />
+            <input id="qr_content" name="model[qr_content]" type="hidden" value=""/>
+            <input type="hidden" name="token" value="{$_W['token']}"/>
+            <input id="iscopy" name="iscopy" type="hidden" value="{$iscopy}"/>
+            <input type="hidden" name="submit" value="submit"/>
+            {if empty($model['id'])}
+            <a href="{php echo $this->createMobileUrl('store.sys_tmp',array('act'=>'index'))}" class="db font32" style="width: 50%;    float: left;   color: #fff;   border-radius: 0.6rem 0 0 0.6rem;    background: #f92f4a;">我再挑挑</a>
+            {else}
+            <a href="{php echo $this->createMobileUrl('store.obj_activity',array('act'=>'index'))}" class="db font32" style="width: 50%; float: left; color: #fff; border-radius: 0.6rem 0 0 0.6rem; background: #f92f4a;">活动列表</a>
+            {/if}
+            <button type="submit" style="width: 50%;   float: left;    background: #FFD112;    color: #0e0e0e;border-radius: 0 0.6rem 0.6rem 0;" id="SubmitBtn">确认提交</button>
+        </section>
+    </section>
+</form>
+<section class="leftTopIcons">
+    <a href="javascript:;" class="speciaIcon" >特效</a>
+    <a href="javascript:;" class="musicIcon">音乐</a>
+    <a href="javascript:;" class=" initIcon">一键初始化</a>
+</section>
+<div class="specia-win" >
+    <div class="specia-sel-panel">
+        <h1 class="specia-sel-h1">选择背景特效</h1>
+        <span id="specia-button">关闭</span>
+        <ul id="specia-sel-ul">
+            <li class="effectli {if $model['effect_id']==0}act{/if}" data-id="0" data-pic="">
+                <img src="{__MOBILE_STORE_IMG__}/checked.png" class="determine-icon" alt=""><h2>无特效</h2>
+            </li>
+
+            {loop $effectClassList $class}
+            <li class="effectclass {if $class['id']==$editeffect['class_id']}on{/if}"><h2><em class="effectarrow"></em>{$class['name']}</h2>
+                {loop $class['effectlist'] $item}
+                <p data-id="{$item['id']}"  data-pic="{$item['pic_url']}"  class="effectli {if $item['id']==$editeffect['id']}on{/if}">
+                    <img src="{__MOBILE_STORE_IMG__}/checked.png" class="determine-icon" style="margin-left: -0.7rem;">
+                    {$item['name']}
+                    <span class="fr">
+                        <img class="specia-pic" src="{php echo explode(',',$item['pic_url'])[0]}" alt="">
+                    </span>
+                </p>
+                {/loop}
+            </li>
+            {/loop}
+        </ul>
+    </div>
+</div>
+<div class="music-win" >
+    <div class="music-sel-panel">
+        <h1 class="music-sel-h1">选择背景音乐<input type="file" accept="audio/mpeg"  id="music_file" style="display: none"></h1>
+        <span id="music-button">关闭</span>
+        <ul id="music-sel-ul">
+            <li data-id="0"  data-src="" data-url="" class="musicli {if empty($model['audio_url'])}act{/if}">
+                <img src="{__MOBILE_STORE_IMG__}/checked.png" class="determine-icon" alt="">
+                <h2>无背景音乐</h2></li>
+            {if !empty($model['audio_url']) && $model['audio_id']==0}
+            <li data-id="0"  data-src="{$model['audio_url']}" data-url="{php echo tomedia($model['audio_url'])}" class="musicli act">
+                <img src="{__MOBILE_STORE_IMG__}/checked.png" class="determine-icon" alt="">
+                <h2 >已上传音乐</h2>
+                <img src="{__MOBILE_STORE_IMG__}/file_upload.png" class="upload-icon" alt="" id="music_upload">
+            </li>
+            {else}
+            <li data-id="0"  data-src="" data-url="" class="musicli">
+                <img src="{__MOBILE_STORE_IMG__}/checked.png" class="determine-icon" alt="">
+                <h2>自定义音乐</h2>
+                <img src="{__MOBILE_STORE_IMG__}/file_upload.png" class="upload-icon" alt="" id="music_upload">
+            </li>
+            {/if}
+
+            {loop $audioClassList $class}
+            <li class="musicclass {if $class['id']==$editaudio['class_id']}on{/if}"><h2><em class="musicarrow"></em>{$class['name']}</h2>
+                {loop $class['audiolist'] $item}
+                <p data-id="{$item['id']}"  data-src="{php echo strpos($item['audiourl'],'/template/audio')>0 ? MODULE_URL:''}{$item['audiourl']}" data-url="{php echo strpos($item['audiourl'],'/template/audio')>0 ? MODULE_URL.$item['audiourl']:tomedia($item['audiourl'])}" class="musicli {if $item['id']==$editaudio['id']}on{/if}">
+                    <img src="{__MOBILE_STORE_IMG__}/checked.png" class="determine-icon" style="margin-left: -0.7rem;">
+                    {$item['name']}
+                    <span class="fr">
+                        <img class="play-button" src="{__MOBILE_STORE_IMG__}/music_play.png" alt="">
+                    </span>
+                </p>
+                {/loop}
+            </li>
+            {/loop}
+        </ul>
+    </div>
+    <audio controls="" id="music" style="display: none;">
+        <source src="" id="audio-play">
+    </audio>
+</div>
+<!--编辑海报-->
+<div class="popup" id="popUpPoster" style=" display:none">
+    <div class="form_con clearfix">
+        <div id="title_edit">
+            <div class="bgfff font30 p20 bor_b">海报设计</div>
+            <div class="mui-input-cell p20 tc">
+                <button class='btn-poster' type='button' data-type='head'>微信头像</button>
+                <button class='btn-poster' type='button' data-type='nickname'>微信昵称</button>
+                <button class='btn-poster' type='button' data-type='qr'>专属二维码</button>
+            </div>
+        </div>
+        <div class="mui-input-cell">
+            <div id="posterEdit" class="rel" style="margin: 0 auto;">
+                <img src="{php echo tomedia($model['qr_url'])}" id="qr_bg_edit" class='bg-poster' />
+                {if !empty($model['qr_content'])}
+                {loop $model['qr_content'] $key $d}
+                <div class="drag" data-type="{$d['type']}" data-index="{php echo $key+1}" data-left="{$d['left']}" data-top="{$d['top']}" data-width="{$d['width']}" data-height="{$d['height']}" data-src="{$d['src']}" data-size="{$d['size']}" data-color="{$d['color']}">
+                    {if $d['type']=='qr'}
+                    <img src="../addons/lywywl_ztb/resource/plugin/poster/qr.png" />
+                    {elseif $d['type']=='head'}
+                    <img src="../addons/lywywl_ztb/resource/plugin/poster/head.png" />
+                    {elseif $d['type']=='nickname'}
+                    <div class="text">微信昵称</div>
+                    {/if}
+                </div>
+                {/loop}
+                {/if}
+            </div>
+        </div>
+        <section class="buttonFloat">
+            <button style="width:50%;float: left;color: #fff;background: #f92f4a;border-radius: 0.6rem 0 0 0.6rem;" id="btn_cancel_edit">取消</button>
+            <button style="width:50%;float: left;color: #0e0e0e;background: #FFD112;border-radius: 0 0.6rem 0.6rem 0;" id="btn_confirm_edit">确认</button>
+        </section>
+    </div>
+</div>
+<script id="regfieldtpl" type="text/html">
+    <section class="form_con clearfix addfield" style="margin-top: 0.32rem;">
+        <section class="clearfix selectBox txt_item mb24">
+            <select name="model[register_field][<%=count%>][Type]" class="font28">
+                <option value="text" selected>文本字段</option>
+                <option value="number">数字字段</option>
+                <option value="radio">单选按钮</option>
+                <option value="checkbox">复选按钮</option>
+                <option value="select">下拉列表</option>
+                <option value="textarea">文本域</option>
+            </select>
+        </section>
+        <section class="clearfix mb24">
+            <section class="coordinate_w33 txt_item" style="width: 48%;margin-right:4%">
+                <input type="text" name="model[register_field][<%=count%>][Explain]" value="" placeholder="请输入名称" class="form_txt">
+            </section>
+            <section class="coordinate_w33 txt_item" style="width: 48%;margin-right:0%">
+                <input type="text" name="model[register_field][<%=count%>][Name]" value="" placeholder="请输入字段(仅支持英文)" onkeyup="value=value.replace(/[^a-zA-Z]/g,'')" class="form_txt">
+            </section>
+        </section>
+        <section class="clearfix">
+            <section class="txt_item add_w fl">
+                <input type="text" name="model[register_field][<%=count%>][Tips]" value="" placeholder="请输入提示信息/配置项" class="form_txt">
+            </section>
+            <section class="select_coordinate ">
+                <button class="but_store fr bgRed delfielditem" type="button">删除字段</button>
+            </section>
+        </section>
+    </section>
+</script>
+<script>
+    //初始化日期控件
+    var start_time = new LCalendar();
+    start_time.init({
+        'trigger': '#start_time',
+        'type': 'datetime'
+    });
+
+    var end_time = new LCalendar();
+    end_time.init({
+        'trigger': '#end_time',
+        'type': 'datetime'
+    });
+    // 实例化 编辑器
+    var artEditor = new Eleditor({
+        el: "#contentEditor",
+        upload:{
+            server: "{php echo $this->createMobileUrl('file',array('act'=>'upload','type'=>'image','thumb'=>0));}",
+            formData: {
+                'module':"umiacp_bargain",
+            },
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png,webp',
+                mimeTypes: 'image/*'
+            },
+            compress: false,
+            fileSizeLimit: 2
+        },
+    });
+    // 初始化编辑器内容
+    artEditor.append($("#content").val());
+    // 初始化颜色选择器
+    //$('#bg_color').cxColor();
+
+    $(function() {
+        //适应PC端参数 设置缩放比例
+        var zoom_scale = 1;
+        //适应手机端参数 设置缩放比例
+        var zoom_scale_edit = 1;
+        //初始化海报元素位置
+        function initPoster(){
+            if($("#qr_bg").attr("src") != ""){
+                var image = new Image();
+                image.src = $("#qr_bg").attr("src");
+                image.onload = function(){
+                    zoom_scale = ($("#qr_bg").width()/this.naturalWidth)*2;
+
+                    $("#poster .drag").each(function () {
+                        var type = $(this).data("type");
+                        var index = $(this).data("index");
+                        var left = ($(this).data("left")+"").replace("px","");
+                        var top = ($(this).data("top")+"").replace("px","");
+                        var width = ($(this).data("width")+"").replace("px","");
+                        var height = ($(this).data("height")+"").replace("px","");
+                        var src = $(this).data("src");
+                        var size = ($(this).data("size")+"").replace("px","");
+                        var color = $(this).data("color");
+
+                        $(this).css({"z-index":index,
+                            "left":(left*zoom_scale)+"px",
+                            "top":(top*zoom_scale)+"px",
+                            "width":(width*zoom_scale)+"px",
+                            "height":(height*zoom_scale)+"px",
+                            "font-size":(size*zoom_scale)+"px",
+                            "color":color});
+                    })
+                }
+            }
+        };
+        initPoster();
+        //初始化编辑海报元素位置
+        function initPosterEdit(){
+            if($("#qr_bg_edit").attr("src") != ""){
+                var image = new Image();
+                image.src = $("#qr_bg_edit").attr("src");
+                image.onload = function(){
+                    zoom_scale_edit = ($("#qr_bg_edit").width()/this.naturalWidth)*2;
+
+                    $("#posterEdit .drag").each(function () {
+                        var type = $(this).data("type");
+                        var index = $(this).data("index");
+                        var left = ($(this).data("left")+"").replace("px","");
+                        var top = ($(this).data("top")+"").replace("px","");
+                        var width = ($(this).data("width")+"").replace("px","");
+                        var height = ($(this).data("height")+"").replace("px","");
+                        var src = $(this).data("src");
+                        var size = ($(this).data("size")+"").replace("px","");
+                        var color = $(this).data("color");
+
+                        $(this).css({"z-index":index,
+                            "left":(left*zoom_scale_edit)+"px",
+                            "top":(top*zoom_scale_edit)+"px",
+                            "width":(width*zoom_scale_edit)+"px",
+                            "height":(height*zoom_scale_edit)+"px",
+                            "font-size":(size*zoom_scale_edit)+"px",
+                            "color":color});
+                    })
+                }
+            }
+        };
+
+        $('.btn-poster').click(function() {
+            if($("#qr_bg_edit").attr("src") == ""){
+                layer.open({
+                    content: '请上传背景图片！',
+                    btn: '我知道了',
+                });
+                return;
+            }
+
+            var type = $(this).data('type');
+            var img = "";
+            if(type == 'qr') {
+                img = '<img src="../addons/lywywl_ztb/resource/plugin/poster/qr.png" />';
+            } else if(type == 'head') {
+                img = '<img src="../addons/lywywl_ztb/resource/plugin/poster/head.png" />';
+            } else if(type == 'nickname') {
+                img = '<div class=text>微信昵称</div>';
+            }
+
+            var index = $("#posterEdit .drag").length + 1;
+            var width = ($("#qr_bg_edit").width()/4);
+            var height = width;
+            var size = ($("#qr_bg_edit").width()/16);
+            var color = "#000";
+            var obj = $('<div class="drag" data-type="'+type+'" data-index="'+index+'" data-left="0px" data-top="0px" data-width="'+Math.round(width/zoom_scale_edit)+'px" data-height="'+Math.round(height/zoom_scale_edit)+'px" data-size="'+Math.round(size/zoom_scale_edit)+'px" data-color="'+color+'" style="z-index:'+index+';left:0px;top:0px;width:'+width+'px;height:'+height+'px;font-size:'+size+'px;color:'+color+';">'+img+'</div>');
+
+            $('#posterEdit').append(obj);
+        });
+
+        var flag = false;
+        var isClick = false;
+        var cur = {x:0,y:0};
+        var nx,ny,dx,dy,x,y ;
+        var divObj;
+        function down(div){
+            //document.body.style.overflow='hidden';
+            flag = true;
+            isClick = true;
+            var touch ;
+            if(event.touches){
+                touch = event.touches[0];
+            }else {
+                touch = event;
+            }
+            cur.x = touch.clientX;
+            cur.y = touch.clientY;
+            dx = div[0].offsetLeft;
+            dy = div[0].offsetTop;
+        }
+        function move(div){
+            if(flag){
+                var touch ;
+                if(event.touches){
+                    touch = event.touches[0];
+                } else {
+                    touch = event;
+                }
+                nx = touch.clientX - cur.x;
+                ny = touch.clientY - cur.y;
+                x = dx+nx;
+                y = dy+ny;
+                div[0].style.left = x+"px";
+                div[0].style.top = y +"px";
+
+                div.attr("data-left",Math.round(x/zoom_scale_edit)+"px");
+                div.attr("data-top",Math.round(y/zoom_scale_edit)+"px");
+            }
+            isClick = false;
+        }
+        //鼠标释放时候的函数
+        function end(div){
+            //document.body.style.overflow='initial';
+            flag = false;
+            if(isClick){
+                if(div.data('type')=='head' || div.data('type')=='qr' ){
+                    //设置图片尺寸
+                    layer.open({
+                        content: '<div class="layui-custom-content"><div class="clearfix"><span>宽度：</span><button id="btn_minus_width">-</button><span id="txt_width">'+div.attr('data-width').replace(/px/,'')+'</span><button id="btn_plus_width">+</button></div><div class="clearfix"><span>高度：</span><button id="btn_minus_height">-</button><span id="txt_height">'+div.attr('data-height').replace(/px/,'')+'</span><button id="btn_plus_height">+</button></div><div class="clearfix" style="padding-top: 20px;"><span>&nbsp;</span><button id="btn_remove" style="font-size: 14px;">删除元素</button></div></div>'
+                        ,btn: ['确定', '取消']
+                        ,shadeClose: false
+                        ,yes: function(index){
+                            var width = parseInt($("#txt_width").text());
+                            var height = parseInt($("#txt_height").text());
+
+                            div[0].style.width = (width*zoom_scale_edit)+"px";
+                            div[0].style.height = (height*zoom_scale_edit) +"px";
+
+                            div.attr("data-width",width+"px");
+                            div.attr("data-height",height+"px");
+
+                            layer.close(index);
+                        }
+                    });
+                }else{
+                    //设置文字样式
+                    layer.open({
+                        content: '<div class="layui-custom-content"><div class="clearfix"><span>宽度：</span><button id="btn_minus_width">-</button><span id="txt_width">'+div.attr('data-width').replace(/px/,'')+'</span><button id="btn_plus_width">+</button></div><div class="clearfix"><span>高度：</span><button id="btn_minus_height">-</button><span id="txt_height">'+div.attr('data-height').replace(/px/,'')+'</span><button id="btn_plus_height">+</button></div><div class="clearfix"><span>字体：</span><button id="btn_minus_size">-</button><span id="txt_size">'+div.attr('data-size').replace(/px/,'')+'</span><button id="btn_plus_size">+</button></div><div class="clearfix"><span>颜色：</span><em id="txt_color" data-color="'+div.attr('data-color')+'" class="edit_color" style="background-color: '+div.attr('data-color')+';"></em></div><div class="clearfix"><span>&nbsp;</span><em data-color="#ffffff" class="edit_color" style="background-color: #ffffff;"></em><em data-color="#000000" class="edit_color" style="background-color: #000000;"></em><em data-color="#FF0000" class="edit_color" style="background-color: #FF0000;"></em><em data-color="#FF9900" class="edit_color" style="background-color: #FF9900;"></em><em data-color="#ffff00" class="edit_color" style="background-color: #ffff00;"></em><em data-color="#00ff00" class="edit_color" style="background-color: #00ff00;"></em><em data-color="#00ffff" class="edit_color" style="background-color: #00ffff;"></em><em data-color="#4a86e8" class="edit_color" style="background-color: #4a86e8;"></em><em data-color="#0000ff" class="edit_color" style="background-color: #0000ff;"></em><em data-color="#9900ff" class="edit_color" style="background-color: #9900ff;"></em><em data-color="#ff00ff" class="edit_color" style="background-color: #ff00ff;"></em><em data-color="#980000" class="edit_color" style="background-color: #980000;"></em></div><div class="clearfix" style="padding-top: 20px;"><span>&nbsp;</span><button id="btn_remove" style="font-size: 14px;">删除元素</button></div></div>'
+                        ,btn: ['确定', '取消']
+                        ,shadeClose: false
+                        ,yes: function(index){
+                            var width = parseInt($("#txt_width").text());
+                            var height = parseInt($("#txt_height").text());
+                            var size = parseInt($("#txt_size").text());
+                            var color = $("#txt_color").data("color");
+
+                            div[0].style.width = (width*zoom_scale_edit) +"px";
+                            div[0].style.height = (height*zoom_scale_edit) +"px";
+                            div[0].style.fontSize = (size*zoom_scale_edit) +"px";
+                            div[0].style.color = color;
+
+                            div.attr("data-width",width+"px");
+                            div.attr("data-height",height+"px");
+                            div.attr("data-size",size+"px");
+                            div.attr("data-color",color);
+
+                            layer.close(index);
+                        }
+                    });
+                }
+                divObj = div;
+            }
+        }
+        $(document).on("click","#btn_remove",function (e) {
+            divObj.remove();
+            layer.closeAll();
+        });
+        $(document).on("click","#btn_minus_width",function (e) {
+            var width = parseInt($("#txt_width").text());
+            if(width<=1){
+                width = 1;
+            }else{
+                width--;
+            }
+            $("#txt_width").text(width);
+        });
+        $(document).on("click","#btn_plus_width",function (e) {
+            var width = parseInt($("#txt_width").text());
+            width++;
+            $("#txt_width").text(width);
+        });
+        $(document).on("click","#btn_minus_height",function (e) {
+            var height = parseInt($("#txt_height").text());
+            if(height<=1){
+                height = 1;
+            }else{
+                height--;
+            }
+            $("#txt_height").text(height);
+        });
+        $(document).on("click","#btn_plus_height",function (e) {
+            var height = parseInt($("#txt_height").text());
+            height++;
+            $("#txt_height").text(height);
+        });
+        $(document).on("click","#btn_minus_size",function (e) {
+            var size = parseInt($("#txt_size").text());
+            if(size<=1){
+                size = 1;
+            }else{
+                size--;
+            }
+            $("#txt_size").text(size);
+        });
+        $(document).on("click","#btn_plus_size",function (e) {
+            var size = parseInt($("#txt_size").text());
+            size++;
+            $("#txt_size").text(size);
+        });
+        $(document).on("click",".edit_color",function (e) {
+            var color = $(this).data('color');
+            $('#txt_color').data('color',color).css({'background-color':color});
+        });
+
+        $('#posterEdit').on('mousedown','.drag',function () {
+            down($(this));
+        })
+        $('#posterEdit').on('touchstart','.drag',function () {
+            down($(this));
+        })
+        $('#posterEdit').on('mousemove','.drag',function () {
+            move($(this));
+        })
+        $('#posterEdit').on('touchmove','.drag',function () {
+            move($(this));
+        })
+        $('#posterEdit').on('touchend','.drag',function () {
+            end($(this));
+        })
+        document.body.addEventListener("mouseup",function(){
+            //document.body.style.overflow='initial';
+        },false);
+
+        $("#btn_poster_edit").click(function(e){
+            var imgUrl = $(".js-image-qr_url").next("div").find("img").attr("src");
+            if(!imgUrl || imgUrl == ""){
+                layer.open({
+                    content: '请上传背景图片！',
+                    btn: '我知道了',
+                });
+                return;
+            }
+
+            var image = new Image();
+            image.src = imgUrl;
+            image.onload = function() {
+                if(this.naturalWidth == 640){
+                    $("#qr_bg,#qr_bg_edit").attr("src", imgUrl);
+                    initPoster();
+
+                    $("#popUpPoster").show();
+                    scroll.afterOpen();
+
+                    var width = $(window).width();
+                    var height = $(window).height() - 20 - $('#title_edit').height() - $('#popUpPoster .buttonFloat').height();
+
+                    var img_width = $("#qr_bg_edit").width();
+                    var img_height = $("#qr_bg_edit").height();
+
+                    if(width/height < img_width/img_height){
+                        $("#posterEdit").width(width);
+                        $("#posterEdit").height(width*(img_height/img_width));
+                    }else{
+                        $("#posterEdit").width(height*(img_width/img_height));
+                        $("#posterEdit").height(height);
+                    }
+
+                    zoom_scale_edit = ($("#qr_bg_edit").width() / this.naturalWidth) * 2;
+
+                    initPosterEdit();
+                }else{
+                    $.ajax({
+                        url: "{php echo $this->createMobileUrl('store.obj_activity',array('act'=>'editQrImage'));}",
+                        data: {bg_pic:$("#qr_url").val()},
+                        type: "post",
+                        dataType: "json",
+                        success: function (jsonData, status) {
+                            if (jsonData.status == 1) {
+                                imgUrl = imgUrl+"?v="+Math.random();
+                                $("#qr_bg,#qr_bg_edit").attr("src", imgUrl);
+                                initPoster();
+
+                                $("#popUpPoster").show();
+                                scroll.afterOpen();
+
+                                image.src = imgUrl;
+                                image.onload = function() {
+                                    var width = $(window).width();
+                                    var height = $(window).height() - 20 - $('#title_edit').height() - $('#popUpPoster .buttonFloat').height();
+
+                                    var img_width = $("#qr_bg_edit").width();
+                                    var img_height = $("#qr_bg_edit").height();
+
+                                    if (width / height < img_width / img_height) {
+                                        $("#posterEdit").width(width);
+                                        $("#posterEdit").height(width * (img_height / img_width));
+                                    } else {
+                                        $("#posterEdit").width(height * (img_width / img_height));
+                                        $("#posterEdit").height(height);
+                                    }
+
+                                    zoom_scale_edit = ($("#qr_bg_edit").width() / this.naturalWidth) * 2;
+                                }
+
+                                initPosterEdit();
+                            }
+                            else {
+                                layer.open({
+                                    content: jsonData.msg
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                            }
+                        },
+                        error: function (e) {
+                            layer.open({
+                                content: '编辑失败，请重试！'
+                            });
+                        },
+                        beforeSend: function(){
+                            layer.open({
+                                type: 2
+                                ,content: '加载中'
+                            });
+                        },
+                        complete: function(){
+                            layer.closeAll();
+                        }
+                    });
+                }
+            }
+        });
+        $("#btn_confirm_edit").click(function(e){
+            $("#poster .drag").remove();
+            $("#posterEdit .drag").each(function(e){
+                $("#poster").append($(this).prop("outerHTML"));
+            });
+            initPoster();
+            $("#popUpPoster").hide();
+            scroll.beforeClose();
+        });
+        $("#btn_cancel_edit").click(function(e){
+            $("#popUpPoster").hide();
+            scroll.beforeClose();
+        });
+    });
+</script>
+<script>
+    
+    function randomString(len) {
+    　　len = len || 16;
+    　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz';   
+    　　var maxPos = $chars.length;
+    　　var str = '';
+    　　for (i = 0; i < len; i++) {
+            str += $chars.charAt(Math.floor(Math.random() * maxPos));
+    　　}
+    　　return str;
+    }
+    //添加登记字段选项
+    $("#addregfieldbtn").click(function () {
+        var fieldcount	= $(".addfield").length;
+        var obj = {};
+        obj.count = fieldcount;
+        var html = template("regfieldtpl",obj);
+        $("#FieldList").append(html);
+        $("input[name='model[register_field]["+fieldcount+"][Name]']").val(randomString(8));
+    });
+
+    //删除信息登记字段
+    $(document).delegate(".delfielditem", "click", function() {
+        var list = $(this).parent().parent().parent().parent();
+        $(this).parent().parent().parent().remove();
+        list.children(".addfield").each(function (index) {
+            $(this).find("[name^='model[']").each(function () {
+                var inputName = $(this).attr("name");
+                $(this).attr("name", inputName.replace(/\[([\d]+)\]/g, "[" + index + "]"));
+            });
+        });
+    });
+
+    $(function(){
+        require(['{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js'], function () {
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                                , style: 'bottom:0;'
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    //赋值封面图片
+                    $("input[name='model[pic_url]']").val($("#pic_url").val());
+                    //赋值分享图标
+                    $("input[name='model[share_thumb]']").val($("#share_thumb").val());
+                    //赋值广告图片
+                    $("input[name='model[ads_url]']").val($("#ads_url").val());
+                    //赋值海报背景
+                    $("input[name='model[qr_url]']").val($("#qr_url").val());
+                    //赋值编辑器内容
+                    $("#content").val(artEditor.getContent());
+                    //赋值自定义海报数据
+                    var data = [];
+                    $('#poster .drag').each(function() {
+                        var obj = $(this);
+                        var d = {
+                            left: obj.attr('data-left'),
+                            top: obj.attr('data-top'),
+                            type: obj.attr('data-type'),
+                            width: obj.attr('data-width'),
+                            height: obj.attr('data-height')
+                        };
+                        if(d.type == 'nickname' ) {
+                            d.size = obj.attr('data-size');
+                            d.color = obj.attr('data-color');
+                        } else if(d.type == 'qr') {
+                            d.size = obj.attr('data-size');
+                        }
+                        data.push(d);
+                    });
+                    $('#qr_content').val(JSON.stringify(data));
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if(data.status == 1){
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+
+                        setTimeout(function () {
+                            window.location.href = "{php echo $this->createMobileUrl('store.obj_activity',array('act'=>'index'));}";
+                        }, 2000);
+
+                    }else{
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+        });
+
+        //背景特效弹框处理
+        $('.speciaIcon').click(function(){
+            $(".specia-win").show();
+        });
+
+        $("#specia-sel-ul .effectclass h2").click(function(e) {
+            e.stopPropagation();
+            $("#specia-sel-ul .effectclass").removeClass("on")
+            $(this).parent().addClass("on");
+        });
+
+        $("#specia-sel-ul .effectli").click(function(e) {
+            e.stopPropagation();
+            $("#specia-sel-ul .effectli").removeClass("act")
+            $(this).addClass("act");
+            init();
+        });
+        $("#specia-button").click(function() {
+            $("#effect_id").val($("#specia-sel-ul .act").data("id"));
+            $(".specia-win").hide();
+        });
+        $("#specia-sel-panel").click(function (e) {
+            e.stopPropagation();
+        });
+
+        //背景音乐弹框处理
+        var audio = document.getElementById('music');
+        $('.musicIcon').click(function(){
+            $(".music-win").show();
+            audio.src = $("#music-sel-ul .act").attr("data-url");
+            let playPromise = audio.play()
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    audio.play();
+            }).catch(()=> {
+
+                })
+            }
+        });
+
+        $("#music-sel-ul .musicclass h2").click(function(e) {
+            e.stopPropagation();
+            $("#music-sel-ul .musicclass").removeClass("on")
+            $(this).parent().addClass("on");
+        });
+
+        $("#music-sel-ul .musicli").click(function(e) {
+            e.stopPropagation();
+            $("#music-sel-ul .musicli").removeClass("act")
+            $(this).addClass("act");
+            audio.pause();
+            audio.src = $(this).attr("data-url");
+            audio.currentTime = 0;
+            let playPromise = audio.play()
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    audio.play();
+            }).catch(()=> {
+
+                })
+            }
+        });
+
+        $("#music-button").click(function() {
+            $("#audio_url").val($("#music-sel-ul .act").attr("data-src"));
+            $("#audio_id").val($("#music-sel-ul .act").attr("data-id"));
+            $(".music-win").hide();
+            audio.pause();
+        });
+        $("#music-sel-panel").click(function (e) {
+            e.stopPropagation();
+        });
+
+        $('#music_upload').click(function(e){
+            e.stopPropagation();
+            $('#music_file').click();
+        });
+
+        $('#music_file').click(function(e){
+            e.stopPropagation();
+        });
+        $('#music_file').change(function(){
+            var filePath=$(this).val();
+            var myform = new FormData();
+            myform.append('file', $(this)[0].files[0]);
+
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: "{php echo $this->createMobileUrl('file',array('act'=>'upload','type'=>'audio'));}",
+                data: myform,
+                async: false,
+                contentType: false,
+                processData: false,
+                success: function (jsonData, status) {
+                    if (jsonData.status == 1) {
+                        //赋值上传文件路径
+                        $("#music_upload").parent().attr('data-url',jsonData.url);
+                        $("#music_upload").parent().attr('data-src',jsonData.attachment);
+                        $("#music_upload").prev().html('已上传音乐');
+                        $("#music_upload").parent().click()
+                        layer.open({
+                            content: '上传成功！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                    }
+                    else {
+                        layer.open({
+                            content: jsonData.msg
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                    }
+                },
+                error: function (e) {
+                    layer.open({
+                        content: '上传失败，请重试！'
+                    });
+                }
+            });
+
+        });
+
+        //一键初始化
+        $(".initIcon").click(function(){
+            mobile_init();
+        });
+
+
+        $(".switch").click(function(e) {
+            if($(this).hasClass("switch_on")){
+                $(this).removeClass("switch_on");
+                $(this).addClass("switch_off");
+                $(this).find("input").val(0);
+            }
+            else{
+                $(this).removeClass("switch_off");
+                $(this).addClass("switch_on");
+                $(this).find("input").val(1);
+            }
+        });
+
+        //选择是否短信提醒选项卡
+        $('.is_sms').on('click', function (event) {
+            var obj_types = $(this).val();
+            if(obj_types==0)
+            {
+                $("#sms_tmp_box").hide();
+            }
+            else
+            {
+                $("#sms_tmp_box").show();
+            }
+        });
+
+        //选择是否开启广告选项卡
+        $('.is_show_ads').on('click', function (event) {
+            var obj_types = $(this).val();
+            if(obj_types==0)
+            {
+                $(".ads_open_box").hide();
+            }
+            else
+            {
+                $(".ads_open_box").show();
+            }
+        });
+
+        //选择是否开启劫流广告
+        $('.is_open_appad').on('click', function (event) {
+            var obj_types = $(this).val();
+            if(obj_types==0)
+            {
+                $(".appad_open_box").hide();
+            }
+            else
+            {
+                $(".appad_open_box").show();
+            }
+        });
+
+        //选择是否轮播头图选项卡
+        $('.banner_types').on('click', function (event) {
+            var banner_types = $(this).val();
+            if(banner_types == 0)
+            {
+                $("#banner_types0_box").show();
+                $("#banner_types1_box").hide();
+                $("#single_banner").hide();
+                $("#multi_banner").show();
+                setMultiBanner();
+                //$("body").attr("style","{$tmpModel['body_style']}");
+            }
+            else
+            {
+                $("#banner_types0_box").hide();
+                $("#banner_types1_box").show();
+                $("#single_banner").show();
+                $("#multi_banner").hide();
+                //$("body").css("background-image","");
+            }
+        });
+
+        //选择是否信息登记选项卡
+        $('.is_register').on('click', function (event) {
+            var is_register = $(this).val();
+            if(is_register==0)
+            {
+                $("#FieldList").hide();
+                $("#FieldExp").hide();
+            }
+            else
+            {
+                $("#FieldList").show();
+                $("#FieldExp").show();
+            }
+        });
+
+        //点击折叠编辑选项
+        //$(".objbox ul").hide();
+        $(".objbox .title").click(function () {
+            if($(this).next().is(':hidden')){
+                $(this).find("span").text("-折叠");
+                $(this).next().show();
+            }else{
+                $(this).find("span").text("+展开");
+                $(this).next().hide();
+            }
+        })
+
+        /*{if $model['banner_types']==0}*/
+        $("#single_banner").hide();
+        $("#multi_banner").show();
+        //$("body").attr("style","{$tmpModel['body_style']}");
+        /*{else}*/
+        $("#single_banner").show();
+        $("#multi_banner").hide();
+        //$("body").css("background-image","");
+        /*{/if}*/
+
+        setMultiBanner();
+        setSingleBanner();
+
+        $('#banner_types0_box .mui-pull-left').on('DOMNodeInserted DOMNodeRemoved',function(){
+            setMultiBanner();
+        });
+
+        $('#banner_types1_box .mui-pull-left').on('DOMNodeInserted DOMNodeRemoved',function(){
+            setSingleBanner();
+        });
+    });
+
+    function setMultiBanner()
+    {
+        require(['jquery.flexslider'], function () {
+            $("#home_slider").before('<section id="home_slider_tmp" class="flexslider"><ul class="slides"></ul></section>');
+            $("#home_slider").remove();
+            $("#banner_types0_box img").each(function(){
+                $("#home_slider_tmp ul").append('<li> <section class="slide"><img src="'+ $(this).attr('src') +'" alt=""/> </section> </li>')
+            });
+            $('#home_slider_tmp').flexslider({
+                animation : 'slide',
+                controlNav : true,
+                directionNav : true,
+                animationLoop : true,
+                slideshow : true,
+                slideshowSpeed : 3000,
+                useCSS : false,
+                autoPlay:true,
+            });
+            $('#home_slider_tmp').attr('id','home_slider');
+        });
+    }
+
+    function setSingleBanner()
+    {
+        $("#single_banner").empty();
+        $("#single_banner").html('<img src="'+ $("#banner_types1_box img").attr('src') +'" width="100%">');
+    }
+
+    //光标处插入指定文本内容
+    function insertAtCursor(text, obj) {
+        var myField = document.getElementById(text);
+        var myValue = obj.innerHTML;
+        if (document.selection) {
+            //IE support
+            myField.focus();
+            sel = document.selection.createRange();
+            sel.text = myValue;
+            sel.select();
+        } else if (myField.selectionStart || myField.selectionStart == '0') {
+            //MOZILLA/NETSCAPE support
+            var startPos = myField.selectionStart;
+            var endPos = myField.selectionEnd;
+            var beforeValue = myField.value.substring(0, startPos);
+            var afterValue = myField.value.substring(endPos, myField.value.length);
+
+            myField.value = beforeValue + myValue + afterValue;
+
+            myField.selectionStart = startPos + myValue.length;
+            myField.selectionEnd = startPos + myValue.length;
+            myField.focus();
+        } else {
+            myField.value += myValue;
+            myField.focus();
+        }
+    }
+
+    const NUMBER_OF_LEAVES = 10;
+    const width=window.screen.width;
+    function init(){
+        var picList = $("#specia-sel-ul .act").data("pic").split(',');
+        var container = document.getElementById('leafContainer');
+        $("#leafContainer").empty();
+        for (var i = 0; i < NUMBER_OF_LEAVES; i++)
+        {
+            container.appendChild(createALeaf(picList));
+        }
+    }
+    function randomInteger(low, high)
+    {
+        return low + Math.floor(Math.random() * (high - low));
+    }
+    function randomFloat(low, high)
+    {
+        return low + Math.random() * (high - low);
+    }
+    function pixelValue(value)
+    {
+        return value + 'px';
+    }
+
+    function durationValue(value)
+    {
+        return value + 's';
+    }
+    function createALeaf(effects_imgs)
+    {
+        var leafDiv = document.createElement('div');
+        var image = document.createElement('img');
+        image.src = effects_imgs[randomInteger(0, effects_imgs.length)];
+        leafDiv.style.top = "-10px";
+        leafDiv.style.left = pixelValue(randomInteger(0, width));
+        var spinAnimationName = (Math.random() < 1.5) ? 'clockwiseSpin' : 'counterclockwiseSpinAndFlip';
+        leafDiv.style.webkitAnimationName = 'fade, drop';
+        image.style.webkitAnimationName = spinAnimationName;
+        var fadeAndDropDuration = durationValue(randomFloat(6, 12));
+        var spinDuration = durationValue(randomFloat(3, 7));
+        leafDiv.style.webkitAnimationDuration = fadeAndDropDuration + ', ' + fadeAndDropDuration;
+        var leafDelay = durationValue(randomFloat(0, 0));
+        leafDiv.style.webkitAnimationDelay = leafDelay + ', ' + leafDelay;
+        image.style.webkitAnimationDuration = spinDuration;
+        leafDiv.appendChild(image);
+        return leafDiv;
+
+    }
+
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+
+    //专属二维码初始化
+    function mrqrclick() {
+        var img = '<img src="../addons/lywywl_ztb/resource/plugin/poster/qr.png" />';
+        var obj = $('<div class="drag" data-type="qr" data-index="1" data-left="0px" data-top="0px" data-width="80px" data-height="80px" data-size="20px" data-color="#000" style="z-index:1;left:0px;top:0px;width:80px;height:80px;font-size:20px;color:rgb(0, 0, 0);">'+img+'</div>');
+        $("#posterEdit .drag").remove();
+        $('#posterEdit').append(obj);
+        $("#poster .drag").remove();
+        $("#posterEdit .drag").each(function(e){
+            $("#poster").append($(this).prop("outerHTML"));
+        });
+    }
+</script>
+</body>
+</html>

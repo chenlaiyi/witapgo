@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">资金管理</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="">商家账户充值</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="row text-center box-body">
+                                <div class="row">
+                                    <div class="col-sm-4 col-md-1">
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-3">
+                                        <div class="color-palette-set">
+                                            <div class="callout callout-info"><span>1.填写信息</span></div>
+                                        </div>
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-3">
+                                        <div class="color-palette-set">
+                                            <div class="callout callout-warning"><span>2.在线支付</span></div>
+                                        </div>
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-3">
+                                        <div class="color-palette-set">
+                                            <div class="callout callout-danger"><span><strong>3.充值错误</strong></span></div>
+                                        </div>
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-1">
+                                    </div><!-- /.col -->
+                                </div>
+                            </div>
+                            <div class="row text-center"><h4>系统出现错误,给您带来的不便请您谅解！</h4></div>
+                            <div class="row text-center">
+                                <i class="glyphicon glyphicon-remove" style="font-size: 96px; color:#d9534f;"></i>
+                            </div>
+                            <div class="row text-center">
+                                错误原因：{$msg}
+                            </div>
+                            <div class="row text-center">
+                                <div class="btn-group" style="margin-top: 10px;">
+                                    <button id="btn_start" type="button" class="btn btn-info" onclick="javascript: window.location.href = '{php echo $this->createWebAppUrl("home");}';">
+                                    <span class="fa fa-home" aria-hidden="true"></span>&nbsp;管理首页
+                                    </button>
+                                    <button id="btn_create" type="button" class="btn btn-danger" onclick="javascript: window.location.href = '{php echo $this->createWebAppUrl("store_bill");}';">
+                                    <span class="fa fa-file-text-o" aria-hidden="true"></span>&nbsp;充值记录
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <dl>
+                                    <dt style="margin-top: 8px;">充值的资金可在哪里使用？</dt>
+                                    <dd><small>充值的金额将进入您的个人帐户，可在项目中增值业务中使用，例如：短信充值 等业务。</small></dd>
+                                    <dt style="margin-top: 8px;">充值后的资金可以提现吗？</dt>
+                                    <dd><small>是的，充值后的金额您可以通过申请提现栏目进行提现操作，我们会在24小时内通过转账打入您的微信或支付宝帐户。</small></dd>
+                                    <dt style="margin-top: 8px;">充值失败或资金未到账怎么办？</dt>
+                                    <dd><small>如出现充值未到账的情况，请不用担心，系统会记录您的充值操作。这时请联系客服人员核对后将资金充值到账。</small></dd>
+                                    <dt style="margin-top: 8px;">充值金额有大小限制吗？</dt>
+                                    <dd><small>每次充值最低金额为{$config['recharge_min_money']}元人民币，低于{$config['recharge_min_money']}元人民币总部不予受理，最大金额不受限制。</small></dd>
+                                    <dt style="margin-top: 8px;">充值流程是什么，有什么需要注意的吗？</dt>
+                                    <dd><small>	填写充值金额 →→ 支付宝/微信在线支付 →→ 资金到账  需要注意的是系统只能有一个未支付订单，未支付的订单可在充值记录里查看。</small></dd>
+                                </dl>
+                            </div><!-- /.box-body -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script>
+    $(function () {
+        SelectNav("商家账户充值");
+    });
+</script>
+</body>
+</html>

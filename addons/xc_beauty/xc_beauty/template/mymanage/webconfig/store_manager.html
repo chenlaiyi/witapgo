@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {template 'common/edithead'}
+    <!--微擎 -->
+    <!--这个放在最后一切平白安全-->
+    <script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+</head>
+<body class="nav-md" style="min-width: 800px">
+<div>
+    <div class="container xc_edit_from" >
+        <div class="main_container" style="overflow-x: hidden;min-height: calc(100vh - 20px);background-color: white;width: 100%;">
+            <div class="col-md-12 col-xs-12">
+                <div class="x_panel">
+                    {template 'mymanage/webconfig/nav4'}
+                    <div class="x_content">
+                        <br/>
+                        <form class="form-horizontal" role="form" method="post" action="{url 'site/entry/announcement',array('m'=>$_GPC['m'],'op'=>'savemodel','version_id'=>$_GPC['version_id'])}" name="submit" style="padding: 20px 0;">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">仅扫码核销订单</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="code_he"
+                                           data-value="{$xc['code_he']}" data-field="status" />
+                                </div>
+                                <label class="col-sm-1 control-label">退款</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="tui"
+                                           data-value="{$xc['tui']}" data-field="status" />
+                                </div>
+                                <label class="col-sm-1 control-label">分销审核</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="apply_share"
+                                           data-value="{$xc['apply_share']}" data-field="status" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">顶部月收入统计</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="count"
+                                           data-value="{$xc['count']}" data-field="status" />
+                                </div>
+                                <label class="col-sm-1 control-label">客户会员数据</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="user"
+                                           data-value="{$xc['user']}" data-field="status" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">搜索</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="search"
+                                           data-value="{$xc['search']}" data-field="status" />
+                                </div>
+                                <label class="col-sm-1 control-label">扫一扫</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="code"
+                                           data-value="{$xc['code']}" data-field="status" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">收银台</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="pay_yin"
+                                           data-value="{$xc['pay_yin']}" data-field="status" />
+                                </div>
+                                <label class="col-sm-1 control-label">收款码</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="pay_code"
+                                           data-value="{$xc['pay_code']}" data-field="status" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">会员充值</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="recharge"
+                                           data-value="{$xc['recharge']}" data-field="status" />
+                                </div>
+                                <label class="col-sm-1 control-label">下单</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="buy"
+                                           data-value="{$xc['buy']}" data-field="status" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">订单</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="order"
+                                           data-value="{$xc['order']}" data-field="status" />
+                                </div>
+                                <label class="col-sm-1 control-label">预约</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="online"
+                                           data-value="{$xc['online']}" data-field="status" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">奖品</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="prize"
+                                           data-value="{$xc['prize']}" data-field="status" />
+                                </div>
+                                <label class="col-sm-1 control-label">收银记录</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="yin_record"
+                                           data-value="{$xc['yin_record']}" data-field="status" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">充值记录</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="recharge_record"
+                                           data-value="{$xc['recharge_record']}" data-field="status" />
+                                </div>
+                                <label class="col-sm-1 control-label">收入统计</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="order_count"
+                                           data-value="{$xc['order_count']}" data-field="status" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">配货</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="pei"
+                                           data-value="{$xc['pei']}" data-field="status" />
+                                </div>
+                                <label class="col-sm-1 control-label">商城订单</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="mall_order"
+                                           data-value="{$xc['mall_order']}" data-field="status" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">员工提成</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="member_ti"
+                                           data-value="{$xc['member_ti']}" data-field="status" />
+                                </div>
+                                <label class="col-sm-1 control-label">收入提现</label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="js-switch" value="1" name="store_ti"
+                                           data-value="{$xc['store_ti']}" data-field="status" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <input type="button" name="submit" class="btn btn-default" value="提交">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{template 'common/editfoot'}
+<script>
+    $(function(){
+        $("input[name='submit']").click(function(){
+            var data=$(".form-horizontal").serialize();
+            $.ajax({
+                type:"post",
+                url:"{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'store_manager_save','version_id'=>$_GPC['version_id'])}",
+                data:data,
+                dataType:'json',
+                success:function(res){
+                    if(res.status==1){
+                        swal('操作成功!', '操作成功!', 'success');
+                    }else{
+                        swal('操作失败!', '操作失败!', 'error');
+                    }
+                }
+            })
+        });
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+{template 'common/header'}
+<link type="text/css" rel="stylesheet" href="resource/js/app/../../components/switch/bootstrap-switch.min.css?v=2019022715">
+<script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="bootstrap.switch" src="resource/js/app/../../components/switch/bootstrap-switch.min.js?v=2019022715"></script>
+<style>
+    .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary, .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary {color: #fff;background: #a0053b;}
+    .btn-primary {color: #fcfafa;background-color: #41cac0;border-color: #ffffff;}
+    .list-group .list-group-item.active {background-color: #41cac0;border-color: #f3f0f2;}
+    .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {color: #FFF;background-color: #c83716;border-color: #c83716;}
+    .nav.nav-tabs {margin-bottom: 10px;border-color: #c83716;}
+    .btn-default {color: #f4eeee;background-color: #169786;border-color: #f2f7f7;}
+    .panel-info > .panel-heading {color: #fbfdfe;background-color: #179786;border-color: #49a2b4;}
+
+    .checkbox-inline{
+        display: inline-block;min-width:140px;padding-top: 0px !important;height: 20px;margin-top: 10px !important;margin-left: 10px !important;
+    }
+    #map-dialog{z-index:2040 !important}
+    .modal-backdrop{z-index: 2000 !important;}
+    .modal-backdrop~.modal-backdrop{z-index: 2020 !important;}
+    .CgPwd{width: 20px; float: left;padding-left: 10px !important;padding-top: 5px !important;padding-left: 10px !important;border:1px solid #e8e9eb;height: 34px;width: 40px;border-left:none;cursor: pointer;}
+</style>
+{if $operation == 'display'}
+{if $_W['isfounder'] || $_W['role'] == 'owner'}
+<div class="panel we7-panel">
+    <div class="panel-body we7-padding">
+        <form action="javascript:return false" method="get" class="we7-form" role="form">
+            <input type="hidden" name="c" value="site" />
+            <input type="hidden" name="a" value="entry" />
+            <input type="hidden" name="m" value="fm_jiaoyu" />
+            <input type="hidden" name="do" value="school" />
+            <input type="hidden" name="schoolid" value="{$schoolid}" />
+            <div class="form-group">
+                <label class="col-sm-2 control-label">关键字</label>
+                <div class="col-sm-2 col-lg-2" style="margin-left:-80px">
+                    <input class="form-control" name="keyword" id="" type="text" value="{$_GPC['keyword']}">
+                </div>
+            </div>
+            <div class="form-group">
+                {if $city}
+                <label class="col-sm-2 control-label">按城市</label>
+                <div class="col-sm-2 col-lg-2" style="margin-left:-80px">
+                    <select style="margin-right:15px;" name="city" id="city" class="form-control">
+                        <option value="0">按城市</option>
+                        {loop $city $row}
+                        <option value="{$row['id']}" {if $row['id'] == $_GPC['city']} selected="selected"{/if}>{$row['name']}</option>
+                        {/loop}
+                    </select>
+                </div>
+                {/if}
+                <div class="col-sm-2 col-lg-2">
+                    <select style="margin-right:15px;" name="areaid" id="areaid" class="form-control">
+                        <option value="0">按区域</option>
+                        {loop $area $row}
+                        <option value="{$row['id']}" {if $row['id'] == $_GPC['areaid']} selected="selected"{/if}>{$row['name']}</option>
+                        {/loop}
+                    </select>
+                </div>
+                <div class="col-sm-2 col-lg-2">
+                    <select style="margin-right:15px;" name="typeid" class="form-control">
+                        <option value="0">按类型</option>
+                        {loop $schooltype $row}
+                        <option value="{$row['id']}" {if $row['id'] == $_GPC['typeid']} selected="selected"{/if}>{$row['name']}</option>
+                        {/loop}
+                    </select>
+                </div>
+                <div class="pull-right col-sm-4">
+                    <button class="btn btn-default"><i class="fa fa-search"></i> 搜索</button>
+                    
+                </div>
+            </div>
+            {if keep_MC()}
+            <div class="form-group" style="padding-left: 100px;">
+                <span class="btn btn-default" onclick="setbdall()" target="view-window"
+                    data-toggle="tooltip" data-placement="top" title="查看所有学校数据"><i class="fa fa-cog fa-spin"> </i> 设置汇总平台</span>
+                <a class="btn btn-default" href="{php echo $_W['siteroot'] . 'app/index.php?i=' . $weid . '&c=entry&do=allschool&noneed=noneed&m=fm_jiaoyu_plugin_bigdata'}" target="view-window"
+                    data-toggle="tooltip" data-placement="top" title="查看所有学校数据"><i class="fa fa-search"> </i> 查看汇总平台</a>
+            </div>
+            {/if}
+        </form>
+    </div>
+</div>
+{/if}
+
+
+<div class="modal fade" id="Modal_bdall" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="margin-top:60px;z-index:2010 !important;">
+    <div class="modal-dialog modal-lg" role="document" >
+        <div class="modal-content" >
+            <div class="modal-header" style="color: black;">
+                <h4 class="modal-title" id="ModalTitle">汇总后台设置</h4>
+            </div>
+            <div class="modal-body" id="map-dialog-content">
+        
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="close_modal" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="submit2" onclick="SaveAllSet()" >确认设置</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+
+function setbdall() {
+    $.ajax({
+        url:"{php echo $this->createWebUrl('schoolbdset', array('op' => 'GetAllSet'))}",
+        type: "post",
+        dataType: "html",
+        success: function (res) {
+             $("#map-dialog-content").html(res)
+            $("#Modal_bdall").modal('toggle');
+        }
+    });
+    
+}
+function SaveAllSet(){
+		var form = new FormData(document.getElementById('bdall_form'));
+		if(form.get('bdalltitle').replace(/^\s*|\s*$/g,"") === ''){
+            alert("请填写标题")
+        }
+        if(form.get('bdallpwd') === ''){
+            alert("请设置密码")
+        }
+       
+        if(form.get('centerpoint[lng]') === '' || form.get('centerpoint[lng]') === ''){
+            alert("请设置中心坐标")
+        }
+		$.ajax({
+			url: "{php echo $this->createWebUrl('schoolbdset', array('op' => 'SetAllSet'))}",
+			type: "post",
+			data: form,
+			processData: false,
+			contentType: false,
+			success: function(result) {
+                res = JSON.parse(result)
+                alert(res.msg)
+                $("#Modal_bdall").modal('toggle');
+			}
+		});
+	}
+
+ 
+
+    $(document).ready(function () {
+        require(['jquery', 'util', 'bootstrap.switch'], function ($, u) {
+            $(':checkbox[name="is_bigdata[]"]').bootstrapSwitch({
+                onText: "启用",      // 设置ON文本
+                offText: "关闭",    // 设置OFF文本
+                onColor: "success",// 设置ON文本颜色
+                //offColor: "dafult",  // 设置OFF文本颜色
+            });
+            $(':checkbox[name="is_bigdata[]"]').on('switchChange.bootstrapSwitch', function (e, state) {
+                var is_bigdata = this.checked ? 1 : 0;
+                var id = $(this).attr('data-id');
+                $.post("{php echo $this->createWebUrl('schoolbdset', array('op' => 'change_schoolbdset'))}", { is_bigdata: is_bigdata, id: id }, function (resp) { });
+            });
+        });
+    })
+</script>
+<div class="panel panel-default">
+    <div class="table-responsive panel-body">
+        <form action="" method="post" class="form-horizontal form" enctype="multipart/form-data">
+            <table class="table table-hover">
+                <thead class="navbar-inner">
+                <tr>
+                    <th style="width:10%;">名称</th>
+                    <th style="width:6%;">区域</th>
+                    <th style="width:20%;">地址</th>
+                    <th style="width:8%;">学校类型</th>
+                    <th style="width:12%;text-align: center;">启用大数据平台</th>
+                    <th style="width:12%;text-align: center;">查看大数据平台</th>
+                    <th style="width:12%;text-align: center;">设置密码</th>
+                    <th style="width:12%;text-align: center;">功能设置</th>
+                    <th style="width:10%;text-align: center;">管理</th>
+                </tr>
+                </thead>
+                <tbody>
+                {loop $schoollist $item}
+                <tr>
+                    <td><img src="{php echo tomedia($item['logo'])}" onerror="this.src='./resource/images/nopic.jpg';" width="60px;" style="border-radius: 3px;"><br/>{$item['title']}</a>
+                    </td>
+                    <td>{$item['city']}</br>{$item['qujian']}</td>
+                    <td> {$item['address']} </br> {$item['tel']} </td>
+                    <td> {$item['leixing']} </td>
+                    <td class="qx_00214"><input type="checkbox" value="{$item['is_bigdata']}" name="is_bigdata[]" data-id="{$item['id']}" {if $item['is_bigdata'] == 1}checked{/if}></td>
+                    <!-- <td class="row-first row-hover" style="text-align: center;word-wrap: break-word;"><a class="btn btn-default"  href="{php echo $this->createWebUrl('bdindex', array('schoolid' =>  $item['id']))}" target="_blank"  data-toggle="tooltip" data-placement="top" title="查看当前学校大数据平台" ><i class="fa fa-search"> </i> 查看</a></td> -->
+                    <td class="row-first row-hover" style="text-align: center;word-wrap: break-word;"><a class="btn btn-default"  href="{php echo $_W['siteroot'] . 'app/index.php?i=' . $item['weid'] . '&c=entry&schoolid=' . $item['id'] . '&do=bdindex&noneed=noneed&m=fm_jiaoyu_plugin_bigdata'}" target="_blank"  data-toggle="tooltip" data-placement="top" title="查看当前学校大数据平台" ><i class="fa fa-search"> </i> 查看</a></td>
+                    <td class="row-first row-hover" style="text-align: center;word-wrap: break-word;"><a href="#" onclick="setpwd({$item['id']})"  class="btn btn-default btn-sm"><i class="fa fa-cog fa-spin"> </i>大数据信息平台</a></td>
+                    <td class="row-first row-hover" style="text-align: center;word-wrap: break-word;"><a href="#" onclick="setShowInfo(`{$item['id']}`)"  class="btn btn-default btn-sm"><i class="fa fa-cog fa-spin"> </i>设置功能</a></td>
+                    <td style="max-width:60px;text-align: right;">
+                        <a href="{php echo $this->createWebUrls('start', array('id' => $item['id'], 'schoolid' =>  $item['id']))}" class="btn btn-default btn-sm" title="管理学校" data-toggle="tooltip" data-placement="top"><i class="fa fa-cog fa-spin"> </i> 管理学校</a>
+                    </td>
+                </tr>
+                {/loop}
+                </tbody>
+            </table>
+        </form>
+        {$pager}
+    </div>
+</div>
+{if $_W['isfounder']}
+<div class="panel panel-default">
+    <div class="panel-heading">给开发者建议或留言</div>
+    <div class="panel-body">
+        <div class="row-fluid">
+            <div class="span8 control-group">
+                【本部分仅创始人可见，不必担心客户或其他管理员能看到】有何建议或BUG请直接提交  联系开发者QQ:<a href="tencent://message/?uin=332035136&Site=qq&Menu=yes">332035136</a> 工作日时间（周一 - 周六 13：00 - 21：00）请直接Q我!其他时间勿扰。
+            </div>
+        </div>
+    </div>
+</div>
+{/if}
+<input type="hidden" name="rid" id="stylerid" value="" />
+<div class="modal fade" id="Modal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="margin-top:60px;z-index:2041 !important;">
+    <div class="modal-dialog modal-lg" role="document" >
+        <div class="modal-content" >
+            <div class="modal-header" style="color: black;">
+                <h4 class="modal-title" id="ModalTitle">大数据后台登陆密码设置</h4>
+            </div>
+            <div class="modal-body">
+                <form id="upsence_form" method="post" class="form-horizontal form" >
+                    <input type="hidden" name="schoolid" id="sid" value="" />
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-xs-12 col-sm-3 col-md-4 control-label">登录连接地址</label>
+                                <div class="col-sm-5">
+                                    <span class="form-control" id="short_url"  style="border:unset"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12 col-sm-3 col-md-4 control-label">标题</label>
+                                <div class="col-sm-5">
+                                    <input type="text" name="bgtitle" id="bgtitle" class="form-control" value=""/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-12 col-sm-3 col-md-4 control-label">密码</label>
+                                <div class="col-sm-5">
+                                    <input type="password" name="pwd" id="pwd" minlength="6" class="form-control" value=""/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="close_modal" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="submit2" onclick="uppwd()" >确认设置</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalShowInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="margin-top:60px;z-index:2041 !important;">
+    <div class="modal-dialog modal-lg" role="document" >
+        <div class="modal-content" >
+            <div class="modal-header" style="color: black;">
+                <h4 class="modal-title">展示功能设置</h4>
+            </div>
+            <div class="modal-body">
+                <form id="showInfo_form" method="post" class="form-horizontal form" >
+                    <div class="panel panel-default">
+                        <div class="panel-body" id="showInfo">
+                            
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="close_modal" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="submit2" onclick="upShowInfo()" >确认设置</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#city").change(function() {
+            var type = 1;
+            var cityId = $("#city option:selected").attr('value');
+            changeGrade(cityId,type, function() {
+            });
+        });
+    });
+
+    function changeGrade(cityId, type, __result) {
+        var weid = "{$weid}";
+        var classlevel = [];
+        //获取班次
+        $.post("{php echo $this->createWebUrls('indexajax',array('op'=>'getquyulist'))}", {'gradeId': cityId, 'weid': weid}, function(data) {
+            data = JSON.parse(data);
+            classlevel = data.bjlist;
+            var html = '';
+            if (classlevel != '') {
+                for (var i in classlevel) {
+                    html += '<option value="' + classlevel[i].id + '">' + classlevel[i].name + '</option>';
+                }
+            }
+            $('#areaid').html(html);
+        });
+    }
+    function setpwd(sid){
+        var weid = "{$weid}";
+        $('#Modal1').modal('toggle');
+        $.ajax({
+            url: "{php echo $this->createWebUrl('schoolbdset',array('op'=>'getbdpwd'))}",
+            data: {'schoolid': sid, 'weid': weid},
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                $("#pwd").val(data.pwd);
+                $("#bgtitle").val(data.bgtitle);
+                $("#sid").val(data.schoolid);
+                $("#short_url").text(data.short_url);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            },
+        });
+
+    }
+    function uppwd(){
+        var schoolid = $("#sid").val();
+        var pwd = $("#pwd").val();
+        var bgtitle = $("#bgtitle").val();
+        var weid = "{$weid}";
+        if(pwd.length <4){
+            alert('密码不能小于4位数');return false;
+        }
+        $.ajax({
+            url: "{php echo $this->createWebUrl('schoolbdset',array('op'=>'setbdpwd'))}",
+            data: {'schoolid': schoolid, 'weid': weid, 'pwd': pwd, 'bgtitle': bgtitle},
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+               alert(data.mes);
+                window.location.reload()
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            },
+        });
+    }
+
+    function setShowInfo(id){
+        $('#ModalShowInfo').modal('toggle');
+        $.ajax({
+            url: "{php echo $this->createWebUrl('schoolbdset',array('op'=>'getBgShowInfo'))}",
+            data: {'schoolid': id, 'weid': `{$weid}`},
+            type: "POST",
+            dataType: "html",
+            success: function (html) {
+                $("#showInfo").html(html)
+            }
+        });
+    }
+
+    function upShowInfo(){
+        let data = $("#showInfo_form").serializeArray();
+        $.ajax({
+            url: "{php echo $this->createWebUrl('schoolbdset',array('op'=>'setBgShowInfo'))}",
+            data: data,
+            type: "POST",
+            dataType: "json",
+            success: function (res) {
+               alert(res.msg)
+               location.reload()
+            }
+        });
+    }
+</script>
+{/if}
+{template 'common/footer'}

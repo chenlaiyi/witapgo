@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>支付失败</title>
+    <link rel="stylesheet" href="//res.wx.qq.com/open/libs/weui/1.1.3/weui.min.css"/>
+    <style>
+        @media (min-width: 768px) {.weui-msg__opr-area{width: 300px;margin:0 auto}.page__bd{width: 400px;margin:0 auto}}
+    </style>
+</head>
+</head>
+<body>
+<div class="container" id="container">
+    <div class="page msg_warn js_show">
+        <div class="weui-msg">
+            <div class="weui-msg__icon-area"><i class="weui-icon-warn weui-icon_msg"></i></div>
+            <div class="weui-msg__text-area">
+                <h2 class="weui-msg__title">支付失败</h2>
+            </div>
+        </div>
+        <div class="page__bd">
+            <div class="weui-cells">
+                <div class="weui-cell" style="text-align: center;">
+                    {$msg}
+                </div>
+            </div>
+        </div>
+
+        <div class="weui-msg__opr-area">
+            <p class="weui-btn-area">
+
+                <a href="javascript:javascript:window.history.go(-1);" class="weui-btn weui-btn_primary">关闭</a>
+
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    /* {if !empty($config['pay_domain']) } */
+    //清空浏览器历史记录
+    pushHistory();
+    //监听浏览器后退事件
+    window.addEventListener("popstate",
+            function(e) {
+                //转向指定的URL
+                location.href='{php echo $this->createMobileUrl('store.store_member',array('act'=>'index'))}';
+            }, false);
+    //清空浏览器历史记录
+    function pushHistory() {
+        var url = "#";
+        var state = {
+            title: "title",
+            url: "#"
+        };
+        window.history.pushState(state, "title", "#");
+    }
+    /*{/if}*/
+</script>

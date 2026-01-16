@@ -1,0 +1,531 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name = "format-detection" content ="telephone=no">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>{$title}</title>
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_TMP_CSS__}/base.css?v=20200331">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_PLUGIN__}/home/css/index.css?v=20200219">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_CSS__}/swiper.min.css">
+    <!-- 移动端适配 -->
+    <script>
+        var html = document.querySelector('html');
+        changeRem();
+        window.addEventListener('resize', changeRem);
+
+        function changeRem() {
+            var width = html.getBoundingClientRect().width;
+            html.style.fontSize = width / 10 + 'px';
+        }
+    </script>
+    <script src="{__MOBILE_USER_JS__}/jquery-2.1.4.min.js"></script>
+    <script src="{__MOBILE_USER_JS__}/jquery.flexslider-min.js"></script>
+    <script src="{__PLUGIN__}/layer/mobile/2.0/layer.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script>
+        // jssdk config 对象
+        jssdkconfig = {php echo json_encode($_W['account']['jssdkconfig']);} || {};
+        // 是否启用调试
+        jssdkconfig.debug = false;
+        jssdkconfig.jsApiList = [
+            'checkJsApi',
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'getLocation',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'hideMenuItems'
+        ];
+        wx.config(jssdkconfig);
+        wx.error(function (res) {
+            layer.open({ content: '对不起，微信JSSDK信息验证失败！', skin: 'msg', time: 2 });
+        });
+        wx.ready(function () {
+            var title = "{php echo replaceShareInfo($config['share_title'])}";
+            var imgUrl = "{php echo $config['share_thumb'] ? tomedia($config['share_thumb']) : getMemberAvatar()}";
+            var link = "{php echo replaceDieDomain($config, __MURL('user.home_activity', array('act' => 'index'), true, true),0,0,0);}";
+            var desc = "{php echo replaceShareInfo($config['share_desc'])}";
+
+            if (wx.onMenuShareTimeline) {
+                //转发到朋友圈
+                wx.onMenuShareTimeline({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                //转发给朋友
+                wx.onMenuShareAppMessage({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    type: 'link',
+                    dataUrl: '',
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareQQ({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareWeibo({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+            }
+            else{
+                //新版发送朋友圈
+                wx.updateTimelineShareData({
+                    title: title, // 分享标题
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+                wx.updateAppMessageShareData({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+            }
+        });
+    </script>
+    <link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+    <script src="{__MOBILE_STORE_JS__}/swiper.jquery.min.js"></script>
+    <link rel="stylesheet" href="{__PLUGIN__}/clipboard/clipboard.min.js">
+</head>
+<body>
+<section class="sellerInf" style="background: #fee002;">
+    <dl>
+        <dt>
+            <a href="javascript:void(0);" class="seller_link">
+            <img src="{php echo tomedia($storeLogo)}">
+            </a>
+        </dt>
+        <dd><p class="font32">{$store['name']}</p></dd>
+    </dl>
+</section>
+<section class="seller">
+    <section class="joinIfm bgfff">
+        <section class="pd24">
+            <section class="contact">
+                {if !empty($storeQrcode)}
+                <span id="ewm"><img src="{__MOBILE_USER_PLUGIN__}/home/images/ewm-.png"></span>
+                {/if}
+                <a href="tel:{$storeTel}"><img src="{__MOBILE_USER_PLUGIN__}/home/images/phone02.png"></a>
+            </section>
+            <p class="address" style="font-size: 0.3733333333333333rem;">累计发起<span class=" c0"> {$activityCount} </span>个促销活动 <span class=" main_red"> {$goingCount}</span>个进行中</p>
+        </section>
+    </section>
+</section>
+
+<section class="forceAttention" style="display:none;">
+    <section class="mask"></section>
+    <section class="attentionCon">
+        <section class="wechatInfo">
+            <h4>商家二维码</h4>
+            <section class="wechatCode"><img src="{php echo tomedia($storeQrcode)}" id="QrImages"></section>
+            <p>长按识别图中二维码</p>
+            <section class="finger"><img src="{__MOBILE_TMP_IMG__}/finger.png"></section>
+        </section>
+        <img src="{__MOBILE_TMP_IMG__}/close.png" class="followClose"> </section>
+</section>
+
+<section class="pd24 bgfff mt24">
+    <h5 class="font32 mt24 mb24" align="center">热门活动</h5>
+    <section id="ContentList">
+        {if getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'activity_show_types') == 0}
+        <ul class="goodsList" id="LoadLists">
+
+        </ul>
+        {else}
+        <ul class="tuoKeList clearfix" id="LoadLists">
+
+        </ul>
+        {/if}
+    </section>
+</section>
+
+<!--底部导航-->
+<footer class="clearfix">
+    <section>
+        <ul>
+            {if $is_show_activity == 1}
+            <li style="width:{$navWidth}%;"><a href="{php echo $this->createMobileUrl('user.home_activity',array('act'=>'index'))}"><img src="{php echo tomedia(getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_activity_icon'))}">
+                <h4 class="fn">{php echo getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_activity_name')}</h4></a>
+            </li>
+            {/if}
+            {if $is_show_nearby == 1}
+            <li style="width:{$navWidth}%;"><a href="{php echo $this->createMobileUrl('user.home_nearby',array('act'=>'index'))}"><img src="{php echo tomedia(getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_nearby_icon'))}">
+                <h4 class="fn">{php echo getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_nearby_name')}</h4></a>
+            </li>
+            {/if}
+            {if $is_show_store == 1}
+            <li style="width:{$navWidth}%;"><a href="{php echo $this->createMobileUrl('user.home_store',array('act'=>'index'))}"><img src="{php echo tomedia(getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_store_onicon'))}">
+                <h4 class="fn">{php echo getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_store_name')}</h4></a>
+            </li>
+            {/if}
+            {if $is_show_join == 1}
+            <li style="width:{$navWidth}%;"><a href="{php echo $this->createMobileUrl('user.home_join',array('act'=>'index'))}"><img src="{php echo tomedia(getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_join_icon'))}">
+                <h4 class="fn">{php echo getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_join_name')}</h4></a>
+            </li>
+            {/if}
+        </ul>
+    </section>
+</footer>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    {if getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'activity_show_types') == 0}
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li class="clearfix">
+        <figure>
+            <a href="<%=rows[i].links%>" class="join">立即参与</a>
+            <div class="left">
+                <%if(rows[i].now_time < rows[i].start_time){%>
+                <span><em class="notStart">待开始</em></span>
+                <%}%>
+                <%if(rows[i].now_time > rows[i].start_time && rows[i].now_time < rows[i].end_time){%>
+                <span><em>进行中</em></span>
+                <%}%>
+                <%if(rows[i].now_time > rows[i].end_time){%>
+                <span><em class="end">已结束</em></span>
+                <%}%>
+                <a href="<%=rows[i].links%>"> <img src="<%=rows[i].pic_url%>"> </a>
+            </div>
+            <figcaption><%=rows[i].title%></figcaption>
+            <%if(rows[i].activity_types==1){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].get_num%></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==2){%>
+            <p class="mt10"><span class="fr  "><em class=" font28 main_red"><i class="font22">￥</i><%=rows[i].money%> </em>现价</span> <span class="c9">已售<%=rows[i].buy_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==3){%>
+            <p class="mt10"><span class="fr  "><em class=" font28 main_red"><i class="font22">￥</i><%=rows[i].money%> </em>现价</span> <span class="c9">已售<%=rows[i].buy_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==4){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].join_num%></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==5){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].join_num%></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==6){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].get_num%></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==7){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].get_num%></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==8){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].get_num%></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==9){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].get_num%></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==10){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].get_num%></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==11){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].get_num%></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==12){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].get_num%></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==13){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].get_num%></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==14){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].get_num%></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==15){%>
+            <p class="mt10"><span class="fr  "><em class=" font28 main_red"><i class="font22">￥</i><%=rows[i].money%> </em>现价</span> <span class="c9">已售<%=rows[i].buy_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==16){%>
+            <p class="mt10"><span class="fr  "><em class=" font28 main_red"><i class="font22">￥</i><%=rows[i].money%> </em>现价</span> <span class="c9">已售<%=rows[i].buy_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==17){%>
+            <p class="mt10"><span class="fr  "><em class=" font28 main_red"><i class="font22">￥</i><%=rows[i].money%> </em>现价</span> <span class="c9">已售<%=rows[i].buy_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==18){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%= (rows[i].get_num + rows[i].buy_num) %></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==19){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].join_num%></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==20){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].buy_num%></em>销量</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <%if(rows[i].activity_types==21){%>
+            <p class="mt10"><span class="fr  "><em class=" font28 main_red"><i class="font22">￥</i><%=rows[i].money%> </em>现价</span> <span class="c9">已售<%=rows[i].buy_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==22){%>
+            <p class="mt10"><span class="fr"><em class="main_red"><%=rows[i].join_num%></em>参与</span> <span><em class="main_red"><%=rows[i].click_num%></em> 浏览</span></p>
+            <%}%>
+            <section class="businessName mt24 font26" ><span class="c6 font24"> 活动商家：</span><br><%=rows[i].store_name%> </section>
+        </figure>
+    </li>
+    <% } %>
+    {else}
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li>
+        <section class="exchange_pro_img">
+            <%if(rows[i].now_time < rows[i].start_time){%>
+            <span><em class="notStart">待开始</em></span>
+            <%}%>
+            <%if(rows[i].now_time > rows[i].start_time && rows[i].now_time < rows[i].end_time){%>
+            <span><em>进行中</em></span>
+            <%}%>
+            <%if(rows[i].now_time > rows[i].end_time){%>
+            <span><em class="end">已结束</em></span>
+            <%}%>
+            <a href="<%=rows[i].links%>"><img src="<%=rows[i].pic_url%>" alt=""></a>
+        </section>
+        <section class="exchange_pro_info">
+            <h2 class="fn"><a href="<%=rows[i].links%>"><%=rows[i].title%></a> </h2>
+            <p class="logo"><span ><img src="<%=rows[i].store_logo%>"></span> <%=rows[i].store_name%></p>
+        </section>
+        <section class=" mt15">
+            <a href="<%=rows[i].links%>" class="join">立即参与</a>
+            <%if(rows[i].activity_types==1){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%=rows[i].get_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==2){%>
+            <p class=" font24"><em class=" font36 main_red"><i class="font22">￥</i><%=rows[i].money%> </em></p>
+            <%}%>
+            <%if(rows[i].activity_types==3){%>
+            <p class=" font24"><em class=" font36 main_red"><i class="font22">￥</i><%=rows[i].money%> </em></p>
+            <%}%>
+            <%if(rows[i].activity_types==4){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%=rows[i].join_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==5){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%=rows[i].join_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==6){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%=rows[i].get_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==7){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%=rows[i].get_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==8){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%=rows[i].get_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==9){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%=rows[i].get_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==10){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%=rows[i].get_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==11){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%=rows[i].get_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==12){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%=rows[i].get_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==13){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%=rows[i].get_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==14){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%=rows[i].get_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==15){%>
+            <p class=" font24"><em class=" font36 main_red"><i class="font22">￥</i><%=rows[i].money%> </em></p>
+            <%}%>
+            <%if(rows[i].activity_types==16){%>
+            <p class=" font24"><em class=" font36 main_red"><i class="font22">￥</i><%=rows[i].money%> </em></p>
+            <%}%>
+            <%if(rows[i].activity_types==17){%>
+            <p class=" font24"><em class=" font36 main_red"><i class="font22">￥</i><%=rows[i].money%> </em></p>
+            <%}%>
+            <%if(rows[i].activity_types==18){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%= (rows[i].get_num + rows[i].buy_num) %></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==19){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%=rows[i].join_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==20){%>
+            <p class=" font24 "><span class="c6"> 销量</span><span class="ml5"><%=rows[i].buy_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==21){%>
+            <p class=" font24"><em class=" font36 main_red"><i class="font22">￥</i><%=rows[i].money%> </em></p>
+            <%}%>
+            <%if(rows[i].activity_types==22){%>
+            <p class=" font24 "><span class="c6"> 参与</span><span class="ml5"><%=rows[i].join_num%></span></p>
+            <p class=" font24 mt5"><span class=" c6"> 浏览</span><span class="ml5"><%=rows[i].click_num%></span></p>
+            <%}%>
+        </section>
+    </li>
+    <% } %>
+    {/if}
+</script>
+
+<script>
+    $(function(){
+        var page = 0;
+        var pageSize = 10;
+
+        $('#ContentList').dropload({
+            scrollArea : window,
+            domUp : {
+                domClass   : 'dropload-up',
+                domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+            },
+            domDown : {
+                domClass   : 'dropload-down',
+                domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+            },
+            loadUpFn : function(me){
+                $.ajax({
+                    type: 'GET',
+                    url: "{php echo $this->createMobileUrl('user.home_store_activity', array('act' => 'getJsonList','store_id' => $store_id));}",
+                    data:{
+                        "page":1,
+                        "pageSize":pageSize
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        var html = template("listtpl", data);
+                        $('#LoadLists').html(html);
+                        // 每次数据加载完，必须重置
+                        me.resetload();
+                        // 重置页数，重新获取loadDownFn的数据
+                        page = 1;
+                        window.delCount = 0;
+                        // 解锁loadDownFn里锁定的情况
+                        me.unlock();
+                        me.noData(false);
+                    },
+                    error: function(xhr, type){
+                        layer.open({
+                            content: '系统错误，稍后重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            loadDownFn : function(me){
+                dropload_me = me;
+                page++;
+                // 拼接HTML
+                var result = '';
+                $.ajax({
+                    type: 'GET',
+                    url: "{php echo $this->createMobileUrl('user.home_store_activity', array('act' => 'getJsonList','store_id' => $store_id));}",
+                    data:{
+                        "page":page,
+                        "pageSize":pageSize
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        var arrLen = data.rows.length;
+                        if(arrLen > 0){
+                            var html = template("listtpl", data);
+                            // 如果没有数据
+                        }else{
+                            // 锁定
+                            me.lock();
+                            // 无数据
+                            me.noData();
+                        }
+
+                        // 插入数据到页面，放到最后面
+                        $('#LoadLists').append(html);
+                        // 每次数据插入，必须重置
+                        me.resetload()
+                    },
+                    error: function(xhr, type){
+                        layer.open({
+                            content: '系统错误，稍后重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            threshold : 50
+        });
+
+        //查看二维码
+        $("#ewm").click(function(e) {
+            $(".forceAttention").show();
+            $(".attentionCon").css("margin-top",($(window).height()-$(".attentionCon").height())/2+"px");
+        });
+        $(".forceAttention .followClose").click(function(e) {
+            $(".forceAttention").hide();
+        });
+    });
+
+    /**
+     * 处理iOS 微信客户端6.7.4 键盘收起页面未下移bug
+     */
+    if(/iphone|ipod|ipad/i.test(navigator.appVersion)){
+        document.addEventListener("blur", function(event) {
+            // 这里加了个类型判断，因为a等元素也会触发blur事件
+            if(['input', 'textarea'].includes(event.target.localName)){
+                document.body.scrollIntoView(false);
+            }
+        }, true);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+﻿<!--底部导航-->
+<footer class="clearfix">
+    <section>
+        <ul>
+            <li class="">
+                <a href="{php echo $this->createMobileUrl('user.sys_case',array('act'=>'index'))}">
+                    {if $_GPC['do'] == 'user.sys_case'}
+                    <img src="{__MOBILE_STORE_IMG__}/mall_on.png"alt="案例中心"/>
+                    {else}
+                    <img src="{__MOBILE_STORE_IMG__}/mall.png"alt="案例中心"/>
+                    {/if}
+                    <h4 class="fn">案例中心</h4>
+                </a>
+            </li>
+            <li class="">
+                <a href="{php echo $this->createMobileUrl('store.sys_tmp',array('act'=>'index'))}">
+                    {if $_GPC['do'] == 'store.sys_tmp'}
+                    <img src="{__MOBILE_STORE_IMG__}/make_on.png"alt="我要制作"/>
+                    {else}
+                    <img src="{__MOBILE_STORE_IMG__}/make.png"alt="我要制作"/>
+                    {/if}
+                    <h4 class="fn">我要制作</h4>
+                </a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.store_member',array('act'=>'index'))}">
+                    {if $_GPC['do'] == 'store.store_member'}
+                    <img src="{__MOBILE_STORE_IMG__}/center_on.png"alt="商家中心"/>
+                    {else}
+                    <img src="{__MOBILE_STORE_IMG__}/center.png"alt="商家中心"/>
+                    {/if}
+                    <h4 class="fn">商家中心</h4>
+                </a>
+            </li>
+        </ul>
+    </section>
+</footer>

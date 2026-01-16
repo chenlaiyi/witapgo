@@ -1,0 +1,22 @@
+<view class="container">
+    <view class="page-body">
+        <view class="page-section">
+            <view>支付金额</view>
+            <view class="price">{{cose}}元</view>
+            <view class="desc">订单号：{{orderId}}</view>
+            <view class="btn-area">
+                <button bindtap="requestPayment" loading="{{loading}}" type="primary">支付</button>
+            </view>
+        </view>
+    </view>
+</view>
+<view class="common_mb_bg1" wx:if="{{showModal}}"></view>
+<view class="modal-dialog" wx:if="{{showModal}}">
+    <view class="modal-title">授权提醒</view>
+    <view class="modal-content">
+        <view class="modal-input">本程序需要您授权获登录方可使用，请允许授权</view>
+    </view>
+    <view class="modal-footer">
+        <button bindgetuserinfo="getUserInfo" class="btn-confirm" openType="getUserInfo">授权登录</button>
+    </view>
+</view>

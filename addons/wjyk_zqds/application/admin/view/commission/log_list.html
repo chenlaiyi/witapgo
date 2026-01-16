@@ -1,0 +1,116 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>佣金记录列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+</head>
+<style>
+.layui-table-cell, .layui-table-tool-panel li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+</style>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">佣金记录</div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="test-table-operate" lay-filter="test-table-operate"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table'], function(){
+        var table = layui.table
+            ,admin = layui.admin;
+
+        table.render({
+            elem: '#test-table-operate'
+            ,url:"{:siteUrl('admin/commission/commission_log_list','','web')}"
+            ,cols: [[
+                {field:'id', title: 'ID', sort: true}
+                ,{field:'uid', title: '用户信息',templet:function(d){
+                	return "<img style='max-width:25px;' src='"+d.avatar+"'></img>"+d.name;
+                }}
+                ,{field:'money', title: '佣金金额',templet:function(d){
+                	return d.money+"元";
+                }}
+                ,{field:'createtime', title: '操作时间', sort: true ,templet:function(d){
+                	return layui.util.toDateString(d.createtime*1000, "yyyy-MM-dd HH:mm");
+                }}
+            ]]
+            ,page: true
+        });
+        
+        
+
+        //监听表格复选框选择
+        table.on('checkbox(test-table-operate)', function(obj){
+            console.log(obj)
+        });
+        //监听工具条
+        table.on('tool(test-table-operate)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){
+            	window.location.href="{:siteUrl('admin/recharge/edit_recharge','','web')}&id="+data.id;
+            } else if(obj.event === 'del'){
+                layer.confirm('确定删除该充值优惠吗？', function(index){
+                	window.location.href="{:siteUrl('admin/recharge/del_recharge','','web')}&id="+data.id;
+                    layer.close(index);
+                });
+            } else if(obj.event === 'edit'){
+                window.location.href="{:siteUrl('admin/recharge/edit_recharge','','web')}&id="+data.id;
+            }
+        });
+        
+        table.on('toolbar(test-table-operate)', function(obj){
+       	  var checkStatus = table.checkStatus(obj.config.id);
+       	  switch(obj.event){
+       	    case 'add':
+       	    	window.location.href="{:siteUrl('admin/recharge/edit_recharge','','web')}";
+       	    break;
+       	  };
+       	});
+        
+        var $ = layui.$, active = {
+            getCheckData: function(){ //获取选中数据
+                var checkStatus = table.checkStatus('test-table-operate')
+                    ,data = checkStatus.data;
+                layer.alert(JSON.stringify(data));
+            },
+            addStore:function(){
+        	   window.location.href="{:siteUrl('admin/recharge/edit_recharge','','web')}";
+            }
+        };
+
+        $('.test-table-operate-btn .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+</script>
+</body>
+<div class="layui-footer" style="position:absolute;bottom:0;text-align:center;width:100%">
+	{include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}
+</div>
+</html>

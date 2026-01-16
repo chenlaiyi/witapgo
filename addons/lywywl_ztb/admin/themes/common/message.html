@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>系统管理平台 V1.2.5</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link href="{$_W['siteroot']}addons/lywywl_ztb/resource/plugin/bootstrap/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link rel="stylesheet" href="{$_W['siteroot']}addons/lywywl_ztb/resource/plugin/font-awesome/font-awesome.min.css?v=4.4.0">
+    <link rel="stylesheet" href="{$_W['siteroot']}addons/lywywl_ztb/resource/web/css/zhutuike.css">
+    <!--[if lt IE 9]>
+    <script src="{$_W['siteroot']}addons/lywywl_ztb/resource/plugin/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="{$_W['siteroot']}addons/lywywl_ztb/resource/plugin/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body class="hold-transition lockscreen">
+<div class="lockscreen-wrapper" style="max-width: 800px;">
+    <!-- User name -->
+    <h2 class="lockscreen-name text-red">系统错误 Error!</h2>
+    <!-- START LOCK SCREEN ITEM -->
+    <div class="lockscreen-item">
+    </div><!-- /.lockscreen-item -->
+    <div class="help-block text-center">
+        {$msg}
+    </div>
+    <div class="text-center">
+        <a href="javascript:history.go(-1);">返回上一页</a>
+    </div>
+    <div class="lockscreen-footer text-center">
+        <p id="footerp">为了您在使用管理平台时获得最佳体验，请升级使用 IE8+ 或下载使用Chrome/Firefox浏览器。</p>
+        <p>{if empty($_W['setting']['copyright']['footerleft'])} Powered by <a href="http://www.we7.cc"><b>微擎</b></a> v{IMS_VERSION} © 2014-{php echo date('Y')} <a href="http://www.we7.cc">www.we7.cc</a>{else}{$_W['setting']['copyright']['footerleft']}{/if} {if !empty($_W['setting']['copyright']['icp'])}备案号：<a href="http://www.miitbeian.gov.cn" target="_blank">{$_W['setting']['copyright']['icp']}</a>{/if}</p>
+    </div>
+</div><!-- /.center -->
+<script type="text/javascript" src="{$_W['siteroot']}addons/lywywl_ztb/resource/web/js/jQuery-2.1.4.min.js"></script>
+<script type="text/javascript" src="{$_W['siteroot']}addons/lywywl_ztb/resource/plugin/bootstrap/bootstrap.min.js"></script>
+</body>
+</html>

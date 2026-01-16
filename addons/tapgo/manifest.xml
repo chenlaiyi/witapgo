@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest>
+    <application>
+        <name>tapgo</name>
+        <identifie>tapgo</identifie>
+        <version>1.0.0</version>
+        <type>module</type>
+        <title>点点够</title>
+        <ability>连接外部数据库的插件</ability>
+        <description>这是一个用于连接外部数据库的插件。</description>
+        <author>点点够团队</author>
+    </application>
+    <install>install.php</install>
+    <uninstall></uninstall>
+    <upgrade></upgrade>
+    <bindings>
+        <entry>
+            <title>后台管理</title>
+            <do>admin</do>
+            <state>enabled</state>
+        </entry>
+    </bindings>
+</manifest>

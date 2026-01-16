@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">模板</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebUrl('obj_home', array('act' => 'index'));}">活动列表</a></li>
+                            <li class="active"><a href="#">{if !empty($model['id'])}编辑{else}创建{/if}活动</a></li>
+                            <li><a href="{php echo $this->createWebUrl('obj_home_nav', array('act' => 'index'));}">聚合导航</a></li>
+                            <li><a href="{php echo $this->createWebUrl('obj_home_attr', array('act' => 'index'));}">聚合属性</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content" id="form_content" method="post">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> {if !empty($model['id'])}编辑{else}创建{/if}活动信息</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>隶属导航栏目</label>
+                                            <div class="col-sm-10">
+                                                {loop $navList $index $nav}
+                                                <label>
+                                                    <input type="checkbox" name="model[nav_list][]" class="flat-blue" value="{$nav['id']}" {if in_array($nav['id'],$model['nav_list'])} checked {/if}> {$nav['name']}
+                                                </label>&nbsp;&nbsp;
+                                                {/loop}
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong> 请选择活动所属的栏目，可多选。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="activity_id" class="col-sm-2 control-label"><span class="text-red">(*)</span>选择聚合活动</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="activity_title" value="{$model['activity_title']}" disabled>
+                                                    <span class="input-group-btn">
+                                                        <button class="btn btn-info btn-flat btn_add" type="button" >选择活动</button>
+                                                    </span>
+                                                </div>
+                                                <input datatype="n" id="activity_id" maxlength="20"
+                                                       name="model[activity_id]" nullmsg="请选择有效的聚合活动！" placeholder="请选择有效的聚合活动"
+                                                       type="hidden" value="{$model['activity_id']}"/>
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong> 请选择商家创建的活动。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="status2" class="col-sm-2 control-label">聚合活动状态</label>
+                                            <div class="col-sm-10">
+                                                <input data-off-text="关闭" data-on-text="开启" data-size="mini" id="status"
+                                                       type="checkbox" value="true" {if $model['status']==1}checked{/if}/>
+                                                <input id="status2" name="model[status]" type="hidden"
+                                                       value="{$model['status']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 选择活动开启/关闭状态，关闭后该活动将在聚合首页隐藏</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>聚合活动属性</label>
+                                            <div class="col-sm-10">
+                                                {loop $attrList $index $attr}
+                                                <label>
+                                                    <input type="checkbox" name="model[attr_list][]" class="flat-blue" value="{$attr['id']}" {if in_array($attr['id'],$model['attr_list'])} checked {/if}> {$attr['name']}
+                                                </label>&nbsp;&nbsp;
+                                                {/loop}
+                                                <span class="help-block">
+                                                    <p><strong class="text-danger">提示：</strong> 请选择聚合活动属性，可多选。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>今日推荐活动</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" value="0" name="model[is_rec]" id="is_rec0"
+                                                           class="flat-blue is_rec" {if $model['is_rec']==0} checked
+                                                    {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" value="1" name="model[is_rec]" id="is_rec1"
+                                                           class="flat-blue is_rec" {if $model['is_rec']==1} checked
+                                                    {/if}> 推荐
+                                                </label>&nbsp;&nbsp;
+                                                <span class="help-block">
+                                                        <p><strong class="text-danger">提示：</strong> 选择推荐后，该活动将在首页“今日推荐”栏目中展示。</p>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div id="is_rec_box" style="display: {if $model['is_rec'] != 1} none{/if};">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span class="text-red">(*)</span>推荐活动图片</label>
+                                                <div class="col-sm-10">
+                                                    {php echo tpl_form_field_image('model[pic_url]',$model['pic_url']);}
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 请上传今日推荐活动图片，建议尺寸350*170像素。</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+                                                <input type="hidden" name="token" value="{$_W['token']}"/>
+                                                <input type="hidden" name="submit" value="submit"/>
+                                                <button type="submit" class="btn btn-primary" id="SubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script>
+    //添加活动配置
+    var importPage = 0;
+    var importSize = 10;
+    window.searchKey = "";
+
+    $(function () {
+        SelectNav("聚合首页");
+
+        myrequire(['select2','bootstrap-switch', 'validform', 'icheck'], function () {
+            //绑定更改状态操作
+            $('#status').bootstrapSwitch({
+                onSwitchChange: function (event, state) {
+                    var status = state ? 1 : 0;
+                    $("#status2").val(status);
+                }
+            });
+
+            //初始化icheck控件radio
+            $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+                checkboxClass: 'icheckbox_flat-blue',
+                radioClass: 'iradio_flat-blue'
+            });
+
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createWebUrl('obj_home', array('act' => 'index'));}";
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+                    }
+                }
+            });
+        });
+
+        //创建操作
+        $(".btn_add").click(function () {
+            require(["jquery", "util"], function(){
+                myrequire(['dropload','icheck'], function () {
+                    var footer = '<div><button type="button" class="btn btn-default" data-dismiss="modal" id="close">关闭</button></div>';
+                    var modalobj = util.dialog('<div class="box-tools">选择聚合活动 <div class="input-group" style="width: 180px;display: inline-flex;margin-left: 30px;"><input type="text" name="table_search" class="form-control input-sm pull-right" placeholder="请输入活动名称" id="search_activity_key"><div class="input-group-btn"><button class="btn btn-sm btn-default" id="btn_search_activity">搜索</button></div></div></div>','<div id="userList" style="height: 420px;overflow-y:auto;"><table class="table table-hover" id="lists" width="100%"><tr style="display: none;"><th width="80">编号</th><th width="170">隶属商家</th><th width="100">活动类型</th><th>活动名称</th><th width="60">选择</th></tr></table></div>',footer,{containerName:'obj-container'});
+                    modalobj.modal({'keyboard': true});
+                    modalobj.find('.modal-body').css({'overflow-y':'hidden','overflow-x':'hidden','height':'460px','padding':'20px' });
+                    window.searchKey = "";
+                    $('#search_activity_key').val("");
+                    ajax_activity(true);
+                    modalobj.modal('show');
+                });
+            });
+        });
+
+        //活动搜索
+        $(document).on('click','#btn_search_activity',function(){
+            window.searchKey = $('#search_activity_key').val();
+            ajax_activity(false);
+        });
+
+        //选择活动
+        $(document).on('click','.addactivity',function(){
+            var addbtn = $(this);
+            $("#activity_id").val(addbtn.data("id"));
+            $("#activity_title").val(addbtn.data("title"));
+            $('#close').trigger("click");
+        });
+
+        //选择推荐活动
+        $('.is_rec').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+            var obj_types = $(this).val();
+            if(obj_types==0)
+            {
+                $("#is_rec_box").hide();
+            }
+            else
+            {
+                $("#is_rec_box").show();
+            }
+        });
+    });
+
+    //获取用户列表
+    function ajax_activity(is_first) {
+        //重新从第一页加载
+        $('#lists tr').not(':eq(0)').remove();
+        importPage = 0;
+        if(!is_first) {
+            dropload_me.unlock();
+            dropload_me.noData(false);
+            dropload_me.resetload();
+        }
+        if(is_first) {
+            $('#userList').dropload({
+                autoLoad: true,
+                domDown: {
+                    domClass: 'dropload-down',
+                    domRefresh: '<div class="dropload-refresh">↑上拉加载更多</div>',
+                    domLoad: '<div class="dropload-load"><span class="loading"></span>加载中...</div>',
+                    domNoData: '<div class="dropload-noData">没有更多数据了</div>'
+                },
+                loadDownFn: function (me) {
+                    dropload_me = me;
+                    importPage++;
+                    // 拼接HTML
+                    var result = '';
+                    $.ajax({
+                        type: 'GET',
+                        url: "{php echo $this->createWebUrl('obj_activity', array('act' => 'getJsonList'));}",
+                        data: {
+                            "page": importPage,
+                            "pageSize": importSize,
+                            "sortName": ' id ',
+                            "status": 1,
+                            "sortOrder": ' desc ',
+                            "key": window.searchKey
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            var arrLen = data.rows.length;
+                            if (arrLen > 0) {
+                                $('#lists tr').first().show();
+                                for (var i = 0; i < arrLen; i++) {
+                                    result += '<tr><td>' + data.rows[i].id + '</td><td>' + data.rows[i].store_name + '</td><td>' + data.rows[i].activity_types + '</td><td>' + data.rows[i].title + '</td><td><button class="btn btn-block btn-success btn-xs addactivity" data-id="' + data.rows[i].id + '" data-title="' + data.rows[i].title + '">添加</button></td></tr>';
+                                }
+                                // 如果没有数据
+                            } else {
+                                // 锁定
+                                me.lock();
+                                // 无数据
+                                me.noData();
+                            }
+                            // 为了测试，延迟1秒加载
+                            // setTimeout(function(){
+                            // 插入数据到页面，放到最后面
+                            $('#lists').append(result);
+                            // 每次数据插入，必须重置
+                            me.resetload();
+                            // },1000);
+                        },
+                        error: function (xhr, type) {
+                            // 即使加载出错，也得重置
+                            me.resetload();
+                        }
+                    });
+                },
+                threshold: 50
+            });
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">系统配置</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="{php echo $this->createWebAppUrl('store_account', array('act' => 'index'));}">商户信息</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content" id="form_content" method="post" action="{php echo $this->createWebAppUrl('store_account', array('act' => 'modify'));}">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 商户基本信息</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <section class="col-lg-6 connectedSortable">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span
+                                                        class="text-red"></span>商家名称</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" type="text" value="{$store['name']}" disabled/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label  class="col-sm-2 control-label"><span
+                                                        class="text-red"></span>所在区域</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" type="text" value="{$store['city']}" disabled/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span class="text-red"></span>账户余额</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" class="form-control" value="{$store['money']}" disabled>
+                                                    <span class="input-group-btn"><a class="btn btn-info btn-flat" type="button" href="{php echo $this->CreateWebAppUrl('store_recharge')}">充值</a><a class="btn btn-danger btn-flat" type="button" href="{php echo $this->CreateWebAppUrl('store_bill')}">明细</a></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">
+                                                    <span class="text-red"></span>服务到期
+                                                </label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" class="form-control" value="{$store['endtime']}" disabled><span class="input-group-btn"><a class="btn btn-info btn-flat" type="button" href="{php echo $this->CreateWebAppUrl('store_renew')}">续费</a></span>
+                                                    </div>
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 当前商户剩余服务时间 <code>{$serverDay}天</code>，可创建活动数 <code>{php echo $store['create_num']==-1?'不限':$store['create_num']}</code>，服务到期后将无法使用系统。</p>
+                                                </div>
+                                            </div>
+                                        </section>
+                                        <section class="col-lg-6 connectedSortable">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span
+                                                        class="text-red"></span>所属行业</label>
+                                                <div class="col-sm-10">
+                                                    <input class="form-control" type="text" value="{$store['industry_name']}" disabled/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span class="text-red"></span>手机号码</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" class="form-control" value="{$store['mobile']}" disabled>
+                                                    <span class="input-group-btn"><a class="btn btn-info btn-flat" type="button" href="{php echo $this->CreateWebAppUrl('store_account',array('act'=>'modify_mobile'))}">号码变更</a></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {if $config['sms_obj']==1}
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span class="text-red"></span>剩余短信</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" class="form-control" value="{$store['sms']}" disabled>
+                                                        <span class="input-group-btn"><a class="btn btn-info btn-flat" type="button" href="{php echo $this->CreateWebAppUrl('store_sms')}">充值</a><a class="btn btn-danger btn-flat" type="button" href="{php echo $this->CreateWebAppUrl('sys_sms')}">日志</a></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {/if}
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"><span
+                                                        class="text-red"></span>微信账户</label>
+                                                <div class="col-sm-10">
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" id="openid" class="form-control" value="{$store['openid']}" disabled>
+                                                    <span class="input-group-btn"><button class="btn btn-danger btn-flat" type="button" onclick="showEwmDialog();">变更</button></span>
+                                                    </div>
+                                                    <p class="help-block"><strong class="text-danger">提示：</strong> 商户绑定微信用户标识，可通过微信登录系统，并通过此微信进行资金结算。</p>
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 商户基本配置</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>店铺商标LOGO</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('config[logo]',$set_config['logo']);}
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请上传企业商标LOGO，该LOGO将展示在活动和商家界面。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>公众号二维码</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_form_field_image('config[wx_qrcode]',$set_config['wx_qrcode']);}
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请上传公众号二维码，上传后将展示在活动页面右侧。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tel" class="col-sm-2 control-label"><span class="text-red">(*)</span>客服联系电话</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="tel" maxlength="20" name="config[tel]" type="text" value="{$set_config['tel']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 客服电话将浮动展示在活动的右侧，如不填写，系统将默认读取您注册账号的手机号码。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>余额能否提现</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[is_money_refund]" id="is_money_refund0" class="flat-blue is_money_refund" value="0" {if $set_config['is_money_refund']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[is_money_refund]" id="is_money_refund1" class="flat-blue is_money_refund" value="1" {if $set_config['is_money_refund']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启后用户参与活动获得的账户余额可申请提现，关闭后用户账户余额只能线上参与或到店消费时抵扣。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>红包发送失败</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[is_mchpayfail_usermoney]" class="flat-blue" value="0" {if $set_config['is_mchpayfail_usermoney']==0} checked {/if}> 进入补发列表
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[is_mchpayfail_usermoney]" class="flat-blue" value="1" {if $set_config['is_mchpayfail_usermoney']==1} checked {/if}> 转为账户余额
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 选择微信红包发放失败时的处理方式，由于微信企业付款接口每天对同一用户转账次数过多后将被限制转账，造成红包发放失败，此时可选择失败时是补发还是转为账户余额。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="money_refund_box" style="display: {if $set_config['is_money_refund'] == 0} none{/if};">
+                                            <label for="min_refund_money" class="col-sm-2 control-label"><span class="text-red">(*)</span>最低提现金额</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="min_refund_money" maxlength="10" name="config[min_refund_money]" placeholder="请输入最低提现金额"
+                                                           onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                           onblur = "this.value=FloatMoney(this.value)"
+                                                           step="0.01" max="1000"
+                                                           type="number" value="{$set_config['min_refund_money']}"/>
+                                                    <span class="input-group-addon">元</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 平台限制单次最大提现金额<code>{if empty($config['refund_max_money'])}5000.00{else}{$config['refund_max_money']}{/if}元</code>。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>商城余额支付</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[is_money_intmall]" id="is_money_intmall0" class="flat-blue is_money_intmall" value="0" {if $set_config['is_money_intmall']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[is_money_intmall]" id="is_money_intmall1" class="flat-blue is_money_intmall" value="1" {if $set_config['is_money_intmall']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启后用户账户余额可在积分商城中购买商品使用。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动余额支付</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[is_money_obj]" id="is_money_obj0" class="flat-blue is_money_obj" value="0" {if $set_config['is_money_obj']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[is_money_obj]" id="is_money_obj1" class="flat-blue is_money_obj" value="1" {if $set_config['is_money_obj']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启后用户账户余额可在商家活动中参与支付使用。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>提现申请通知</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="config[is_refund_notify]" id="is_refund_notify0" class="flat-blue is_refund_notify" value="0" {if $set_config['is_refund_notify']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="config[is_refund_notify]" id="is_refund_notify1" class="flat-blue is_refund_notify" value="1" {if $set_config['is_refund_notify']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启后用户提现时，将使用手机短信和微信模板信息的方式通知商家。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="password" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>商户安全密码
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" id="password" class="form-control" value="{php echo empty($set_config['password'])?'':'******' }" disabled>
+                                                    <span class="input-group-btn"><a class="btn btn-info btn-flat" type="button" href="{php echo $this->CreateWebAppUrl('store_account',array('act'=>'modify_storepwd'))}">{php echo empty($set_config['password'])?'设置':'更换' }</a></span>
+                                                </div>
+                                                <p class="help-block">商户安全密码，可包含数字、字母等。限制长度为6。用于创建账户核销员工等操作时使用</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tel" class="col-sm-2 control-label"><span class="text-red">(*)</span>活动预览用户</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="preview_openid" name="config[preview_openid]" type="text" value="{$set_config['preview_openid']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 发布活动平台未审核时，可提前预览活动内容是否有误。多个OPENID请用英文逗号,分隔</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="tel" class="col-sm-2 control-label"><span class="text-red"></span>商家核销二维码</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="store_writeoff_code" name="config[store_writeoff_code]" type="text" readonly="true" value="{$set_config['store_writeoff_code']}"/>
+                                                <img src="{$set_config['store_writeoff_code']}" width="150">
+                                                <p class="help-block"><strong class="text-danger">链接：</strong> {$scanurl}</p>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 客户到店扫码后转跳订单列表,方便用户核销. 或者复制链接,直接分享用户,或者自行根据链接生成二维码.</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 活动门店配置</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group" style="padding-top: 5px">
+                                        <label class="col-sm-2 control-label"><span class="text-red">(*)</span>活动门店地址</label>
+                                        <div class="col-sm-10">
+                                            <div class="box">
+                                                <div class="box-header">
+                                                    <h3 class="box-title">活动门店用于创建活动时默认加载，所有信息为必填项，请按照要求认真填写。<code>活动门店最多可设置5个</code></h3>
+                                                    <div class="box-tools pull-right">
+                                                        <input type="button" id="addmapbtn"
+                                                               class="btn btn-sm btn-info" value="添加门店" style="margin-bottom: 10px;" />
+                                                    </div>
+                                                </div>
+                                                <div class="box-body">
+                                                    <table class="table table-striped" id="addmaptable">
+                                                        <tr>
+                                                            <th>门店名称</th>
+                                                            <th>经纬度</th>
+                                                            <th>详细地址</th>
+                                                            <th>联系电话</th>
+                                                            <th>操作</th>
+                                                        </tr>
+                                                        {if !empty($default_store_map)}
+                                                        {loop $default_store_map $index $item}
+                                                        <tr class="addmap">
+                                                            <td>
+                                                                <input class="form-control" name="default_store_map[{$index}][name]"  placeholder="请输入门店名称" value="{$item['name']}"  type="text" />
+                                                            </td>
+                                                            <td>
+                                                                <div class="row row-fix">
+                                                                    <div class="col-xs-4 col-sm-4">
+                                                                        <input type="text" name="default_store_map[{$index}][lng]" value="{$item['lng']}" placeholder="地理经度"  class="form-control" />
+                                                                    </div>
+                                                                    <div class="col-xs-4 col-sm-4">
+                                                                        <input type="text" name="default_store_map[{$index}][lat]" value="{$item['lat']}" placeholder="地理纬度"  class="form-control" />
+                                                                    </div>
+                                                                    <div class="col-xs-4 col-sm-4">
+                                                                        <button onclick="showCoordinate(this);" class="btn btn-default" type="button">选择坐标</button>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control" name="default_store_map[{$index}][address]" value="{$item['address']}" placeholder="请输入门店位置" type="text" />
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control" name="default_store_map[{$index}][tel]" value="{$item['tel']}" placeholder="请输入联系电话" type="text" />
+                                                            </td>
+                                                            <td>
+                                                                <input type="button" class="btn btn-sm btn-danger pull-right delmapitem" value="删除门店" style="margin-right:10px" />
+                                                            </td>
+                                                        </tr>
+                                                        {/loop}
+                                                        {/if}
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <input type="hidden" name="token" value="{$_W['token']}"/>
+                                                <button type="submit" class="btn btn-primary" id="SubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script id="maptpl" type="text/html">
+    <tr class="addmap">
+        <td>
+            <input class="form-control" name="default_store_map[<%= count %>][name]"  placeholder="请输入门店名称" type="text" />
+        </td>
+        <td>
+            <div class="row row-fix">
+                <div class="col-xs-4 col-sm-4">
+                    <input type="text" name="default_store_map[<%= count %>][lng]" value="" placeholder="地理经度"  class="form-control" />
+                </div>
+                <div class="col-xs-4 col-sm-4">
+                    <input type="text" name="default_store_map[<%= count %>][lat]" value="" placeholder="地理纬度"  class="form-control" />
+                </div>
+                <div class="col-xs-4 col-sm-4">
+                    <button onclick="showCoordinate(this);" class="btn btn-default" type="button">选择坐标</button>
+                </div>
+            </div>
+        </td>
+        <td>
+            <input class="form-control" name="default_store_map[<%= count %>][address]"  placeholder="请输入门店位置" type="text" />
+        </td>
+        <td>
+            <input class="form-control" name="default_store_map[<%= count %>][tel]"  placeholder="请输入联系电话" type="text" />
+        </td>
+        <td>
+            <input type="button" class="btn btn-sm btn-danger pull-right delmapitem" value="删除门店" style="margin-right:10px" />
+        </td>
+    </tr>
+</script>
+<script>
+    $(function () {
+        //设置选中导航
+        SelectNav("商户信息配置");
+
+        myrequire(['icheck','validform','select2'], function () {
+            //初始化icheck控件radio
+            $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+                checkboxClass: 'icheckbox_flat-blue',
+                radioClass: 'iradio_flat-blue'
+            });
+
+            //是否开启余额提现选项
+            $('.is_money_refund').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
+                var is_money_refund = $(this).val();
+                if (is_money_refund==0)
+                {
+                    $("#money_refund_box").hide();
+                }
+                else
+                {
+                    $("#money_refund_box").show();
+                }
+            });
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createWebAppUrl('store_account', array('act' => 'index'));}";
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+                    }
+                }
+            });
+
+            //添加默认活动门店
+            myrequire([ 'arttemplate'], function (template) {
+                //开启多门店添加门店信息
+                $("#addmapbtn").click(function () {
+                    var mapcount	= $(".addmap").length;
+                    var obj = {};
+                    obj.count = mapcount;
+                    var html = template("maptpl",obj);
+                    $("#addmaptable").append(html);
+                });
+            });
+
+            //删除多门店信息
+            $(document).delegate(".delmapitem", "click", function() {
+                var list = $(this).parent().parent().parent();
+                $(this).parent().parent().remove();
+                list.children(".addmap").each(function (index) {
+                    $(this).find(".form-control").each(function () {
+                        var inputName = $(this).attr("name");
+                        $(this).attr("name", inputName.replace(/\[([\d]+)\]/g, "[" + index + "]"));
+                    });
+                });
+            });
+        });
+    });
+
+    function showEwmDialog() {
+        require(["jquery", "util"], function(){
+            var footer = '<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
+            var modalobj = util.dialog('扫码变更OPENID','<div class=link-modal><div style=width:300px;margin:auto;position:relative;text-align:center;><img src="{php echo $this->createWebAppUrl('store_account', array('act' => 'openidQrPreview'));}"><p>请用需要绑定用户的微信浏览器打开！</p></div></div>',footer,{containerName:'emw-container'});
+            modalobj.modal({'keyboard': true});
+            modalobj.find('.modal-body').css({'overflow-y':'auto' });
+            modalobj.modal('show');
+        });
+    }
+</script>
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=F51571495f717ff1194de02366bb8da9&s=1"></script>
+<script type="text/javascript">
+    function showCoordinate(elm) {
+        require(["util"], function(util){
+            require(["map"], function(){
+
+                //百度地图API提供Geocoder类进行地址解析，您可以通过Geocoder.getPoint()方法来将一段地址描述转换为一个坐标。
+                function addressToPoint(address) {
+                    var LocalSearch = new BMap.LocalSearch(map, {
+                        renderOptions: { map: map }
+                    });
+                    LocalSearch.search(address);
+                    LocalSearch.setSearchCompleteCallback(function () {
+                        var point = LocalSearch.getResults().getPoi(0).point;
+                        LocalSearch.clearResults();
+                        map.panTo(point); // 将地图的中心点更改为给定的点
+                        marker.setPosition(point); // 设置标注的地理坐标
+                        marker.setAnimation(BMAP_ANIMATION_BOUNCE); // 设置标注动画效果
+                        setTimeout(function () {
+                            marker.setAnimation(null);
+                        }, 3600); // 动画持续时间
+                    });
+                }
+
+                var defaultValue = {};
+                defaultValue.lng = parseFloat($(elm).parent().prev().prev().find(":text").val());
+                defaultValue.lat = parseFloat($(elm).parent().prev().find(":text").val());
+
+                defaultValue || (defaultValue = {});
+                defaultValue.lng || (defaultValue.lng = 116.403851);
+                defaultValue.lat || (defaultValue.lat = 39.915177);
+                var point = new BMap.Point(defaultValue.lng, defaultValue.lat) /*2、创建点坐标*/
+                var geocoder = new BMap.Geocoder /*创建地址解析器实例*/
+                var $mapDialog = $("#map-dialog");
+
+                if (0 == $mapDialog.length) {
+                    ($mapDialog = util.dialog("请选择地点", '<div class="form-group"><div class="input-group"><input type="text" class="form-control" placeholder="请输入地址来直接查找相关位置"><div class="input-group-btn"><button class="btn btn-default"><i class="icon-search"></i> 搜索</button></div></div></div><div id="map-container" style="height:400px;"></div>', '<button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-primary">确认</button>', {
+                        containerName: "map-dialog"
+                    })).find(".modal-dialog").css("width", "80%");
+                    $mapDialog.modal({
+                        keyboard: false
+                    });
+                    map = util.map.instance = new BMap.Map("map-container"); // 1、创建地图实例
+                    map.centerAndZoom(point, 12); // 3、地图初始化，设置中心坐标点及地图级别
+                    map.enableScrollWheelZoom(); // 4、其它，鼠标滚轮控制缩放
+                    map.enableDragging(); // 启用地图拖拽，默认启用
+                    map.enableContinuousZoom(); // 启用连续缩放效果，默认禁用
+                    map.addControl(new BMap.NavigationControl); // 添加导航控件
+                    map.addControl(new BMap.OverviewMapControl); // 添加缩略图控件
+                    marker = util.map.marker = new BMap.Marker(point); // 创建一个图像标注实例。point参数指定了图像标注所在的地理位置
+                    marker.setLabel(new BMap.Label("请您移动此标记，选择您的坐标！", {
+                        offset: new BMap.Size(10, -20)
+                    })); // //把label设置到maker上
+                    map.addOverlay(marker); // 添加自定义覆盖物
+                    marker.enableDragging(); //开启标注拖拽功能
+                    // 添加拖拽事件监听函数
+                    marker.addEventListener("dragend", function (e) {
+                        var point = marker.getPosition(); // 返回标注的地理坐标
+                        // 拖拽标签由坐标地址转换为文本地址
+                        geocoder.getLocation(point, function (geocoderResult) {
+                            $mapDialog.find(".input-group :text").val(geocoderResult.address)
+                        })
+                    });
+                    // 回车由文本地址解析坐标
+                    $mapDialog.find(".input-group :text").keydown(function (e) {
+                        13 == e.keyCode && addressToPoint($(this).val())
+                    });
+                    // 点击按钮由文本地址解析坐标
+                    $mapDialog.find(".input-group button").click(function () {
+                        addressToPoint($(this).parent().prev().val())
+                    });
+                }
+
+                // 在模态框完全展示出来做一些动作
+                // http://www.runoob.com/bootstrap/bootstrap-modal-plugin.html
+                $mapDialog.off("shown.bs.modal");
+                $mapDialog.on("shown.bs.modal", function () {
+                    marker.setPosition(point); // 设置标注的地理坐标
+                    map.panTo(marker.getPosition()); // 将地图的中心点更改为给定的点
+                });
+
+                $mapDialog.find("button.btn-primary").off("click");
+                $mapDialog.find("button.btn-primary").on("click", function () {
+                    var e = util.map.marker.getPosition();
+                    geocoder.getLocation(e, function (i) {
+                        var result = {
+                            lng: e.lng,
+                            lat: e.lat,
+                            label: i.address
+                        };
+                        $(elm).parent().prev().prev().find(":text").val(result.lng);
+                        $(elm).parent().prev().find(":text").val(result.lat);
+                    })
+                    $mapDialog.modal("hide");
+                });
+                $mapDialog.modal("show");
+            });
+        });
+    }
+</script>
+</body>
+</html>

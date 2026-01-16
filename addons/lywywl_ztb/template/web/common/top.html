@@ -1,0 +1,89 @@
+<header class="main-header">
+    <a href="{php echo $this->createWebUrl('home');}" class="logo">
+        <!-- 系统32*32LOGO -->
+        <span class="logo-mini"><img src="{if !empty($GLOBALS['config']['logo_small'])}{php echo tomedia($GLOBALS['config']['logo_small'])}{else}{__IMG__}/smalllogo.png{/if}" width="28" height="28"
+                                     alt="{php echo $_W['uniaccount']['name']}"
+                                     title="{php echo $_W['uniaccount']['name']}"></span>
+        <!-- 系统200*32LOGO -->
+        <span class="logo-lg"><img src="{if !empty($GLOBALS['config']['logo_big'])}{php echo tomedia($GLOBALS['config']['logo_big'])}{else}{__IMG__}/logo.png{/if}" width="110" height="28"
+                                   alt="{php echo $_W['uniaccount']['name']}"
+                                   title="{php echo $_W['uniaccount']['name']}"></span>
+    </a>
+
+    <nav class="navbar navbar-static-top" role="navigation">
+        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">切换导航</span>
+        </a>
+        <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+                {if empty($admin)}
+                <!-- 微擎首页 -->
+                <li>
+                    <a href="./index.php?c=home&amp;a=welcome&amp;" title="返回首页"><i class="fa fa-desktop"></i></a>
+                </li>
+                <!-- 在线客服 -->
+                <!--<li>-->
+                <!--<a href="http://wpa.qq.com/msgrd?v=3&uin=2970330895&site=维奕网络&menu=yes" title="在线客服" target="_blank"><i class="fa fa-qq"></i></a>-->
+                <!--</li>-->
+                <!-- 系统更新 -->
+                <li>
+                    <a href="./index.php?c=module&amp;a=manage-system&amp;" title="系统更新" target="_blank"><i class="fa fa-download"></i></a>
+                </li>
+                <!-- 更新缓存 -->
+                <li>
+                    <a href="javascript:void(0);" id="update_cache_btn" title="更新缓存"><i class="fa fa-recycle"></i></a>
+                </li>
+                <!-- 切换公众号 -->
+                <li>
+                    <a href="./index.php?c=account&a=display&" title="切换公众号"><i class="fa fa-random"></i></a>
+                </li>
+                {/if}
+                <!-- 管理员信息 -->
+                <li class="dropdown user user-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="帐号信息">
+                        <img src="{if !empty($_W['account']['logo'])}{$_W['account']['logo']}{else}{__IMG__}/avatar.jpg{/if}" class="user-image" alt="User Image">
+                        <span class="hidden-xs">{$_W['account']['name']}</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="user-header">
+                            <img src="{if !empty($_W['account']['logo'])}{$_W['account']['logo']}{else}{__IMG__}/avatar.jpg{/if}" class="img-circle" alt="User Image">
+                            <p>
+                                <span>{$_W['user']['username']}（用户组：{$_W['account']['setmeal']['groupname']}）</span>
+                                <small>V1.2.9 正式版</small>
+                            </p>
+                        </li>
+                        <li class="user-body">
+                            <div>
+                                <small>
+                                    账户注册时间：<?php echo date('Y-m-d H:i:s',$_W['user']['joindate']) ?> <br/>
+                                    上次登录地址：{$_W['user']['lastip']}<br/>
+                                    上次登录时间：<?php echo date('Y-m-d H:i:s',$_W['user']['lastvisit']) ?> <br/>
+                                </small>
+                            </div>
+                        </li>
+                        <li class="user-footer">
+                            <div class="pull-left">
+                                <a href="./index.php?c=user&amp;a=profile&amp;" class="btn btn-default btn-flat">
+                                    <i class="fa   fa-expeditedssl"></i>
+                                    我的账号
+                                </a>
+                            </div>
+                            <div class="pull-right">
+                                <a href="{url 'user/logout'}" class="btn btn-default btn-flat">
+                                    <i class="fa  fa-power-off"></i>
+                                    退出系统
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <!-- 设置公众号 -->
+                {if empty($admin)}
+                <li>
+                    <a href="./index.php?c=account&a=post&&acid={$_W['acid']}&uniacid={$_W['uniacid']}" title="设置公众号" target="_blank"><i class="fa fa-gear"></i></a>
+                </li>
+                {/if}
+            </ul>
+        </div>
+    </nav>
+</header>

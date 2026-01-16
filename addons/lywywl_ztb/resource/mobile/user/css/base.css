@@ -1,0 +1,131 @@
+@charset "utf-8";
+body,div,p,ul,ol,li,dl,dt,dd,h1,h2,h3,h4,h5,h6,pre,form,input,select,button,textarea,table,th,td,a,span,canvas,figure{margin: 0; padding: 0; background: no-repeat center / contain; cursor: default;}
+body{display: block; position: relative; margin: auto; font-size: 0.25rem; font-family:Tahoma,"Microsoft Yahei", "Arial", sans-serif; background:#f2f2f2; overflow-x:hidden}
+ul,ol{list-style: none;}
+i,em{ font-style:normal;}
+img{border: none;}
+a,input,button,select,textarea{outline:none; -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-appearance: none;}
+a{text-decoration: none; color:#000}
+.clearfix:after{content: ""; clear: both; display: block; visibility: hidden; height: 0;}
+img {transition: all .5s ease-in-out;}
+
+
+/*简写属性*/
+.fl{float:left; }.fr{float:right}.fb{font-weight:bold}.fn{font-weight:normal}.fw{ font-weight:bold;}.fi{font-style:italic}.tl{text-align:left}.tc{text-align:center}.tr{text-align:right}.tj{text-align:justify; text-justify:inter-ideograph}
+.rel{position:relative}.abs{position:absolute}.dn{display:none}.db{display:block}.di{display:inline}.d_ib{ display:inline-block;}.ovh{overflow:hidden}.vm{vertical-align:middle}
+.wb{word-break:break-all;word-wrap:break-word}.ws{white-space:nowrap}.wryh{font-family:微软雅黑;}.auto{ margin:0 auto;}
+.arial{ font-family:arial;}.bg_fff{ background-color:#fff;}
+
+/*常用颜色*/
+.c9{ color:#999;}.c6{ color:#666;}.black{ color:#000;}.white{ color:#fff;}.green{color:#090}
+.main_red{ color:#f35847;}.main_green{ color:#3ca73f;}
+
+
+/*外边距*/
+.m2{margin:2px;}.m3{margin:3px;}.m4{margin:4px;}
+.m5{margin: 0.0008888888888888888rem;}
+.mt5{margin-top: 0.06666666666666667rem;}
+.mr5{margin-right: 0.06666666666666667rem;}
+.mb5{margin-bottom: 0.06666666666666667rem;}
+.ml5{margin-left: 0.06666666666666667rem;}
+.m10{margin: 0.13333333333333333rem;}
+.mt10{margin-top: 0.13333333333333333rem;}
+.mr10{margin-right: 0.13333333333333333rem;}
+.mb10{margin-bottom: 0.13333333333333333rem;}
+.ml10{margin-left: 0.13333333333333333rem;}
+.m15{margin: 0.2rem;}
+.mt15{margin-top: 0.2rem;}
+.mr15{margin-right: 0.2rem;}
+.mb15{margin-bottom: 0.2rem;}
+.ml15{margin-left: 0.2rem;}
+.m20{margin: 0.26666666666666666rem;}
+.mt20{margin-top: 0.26666666666666666rem;}
+.mt24{margin-top: 0.32rem;}
+.mr20{margin-right: 0.26666666666666666rem;}
+.mb20{margin-bottom: 0.26666666666666666rem;}
+.ml20{margin-left: 0.26666666666666666rem;}
+.m30{margin: 0.4rem;}
+.mt30{margin-top: 0.4rem;}
+.mr30{margin-right: 0.4rem;}
+.mb24{margin-bottom: 0.32rem;}
+.mb30{margin-bottom: 0.4rem;}
+.ml30{margin-left: 0.4rem;}
+.m50{margin: 0.6666666666666666rem;}
+.mt50{margin-top: 0.6666666666666666rem;}
+.mr50{margin-right: 0.6666666666666666rem;}
+.mb50{margin-bottom: 0.6666666666666666rem;}
+.ml50{margin-left: 0.6666666666666666rem;}
+.ml60{margin-left: 0.8rem;}
+
+/*内边距*/
+.p1{padding:1px;}.p2{padding:2px;}.p3{padding:3px;}.p4{padding:4px;}
+.p5{padding: 0.06666666666666667rem;}
+.pt5{padding-top: 0.06666666666666667rem;}
+.pr5{padding-right: 0.06666666666666667rem;}
+.pb5{padding-bottom: 0.06666666666666667rem;}
+.pl5{padding-left: 0.06666666666666667rem;}
+.p10{padding: 0.13333333333333333rem;}
+.pt10{padding-top: 0.13333333333333333rem;}
+.pr10{padding-right: 0.13333333333333333rem;}
+.pb10{padding-bottom: 0.13333333333333333rem;}
+.pl10{padding-left: 0.13333333333333333rem;}
+.p15{padding: 0.4rem;}
+.pt15{padding-top: 0.2rem;}
+.pr15{padding-right: 0.2rem;}
+.pb15{padding-bottom: 0.2rem;}
+.pl15{padding-left: 0.2rem;}
+.p20{padding: 0.26666666666666666rem;}
+.pt20{padding-top: 0.26666666666666666rem;}
+.pr20{padding-right: 0.26666666666666666rem;}
+.pb20{padding-bottom: 0.26666666666666666rem;}
+.pl20{padding-left: 0.26666666666666666rem;}
+.p30{padding: 0.4rem;}
+.pt30{padding-top: 0.4rem;}
+.pr30{padding-right: 0.4rem;}
+.pb30{padding-bottom: 0.4rem;}
+.pl30{padding-left: 0.4rem;}
+.p50{padding: 0.6666666666666666rem;}
+.pt50{padding-top: 0.6666666666666666rem;}
+.pr50{padding-right: 0.6666666666666666rem;}
+.pb50{padding-bottom: 0.6666666666666666rem;}
+.pl50{padding-left: 0.6666666666666666rem;}
+.p50-0{padding: 0.6666666666666666rem 0;}
+
+.h24{ height:0.32rem;}
+.pd24{ padding:0.32rem}
+.pd0_24{ padding:0 0.32rem;}
+.pd20{ padding:0 0.26666666666667rem;}
+.pd10_20{ padding:0.13333333rem 0.26666666666667rem;}
+
+/*背景颜色*/
+.bgf2{ background:#f2f2f2}
+.bgfff{ background:#fff}
+.bg_f9{ background:#f9f9f9}
+
+/*字体*/
+.font16{ font-size:0.2133333333333334rem;}
+.font18{ font-size:0.24rem;}
+.font20{ font-size:0.2666666666666667rem;}
+.font22{ font-size:0.2933333333333333rem;}
+.font24{ font-size:0.32rem;}
+.font26{ font-size:0.3466666666666667rem;}
+.font28{ font-size:0.3733333333333333rem;}
+.font30{ font-size:0.4rem;}
+.font32{ font-size:0.4266666666666667rem;}
+.font34{ font-size:0.4533333333333333rem;}
+.font36{ font-size:0.48rem;}
+.font50{ font-size:0.6666666666666666rem;}
+.font60{ font-size:0.8rem;}
+
+.cfee{ color:#fee002;}
+
+/*底部浮动按钮*/
+.buttonFloat{ position:fixed; left:0; bottom:0; background:#fcdf1a; width:100%; border:none; display:block; height:1.31rem; line-height:1.31rem; text-align:center; z-index:1}
+.buttonBox{ height:1.30rem;}
+.buttonFloat button{ width:100%; height:100%; border:none; font-size:0.4266666666666667rem}
+
+/*黑色透明弹出层*/
+.mask{ background:rgba(0,0,0,0.9); width:100%; height:100%; position:fixed; top:0px; left:0px; visibility:hidden; z-index:100}
+
+/*提交按钮*/
+.Button{ background:#fee002; color:#000; border:none;font-size:0.42rem; border-radius:0.6rem; width:100%; text-align:center; height:1.31rem; line-height:1.31rem;}

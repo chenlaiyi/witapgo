@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<body>
+<section class="rel" style="height: 1.08rem;">
+    <h2 class="screen fn font28 bgfff" style=" position: fixed;z-index: 10;width: 100%;">
+        <dl class="retrie">
+            <dt class="bor_b pd0_24">
+                <a id="filter" href="javascript:;" style="width:auto!important">筛选<i class="sortIconI"></i> </a>
+            </dt>
+            <dd class="default">
+                <form>
+                    <!--筛选弹出层-->
+                    <section class="interal_filter downlist">
+                        <ul class="form">
+                            <li>
+                                <span>用户信息：</span>
+                                <section>
+                                    <input type="text" id="searchKey"
+                                           placeholder="微信昵称/OPENID" value="{$openid}">
+                                </section>
+                            </li>
+                            <li>
+                                <span>变动类型：</span>
+                                <section>
+                                    <p class="select_box rel">
+                                        <select id="searchTypes">
+                                            <option value="" selected="selected">请选择</option>
+                                            {loop $userBillTypes $key $value}
+                                            <option value="{$key}">{$value}</option>
+                                            {/loop}
+                                        </select>
+                                    </p>
+                                </section>
+                            </li>
+                        </ul>
+                        <section class="retrieval mt24 clearfix">
+                            <button type="reset" class="recharge_but font32"> 重置</button>
+                            <button type="button" class="submit_but font32" id="btnSearch"> 搜索</button>
+                        </section>
+                    </section>
+                </form>
+            </dd>
+        </dl>
+    </h2>
+</section>
+<section class="h24"></section>
+<section class="bgfff mt24" id="ContentList">
+    <ul class="integralFlow_list" id="LoadLists">
+
+    </ul>
+</section>
+
+<section class="h24"></section>
+<section class="buttonBox">
+    <section class="buttonFloat">
+        <a href="{php echo $this->createMobileUrl('store.store_member',array('act'=>'index'))}" class="db font32 yellowBtn" style="background: #FFD112;">商家中心</a>
+    </section>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li data-id="<%= rows[i].id %>">
+        <figure>
+            <img src="<%= rows[i].headurl %>"  alt=""/>
+            <figcaption class="font18"></figcaption>
+        </figure>
+        <%if(rows[i].types == 1 || rows[i].types == 3 || rows[i].types == 5 || rows[i].types == 6){%>
+        <div class="fen main_green fr">+<%= rows[i].money %></div>
+        <%}else{%>
+        <div class="fen main_red fr">-<%= rows[i].money %></div>
+        <%}%>
+        <div class="integral_content">
+            <h4 class="fn"><%= rows[i].nickname %></h4>
+            <p class="font26"><%= rows[i].types_name %></p>
+            <p class="font26">余额:<%= rows[i].balance %></p>
+            <time class="font28 c9 db"><%= rows[i].createtime %></time>
+        </div>
+    </li>
+    <% } %>
+</script>
+
+<script>
+    $(function () {
+        //点击筛选
+        $('#filter').click(function(){
+            var $filter = $(this);
+            if($filter.hasClass('up')){
+                $filter.removeClass('up');
+                $('.downlist').hide();
+            }else{
+                $filter.addClass('up');
+                $('.downlist').show();
+            }
+        });
+
+        var page = 0;
+        var pageSize = 10;
+        var delCount = 0;
+        var dropload_me;
+        var is_first = true;
+
+        //点击搜索
+        $('#btnSearch').click(function() {
+            //隐藏筛选弹框
+            $('#filter').removeClass('up');
+            $('.downlist').hide();
+
+            //筛选参数
+            window.searchKey = $('#searchKey').val();
+            window.searchTypes = $('#searchTypes').val();
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.user_bill', array('act' => 'getJsonList'));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "delCount":0,
+                                "key":window.searchKey,
+                                "types":window.searchTypes,
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                delCount = 0;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false);
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var result = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.user_bill', array('act' => 'getJsonList'));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "delCount":delCount,
+                                "key":window.searchKey,
+                                "types":window.searchTypes,
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    threshold : 50
+                });
+            }
+        }).trigger("click");
+    });
+</script>
+</body>
+</html>

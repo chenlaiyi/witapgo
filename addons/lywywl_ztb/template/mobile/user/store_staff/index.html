@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+{template 'user/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+<link href="{MODULE_URL}resource/mobile/plugin/css/common.min.css?v=20170802" rel="stylesheet">
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/util.js"></script>
+<script src="{MODULE_URL}resource/mobile/plugin/js/require.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js//lib/mui.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/common.js"></script>
+<body class="bgf2">
+<form action="{php echo $this->createMobileUrl('user.store_staff',array('store_id'=>$store_id));}" id="user_form" method="post">
+<!--中心区域-->
+<section class="pd24">
+    <section class="toux tc">
+        {php echo tpl_app_form_field_avatar('avatar', $userinfo['headimgurl']);}
+        <p class="font28 black">{$userinfo['nickname']}</p>
+    </section>
+    <section class="openid font32 tc">OPENID：{$userinfo['openid']}</section>
+    <h2 class="font32 fn tc pd24">请完善您的信息</h2>
+    <ul class="edit">
+        <li><span>员工姓名</span><section><input class="editInput" type="text" datatype="*" id="name" name="model[name]" value="{$userinfo['nickname']}" nullmsg="请输入员工真实姓名！" placeholder="请输入员工真实姓名"></section></li>
+        <li><span>手机号码</span><section><input class="editInput"  type="tel" datatype="m" id="mobile" maxlength="11" name="model[mobile]" value="" nullmsg="请输入员工手机号码！" placeholder="请输入员工手机号码"></section></li>
+       <!-- <li style="height: auto;"><span>微信二维码</span><section><div class="mui-input-cell">
+            {php echo tpl_app_form_field_image('qrcode','' ,false);}
+        </div></section></li>-->
+        <li><span>商户安全密码</span><section><input class="editInput" type="password" datatype="*" maxlength="35" id="password" name="password" value="" nullmsg="请输入商户安全密码！"></section></li>
+    </ul>
+    <section class="h24"></section>
+    <button type="submit" class="Button" id="SubmitBtn">提交</button>
+</section>
+</form>
+<script>
+    $(function () {
+        require(['{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js'], function () {
+            //为formContent 添加验证事件
+            $("#user_form").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                                , style: 'bottom:0;'
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if(data.status == 1){
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+
+                        setTimeout(function () {
+                            if(data.url != ""){
+                                window.location.href = data.url;
+                            }else{
+                                window.location.reload();
+                            }
+                        }, 2000);
+
+                    }else{
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<ul class="we7-page-tab">
+    <li><a href="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'service_poster','new'=>1,'version_id'=>$_GPC['version_id'])}">分销海报</a></li>
+    <li><a href="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'store_poster','new'=>1,'version_id'=>$_GPC['version_id'])}">门店海报</a></li>
+    <li><a href="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'member_poster','new'=>1,'version_id'=>$_GPC['version_id'])}">店员海报</a></li>
+    <li><a href="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'mall_poster','new'=>1,'version_id'=>$_GPC['version_id'])}">商城海报</a></li>
+    <li><a href="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'package_poster','new'=>1,'version_id'=>$_GPC['version_id'])}">套餐海报</a></li>
+    <li><a href="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'share_poster','new'=>1,'version_id'=>$_GPC['version_id'])}">服务项目海报</a></li>
+    <li><a href="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'article_poster','new'=>1,'version_id'=>$_GPC['version_id'])}">文章海报</a></li>
+</ul>
+<script type="text/javascript">
+
+    function  indexofleftdatda($str,findstr) {
+        var $navurl=$str;
+        var navstart=  $navurl.indexOf(findstr);
+        var navparalen= $navurl.length-navstart;
+        var navstrpara =  $navurl.substring(navstart,$navurl.length);
+        return navstrpara;
+    }
+    var  navstrpara= indexofleftdatda(location.href,"?");
+    $(".we7-page-tab").find("a").each(function () {
+        if(navstrpara.indexOf(indexofleftdatda($(this).attr("href"),"?"))>-1){
+            $(this).parent().addClass("active");
+            navstrpara="";
+            return false;
+        }
+    });
+    if(navstrpara!=""){
+        $(".we7-page-tab").find("li").eq(0).addClass("active");
+    }
+</script>

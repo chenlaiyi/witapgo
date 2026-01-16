@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li class="layui-this">
+						<a href="{php echo webUrl('userMemberCardList',['uid'=>$uid, 'nickname'=>$_GPC['nickname']])}">{$_GPC['nickname']}的会员卡</a>
+					</li>
+					<li>
+						<a href="{php echo webUrl('membership')}">返回</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="layui-form">
+				<table class="layui-table">
+					<thead>
+					<tr>
+						<th>ID</th>
+						<th>名称</th>
+						<th>类型</th>
+						<th>详情</th>
+						<th>操作</th>
+					</tr>
+					</thead>
+					<tbody>
+					{loop $list $index $item}
+					<tr>
+						<td class="wmin20">{$item['id']}</td>
+						<td>{$item['card']}</td>
+						<td>
+							{if $item['type'] == 0}时间卡
+							{else if $item['type'] == 1}次卡
+							{else if $item['type'] == 2}储值卡
+							{else if $item['type'] == 3}课程次卡
+							{else if $item['type'] == 5}限时次卡
+							{else}{$item['type']}
+							{/if}
+						</td>
+						<td>
+							{if $item['type'] == 0}时长：{$item['mtime']}
+							{else if $item['type'] == 1}次数：{$item['mtimes']}
+							{else if $item['type'] == 2}面额：{$item['money']}
+							{else if ($item['type'] == 3) || ($item['type'] == 5) }
+								次数：{$item['times']}
+								<br>
+								剩余次数：{$item['left_times']}
+								{if !empty($item['due_time'])}
+									<br>到期时间：{php echo date('Y-m-d',$item['due_time'])}
+								{/if}
+							{else}{$item['type']}
+							{/if}
+						</td>
+						<td class="td-button">
+							{if $item['type'] == 1 || $item['type'] == 3 || $item['type'] == 5}
+							<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger btn-del"
+								data-id="{$item['id']}">删除</a>
+							{/if}
+						</td>
+					</tr>
+					{/loop}
+					</tbody>
+				</table>
+				<div class="pager">
+					{$pager}
+				</div>
+			</div>
+			<script>
+				layui.use(['laypage', 'layer'], function(){
+					var laypage = layui.laypage;
+					var layer = layui.layer;
+
+					// 分页
+					laypage.render({
+						elem: $('.pager')
+						,limit: '{php echo $pageSize; }'
+						,count: '{php echo $total; }'
+						,theme: '#1E9FFF'
+						,curr:  '{php echo $pageIndex; }'
+						,hash: '{php echo $pageIndex; }'
+						,jump: function (obj, first) {
+							if (first != true) {
+								var currentPage = obj.curr; //获取点击的页码
+								window.location.href = "{php echo webUrl('userMemberCardList',['uid'=>$uid, 'nickname'=>$_GPC['nickname']])}&page=" + currentPage;
+							}
+						}
+					});
+					$('.pager').show();
+
+					// 删除
+					$(document).on('click', '.btn-del', function () {
+						$obj = $(this);
+						$del_id = $obj.data('id');
+						layer.confirm("确定要删除吗", {
+							offset: '20%',
+							btn: ["再想想", "删除"],
+							scrollbar: false,
+							closeBtn: 0,
+							success: function (layero, index) {
+								this.enterEsc = function (event) {
+									if (event.keyCode === 13) {
+										fun_del();
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+									if (event.keyCode === 27) {
+										layer.close(index);
+										return false; //阻止系统默认回车事件
+									}
+								};
+								$(document).on('keydown', this.enterEsc);   //监听键盘事件，关闭层
+							}
+							, end: function(){
+								$(document).off('keydown', this.enterEsc);  //解除键盘关闭事件
+							}
+						}, function (i) {
+						   layer.close(i);
+						}, function (i) {
+							fun_del();
+						});
+
+						// 删除事件
+						function fun_del()
+						{
+							let $url = "{php echo webUrl('DelMyMemberCard')}";
+
+							$.ajax({
+								type: "POST",
+								url: $url,
+								dataType: 'json',
+								data: {
+									id: $del_id
+								},
+								success: function (rs) {
+									if (rs && rs.code.toString() === '0') {
+										$obj.closest('tr').fadeOut(200, function () {
+											$obj.remove();
+											layer.msg("成功", {time: 500});
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+											shift: 6,
+										});
+									}
+								},
+								error: function () {
+									layer.msg("保存过程发生错误，请与管理员联系" , {
+										offset: '20%',
+										shift: 6,
+									});
+								}
+							});
+						}
+					});
+				});
+			</script>
+
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

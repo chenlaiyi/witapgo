@@ -1,0 +1,143 @@
+<view class="app">
+    <view class="header">
+        <view bindtap="weizhi" class="menu bd">
+            <text>按区域</text>
+            <image hidden="{{weizhi?false:true}}" src="../../img/hotel/jiantouxia.png"></image>
+            <image hidden="{{weizhi?true:false}}" src="../../img/hotel/jiantoushang.png"></image>
+        </view>
+        <view bindtap="price" class="menu bd">
+            <text>按类型</text>
+            <image hidden="{{price?false:true}}" src="../../img/hotel/jiantouxia.png"></image>
+            <image hidden="{{price?true:false}}" src="../../img/hotel/jiantoushang.png"></image>
+        </view>
+        <view bindtap="paixu" class="menu">
+            <text>按距离</text>
+            <image hidden="{{paixu?false:true}}" src="../../img/hotel/jiantouxia.png"></image>
+            <image hidden="{{paixu?true:false}}" src="../../img/hotel/jiantoushang.png"></image>
+        </view>
+    </view>
+    <view class="top_kong"></view>
+    <official-account></official-account>
+    <view class="item" wx:for="{{datas}}" wx:for-item="hotel" wx:key="userInfoListId">
+        <navigator url="../home/home?schoolid={{hotel.schoolid}}">
+            <view class="lt">
+                <image src="{{hotel.logos}}"></image>
+            </view>
+            <view class="rt">
+                <view class="name">{{hotel.title}}<text class="tips">{{hotel.typename}}</text>
+                    <text class="juli">{{hotel.juli}}km</text>
+                </view>
+                <view class="col">
+                    <text class="score">{{hotel.tel}} </text>| {{hotel.location}} 
+        </view>
+                <view class="col">
+          {{hotel.address}}
+        </view>
+            </view>
+        </navigator>
+    </view>
+    <view class="nomore" wx:if="{{datas!=''&&more==0}}">
+    没有更多数据了
+  </view>
+    <view bindtap="more" class="more" wx:if="{{datas!=''&&more==1}}">
+    查看更多
+  </view>
+    <view class="nodata" wx:if="{{datas==''}}">
+        <image src="../../img/hotel/nodata.png"></image>
+        <text>宝宝心里苦，没有宝宝的学校</text>
+    </view>
+    <view class="h100"></view>
+    <view bindtap="dwbg" class="dwbg" hidden="{{dwbg}}"></view>
+    <view class="paixu_dialog" hidden="{{paixu?true:false}}">
+        <view class="orderitem">
+            <view class="lt">
+                <image hidden="{{order==1?false:true}}" src="../../img/hotel/duihao.png"></image>
+            </view>
+            <text bindtap="orderclick" class="{{order==1?'on':''}}" data-order="1">默认排序</text>
+        </view>
+        <view class="orderitem">
+            <view class="lt">
+                <image hidden="{{order==2?false:true}}" src="../../img/hotel/duihao.png"></image>
+            </view>
+            <text bindtap="orderclick" class="{{order==2?'on':''}}" data-order="2">距离最近</text>
+        </view>
+        <view class="orderitem">
+            <view class="lt">
+                <image hidden="{{order==3?false:true}}" src="../../img/hotel/duihao.png"></image>
+            </view>
+            <text bindtap="orderclick" class="{{order==3?'on':''}}" data-order="3">距离最远</text>
+        </view>
+    </view>
+    <view class="dialog_select" hidden="{{price?true:false}}">
+        <view class="btn">
+            <text bindtap="priceclear" class="lt">清空</text>
+            <text bindtap="priceyes" class="rt">完成</text>
+        </view>
+        <view class="content">
+            <view class="select">
+                <text bindtap="star" class="{{star_id==0?'on':''}}" data-id="0">不限</text>
+                <text bindtap="star" class="{{star_id==item.id?'on':''}}" data-id="{{item.id}}" wx:for="{{stars}}" wx:key="stars">{{item.name}}</text>
+            </view>
+        </view>
+    </view>
+    <view class="dialog_select" hidden="{{weizhi?true:false}}">
+        <view class="btn">
+            <text bindtap="wzclear" class="lt">清空</text>
+            <text bindtap="wzyes" class="rt">完成</text>
+        </view>
+        <view class="content">
+            <view class="lt">
+                <view class="ltcol  {{wzselect==0?'on':''}}" data-id="0">
+                    <image src="../../img/hotel/dian.png"></image>
+                    <text bindtap="wzselect" data-select="0">不限</text>
+                </view>
+                <view class="ltcol  {{wzselect==item.id?'on':''}}" data-id="{{item.id}}" wx:for="{{city}}" wx:key="city">
+                    <image src="../../img/hotel/dian.png"></image>
+                    <text bindtap="wzselect" data-select="{{item.id}}">{{item.name}}</text>
+                </view>
+            </view>
+            <view class="rt" wx:if="{{wzselect==0}}">
+                <view class="rtcol on" data-id="0">
+                    <image src="../../img/hotel/duihao.png"></image>
+                    <text bindtap="areaclick" data-area="0" data-city="0">不限</text>
+                </view>
+            </view>
+            <view class="rt" wx:if="{{wzselect==item.id}}" wx:for="{{city}}" wx:key="citys">
+                <view class="rtcol {{area_id==0?'on':''}}" data-id="0">
+                    <image src="../../img/hotel/duihao.png"></image>
+                    <text bindtap="areaclick" data-area="0" data-city_a="{{item.id}}">不限</text>
+                </view>
+                <view class="rtcol {{area_id==area_a.id?'on':''}}" data-id="{{area_a.id}}" wx:for="{{item.area}}" wx:for-item="area_a" wx:key="areas">
+                    <image src="../../img/hotel/duihao.png"></image>
+                    <text bindtap="areaclick" data-area="{{area_a.id}}" data-city_a="{{item.id}}">{{area_a.name}}</text>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="hotel_footer">
+        <view class="ft_item on">
+            <navigator url="../list/list">
+                <image src="../../img/hotel/bottom_menu_icon1_noSelect.png"></image>
+                <text>学校列表</text>
+            </navigator>
+        </view>
+        <view class="ft_item">
+            <navigator url="{{binding}}">
+                <image src="../../img/hotel/bottom_menu_icon4_noSelect.png"></image>
+                <text>微信绑定</text>
+            </navigator>
+        </view>
+        <view class="ft_item">
+            <navigator url="{{user}}">
+                <image src="../../img/hotel/bottom_menu_icon4_noSelect.png"></image>
+                <text>学生中心</text>
+            </navigator>
+        </view>
+        <view class="ft_item">
+            <navigator url="{{myschool}}">
+                <image src="../../img/hotel/wode_off.png"></image>
+                <text>老师中心</text>
+            </navigator>
+        </view>
+    </view>
+</view>

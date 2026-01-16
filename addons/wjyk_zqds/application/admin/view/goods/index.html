@@ -1,0 +1,160 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>积分商品列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+</head>
+<style>
+.layui-table-cell, .layui-table-tool-panel li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+	height:auto;
+  }
+</style>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">商品列表</div>
+                <div class="layui-card-body">
+                    <div class=" demoTable layui-form" style="margin-bottom:10px">
+                    	<button class="layui-btn" data-type="addgoods">添加商品</button>
+						<div class="layui-input-inline">			            	<label class="layui-form-label">商品分类</label>						    <div class="layui-input-block">						      <select  lay-verify="" id="category" >						      	{if empty($categoryList)}							      	<option value="">暂无分类</option>							    {else}							    	<option value="0">请选择商品分类</option>							    	{foreach  $categoryList as $v}							        <option value="{$v.id}" >{$v.name}</option>							        {/foreach}							    {/if}						      </select>						    </div>					  	</div>
+					    <div class="layui-inline">
+					      <label class="layui-form-label">商品名称：</label>
+					      <div class="layui-input-inline">
+					        <input class="layui-input" placeholder="请输入商品名称" name="name" id="name" autocomplete="off">
+					      </div>
+					    </div>					    					    <div class="layui-input-inline">			            	<label class="layui-form-label">商品类型</label>						    <div class="layui-input-block">						      <select  lay-verify="" id="type">				              	<option value="0">请选择商品类型</option>						        <option value="1">实物</option>						        <option value="2">虚拟商品</option>						      </select>						    </div>					  	</div>
+			            <button class="layui-btn" style="margin-left:20px;" data-type="reload">搜索</button>
+					</div>
+                    <table class="layui-hide" id="test-table-operate" lay-filter="test-table-operate"></table>
+                    
+                    <script type="text/html" id="displayTpl">
+  						{{#  if(d.is_display == 1){ }}
+    						 <input type="checkbox" checked lay-skin="switch" lay-filter="encrypt"  lay-text="上架|下架" >
+  						{{#  } else { }}
+    						 <input type="checkbox" lay-skin="switch" lay-filter="encrypt" lay-text="上架|下架" >
+  						{{#  } }}
+					</script>
+					<script type="text/html" id="recommendTpl">
+  						{{#  if(d.is_recommend == 1){ }}
+    						 <input type="checkbox" checked lay-skin="switch" lay-filter="encrypt"  lay-text="推荐|不推荐" >
+  						{{#  } else { }}
+    						 <input type="checkbox" lay-skin="switch" lay-filter="encrypt" lay-text="推荐|不推荐" >
+  						{{#  } }}
+					</script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '__PUBLIC__/static/layuiadmin/' 
+    }).extend({
+        index: 'lib/index' 
+    }).use(['index', 'table'], function(){
+        var table = layui.table
+            ,admin = layui.admin;
+
+        table.render({
+            elem: '#test-table-operate'
+            ,url:"{:siteUrl('admin/goods/goods_list','','web')}"
+            ,cols: [[
+				{field:'categoryid',  title: '所属分类',templet:function(d){
+					return "<img style='max-width:25px;' src='"+d.cate_pic+"'></img>"+d.cate_name;;
+				}}
+				,{field:'name',  title: '商品名称',templet:function(d){
+                	return "<img style='max-width:25px;' src='"+d.pic_url+"'></img>"+d.name;
+                }}								,{field:'type', title: '商品类型', sort: true,templet:function(d){					if(d.type == 1){                   		return "实物";                   	}else if(d.type == 2){                   		return "虚拟商品";                   	}                }}				,{field:'price', title: '价格（元）', sort: true}				,{field:'price', title: '现价',templet:function(d){                   	return "可用{$name}："+d.integral+"<br>抵扣金额："+d.deduction;                }}                ,{field:'purchase', title: '限购数量', sort: true}                ,{field:'inventory', title: '库存', sort: true}
+                ,{field:'is_recommend',  title: '是否推荐', sort: true,templet: '#recommendTpl', event: 'setSign2'}                ,{field:'is_display',  title: '是否上架', sort: true,templet: '#displayTpl', event: 'setSign'}
+                ,{field:'createtime',  title: '添加时间', sort: true ,templet:function(d){
+                	return layui.util.toDateString(d.createtime*1000, "yyyy-MM-dd HH:mm");
+                }}
+                ,{width:350, title: '操作', align:'center',templet:function(d){                	if(d.type == 2){                		return '<a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="log">'+d.virtual_type+'列表</a>'+                		'<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+                    	'<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';                	}else{                		return '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>'+                    	'<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';                	}                }}
+            ]]
+            ,page: true
+        });
+        table.on('checkbox(test-table-operate)', function(obj){
+            console.log(obj)
+        });
+
+        table.on('tool(test-table-operate)', function(obj){
+            var data = obj.data;
+			if(obj.event === 'detail'){
+            	window.location.href="{:siteUrl('admin/goods/edit_goods','','web')}&id="+data.id;
+            } else if(obj.event === 'del'){
+                layer.confirm('确定删除该商品吗？', function(index){
+                	window.location.href="{:siteUrl('admin/goods/del_goods','','web')}&id="+data.id;
+                    layer.close(index);
+                });
+            } else if(obj.event === 'edit'){
+                window.location.href="{:siteUrl('admin/goods/edit_goods','','web')}&id="+data.id;
+            }  else if(obj.event === 'setSign'){
+                $.ajax({
+                    url:"{:siteUrl('admin/goods/change','','web')}&id="+data.id,
+                    type:"POST",
+                    success: function(data){
+                    	var res = JSON.parse(data);
+                    	console.log(res);
+                    	if(res.code > 0 ){
+                    		layer.msg(res.msg,{icon: 2,time:3000},function(){
+                    			table.reload('test-table-operate');
+                    		});
+                    	}
+                    }
+                })
+            }   else if(obj.event === 'setSign2'){                $.ajax({                    url:"{:siteUrl('admin/goods/change_recommend','','web')}&id="+data.id,                    type:"POST",                    success: function(data){                    	var res = JSON.parse(data);                    	console.log(res);                    	if(res.code > 0 ){                    		layer.msg(res.msg,{icon: 2,time:3000},function(){                    			table.reload('test-table-operate');                    		});                    	}                    }                })            }else if(obj.event === 'log'){            	                layer.open({                    type:2,                    area : [ '80%', '80%' ],                    title:data.name+data.virtual_type+"列表",                    yes: function(index, layero){                        layer.close(index);                    },                    cancel: function(){                    },                    content:"{:siteUrl('admin/goods/card_view','','web')}&goodsid="+data.id,                    success:function(){                    }                });            }
+        });
+        
+        table.on('toolbar(test-table-operate)', function(obj){
+       	  var checkStatus = table.checkStatus(obj.config.id);
+       	  switch(obj.event){
+       	    case 'add':
+       	    	window.location.href="{:siteUrl('admin/goods/edit_goods','','web')}";
+       	    break;
+       	  };
+       	});
+
+        var $ = layui.$, active = {
+            reload: function(){
+                table.reload('test-table-operate', {
+                  page: {
+                    curr: 1 
+                  }
+                  ,where: {
+                    'name': $('#name').val(),
+                    'is_status': $('#is_status').val(),                    'type': $('#type').val()
+                  }
+                });
+              },
+              addgoods:function(){
+           	   window.location.href="{:siteUrl('admin/goods/edit_goods','','web')}";
+               }
+        };
+
+        $('.demoTable .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+</script>
+</body>
+<div class="layui-footer" style="margin-top:20px;display: flex;justify-content: center;align-items: flex-end;">
+	{include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}
+</div>
+</html>

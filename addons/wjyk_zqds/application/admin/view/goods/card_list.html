@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>佣金记录列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+</head>
+<style>
+.layui-table-cell, .layui-table-tool-panel li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">{$name}列表</div>                <div class="layui-card-body">                    <div class=" demoTable layui-form" style="margin-bottom:10px">                    	<button class="layui-btn" data-type="addgoods">添加{$name}</button>					    <div class="layui-input-inline">			            	<label class="layui-form-label">使用状态</label>						    <div class="layui-input-block">						      <select  lay-verify="" id="is_status">				              	<option value="0">请选择使用状态</option>						        <option value="1">待使用</option>						        <option value="2">已使用</option>						      </select>						    </div>					  	</div>					  	<button class="layui-btn" style="margin-left:20px;" data-type="reload">搜索</button>					  	<input type="file" class="layui-btn layui-btn-primary" id="LAY-excel-import-excel" multiple="multiple">
+					  	<button class="layui-btn layui-btn-primary"   data-type="view">查看导入格式</button>					</div>                    <table class="layui-hide" id="test-table-operate" lay-filter="test-table-operate"></table>                                        <script type="text/html" id="test-table-operate-barDemo">                        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>                        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>                    </script>                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="tong" style="display: none;">
+	<img src="__PUBLIC__/import.jpg"  style="width: 400px;height: auto">
+</div>
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script>
+layui.config({
+    base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+}).extend({
+    index: 'lib/index' //主入口模块
+   	,excel: '../layui/layui_exts/excel/excel',
+}).use(['index', 'table','jquery','excel'], function(){
+    var $ = layui.$
+	    ,table = layui.table
+        ,excel = layui.excel
+        ,admin = layui.admin;
+        table.render({
+            elem: '#test-table-operate'
+            ,url:"{:siteUrl('admin/goods/card_list',array('goodsid'=>$goodsid),'web')}"
+            ,cols: [[
+                {field:'serial', title: '{$name}'}
+                ,{field:'is_status', title: '状态', sort: true,templet:function(d){					if(d.is_status == 1){                   		return "待使用";                   	}else if(d.is_status == 2){                   		return "已使用";                   	}                }}
+                ,{field:'createtime', title: '操作时间', sort: true ,templet:function(d){
+                	return layui.util.toDateString(d.createtime*1000, "yyyy-MM-dd HH:mm");
+                }}                ,{width:218, title: '操作', align:'center', toolbar: '#test-table-operate-barDemo'}
+            ]]
+            ,page: true
+        });
+        table.on('tool(test-table-operate)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'del'){
+                layer.confirm('确定删除该卡密吗？', function(index){
+                	window.location.href="{:siteUrl('admin/goods/del_card','','web')}&id="+data.id;
+                    layer.close(index);
+                });
+            } else if(obj.event === 'edit'){
+                window.location.href="{:siteUrl('admin/goods/edit_card',array('goodsid'=>$goodsid),'web')}&id="+data.id;
+            }
+        });
+        
+        $('#LAY-excel-import-excel').change(function(e) {
+            var files = e.target.files;
+            try {
+                // 方式二：可以在读取过程中梳理数据
+                excel.importExcel(files, {
+                    fields: {
+                        'serial': 'A'
+                    }
+                }, function(data) {
+                	admin.req({
+                        url:"{:siteUrl('admin/goods/import_card',array('goodsid'=>$goodsid),'web')}",
+                        data:data[0],
+                        type:"POST",
+                        done:res=>{
+                        	if(res.code == 0 ){
+                        		layer.msg('导入成功',{time:3000},function(){
+                        			window.location.href="{:siteUrl('admin/goods/card_view',array('goodsid'=>$goodsid),'web')}";
+                        		})
+                        		
+                        	}else{
+                        		layer.msg('导入失败');
+                        	}
+                        }
+                    })
+                	
+                    console.log(data);
+                });
+            } catch (e) {
+                layer.alert(e.message);
+            }
+        });
+
+        var $ = layui.$, active = {
+  		    reload: function(){              table.reload('test-table-operate', {                page: {                  curr: 1                 }                ,where: {                  'is_status': $('#is_status').val()                }              });            },
+            addgoods:function(){
+        	   window.location.href="{:siteUrl('admin/goods/add_card',array('goodsid'=>$goodsid),'web')}";
+            },
+            view:function(){
+            	layer.open({
+            	      type: 1,
+            	      title: false,
+            	      closeBtn: 0,
+            	      area: '400px',
+            	      skin: 'layui-layer-nobg', //没有背景色
+            	      shadeClose: true,
+            	      content: $('#tong')
+            	});
+             }
+        };
+
+        $('.test-table-operate-btn .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });        $('.demoTable .layui-btn').on('click', function(){            var type = $(this).data('type');            active[type] ? active[type].call(this) : '';        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>项目分类</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+    <style>
+		.layui-form-label{
+			width:115px;
+        }
+		.layui-input-block{
+			margin-left:145px;
+		}
+        form{
+            padding-right:15px ;
+        }
+    </style>
+</head>
+<body>
+<form class="layui-form" style="margin-top:21px;">
+  <input type="hidden" name="id" value="{$srdb['id']}">
+  <input type="hidden" name="b_type" value="{$b_type}">
+  
+    <div class="layui-form-item">
+	    <label class="layui-form-label">名称</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="name"   autocomplete="off" class="layui-input" value="{$srdb['name']}">
+	    </div>
+	  </div>
+	  
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">小标题</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="title"   autocomplete="off" class="layui-input" value="{$srdb['title']}">
+	    </div>
+	  </div>  
+	  
+	<div class="layui-form-item">
+	    <label class="layui-form-label">描述</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="desc"   autocomplete="off" class="layui-input" value="{$srdb['desc']}">
+	    </div>
+	  </div>  
+  
+   <div class="layui-form-item">
+    <label class="layui-form-label">跳转类型</label>
+    <div class="layui-input-block" id="type">
+      <input type="radio" name="type" value="1" title="本小程序链接" {if $srdb['type'] == '1' || $srdb['type'] == ''}checked{/if} lay-filter="bbb">
+      <input type="radio" name="type" value="2" title="外部小程序链接" {if $srdb['type'] == '2'}checked{/if} lay-filter="bbb">
+      <input type="radio" name="type" value="3" title="看视频" {if $srdb['type'] == '3'}checked{/if} lay-filter="bbb">
+      {foreach  $list as $v}
+      	<input type="radio" name="type" value="{$v['id']}" title="{$v['name']}" {if $srdb['type'] == $v['id']}checked{/if} lay-filter="bbb">
+      {/foreach}
+    </div>
+  </div>
+  
+ <div class="type2"  {if $srdb['type'] != '2' }style="display:none"{/if}>
+  	
+  	
+  	  <div class="layui-form-item">
+	    <label class="layui-form-label">外部小程序APPID</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="appid"   autocomplete="off" class="layui-input" value="{$srdb['appid']}">
+	    </div>
+	  </div>
+  </div>
+  
+  <div class="type-2"  {if $srdb['type'] != '1' && !empty($srdb['type']) }style="display:none"{/if}>
+ 	<div class="layui-form-item">
+ 		<div class="layui-input-block">
+	    <div class="layui-btn" data-type="toPayment" id="dian">选择路径</div>
+	    </div>
+  	</div>
+  </div>
+  <div class="type-12"  {if $srdb['type'] > 2 && !empty($srdb['type'])}style="display:none"{/if}>
+	  <div class="layui-form-item" >
+	    <label class="layui-form-label">跳转链接</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="url"  id = 'url' autocomplete="off" class="layui-input" value="{$srdb['url']}">
+	    </div>
+	  </div>
+  </div>  
+    
+  <div class="layui-form-item">
+    <label class="layui-form-label">图片</label>
+    <div class="layui-upload col-sm-9">
+        <button type="button" class="layui-btn" id="test1"  >选择图片</button>
+        <div class="layui-form-mid layui-word-aux">建议上传96px * 96px尺寸</div>
+       <div class="layui-input-block">
+           <img class="layui-upload-img" id="demo1" style="margin-top: 10px;height: 96px;width: 96px" {if $srdb['pic_url']==''}{else}src="{$srdb['pic_url']}"{/if}">
+           <input type="hidden" name="pic_url" id="pic_url" value="{$srdb['pic_url']}">
+       </div>
+    </div>
+  </div>
+  
+  
+  <div class="layui-form-item">
+    <label class="layui-form-label">排序</label>
+    <div class="layui-input-block">
+      <input type="number" name="sort" placeholder="请输入排序值 ，数值越高，越在前显示" autocomplete="off" class="layui-input" value="{$srdb['sort']}">
+    </div>
+  </div>
+  
+  <div class="layui-form-item">
+    <label class="layui-form-label">是否显示</label>
+    <div class="layui-input-block">
+      <input type="radio" name="is_display" value="1" title="显示" {if $srdb['is_display'] == '1' || $srdb['is_display'] == ''}checked{/if}>
+
+      <input type="radio" name="is_display" value="2" title="隐藏" {if $srdb['is_display'] == '2'}checked{/if}>
+
+    </div>
+
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit lay-filter="demo1">立即提交</button>
+      <input type="button" class="layui-btn layui-btn-primary" onclick="history.go(-1)"  value="返回列表"> 
+    </div>
+  </div>
+
+  
+  <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use('index');
+
+</script>
+<script>
+    layui.use(['jquery','form', 'laydate','upload','util'], function(){
+    	var $ = layui.$
+    		,form = layui.form
+            ,layer = layui.layer
+            , upload = layui.upload;
+    	
+    	form.on('radio(bbb)', function (data) {
+        	console.log($('#type input[name="type"]:checked ').val());
+            if ($('#type input[name="type"]:checked ').val() == "2") {
+             $(".type2").show();
+             $(".type-2").hide();
+             $(".type-12").show();
+            } else if ($('#type input[name="type"]:checked ').val() == "1") {
+             $(".type2").hide();
+             $(".type-2").show();
+             $(".type-12").show();
+            }else  {
+               $(".type2").hide();
+               $(".type-2").hide();
+               $(".type-12").hide();
+              }
+            form.render();
+        });
+        
+        
+    	
+    	upload.render({
+            elem: '#test1'
+            ,url: "{:siteUrl('admin/index/upload','','web')}" //改成您自己的上传接口
+            ,done: function(res){
+                //如果上传失败
+                if(res.code < 0){
+                    return layer.msg('上传失败');
+                }else{
+                    $('#demo1').attr('src', res.msg); //图片链接（base64）
+                    $('#pic_url').val(res.msg);
+                }
+            }
+        });
+    	
+    	$("#dian").click(function(){
+        	layer.open({
+                type:2,
+                area: ['80%', '70%'],
+                title:"选择路径",
+                btn: ['确定', '取消'],
+                yes: function(index, layero){
+                    //按钮【按钮一】的回调
+                    var body = layer.getChildFrame('body', index);
+                    var url = body.find("#url").val();
+
+                    $("#url").val(url);
+                    
+                	layer.close(index);
+                	
+                },
+                cancel: function(){ 
+                    //右上角关闭回调
+                    
+                    //return false 开启该代码可禁止点击该按钮关闭
+                },
+                content:"{:siteUrl('admin/navigation/pages',array('url'=>$srdb['url']),'web')}",
+                success:function(){
+                	
+
+                }  
+            });
+       });
+    	
+      //监听提交
+        form.on('submit(demo1)', function(data){
+            var admin = layui.admin
+            
+            admin.req({
+                url:"{:siteUrl('admin/navigation/edit_navigation','','web')}",
+                data:data.field,
+                type:"POST",
+                done:res=>{
+                	if(res.code == 0 ){
+               			layer.msg(res.msg,{icon: 1,time:3000},function(){
+               				window.location.href="{:siteUrl('admin/navigation/index','','web')}";
+                   		});
+                		
+                	}else{
+                		layer.msg(res.msg,{icon: 2,time:3000},function(){
+                			window.location.href="{:siteUrl('admin/navigation/index','','web')}";  
+                		});
+                	}
+                }
+            })
+            return false
+  
+        });
+        $("#return").click(function(){
+        	window.location.href="{:siteUrl('admin/navigation/index','','web')}";  
+        });
+
+        //表单取值
+        layui.$('#LAY-component-form-getval').on('click', function(){
+            var data = form.val('example');
+            alert(JSON.stringify(data));
+        });
+
+    });
+</script>
+</body>
+</html>

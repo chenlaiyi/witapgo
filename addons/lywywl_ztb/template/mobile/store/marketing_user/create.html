@@ -1,0 +1,320 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<script src="{__MOBILE_STORE_JS__}/swiper.jquery.min.js"></script>
+<style>
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {position: static}
+    .layui-m-layercont {padding: 20px 20px;line-height: 22px;text-align: center;}
+</style>
+<body>
+<section class="tabContainer" style="margin-bottom: 1.41rem;">
+    <ul class="tabHd tabHd01 ">
+        <li class="active" style="width: 50%;" id="tabs-nav-code"><span>扫码添加</span></li>
+        <li style="width: 50%;" id="tabs-nav-user"><span>手动添加</span></li>
+    </ul>
+    <section class="swiper-container swiper-container-horizontal swiper-container-autoheight">
+        <section class="swiper-wrapper">
+            <section class="swiper-slide" id="tabs-content-code">
+                <section class="tabCon">
+                    <!--扫码添加-->
+                    <section class="bgfff tc pt20"> <img class="addewm" src="{php echo $this->createMobileUrl('store.marketing_user', array('act' => 'addQrPreview','aid' => $aid,'tid' => $tid));}"  width="205"  height="205" alt="扫码创建二维码"/>
+                        <p class="font28 c6">团队成员微信扫码创建</p>
+                        <p class=" font28 mt15">邀请码：<span id="invite_code_value">{$teamModel['invite_code']}</span>
+                            <button class="copyBtn" id="btn_reset">重置邀请码</button>
+                        </p>
+                        <img class="addewm" src="{php echo $this->createMobileUrl('store.marketing_user', array('act' => 'marketingQrPreview','aid' => $aid,'tid' => $tid));}"  width="205"  height="205" alt="扫码管理二维码"/>
+                        <p class="font28 c6">微信扫码管理溯源统计</p>
+                        <section class="copyScan">
+                            <section class="tl pd24 font28 links copy_text" style="">
+                                <section> {php echo replaceDieDomain($config, __MURL('user.admins_marketing', array('store_id' => $actModel['store_id'],'activity_id' => $aid), true, true));} </section>
+                            </section>
+                            <input type="button" class="copyBtn" id="btnCopy" value="复制链接" data-clipboard-action="copy" data-clipboard-target=".copy_text">
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="swiper-slide" style="display: none;" id="tabs-content-user">
+                <section class="tabCon">
+                    <section class="tabCon_item">
+                        <!--手动添加-->
+                        <section style="background:#fff; padding-bottom:0.32rem">
+                            <section style=" height:1.6rem;">
+                                <section class="pd24 map_search clearfix">
+                                    <section class="txt_item w80 fl">
+                                        <input type="text" placeholder="请输入用户昵称" class="form_txt" id="searchKey">
+                                    </section>
+                                    <section class="w20 fr">
+                                        <button class="but_search" id="btnSearch">搜索</button>
+                                    </section>
+                                </section>
+                            </section>
+                            <div id="ContentList">
+                                <ul class="mystaff" id="LoadLists" >
+
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+        </section>
+    </section>
+</section>
+<section class="buttonFloat"><a href="{php echo $this->createMobileUrl('store.marketing_user', array('act' => 'index','aid' => $aid,'tid' => $tid));}" style="background-color: #fee002;border-radius: 0.6rem;" class="db font32" >返回</a></section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script src="{__MOBILE_STORE_JS__}/index.js"></script>
+<script src="{__PLUGIN__}/clipboard/clipboard.min.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li>
+        <section class="staff_info bor_t"> <img class="tx" src="<%= rows[i].headurl %>" alt="<%= rows[i].nickname %>"/>
+            <h2 class="fn clearfix" style="margin-right: 1.68rem;"><span class="mr10"><%= rows[i].nickname %></span></h2>
+            <p>OPENID：<%= rows[i].openid %></p>
+            <button class="addBtn adduser" data-userid="<%= rows[i].id %>">添加</button>
+        </section>
+    </li>
+    <% } %>
+</script>
+<script>
+    $(function () {
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //点击搜索
+        $('#btnSearch').click(function() {
+            //筛选参数
+            window.searchKey = $('#searchKey').val();
+            window.delCount = 0;
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.user_account', array('act' => 'getJsonList'));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "delCount":window.delCount,
+                                "key":window.searchKey,
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                window.delCount = 0;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false);
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var result = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.user_account', array('act' => 'getJsonList'));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "delCount":window.delCount,
+                                "key":window.searchKey,
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    threshold : 50
+                });
+            }
+
+        }).trigger("click");
+
+        //创建切换
+        $(document).on("click", "#tabs-nav-code", function(){
+            $("#tabs-nav-code").attr('class','active') ;
+            $("#tabs-content-code").show();
+            $("#tabs-nav-user").removeClass('active') ;
+            $("#tabs-content-user").hide();
+        });
+        //创建切换
+        $(document).on("click", "#tabs-nav-user", function(){
+            $(document).scrollTop($(document).height());
+            $("#tabs-nav-user").attr('class','active') ;
+            $("#tabs-content-user").show();
+            $("#tabs-nav-code").removeClass('active') ;
+            $("#tabs-content-code").hide();
+            $('#btnSearch').click();
+        });
+
+        //重置邀请码
+        $(document).on('click','#btn_reset',function(){
+            //询问框
+            layer.open({
+                content: '你确定要重置吗？重置后邀请用户加入团队将使用新的邀请码！'
+                , btn: ['确定', '取消']
+                , yes: function (index) {
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createMobileUrl('store.marketing_team', array('act' => 'resetInviteCode','aid' => $aid));}",
+                        data: {"id": {$tid}},
+                        success: function (data, status) {
+                            if (data.status == 1) {
+                                $("#invite_code_value").html(data.invite_code);
+                                layer.open({
+                                    content: data.msg
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                            }
+                            else {
+                                layer.open({
+                                    content: data.msg
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                            }
+                        }
+                    });
+                    layer.close(index);
+                }
+            });
+        });
+
+        //手动创建
+        $(document).on('click','.adduser',function(){
+            var addbtn = $(this);
+            var userid = addbtn.attr("data-userid");
+            addbtn.attr('disabled',true);
+            $.ajax({
+                type: "post",
+                url: "{php echo $this->createMobileUrl('store.marketing_user', array('act' => 'addUser','aid' => $aid,'tid' => $tid));}",
+                data: {"id": userid},
+                success: function (data, status) {
+                    addbtn.attr('disabled',false);
+                    if (data.status == 1) {
+                        layer.open({
+                            content: data.msg
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                    }
+                    else {
+                        layer.open({
+                            content: data.msg
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                    }
+                }
+            });
+        });
+    });
+
+    var btn = document.getElementById('btnCopy');
+    var clipboard = new Clipboard(btn);
+    clipboard.on('success', function (e) {
+        layer.open({ content: '内容已复制', skin: 'msg', time: 2 });
+    });
+    clipboard.on('error', function (e) {
+        layer.open({ content: '对不起，浏览器不支持，请手动复制内容！', skin: 'msg', time: 2 });
+    });
+
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+</script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">分销管理</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="">分销排行榜</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <!-- Widget: user widget style 1 -->
+                                    <div class="box box-widget widget-user">
+                                        <!-- Add the bg color to the header using any of the bg-* classes -->
+                                        <div class="widget-user-header bg-aqua-active">
+                                            <h3 class="widget-user-username">{$_W['store']['name']}</h3>
+                                        </div>
+                                        <div class="widget-user-image">
+                                            <img class="img-circle" src="{php echo tomedia($_W['store_user']['headurl'])}" alt="User Avatar">
+                                        </div>
+                                        <div class="box-footer">
+                                            <div class="row">
+                                                <div class="col-sm-4 border-right">
+                                                    <div class="description-block">
+                                                        <h5 class="description-header" id="userInvite">0</h5>
+                                                        <span class="description-text">返利数量</span>
+                                                    </div>
+                                                    <!-- /.description-block -->
+                                                </div>
+                                                <!-- /.col -->
+                                                <div class="col-sm-4 border-right">
+                                                    <div class="description-block">
+                                                        <h5 class="description-header" id="userRanking">暂无</h5>
+                                                        <span class="description-text">我的排名</span>
+                                                    </div>
+                                                    <!-- /.description-block -->
+                                                </div>
+                                                <!-- /.col -->
+                                                <div class="col-sm-4">
+                                                    <div class="description-block">
+                                                        <h5 class="description-header"  id="userMoney">0.00元</h5>
+                                                        <span class="description-text">返利金额</span>
+                                                    </div>
+                                                    <!-- /.description-block -->
+                                                </div>
+                                                <!-- /.col -->
+                                            </div>
+                                            <!-- /.row -->
+                                        </div>
+                                    </div>
+                                    <!-- /.widget-user -->
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="nav-tabs-custom">
+                                        <!-- Tabs within a box -->
+                                        <ul class="nav nav-tabs pull-right" id="mytab">
+                                            <li class=""><a href="javascript:getRanking('month');" id="month" >月榜</a></li>
+                                            <li class=""><a href="javascript:getRanking('week');" id="week">周榜</a></li>
+                                            <li class=""><a href="javascript:getRanking('day');" id="day">日榜</a> </li>
+                                            <li class="active"><a href="javascript:getRanking('total');" id="total">总榜</a></li>
+                                            <li class="pull-left header"><i class="fa fa-database"></i> 排行榜 &nbsp;&nbsp;<small style="color: #777;">前50名分销排行榜</small></li>
+                                        </ul>
+                                        <div class="tab-content no-padding">
+                                            <!-- 红包补发 -->
+                                            <div class="tab-pane active">
+                                                <div class="box-body">
+                                                    <table class="table table-striped" >
+                                                        <thead>
+                                                        <tr>
+                                                            <th>排名</th>
+                                                            <th>商家</th>
+                                                            <th>返利数量</th>
+                                                            <th>返利金额</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody id="LoadLists">
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <tr>
+        <td>
+            <%= i+1 %>.
+        </td>
+        <td>
+            <img height="30" width="30" src="<%= rows[i].logo %>" alt="<%= rows[i].name %>">
+            <%= rows[i].name %>
+        </td>
+        <td><%= rows[i].invite %>笔</td>
+        <td><%= rows[i].money %>元</td>
+    </tr>
+    <% } %>
+</script>
+<script>
+
+    $(function () {
+        SelectNav("分销佣金排行");
+        getRanking('total');
+    });
+
+    function getRanking(status){
+        //选中点击选项卡
+        $("#mytab > li").each(function(){
+            $(this).removeClass("active")
+        });
+        $("#"+status).parents('li').addClass("active");
+        //获取排行榜数据
+        $("#LoadLists").html("<div class='dropload-load'><span class='loading'></span>数据加载中...</div>");
+        $.ajax({
+            type: 'GET',
+            url: "{php echo $this->createWebAppUrl('invite_ranking', array('act' => 'getJsonList'));}",
+            data:{
+                "status":status
+            },
+            dataType: 'json',
+            beforeSend: function(){
+                $("#LoadLists").html('<tr><td colspan="4"><div class=\'load-down\'><div class=\'load-load\'><span class=\'loading\'></span>统计数据加载中...</div></div></td></tr>');
+            },
+            success: function(data){
+                if (data['count']>0)
+                {
+                    myrequire([ 'arttemplate'], function (template) {
+                        var html = template("listtpl", data);
+                        $('#LoadLists').html(html);
+                    });
+                    if(data['ranking']>0)
+                    {
+                        $("#userRanking").html(data['ranking']);
+                        $("#userInvite").html(data['invite']);
+                        $("#userMoney").html(data['money']);
+                    }
+                    else
+                    {
+                        $("#userRanking").html("暂无");
+                        $("#userInvite").html("0");
+                        $("#userMoney").html("0.00");
+                    }
+                }
+                else
+                {
+                    $('#LoadLists').html('<tr><td colspan="4">暂无信息</td></tr>');
+                }
+            },
+            error: function(xhr, type){
+                $('#LoadLists').html('<tr><td colspan="4">暂无信息</td></tr>');
+            }
+        });
+    }
+</script>
+</body>
+</html>

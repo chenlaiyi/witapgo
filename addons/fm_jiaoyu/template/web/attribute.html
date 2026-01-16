@@ -1,0 +1,150 @@
+{template 'public/header'}
+{template 'public/comhead'}
+<div class="panel panel-info">
+	<div class="panel-body">
+		<ul class="nav nav-tabs">
+			<li {if $_GPC['op']=='teadisplay'}class="active"{/if}><a href="{php echo $this->createWebUrl('attribute', array('op' => 'teadisplay', 'schoolid' => $schoolid))}">老师</a></li>
+			<li {if $_GPC['op']=='studisplay'}class="active"{/if}><a href="{php echo $this->createWebUrl('attribute', array('op' => 'studisplay', 'schoolid' => $schoolid))}">学生</a></li>
+            <li {if $_GPC['op']=='kcdisplay'}class="active"{/if}><a href="{php echo $this->createWebUrl('attribute', array('op' => 'kcdisplay', 'schoolid' => $schoolid))}">课程</a></li>
+		</ul>
+	</div>
+</div> 
+<style>
+    th{
+        text-align: center;
+    }
+    td{
+        text-align: center;
+    }
+</style>
+{if $operation == 'teadisplay' || $operation == 'studisplay' || $operation == 'kcdisplay'}
+<div class="main">
+    <div class="panel panel-info">
+        <div class="panel-heading">{$typeName}</div>
+        <div class="panel-body">
+            <div class="span8 control-group">
+                <a class="btn qx_edit btn-primary" href="javascript:Add({$type})"><i class="fa fa-plus"></i> 添加属性</a>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <table class="table table-hover">
+            <thead class="navbar-inner">
+                <tr>
+                    <th >排序</th>
+                    <th >标题</th>
+                    <th >所属类型</th>
+                    <th >创建时间</th>
+                    <th >操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {loop $list $item}
+                <tr>
+                    <td>{$item['ssort']}</td>
+                    <td>{$item['name']}</td>
+                    <td>{$item['category_name']}</td>				
+                    <td>{$item['createtime']}</td>				
+                    <td >
+                        <a class="btn btn-default btn-sm" onclick="edit(this,`{$item['type']}`,`{$item['id']}`)" data-name="{$item['name']}" data-ssort="{$item['ssort']}" data-category="{$item['category']}" title="编辑"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;<a class="btn btn-default btn-sm qx_3203" href="{php echo $this->createWebUrl('attribute', array('id' => $item['id'], 'op' => 'delete', 'schoolid' => $schoolid))}" onclick="return confirm('此操作不可恢复，确认删除？');return false;" title="删除"><i class="fa fa-times"></i></a>
+                    </td>
+                </tr>
+                {/loop}
+            </tbody>
+        </table>
+    </div>
+</div>
+{/if}
+<div class="modal fade" style="min-width: 600px!important;" id="Box" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" style="width: 450px;">
+        <div class="modal-content" id="ed_stubox" style="max-height:unset !important;">
+            <div class="modal-header" style="text-align: center;color: black;">
+                <h4 class="modal-title" id="myModaltitle">添加属性</h4>
+            </div>
+            <div class="modal-body" style="height:100%;overflow-y: scroll; max-height: 87%;">
+                <form action="" method="post" class="form-horizontal form" id="formData" enctype="multipart/form-data">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">排序</label>
+                                <div class="col-sm-9">
+                                    <input type="number" name="ssort" class="form-control" id="ssort"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label"><span style="color:red">*</span>标题</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="name" id="name" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label"><span style="color:red">*</span>选择类型</label>
+                                <div class="col-sm-9" >
+                                    <select style="margin-right:15px;width: 100%;" name="category" id="category">
+                                        <option value="">请选择</option>
+                                        <option value="text">文本</option>
+                                        <option value="idcard">身份证</option>
+                                        <option value="phone">手机号</option>
+                                        <option value="number">数字</option>
+                                        <option value="date">日期</option>
+                                        <option value="richtext">富文本</option>
+                                        <option value="file">附件</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <input type="hidden" name="type" id="type"/>
+                            <input type="hidden" name="attrid" id="attrid" value='0'>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-foot">
+                <a class="btn btn-primary" style="color: #fff;" onclick="save();">提交</a>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var total = `{$total}`
+    function Add(type){
+        if(total >= 16){
+            ReToastGlobal('最多只能添加16个属性值')
+            return
+        }
+        $("#type").val(type)
+        $("#Box").modal('toggle')
+    }
+    function edit(obj,type,id){
+        $("#attrid").val(id)
+        $("#name").val($(obj).attr('data-name'))
+        $("#category").val($(obj).attr('data-category'))
+        $("#ssort").val($(obj).attr('data-ssort'))
+        $("#myModaltitle").html('编辑属性')
+        $("#type").val(type)
+        $("#Box").modal('toggle')
+    }
+    function save(){
+        if(!$("#name").val()){
+            ReToastGlobal('标题不能为空')
+            return
+        }
+        if(!$("#category").val()){
+            ReToastGlobal('请选择类型')
+            return
+        }
+        let formData = $("#formData").serializeArray();
+        $.ajax({
+            url: "{php echo $this->createWebUrl('attribute',array('op'=>'save','schoolid'=>$schoolid,'weid'=>$weid))}",
+            type: "post",
+            dataType: "json",
+            data:formData,
+            success: function (res) {
+                ReToastGlobal(res.msg)
+                total = res.total
+                location.reload()
+            }
+        });
+    }
+</script>
+{template 'public/footer'}

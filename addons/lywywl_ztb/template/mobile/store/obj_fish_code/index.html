@@ -1,0 +1,337 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<style>
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {position: static}
+</style>
+<body>
+<!--中心区域-->
+<section class="rel">
+    <h2 class="screen fn font28 bgfff">
+        <dl class="retrie">
+            <dt class="bor_b pd0_24">
+                <a id="writeoff" href="javascript:;" style="width:auto!important; float:right !important"><i class="sortIconI"></i> 设定 </a>
+                <a id="filter" href="javascript:;" style="width:auto!important">筛选<i class="sortIconI"></i> </a>
+            </dt>
+            <dd class="default">
+                <form>
+                    <!--筛选弹出层-->
+                    <section class="interal_filter downlist">
+                        <ul class="form">
+                            <li><span>用户信息：</span><section><input type="text" placeholder="OPENID/抽奖码" id="searchKey" value="{$openid}"></section></li>
+                            <li><span>变动类型：</span><section >
+                                <p class="select_box rel">
+                                    <select id="searchShare">
+                                        <option value="" selected="selected">请选择</option>
+                                        <option value="0">参与获得</option>
+                                        <option value="1">邀请获得</option>
+                                    </select>
+                                </p>
+                            </section></li>
+                        </ul>
+                        <section class="retrieval mt24 clearfix">
+                            <button type="reset" class="recharge_but font32"> 重置</button>
+                            <button type="button" class="submit_but font32" id="btnSearch"> 搜索</button>
+                        </section>
+                    </section>
+                </form>
+                <form>
+                    <!--设定中奖弹出层-->
+                    <section class="interal_filter writelist">
+                        <ul class="form">
+                            <section class="txt_item"><textarea style="width:100%" rows = "3" id="winer_code" class="form_area" placeholder="请输入抽奖码..." >{$objModel['winer_code']}</textarea></section>
+                            <section class="font26 c9 lh15">
+                                <strong>提示：</strong> 参与用户数量小于锦鲤数量时，请提前设置中奖抽奖码，否则所有参与用户均为锦鲤。
+                            </section>
+                        </ul>
+                        <section class="retrieval mt24 clearfix">
+                            <button type="button" class="recharge_but font32" id="get_rand_btn"> 随机抽取</button>
+                            <button type="button" class="submit_but font32"  id="save_winer_btn"> 确认保存</button>
+                        </section>
+                    </section>
+                </form>
+            </dd>
+        </dl>
+    </h2>
+</section>
+<section class="mt24" id="ContentList">
+    <ul class="mtaff lottery" id="LoadLists">
+
+    </ul>
+</section>
+<section class="h24"></section>
+<section class="buttonBox">
+    <section class="buttonFloat">
+        <a href="{php echo $this->createMobileUrl('store.obj_activity',array('act'=>'index'))}" class="db font32 yellowBtn" style="background: #FFD112;">活动列表</a>
+    </section>
+</section>
+
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li>
+        <section class="get_time bor_b"><span class="font26 c9">获得时间：<%= rows[i].createtime %></span></section>
+        <section class="staff_info"> <img class="tx" src="<%= rows[i].headurl %>" alt="<%= rows[i].nickname %>">
+            <h2 class="fn clearfix"><span class="mr10"><%= rows[i].nickname %></span></h2>
+            <p>OPENID：<%= rows[i].openid %></p>
+            <%if(rows[i].is_share==1){%>
+            <h4 class="fn font30 mt10 mb5"><span class="bgGreen label">邀请获得</span></h4>
+            <%}else{%>
+            <h4 class="fn font30 mt10 mb5"><span class="bgOrg label">参与获得</span></h4>
+            <%}%>
+            <h2 class="fn clearfix"><span class="mr10">抽奖码：<%= rows[i].writecode %></span></h2>
+        </section>
+        <%if(rows[i].is_share==1){%>
+        <section class="hexiao_centre">
+            <section class="user_info" style="margin-top: inherit;"><img src="<%= rows[i].share_headurl %>" alt="<%= rows[i].share_nickname %>">
+                <p class="font24 c6">邀请人：<%= rows[i].share_nickname %></p>
+                <p class="font24 c9">OPENID：<%= rows[i].share_openid %></p>
+            </section>
+        </section>
+        <%}%>
+    </li>
+    <% } %>
+</script>
+<script>
+    $(function () {
+        //点击筛选
+        $('#filter').click(function(){
+            var $filter = $(this);
+            if($filter.hasClass('up')){
+                $filter.removeClass('up');
+                $('.downlist').hide();
+            }else{
+                $filter.addClass('up');
+                $('.downlist').show();
+            }
+        });
+
+        //点击筛选
+        $('#writeoff').click(function(){
+            var $writeoff = $(this);
+            if($writeoff.hasClass('up')){
+                $writeoff.removeClass('up');
+                $('.writelist').hide();
+            }else{
+                $writeoff.addClass('up');
+                $('.writelist').show();
+            }
+        });
+
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //点击搜索
+        $('#btnSearch').click(function() {
+            //隐藏筛选弹框
+            $('#filter').removeClass('up');
+            $('.downlist').hide();
+
+            //筛选参数
+            window.searchKey = $('#searchKey').val();
+            window.searchShare = $('#searchShare').val();
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.obj_fish_code', array('act' => 'getJsonList','aid' => $aid));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "is_share":window.searchShare,
+                                "key":window.searchKey
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                window.delCount = 0;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false);
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var result = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.obj_fish_code', array('act' => 'getJsonList','aid' => $aid));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "is_share":window.searchShare,
+                                "key":window.searchKey
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    threshold : 50
+                });
+            }
+
+        }).trigger("click");
+
+        //获取随机抽奖码
+        $('#get_rand_btn').click(function() {
+            $.ajax({
+                type: "post",
+                url: "{php echo $this->createMobileUrl('store.obj_fish_code', array('act' => 'getRandCode','aid' => $aid));}",
+                data: {},
+                beforeSend: function () {
+                    // 禁用按钮防止重复提交
+                    $("#get_rand_btn").attr({ disabled: "disabled" });
+                    //loading带文字
+                    layer.open({
+                        type: 2
+                        , content: '生成中，请耐心等待！'
+                        ,shadeClose:false
+                    });
+                },
+                dataType:"text",
+                success: function (data) {
+                    $("#winer_code").val(data);
+                    $("#get_rand_btn").removeAttr("disabled");
+                    layer.closeAll();
+                }
+            });
+        });
+
+        //存储中奖抽奖码
+        $('#save_winer_btn').click(function() {
+            $.ajax({
+                type: "post",
+                dataType:'json',
+                url: "{php echo $this->createMobileUrl('store.obj_fish_code', array('act' => 'saveWinerCode','aid' => $aid));}",
+                data: {winer_code:$("#winer_code").val()},
+                success: function (data) {
+                    if (data.status == 1) {
+                        layer.open({
+                            content: data.msg
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        //隐藏筛选弹框
+                        $('#writeoff').removeClass('up');
+                        $('.writelist').hide();
+                    }
+                    else {
+                        layer.open({
+                            content: data.msg
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                    }
+                }
+            });
+
+        });
+    });
+
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+
+    //关闭关闭弹窗
+    function closeWindows(){
+        layer.closeAll();
+        scroll.beforeClose();
+    }
+</script>
+</body>
+</html>

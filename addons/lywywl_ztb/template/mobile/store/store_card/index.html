@@ -1,0 +1,357 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<style>
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {position: static}
+</style>
+<body>
+<section class="rel" style="height: 1.08rem;">
+    <h2 class="screen fn font28 bgfff" style=" position: fixed;z-index: 10;width: 100%;">
+        <dl class="retrie">
+            <dt class="bor_b pd0_24">
+                <a id="filter" href="javascript:;" style="width:auto!important">筛选<i class="sortIconI"></i> </a>
+            </dt>
+            <dd class="default">
+                <form>
+                    <!--筛选弹出层-->
+                    <section class="interal_filter downlist">
+                        <ul class="form">
+                            <li><span>卡券信息：</span><section><input type="text" placeholder="卡券名称/卡券编号" id="searchKey"></section></li>
+                            <li><span>卡券状态：</span><section >
+                                <p class="select_box rel">
+                                    <select id="searchStatus">
+                                        <option value="">请选择</option>
+                                        <option value="1">启用</option>
+                                        <option value="0">禁用</option>
+                                    </select>
+                                </p>
+                            </section></li>
+                        </ul>
+                        <section class="retrieval mt24 clearfix">
+                            <button type="reset" class="recharge_but font32"> 重置</button>
+                            <button type="button" class="submit_but font32" id="btnSearch"> 搜索</button>
+                        </section>
+                    </section>
+                </form>
+            </dd>
+        </dl>
+    </h2>
+</section>
+<!--中心区域-->
+<section class="h24"></section>
+<section id="ContentList">
+    <ul class="mycoupon" id="LoadLists">
+
+    </ul>
+</section>
+<section class="buttonBox"></section>
+<section class="buttonFloat">
+    <a href="{php echo $this->createMobileUrl('store.store_member',array('act'=>'index'))}" class="db font32" style="width: 50%;    float: left;   color: #fff;   border-radius: 0.6rem 0 0 0.6rem;    background: #f92f4a;">商家中心</a>
+    <a href="{php echo $this->createMobileUrl('store.store_card', array('act' => 'modify'));}" style="width: 50%;   float: left;    background: #FFD112;    color: #0e0e0e;border-radius: 0 0.6rem 0.6rem 0;" class="db font32">创建卡券</a>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script src="{__MOBILE_STORE_JS__}/index.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li data-id="<%= rows[i].id %>">
+        <%if(rows[i].pic_types==1){%>
+        <section class="quan" style="background:#fcc838;">
+        <%}%>
+        <%if(rows[i].pic_types==2){%>
+        <section class="quan" style="background:#ff6e87;">
+        <%}%>
+        <%if(rows[i].pic_types==3){%>
+        <section class="quan" style="background:#70bdff;">
+        <%}%>
+            <section class="val rel"><i class="yuan_l"></i><i class="yuan_r"></i><span class="font20">￥</span><span class="font32"><%= rows[i].money %></span></section >
+            <%if(rows[i].pic_types==1){%>
+            <p class="font22" style="background:#f59228;">可用<%= rows[i].writeoff_num %>次</p>
+            <%}%>
+            <%if(rows[i].pic_types==2){%>
+            <p class="font22" style="background:#fe576f;">可用<%= rows[i].writeoff_num %>次</p>
+            <%}%>
+            <%if(rows[i].pic_types==3){%>
+            <p class="font22" style="background:#3b8de8;">可用<%= rows[i].writeoff_num %>次</p>
+            <%}%>
+        </section>
+        <figure>
+            <figcaption class="font30"><%= rows[i].name %></figcaption>
+            <p class="c6 font24"><%= rows[i].use_limit %></p>
+            <time class="c9 font24">
+                <%if (rows[i].time_types==0) {%>
+                领取后<%= rows[i].time_day %>天
+                <%}else if(rows[i].time_types==1){%>
+                <%= rows[i].time_end %>
+                <%}else{%>
+                核销后<%= rows[i].time_day %>天
+                <%}%>
+            </time>
+        </figure>
+        <section class="quan_count">
+            <%if(rows[i].status==1){%>
+            <span class="switch switch_on" style="top: 0.55rem;"><i class="slider"></i></span>
+            <%}else{%>
+            <span class="switch switch_off"><i class="slider"></i></span>
+            <%}%>
+        </section>
+        <section class="operation clearfix"> <a href="#" class="edit bor_r font28"><span>编辑</span></a> <a href="#" class="delete font28"><span>删除</span></a> </section>
+    </li>
+    <% } %>
+</script>
+<script>
+    $(function () {
+        //点击筛选
+        $('#filter').click(function(){
+            var $filter = $(this);
+            if($filter.hasClass('up')){
+                $filter.removeClass('up');
+                $('.downlist').hide();
+            }else{
+                $filter.addClass('up');
+                $('.downlist').show();
+            }
+        });
+
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //点击搜索
+        $('#btnSearch').click(function() {
+            //隐藏筛选弹框
+            $('#filter').removeClass('up');
+            $('.downlist').hide();
+
+            //筛选参数
+            window.searchStatus = $('#searchStatus').val();
+            window.searchKey = $('#searchKey').val();
+            window.delCount = 0;
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.store_card', array('act' => 'getJsonList'));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "delCount":window.delCount,
+                                "status":window.searchStatus,
+                                "key":window.searchKey,
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                window.delCount = 0;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false);
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var result = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.store_card', array('act' => 'getJsonList'));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "delCount":window.delCount,
+                                "status":window.searchStatus,
+                                "key":window.searchKey,
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    threshold : 50
+                });
+            }
+
+        }).trigger("click");
+
+    });
+
+    //状态开关
+    $('#LoadLists').on('click','.switch',function(){
+        var switchobj = $(this);
+        var status = switchobj.hasClass("switch_on") ? 0 : 1;
+        var Rowid = switchobj.parents('li').data("id");
+        $.ajax({
+            type: "post",
+            dataType:'json',
+            url: "{php echo $this->createMobileUrl('store.store_card', array('act' => 'setStatus'));}",
+            data: {
+                "id": Rowid,
+                "status": status
+            },
+            success: function (jsonData, status) {
+                if (jsonData.status == 1) {
+                    if(switchobj.hasClass("switch_on")){
+                        switchobj.removeClass("switch_on");
+                        switchobj.addClass("switch_off");
+                    }
+                    else{
+                        switchobj.removeClass("switch_off");
+                        switchobj.addClass("switch_on");
+                    }
+                }
+                else {
+                    layer.open({
+                        content: jsonData.msg
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                }
+            }
+        });
+    });
+
+    //编辑信息
+    $('#LoadLists').on('click','.edit',function(){
+        var editobj = $(this);
+        var Rowid = editobj.parents('li').data("id");
+        window.location.href = "{php echo $this->createMobileUrl('store.store_card', array('act' => 'modify'));}&id="+Rowid;
+    });
+
+    //删除信息
+    $('#LoadLists').on('click','.delete',function(){
+        var delobj = $(this);
+        var Rowid = delobj.parents('li').data("id");
+        //询问框
+        layer.open({
+            content: '你确定要删除吗？'
+            , btn: ['确定', '取消']
+            , yes: function (index) {
+                $.ajax({
+                    type: "post",
+                    dataType:'json',
+                    url: "{php echo $this->createMobileUrl('store.store_card', array('act' => 'del'));}",
+                    data: {
+                        id: Rowid
+                    },
+                    success: function (data, status) {
+                        if (data.status == 1) {
+                            window.delCount = window.delCount + 1;
+                            delobj.parents('li').remove();
+                            layer.open({
+                                content: jsonData.msg
+                                ,skin: 'msg'
+                                ,time: 2 //2秒后自动关闭
+                            });
+                        }
+                        else {
+                            layer.open({
+                                content: jsonData.msg
+                                ,skin: 'msg'
+                                ,time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                });
+                layer.close(index);
+            }
+        });
+    });
+
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+
+</script>
+</body>
+</html>

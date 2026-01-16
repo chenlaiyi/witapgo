@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<meta name="HandheldFriendly" content="true" />
+<title>{$school['title']}</title>
+<link rel="stylesheet" type="text/css" href="{MODULE_URL}public/mobile/css/new_yab1.css?v=1?v=1111" />
+<link rel="stylesheet" type="text/css" href="{MODULE_URL}public/mobile/css/Swiper.css?v=0818" rel="stylesheet" />
+{php echo register_jssdks();}
+<script type="text/javascript" src="{MODULE_URL}public/mobile/js/jquery-1.11.3.min.js?v=4.8"></script>
+{php include $this->template('port');}
+<style>
+body {background-color: #fff;}
+* {margin:0;padding:0;box-sizing:border-box;}
+/**滑动切换特效**/
+.slide_li::before { content: ""; position: absolute; top: 0; left: 100%; width: 0; height: 100%; border-bottom: 3px solid {$school['headcolor']}; transition: 0.1s all linear; }
+.slide_li.act::before { width: 25%; top: 0; left: 0; margin-left:38%; transition-delay: 0.1s; border-bottom-color: {$school['headcolor']};}
+.slide_li.act ~ .slide_li::before { left: 0; }
+/**顶部切换**/
+.headers{ background-color: #fff; width: 100%; height: auto; position: fixed; top: 0px; z-index: 2;box-shadow: 0px 1px 0px rgba(136, 136, 136, 0.43);} 
+.op_boxs{position: relative; width: 100%; display: inline-flex; text-align: center; height: 40px; } 
+.op_boxs .opt_btn{ list-style: none; width: 33.33%; line-height: 40px; display: inline-block; text-decoration: none; color: #333; position: relative; margin-bottom: 4px;}
+.op_boxs .act{color: {$school['headcolor']};} 
+ .new_search_boxs{ width: 100%; display: inline-flex; } .new_search_option_boxs { background: url({OSSURL}public/mobile/img/new_search_icon2.png) no-repeat left;background-size: 13px 13px;background-position-x: 8px;padding-left: 25px; margin-top: 6px;float: left; width: 100%; display: block;  margin-bottom: 10px; height: 32px; box-sizing: border-box; padding: 10px 10px 10px 26px; background-color: #f3f1f1; border: 1px solid #f3f1f1; position: relative; margin-left: 10px; margin-right: 10px; padding-top: 10px; border-radius: 15px; } .sou_btn{ width: 12%; height: 25px; line-height: 25px; background-color: #afdbf5; text-align: center; margin-top: 9px; border-radius: 7px; }.onclick{width: 80%;}
+/**幻灯片**/
+.swiper-container { margin: 0 auto; position: relative; overflow: hidden; z-index: 1; margin-top: 41px;} .swiper-container{ width: 100%; max-height:160px; min-height:110px; background-color:#fff; } .swiper-slide{ width: 100%; } .swiper-slide img{ width: 96%; border-radius: 10px; margin-left: 2%; max-height: 160px; min-height: 110px; }
+/**顶部滑动课程**/
+.kcbox_xlkc{ position: relative; width: 100%; height: auto; background-color: #f0f0f2; margin-top: 5px; } .kcbox_xlkc .title_box{padding-bottom: 9px;background-color: #fff;} .title_box .title_text{font-size: 14px; font-weight: bold;margin-left: 9px; padding-top: 9px;} .xlkc_box{width: 100%; overflow: hidden; overflow-x: scroll; display: inline-flex; position: relative; padding-bottom: 5px; white-space: nowrap;} .childrenBox{ width: 100%; height: 100%; } .kcboxs{width: 40%; min-width: 40%; float: left;padding: 4px;margin: 6px;height: 186px;background-color: #fff;} .cutImgOutBox{position: relative;} .cutImgOutBox .cImg{ width: 100%; min-height: 103px;} .kc_name{ width: 100%; max-height: 32px; height: 32px; overflow: hidden; } .kc_name_content{font-size: 12px;} .zhuliclass{ float:right; } .zlheader{ width: 17px; border-radius: 17px; margin-left: -13px; } .fans_box{ width: 100%; margin-top: 5px; height: 23px; } .fans_text_title{ font-size: 11px; color: #8c8787; float: left; } .pay_cose{ font-size: 12px; font-weight: bold; color: red; float: left; }	
+/**3图魔方**/
+.kcbox_mfkc{ position: relative; width: 100%; height: 184px; background-color: #fff; display: inline-flex; margin-top: 7px; } 
+.left_mfkc{ width: 37%; height: 184px; margin-left: 2.5%; }
+ .mf_left_img{ width: 100%; height: 183px; overflow-y: hidden;  } 
+.mf_left_img .left_img{ width: inherit; height: inherit;  border-radius: 5px;} 
+.right_mfkc{ width: 56%; height: 184px; margin-left: 2%; }
+.mf_right_img{ width: 100%; height: 88px; overflow-y: hidden; } 
+ .mf_right_img .right_img{ width: inherit; height: 106px; position: relative;border-radius: 5px; }
+/**4宫格课程**/
+.kcbox_top{ width: 100%; height: auto; background-color: #fff; } .title_box:after{ content: ''; position: absolute; z-index: 0; margin-top: -16px; left: 9px; width: 3px; height: 15px; background: {$school['headcolor']}; border-radius: 3px; } .title_box .title_text{font-size: 14px; font-weight:bold;margin-left:19px;padding-top:9px;} .childrenBox{ width: 100%; height: 100%; } .kcbox{width: 50%;float: left;padding: 2%;background-color: #fff;} .cutImgOutBox{position: relative;} .cutImgOutBox .cImg{ width: 100%; max-height: 103px ; border-radius: 4px;box-shadow: 0px 1px 3px 1px #ccc;} .kc_name{ width: 100%; max-height: 32px; height: 32px; overflow: hidden; } .kc_name_content{font-size: 12px;} .zhuliclass{ float:right; } .zlheader{ width: 17px; border-radius: 17px; margin-left: -13px; } .fans_box{ width: 100%; margin-top: 5px; height: 23px; } .fans_text_title{ font-size: 11px; color: #8c8787; float: left; } .pay_cose{ font-size: 12px; font-weight: bold; color: red; float: left; }
+.xlkc_img{width: 58%;}
+/**列表课程**/
+.course-kinds {    display: flex; flex-direction: row; justify-content: space-between; position: relative; font-size: 0; background: #fff; height: 46px;} .course-kinds>li { position: relative; font-size: 15px; line-height: 36px; display: inline-block; vertical-align: baseline; padding: 8px; cursor: pointer; white-space: nowrap; } .course-kinds>li.active { color: #06c1ae; font-size: 15px; } .kcbox_list{ position: relative; width: 100%; height: auto; background-color: #fff; margin-top: 5px; } .list_title{ width: 100%; padding: 10px; position: relative; height: 45px; text-align: center; } .list_type{ width: 33%; float: left; height: 27px; } .act{color: {$school['headcolor']};} @keyframes fade-in {  0% {opacity: 0;} 40% {opacity: 0;} 100% {opacity: 1;} }  @-webkit-keyframes fade-in { 0% {opacity: 0;}  40% {opacity: 0;}  100% {opacity: 1;}  }.list_box{ width: 100%; height: auto; } .list_box_li{list-style: none;padding: 5px;position: relative;width: 100%;margin-top: 5px;} .list_left{width: 33%; float: left; max-height: 76px;    overflow-y: hidden;} .cImg_left { width: 92%;height: auto; position: relative; } .list_right{ width: 64%; float: left; } .list_box_div{ width: 98%; height: 86px; border-bottom: 1px solid #eae8e8; }
+/**预约试听**/
+.popUpBox { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; animation-name: popFadeIn; -webkit-animation-name: popFadeIn; -ms-animation-name: popFadeIn; -moz-animation-name: popFadeIn; -o-animation-name: popFadeIn; -webkit-animation-duration: 600ms; animation-duration: 600ms; -webkit-animation-fill-mode: both; z-index: 100; } .popUpBoxOut { animation-name: popFadeOut; -webkit-animation-name: popFadeOut; -ms-animation-name: popFadeOut; -moz-animation-name: popFadeOut; -o-animation-name: popFadeOut; -webkit-animation-duration: 600ms; animation-duration: 600ms; -webkit-animation-fill-mode: both; } @keyframes popFadeIn { 0% { opacity: 0; }  100% { opacity: 1; } }  @keyframes popFadeOut { 0% { opacity: 1; }  100% { opacity: 0; } } .trackMatte { position: absolute; width: 100%; height: 100vh; top: 0; left: 0; right: 0; bottom: 0; background-color: black; opacity: .5; }  .popContentBox { position: absolute; width: 80%; margin-left: 10%; max-height: 80%; top: 49%; transform: translateY(-50%); -webkit-transform: translateY(-50%); -moz-transform: translateY(-50%); -ms-transform: translateY(-50%); -o-transform: translateY(-50%); z-index: 101; background-color: white; border-radius: 10px; }  .poptitle { width: 100%; font-size: 16px; color: #333333; text-align: center; padding: 5px 0; }  .popinfo { width: 100%; font-size: 13px; color: #333333; text-align: center; padding: 5px 0; } .popNotifyDescribe { background: #f0f0f2; border-radius: 5px; }  .popNotifyDescribe span { text-align:center; border-radius: 5px; padding: 12px; color: #666666; font-size: 12px; display: inline-block; }  .sectionContBox { margin: 10px; } .btnBox { display: -webkit-box; /* 老版本语法: Safari,  iOS, Android browser, older WebKit browsers.  */ display: -moz-box; /* 老版本语法: Firefox (buggy) */ display: -ms-flexbox; /* 混合版本语法: IE 10 */ display: -webkit-flex; /* 新版本语法： Chrome 21+ */ display: flex; /* 新版本语法： Opera 12.1, Firefox 22+ */ margin: 7px 0; }  .btnPass, .btnCancel { width: 100px; height: 31px; font-size: 14px; color: white; text-align: center; line-height: 31px; border-radius: 20px; } .btnPass { background: #06c1ae; margin-left: 12px;  } .btnCancel { background: #ff9f22; margin-left: auto; margin-right: 10px; } .notifyCreateTime{ font-size: 12px; color: #a7a5a5; } .form-line{ margin:5px } .stu_info_text{ font-size: 13px; width: 90%; height: 82px; }
+.form-order>.form-line{ margin-bottom:5px } .input-wrapper { padding: 2px 2px; border: 1px solid #d5d7d9; border-radius: 2px; } .input-wrapper>input, .input-wrapper>textarea { width: 100%; outline: 0; box-sizing: border-box; border: none; font-size: 12px; resize: none; display: block; }
+/**团购抢购标签 列表**/
+.label-danger{display: inline-block; padding: 1px 2px 2px; font-size: 10px; line-height: 1; color: #fff; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 3px;}
+.class_over{background-color: rgba(109, 108, 108, 0.08);opacity: 0.5;} .marks{ position: absolute; top: 0; left: 34%; background-repeat: no-repeat; background-position: 0 0; background-size: contain; background-color: transparent; } .mark{ position: absolute; top: 5px; left: 5px; background-repeat: no-repeat; background-position: 0 0; background-size: contain; background-color: transparent; } .marks.class_over_tip{ width: 152px; height: 89px; background-image: url({MODULE_URL}public/mobile/img/class_overr.png); } .mark.mark_rush{ width: 50%; height: 40px; background-image:url({MODULE_URL}public/mobile/img/mark-rush.png) } .mark.mark_group{ width: 50%; height: 40px; background-image:url({MODULE_URL}public/mobile/img/mark-group.png) }
+/**团购抢购标签 顶部推荐**/
+.markr{ position: absolute; top: 0px; right: 0px; background-repeat: no-repeat; background-position: 0 0; background-size: contain; background-color: transparent; }  .markr.mark_rush{ width: 35%; height: 100%; background-image:url({MODULE_URL}public/mobile/img/mark-rushr.png) } .markr.mark_group{ width: 35%; height:100%; background-image:url({MODULE_URL}public/mobile/img/mark-groupr.png) }
+.yuanjia{text-decoration: line-through;color:#c5c4c4;font-size: 9px;line-height:16px;margin-left:40px;}
+</style>
+</head>
+<body class="auto_height" id="auto_height">
+<div class="All" style="height: 100%;">
+	<div class="headers">
+		<!-- <div class="new_search_boxs"> -->
+			<!-- <input class="new_search_option_boxs" placeholder="输入课程名"></input> -->
+			<!-- <div class="sou_btn" style="display: none;">搜索</div> -->
+		<!-- </div> -->
+		<div class="op_boxs">
+		{loop $kctitle $key $row}
+			<li class="opt_btn slide_li {if $key == 0}act{/if}" onclick="top_change({php echo $key+1},this)">{$row['name']}</li>
+		{/loop}	
+		</div>
+	</div>
+	<div class="swiper-container">
+		<div class="swiper-wrapper">
+			{loop $banner $row}
+			<div class="swiper-slide">
+				<a href="{$row['url']}" style="display:block;height:100%">
+					<img src="{php echo tomedia($row['icon']);}">
+				</a>
+			</div>
+			{/loop}
+		</div>
+	</div>
+	<div class="tuijian">
+		{if $jpkc}
+		<div class="kcbox_top">
+			<div class="childrenBox">
+				<div class="title_box"><p class="title_text">精品课程</p></div>
+				{loop $jpkc $row}
+				<div class="kcbox"  onclick="chack('{$row['url']}');">
+					<div class="childrenBox">
+						<div class="imageC">
+							<div class="cutImgOutBox">
+								<img class="cImg" src="{php echo tomedia($row['icon']);}">
+								{if $row['sale_type'] == 1 && $row['endtime']}<div class="mark_group markr text_center"></div>{/if}
+								{if $row['sale_type'] == 2 && $row['endtime']}<div class="mark_rush markr text_center"></div>{/if}
+							</div>
+						</div>
+						<div class="kc_name">
+							<p class="kc_name_content">{$row['name']}</p>
+						</div>
+						<div class="fans_box">
+							<span class="zhuliclass">
+							{loop $row['fans_list'] $item}
+								<img class="zlheader" src="{$item['icon']}">
+							{/loop}	
+							</span>
+							<p class="fans_text_title">{if $row['all_number']}{$row['all_number']}人正在学{/if}</p>
+						</div>
+						<div class="pay">
+						{if $row['sale_type'] == 0}
+							<p class="pay_cose">￥{$row['cose']}</p>
+						{else}
+							<p class="pay_cose">￥{$row['nowprice']}</p><p class="yuanjia">￥{$row['cose']}</p>
+						{/if}
+						</div>
+					</div>
+				</div>
+				{/loop}
+			</div>
+		</div>
+		{/if}
+		<div class="clear"></div>
+		{if $kccommend}
+		<div class="kcbox_mfkc">
+			<div class="left_mfkc">
+				<div class="mf_left_img" onclick="chack('{$kccommend[0]['url']}');">
+					<img class="left_img" src="{php echo tomedia($kccommend[0]['icon']);}"/>
+				</div>
+			</div>	
+			<div class="right_mfkc">	
+				<div class="mf_right_img" onclick="chack('{$kccommend[1]['url']}');">
+					<img class="right_img" src="{php echo tomedia($kccommend[1]['icon']);}"/>
+				</div>
+				<div class="mf_right_img" style="margin-top: 8px;" onclick="chack('{$kccommend[2]['url']}');">
+					<img class="right_img" src="{php echo tomedia($kccommend[2]['icon']);}"/>
+				</div>
+			</div>
+		</div>
+		{/if}
+		<div class="clear"></div>
+		{if $kcteam}
+		<div class="kcbox_xlkc">
+			<div class="title_box"><p class="title_text">推荐团购</p></div>
+			<div class="xlkc_box">
+				{loop $kcteam $row}
+				<div class="kcboxs" onclick="chack('{$row['url']}');">
+					<div class="childrenBox">
+						<div class="imageC">
+							<div class="cutImgOutBox">
+								<img class="cImg" src="{php echo tomedia($row['icon']);}">
+								{if $row['sale_type'] == 1 && $row['endtime']}<div class="mark_group markr text_center"></div>{/if}
+								{if $row['sale_type'] == 2 && $row['endtime']}<div class="mark_rush markr text_center"></div>{/if}
+							</div>
+						</div>
+						<div class="kc_name">
+							<p class="kc_name_content">{$row['name']}</p>
+						</div>
+						{if $row['fans_list'] || $row['all_number']}
+						<div class="fans_box">
+							<span class="zhuliclass">
+							{loop $row['fans_list'] $item}
+								<img class="zlheader" src="{$item['icon']}">
+							{/loop}	
+							</span>
+							<p class="fans_text_title">{$row['all_number']}人正在学</p>
+						</div>
+						{/if}
+						<div class="pay">
+						{if $row['sale_type'] == 0}
+							<p class="pay_cose">￥{$row['cose']}</p>
+						{else}
+							<p class="pay_cose">￥{$row['nowprice']}</p><p class="yuanjia">￥{$row['cose']}</p>
+						{/if}
+						</div>
+					</div>
+				</div>
+				{/loop}
+			</div>
+		</div>
+		{/if}
+	</div>
+	<div class="allkc" style="display:none">
+		<div style="overflow-x:scroll;line-height: 36px;height: 50px; background: #fff;">
+			<ul class="course-kinds">
+				<li onclick="change(-1,this)" class="kctitle slide_li act">全部课程</li>
+				{loop  $CourseType  $row_c}
+				<li onclick="change({$row_c['sid']},this)" class="kctitle slide_li">{$row_c['sname']}</li>
+				{/loop}
+			</ul>
+		</div>
+		<div class="clear"></div>
+		<div class="kcbox_list">
+			<input type="hidden" id="has_over" value="0" >
+			<input type="hidden" id="ctype_more" value="-1">
+			<div class="list_box">
+				{loop $list $key $item}
+					{if $item['OldOrNew'] == 1}
+					<li class="list_box_li {if $item['end'] <TIMESTAMP}class_over{/if}" {if TIMESTAMP < $item['end']}onclick="goto_kcinfo({$item['id']})"{/if} time="{$key}" ctype="{$Ctype}">
+						<div class="list_box_div">
+							<div class="list_left">
+								<img class="cImg_left" src="{if !empty($item['thumb'])}{php echo tomedia($item['thumb'])}{else}{php echo tomedia($school['logo'])}{/if}">
+							</div>
+							<div class="list_right">
+								<div class="kc_name" style="height: 15px;">
+									<p class="kc_name_content">{$item['name']}</p>
+								</div>
+								{if $item['fans_list'] || $item['all_number']}
+								<div class="fans_box">
+									<span class="zhuliclass">
+									{loop $item['fans_list'] $row}
+										<img class="zlheader" src="{$row['icon']}">
+									{/loop}	
+									</span>
+									<p class="fans_text_title">{$item['minge']}人/班</p>
+									<p class="fans_text_title">&nbsp;&nbsp;&nbsp;&nbsp;{$item['all_number']}人正在学</p>
+								</div>
+								{/if}
+								<div class="pay">
+									{if $item['sale_type'] == 0}
+										<p class="pay_cose">￥{$item['cose']}</p>
+									{else}
+										<p class="pay_cose">￥{$item['nowprice']}</p><p class="yuanjia">￥{$item['cose']}</p>
+									{/if}
+								</div>
+								{if $item['is_hot'] == 1}{if $item['end'] > TIMESTAMP}
+								<span style="background-color: #10b7a6;float: left;"class="label label-danger">精品课</span>
+								{/if}{/if}
+							</div>
+							{if $item['end'] <TIMESTAMP}<div class="class_over_tip marks text_center"><span></span></div>{/if}
+							{if $item['sale_type'] == 1}<div class="mark_group mark text_center"></div>{/if}
+							{if $item['sale_type'] == 2}<div class="mark_rush mark text_center"></div>{/if}
+						</div>
+					</li>
+					{elseif $item['OldOrNew'] == 0}
+					<li class="list_box_li {if $item['end'] <TIMESTAMP}class_over{/if}" {if TIMESTAMP < $item['end']}onclick="goto_kcinfo({$item['id']})"{/if} time="{$key}" ctype="{$Ctype}">
+						<div class="list_box_div">
+							<div class="list_left">
+								<img class="cImg_left" src="{if !empty($item['thumb'])}{php echo tomedia($item['thumb'])}{else}{php echo tomedia($school['logo'])}{/if}">
+							</div>
+							<div class="list_right">
+								<div class="kc_name" style="height: 15px;">
+									<p class="kc_name_content">{$item['name']}</p>
+									{if $item['end'] <TIMESTAMP}
+										<span style="background-color: gray;"class="label label-danger">已结课</span>
+									{/if}
+								</div>
+								{if $item['fans_list'] || $item['all_number']}
+								<div class="fans_box">
+									<span class="zhuliclass">
+									{loop $item['fans_list'] $row}
+										<img class="zlheader" src="{$row['icon']}">
+									{/loop}	
+									</span>
+									<p class="fans_text_title">{$item['minge']}人/班</p>
+									<p class="fans_text_title">&nbsp;&nbsp;&nbsp;&nbsp;{$item['all_number']}人正在学</p>
+								</div>
+								{/if}
+								<div class="pay">
+									{if $item['sale_type'] == 0}
+										<p class="pay_cose">￥{$item['cose']}</p>
+									{else}
+										<p class="pay_cose">￥{$item['nowprice']}</p><p class="yuanjia">￥{$item['cose']}</p>
+									{/if}
+								</div>
+								{if $item['is_hot'] == 1}{if $item['end'] > TIMESTAMP}
+								<span style="background-color: #10b7a6;float: left;"class="label label-danger">精品课</span>
+								{/if}{/if}
+							</div>
+							{if $item['end'] <TIMESTAMP}<div class="class_over_tip marks text_center"></div>{/if}
+							{if $item['sale_type'] == 1}<div class="mark_group mark text_center"></div>{/if}
+							{if $item['sale_type'] == 2}<div class="mark_rush mark text_center"></div>{/if}
+						</div>
+					</li>
+					{/if}
+				{/loop}			
+			</div>
+		</div>
+	</div>
+
+</div>
+<style>
+.teachers_box{ width: 100%; height: 100%; position: absolute; margin-top: 7px; background-color: #fff;}
+.tea_box_title { width: 100%; text-align: center; padding: 14px; font-size: 17px; }
+.tea_box_list{ width: 100%; position: relative; }
+.tea_box{ list-style: none; width: 50%; float: left; text-align: center; background-color: #fff; padding-bottom: 13px; }
+.header_box{ width: 51px; height: 51px; margin-left: 35%; margin-top: 12px; border-radius: 50px; background-color: #fff; border: 1px solid #dad6d6; }
+.header_box .header_img{ width: 45px; border-radius: 50%; margin-top: 2px; }
+.tea_name{ font-size: 13px; }
+.tea_info{ font-size: 12px; color: #908d8d; }
+.school_box{ width: 100%; }
+.school_box .school_img{ width: 50%; }
+.text_614 { border-left: 1px solid rgba(236, 238, 241, 1); width: 1px; height: 115px; position: absolute; margin-top: 18px; }
+.text_615 { border-top: 1px solid rgba(236, 238, 241, 1); width: 115px; height: 1px; position: absolute; margin-left: 10%; }
+</style>
+<div class="teacher" style="display:none">
+	<div class="teachers_box">
+		<div class="tea_box_title">名师推荐</div>
+		<div class="tea_box_list">
+			{php $kccount = count($kcteacher);}
+			{loop $kcteacher $index $row}
+			<li class="tea_box" onclick="chack('{$row['url']}')">
+				<div class="text_614"></div>
+				<div class="header_box">
+					<img class="header_img" src="{php echo tomedia($row['icon'])}" style="height:45px;">
+				</div>
+				<div class="tea_name">{$row['name']}</div>
+				<div class="tea_info">{$row['beizhu']}</div>
+				<div class="school_box">
+					<img class="school_img" src="{php echo tomedia($row['icon2'])}" style="height:37.76px;">
+				</div>
+				{if ($kccount-2) > $index}
+				<div class="text_615"></div>
+				{/if}
+			</li>
+			{/loop}
+		</div>
+	</div>
+</div>
+<div class="blank_98" style="height:55px"></div>
+<style>
+.right_bot_box{ width: 50px; height: auto; z-index: 2; right: 20px; margin-bottom: 276px; display: block; position: fixed; bottom: 0px; }
+.F_divs { width: 50px; height: 50px;border-radius: 50%; position: absolute; }
+.bot_icon1{ background-image: url({MODULE_URL}public/mobile/img/home_kc.png); background-size: 50px 50px; }
+.bot_icon2{ background-image: url({MODULE_URL}public/mobile/img/talk_kc.png); background-size: 50px 50px; margin-top: 69px; }
+.bot_icon3{ background-image: url({MODULE_URL}public/mobile/img/mobile_kc.png); background-size: 51px 50px; margin-top: 137px; }
+</style>
+<!-- <div class="right_bot_box">
+	<a href="{php echo $this->createMobileUrls('detail', array('schoolid' => $schoolid), true)}" class="F_divs bot_icon1" ></a>
+	<a data-reveal-id="yyst" class="F_divs bot_icon2" ></a>
+	<a href="tel:{$school['tel']}" class="F_divs bot_icon3" ></a>
+</div> -->
+<div class="popUpBox" style="display: none">
+	<div class="trackMatte"></div>
+	<div class="popContentBox">
+		<div class="poptitle">预约试听<p class="notifyCreateTime">提交您的预约申请,将会发送给管理员</p>
+		</div>
+		<div class="sectionContBox">
+			<div class="mb20 phone_wrap">
+				<div class="over_hidden h35">
+					<div class="form-line">
+						<div class="input-wrapper">
+							<input style="height: 27px;" type="text" placeholder="您的姓名" id="order_name" name="order_name" maxlength="10" required="">
+						</div>
+					</div>
+					<div class="form-line">
+						<div class="input-wrapper">
+							<input style="height: 27px;" type="tel" placeholder="手机号码" id="order_mobile" name="order_mobile" pattern-name="CHINA_MOBILE" required="">
+						</div>
+					</div>
+					<div class="form-line">
+						<div class="input-wrapper">
+							<textarea id="order_beizhu" class="stu_info_text" placeholder="请输入留言,50个字以内"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="btnBox">
+				<div class="btnPass" onclick="yy_order();">提交</div>
+				<div class="btnCancel">关闭</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+<script src="{MODULE_URL}public/mobile/js/swiper.min.js?v=0818"></script>
+<script src="{MODULE_URL}public/mobile/js/swipe.js?v=0818"></script>
+<script src="{MODULE_URL}public/mobile/js/scroll_course_new.js?v=1717"></script>
+<script type="text/javascript">
+$(".trackMatte").on("click",function(){
+	e = window.event;
+	e.stopPropagation();
+	e.preventDefault();
+	$('.popUpBox').slideUp(200);
+	$('html,body').removeClass('popNoscroll');
+})
+    $(document).scroll(function() {
+        var scroH = $(document).scrollTop();  //滚动高度
+        var viewH = $(window).height();  //可见高度 
+        var contentH = $(document).height();  //内容高度
+        if(scroH >150){  //距离顶部大于100px时
+			$('.new_search_boxs').slideUp(200);
+        }else{
+			$('.new_search_boxs').slideDown(200);
+		}
+    });
+	$('.new_search_boxs input').on('click', function() {
+		$('.sou_btn').slideDown(200);
+		$(this).addClass('onclick');
+	});
+	$('.new_search_boxs input').on('blur', function() {
+		$('.sou_btn').hide(200);
+		$(this).removeClass('onclick');
+	});
+	var mySwiper = new Swiper('.swiper-container', {
+	  direction: 'horizontal',
+	  loop: true,
+	  pagination: '.swiper-pagination',
+	  autoplay: 2500
+	});
+    function top_change(type,elm){
+		$(".opt_btn").removeClass("act");
+		$(elm).addClass("act");
+		if(type==1){
+			$('.tuijian').show (200);
+			$('.allkc').hide(200);
+			$('.teacher').hide(200);
+		}
+		if(type==2){
+			$('.tuijian').hide(200);
+			$('.allkc').show(200);
+			$('.teacher').hide(200);
+		}
+		if(type==3){
+			$('.tuijian').hide(200);
+			$('.allkc').hide(200);
+			$('.teacher').show(200);
+		}
+	}
+	common_ajax_callback = false;
+	new Scroll_load({
+		"limit": "0",
+		"ajax_switch": true,
+		"ul_box": ".list_box",
+		"ctype_id":"#ctype_more",
+		"li_item": ".list_box .list_box_li",
+		"ajax_url": "{php echo $this->createMobileUrls('hookcom', array('goto'=>'onlinekc','schoolid' => $schoolid,'op'=>'scroll_more' ), true)}",
+		"page_name": "teacher_notify",
+		"after_ajax": function () {
+		}
+	}).load_init();
+	function change(id,e){
+		ajax_start_loading("加载中...");	
+		$(".kctitle").removeClass("act");
+		$(e).addClass("act");
+		$("#has_over").val(0);
+		$(window).on("scroll", scroll_fun);
+		$.ajax({
+			url: "{php echo $this->createMobileUrls('hookcom', array('goto'=>'onlinekc','op' => 'moreCourse','schoolid' => $schoolid), true)}",
+			type: "post",
+			data: {
+				Ctypeid: id
+			},
+			success: function (data) {
+				var html = data;
+				$(".list_box").html(html);
+				ajax_stop_loading();
+			},
+			error: function(){
+				ajax_stop_loading();
+			}
+		});
+		return;
+	}
+	$(".bot_icon2").on("click",function(){
+		e = window.event;
+		e.stopPropagation();
+		e.preventDefault();
+		$('.popUpBox').slideDown(200);
+	})
+	$('.btnCancel').click(function() {
+		$('.popUpBox').slideUp(200);
+		$('html,body').removeClass('popNoscroll');
+	});
+	function yy_order(){
+		var telphone = $("#order_mobile").val();
+		var name = $("#order_name").val();
+		var beizhu = $("#order_beizhu").val();
+		$.ajax({
+			url: "{php echo $this->createMobileUrls('comajax', array('op' => 'yy_order'), true)}",
+			type: "post",
+			dataType: "json",
+			data: {
+				telphone: telphone,
+				name:name,
+				beizhu:beizhu,
+				ordertype:1,//公共预约
+				schoolid: {$schoolid},
+				weid:{$weid}
+			},
+			success: function (data) {
+				jTips(data.msg);
+				if(data.result == true){
+					$('.popUpBox').hide();
+					$('html,body').removeClass('popNoscroll');
+				}
+			}
+		});
+		return;
+	}
+	function goto_kcinfo(kcid){
+		let url = "{php echo $this->createMobileUrls('hookcom', array('goto'=>'video_kc','schoolid' => $schoolid), true)}"+"&kcid="+kcid;
+		location.href = url
+	}
+	function check_mobile(mobile) {
+		var reg = /^(0|86|17951)?(13[0-9]|15[012356789]|16[012356789]|17[0-9]|18[0-9]|19[0-9]|14[57])[0-9]{7,8}$/;
+		var res = true;
+		if (!reg.test(mobile)) {
+			res = false;
+		}
+		return res;
+	}
+	var WeixinApi = (function () {
+		return {
+			imagePreview    :imagePreview
+		}; 
+		"use strict";
+		/**
+		 * 调起微信Native的图片播放组件。
+		 * 这里必须对参数进行强检测，如果参数不合法，直接会导致微信客户端crash
+		 *
+		 * @param {String} curSrc 当前播放的图片地址
+		 * @param {Array} srcList 图片地址列表
+		 */
+		function imagePreview(curSrc,srcList) {
+			if(!curSrc || !srcList || srcList.length == 0) {
+				return;
+			}
+			WeixinJSBridge.invoke('imagePreview', {
+				'current' : curSrc,
+				'urls' : srcList
+			});
+		}
+		return {
+			version         :"2.5",
+			ready           :wxJsBridgeReady,
+			imagePreview    :imagePreview
+		};
+	})();
+	function wxImageShow(elm){
+		let srcList = new Array();
+		let src = $(elm).children('img').attr("src");
+		srcList.push(src);
+		WeixinApi.imagePreview(src, srcList);
+	}
+	function chack(url){
+		window.location.href = url;
+	}
+</script>
+{php include $this->template('footer');} 

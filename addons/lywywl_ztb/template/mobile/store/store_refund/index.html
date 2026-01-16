@@ -1,0 +1,208 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+
+<body class="bgf2">
+    <!--中心区域-->
+    <section class="pd24">
+        <section class="cash">
+            <section class="rel cash_pd">
+                <a href="{php echo $this->createMobileUrl('store.store_refund',array('act'=>'list'));}"
+                    class="exchange_record">提现记录</a>
+                <h4 class="fn">当前金额</h4>
+                <h2 class="">{$store['money']}</h2>
+            </section>
+        </section>
+    </section>
+    <form action="{php echo $this->createMobileUrl('store.store_refund',array('act'=>'applyFor'));}" id="store_refund"
+        method="post">
+        <section class="cash_bg">
+            <p class="font30">提现金额</p>
+            <section class="cash_money"><span>¥</span><input class="regInput" type="number" name="model[money]"
+                    id="money" min="0.00" step="0.01" datatype="*" nullmsg="请输入提现金额！"
+                    onkeyup="if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                    onblur="this.value=FloatMoney(this.value)"></section>
+            <section class="rel d_ib"
+                style=" line-height:0.48rem; vertical-align:middle;font-size: 0.32rem;color: #888;">
+                单次提现金额限制 <span class="main_red">{$config['refund_min_money']} - {if
+                    empty($config['refund_max_money'])}5000.00{else}{$config['refund_max_money']}{/if}</span> </section>
+        </section>
+        <ul class="pd24 bgfff mt10">
+            <li class="float" style="display: {if intval($config['is_verify_refund'])==1} none {/if};">
+                <section class="form_con clearfix">
+
+                    <section class="input_item" style="width: 28.3%;">
+                        <input type="radio" value="0" name="model[withdrawal_type]" id="withdrawal_type0"
+                            class="withdrawal_type" {if $model['withdrawal_type']==0} checked {/if}>
+
+                        <label for="withdrawal_type0"></label>
+                        <span>微信</span>
+                    </section>
+                    <section class="input_item" style="width: 28.3%;display: {if intval($config['is_verify_refund_show'])==0} none {/if};">
+                        <input type="radio" value="1" name="model[withdrawal_type]" id="withdrawal_type1"
+                            class="withdrawal_type" {if $model['withdrawal_type']==1} checked {/if}>
+                        <label for="withdrawal_type1"></label>
+                        <span>支付宝</span>
+                    </section>
+                    <section class="input_item" style="width: 28.3%;display: {if intval($config['is_verify_refund_show'])==0} none {/if};">
+                        <input type="radio" value="2" name="model[withdrawal_type]" id="withdrawal_type2"
+                            class="withdrawal_type" {if $model['withdrawal_type']==2} checked {/if}>
+                        <label for="withdrawal_type2"></label>
+                        <span>银行卡</span>
+                    </section>
+                </section>
+            </li> 
+            <li style="display:none;" id="withdrawal_name_li">
+                <input
+                    style="background: #f2f2f2;margin-top: 0.3rem;border-radius: 0.13rem;padding: 0 0.13rem;box-sizing: border-box;"
+                    class="regInput font32" type="text" placeholder="请输入您的银行卡开户名" name="model[withdrawal_name]" id="withdrawal_name"
+                    value="">
+            </li>
+            <li style="display: {if intval($config['is_verify_refund_show'])==0} none {/if};" id="withdrawal_li">
+                <input
+                    style="background: #f2f2f2;margin-top: 0.3rem;border-radius: 0.13rem;padding: 0 0.13rem;box-sizing: border-box;"
+                    class="regInput font32" type="text"  name="model[withdrawal]" id="withdrawal"
+                    value="{$store['openid']}" readonly="true" nullmsg="请输入您的收款账户">
+            </li>
+        </ul>
+        <section class="btn-de">
+            <input name="token" value="{$_W['token']}" type="hidden" />
+            <input type="hidden" name="submit" value="submit" />
+            <button type="submit" class="Button" id="SubmitBtn">提现</button>
+        </section>
+    </form>
+    {if !empty($config['refundpushtmp_sub'])}
+    <div style="position: fixed;top: 120px;left: 15px;z-index:9999;">
+        <wx-open-subscribe template="{$config['refundpushtmp_sub']}" id="subscribe-btn">
+            <template slot="style">
+                <style>
+                    .subscribe-btn {width: 50px;height: 50px;padding: 8px;border-radius: 25px;border: 0;font-size: 12px;color: #fff;background-color: #07c160;}
+                </style>
+            </template>
+            <template>
+                <button class="subscribe-btn">提现通知</button>
+            </template>
+        </wx-open-subscribe>
+    </div>
+    <script>
+        document.getElementById('subscribe-btn').addEventListener('success', function (e) {
+            var status = JSON.parse(JSON.parse(e.detail.subscribeDetails)["{$config['refundpushtmp_sub']}"])["status"];
+            if(status == 'accept'){
+                layer.open({content: '订阅成功，获得一次模版消息提醒！', skin: 'msg', time: 2});
+            }
+        });
+    </script>
+    {/if}
+    <script src="{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js"></script>
+    <script>
+        $(function () {
+
+            /*{if intval($config['is_verify_refund'])==0}*/
+
+            //选择提现账号是否显示
+            $('input.withdrawal_type').on('click', function (event) {
+                var obj_types = $(this).val();
+                if (obj_types == 0) {
+                    $("#withdrawal_li").show();
+                    $("#withdrawal").val("{php echo $store['openid']}");
+                    $("#withdrawal").attr("readonly",true);
+                    $("#withdrawal_name_li").hide();
+                }
+                else if (obj_types == 1 ) {
+                    $("#withdrawal_li").show();
+                    $("#withdrawal").val("");
+                    $("#withdrawal").attr("readonly",false);
+                    $("#withdrawal").attr("placeholder","请输入您的支付宝账户");
+                    $("#withdrawal_name_li").hide();
+                }else if (obj_types == 2 ) {
+                    $("#withdrawal_li").show();
+                    $("#withdrawal").val("");
+                    $("#withdrawal").attr("readonly",false);
+                    $("#withdrawal").attr("placeholder","请输入您的银行卡号");
+                    $("#withdrawal_name_li").show();
+                }
+            });
+
+            /*{/if}*/
+
+            //为formContent 添加验证事件
+            $("#store_refund").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                                , style: 'bottom:-50px;'
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+
+                    } else {
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+
+        });
+        //格式化金额
+        function FloatMoney(value) {
+            if (value == "") {
+                return "";
+            }
+            var value = Math.round(parseFloat(value) * 100) / 100;
+            var xsd = value.toString().split(".");
+            if (xsd.length == 1) {
+                value = value.toString() + ".00";
+                return value;
+            }
+            if (xsd.length > 1) {
+                if (xsd[1].length == 1) {
+                    value = value.toString() + "0";
+                }
+                else if (xsd[1].length < 2) {
+                    value = value.toString();
+                }
+                return value;
+            }
+        }
+
+    </script>
+</body>
+
+</html>

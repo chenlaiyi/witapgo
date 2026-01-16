@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<meta name="HandheldFriendly" content="true" />
+<link rel="stylesheet" type="text/css" href="{OSSURL}public/mobile/css/new_yab1.css?v=1?v=1111" />
+<script type="text/javascript" src="{MODULE_URL}public/mobile/js/jquery-1.10.1.min.js?v=4.9"></script>
+{php echo register_jssdks();}
+{php include $this->template('port');}	
+<style type="text/css">
+.header { width: 100%; height: 50px; line-height: 50px; position: fixed; z-index: 1000; top: 0; left: 0; box-shadow: 0 0 2px 0px rgba(0,0,0,0.3),0 0 6px 2px rgba(0,0,0,0.15); } .header .l { width: 50px; height: 50px; line-height: 50px; color: white; position: absolute; left: 0; top: 0; } .header .m { width: 100%; height: 50px; line-height: 50px; text-align: center; color: white; font-size: 18px; } .header .r { width: 50px; height: 50px; line-height: 50px; position: absolute; right: 0; top: 0; } .mainColor { background: #06c1ae !important; } .header .l a { font-size: 18px; color: white; display: block; width: 100%; height: 100%; text-align: center; }
+.main {margin: 10px 10px;box-shadow: 0px 0px 0px rgba(0,0,0,0);background: #FFF;padding: 0;border-radius: 10px;padding-bottom: 10px;}
+
+.user_info {position: fixed;left: 0;right: 0;top: 0;bottom: 0;-webkit-box-sizing: border-box;box-sizing: border-box;background-color: rgba(0,0,0,.53);
+text-align: center;z-index: 9999;font-size: 20px;color: #fe6700;}
+.user_info>div {position: absolute;left: 6%;right: 6%;top: 45px;padding: 0 20px;background-color: #fff;padding-bottom: 33px;padding-top: 10px;}
+.user_name {text-align: left;color: #666;font-size: 14px;}
+.btn {height: 44px;display: block;background-color: #7bb52d;font: 20px "黑体";text-align: center;color: #fff;cursor: pointer;}
+.user_name > input {display: block;width: 100%;border-radius: 3px;height: 44px;padding: 0 10px;margin-bottom: 10px;border: 1px solid #ccc;-webkit-box-sizing: border-box;box-sizing: border-box;}
+.close_pupop_c {width: 100px; margin: 0 auto;}
+.close_pupop_button {width: 100px;height: 30px;border-radius: 5px;line-height: 30px;font-size: 16px;text-align: center;}
+.close_pupop_button_1 {background: #06c1ae;color: #fff;}
+</style>
+<title>{$school['title']}</title>
+</head>
+<body>
+<div class="All">  
+	<div class="listContent">
+		<div id="search_data" style="display: none;"></div>
+		{loop $list $key $v}
+        <li class="main" time="{$key}" style="display: block;" >
+			<div class="cutting"></div>
+			<div class="notifyTopBox" onclick="showInfo(`{$v['id']}`)">
+				<div class="notifyTopLeft">
+					<img src="{$v['icon']}">
+				</div>
+				<div class="notifyTopRight">
+					<div class="notifyTopRightTopBox" style="font-size: 12px;font-weight: inherit;">
+						<span class="JobTeacherBox" >姓名：{$v['name']}</span>
+                    </div>
+					{if $v['status'] == 1}
+					<div class="notifyTopRightTopBox" style="font-size: 12px;font-weight: inherit;color:gray">
+						<span>处理人：{$v['tname']}</span><br>
+                    </div>
+					<div class="notifyTopRightTopBox" style="font-size: 12px;font-weight: inherit;color:gray">
+						<span>处理时间：{$v['cltime']}</span>
+                    </div>
+					{else}
+					<div class="notifyTopRightTopBox" style="font-size: 12px;font-weight: inherit;color:gray">
+						<span>状态:{$v['tname']}</span>
+                    </div>
+					{/if}
+				</div>
+			</div>
+		</li>
+		{/loop}	
+	</div>
+</div>
+</body>
+
+<div class="user_info" style="display:none;">
+	<div style="border-radius: 5%;">
+		<ul id="infoBox">
+		</ul>
+	</div>
+ </div>
+
+</html>
+<script src="{OSSURL}public/mobile/js/common.js?v=1717"></script>
+<script src="{MODULE_URL}public/mobile/js/scroll_remaster.js?v=1"></script>
+<script type="text/javascript">
+	var formid = 0;
+	//显示弹窗信息
+	function showInfo(id) {
+		formid = id
+		$.ajax({
+			type: "POST",
+			url: "{php echo $this->createMobileUrl('tspecialform', array('op' => 'getinfo','schoolid'=>$schoolid))}",
+			dataType: "json",
+			data: {
+				id: id,
+			},
+			success: function(res) {
+				$(".user_info").show()
+				let showBtn = ''
+                if(res.status != '1'){
+                    showBtn = `<div class="close_pupop_c">
+							<div onclick="tijiao()" class="close_pupop_button close_pupop_button_1 float_l">通过审核</div>
+						</div>`;
+                }
+                let data = res.data;
+                let html = ``;
+                let temphtml = ``;
+                for(let item of data){
+                    let titleArr = item.title
+                    let contentArr = item.content
+                    let content = ''
+                    let title = ''
+                    for(i in titleArr){
+                        title = titleArr[i]
+                        if(Array.isArray(contentArr[i])){
+                            for(tempcontent of contentArr[i]){
+                                content += tempcontent+','
+                            }
+                        }else{
+                            content = contentArr[i]
+                        }
+                        temphtml = `<li class="user_name">
+										${title}
+										<input type="text" value="${content}" readonly="readonly">
+									</li>`
+						
+                    }
+                    html += temphtml;
+                }
+				html += `${showBtn}`
+                $("#infoBox").html(html)
+			}
+		});
+	}
+	//关闭弹窗
+	$(".user_info").click(function(){
+		$(".user_info").hide()
+	})
+	function tijiao(){
+		$.ajax({
+			url: "{php echo $this->createMobileUrl('tspecialform', array('schoolid' => $schoolid,'op'=>'save'))}",
+			type: "post",
+			dataType: "json",
+			data:{id:formid},
+			success: function (res) {
+				jTips(res.msg)
+				location.reload()
+			}
+		});
+	}
+    // 底部加载更多
+	new Scroll_load({
+		"limit": "0",
+		"pageSize": 10,
+		"ajax_switch": true,
+		"ul_box": ".listContent",
+		"li_item": ".listContent .main",
+		'param' : ['time','ctype'],
+		"ajax_url": "{php echo $this->createMobileUrl('tspecialform', array('schoolid' => $schoolid,'op'=>'scroll_more'), true)}",
+		"page_name": "teacher_notify",
+		"after_ajax": function () {}
+	}).load_init();
+</script>
+{php include $this->template('newfooter');} 
+<script>
+</script>

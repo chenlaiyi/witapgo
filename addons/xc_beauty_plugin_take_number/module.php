@@ -1,0 +1,2 @@
+<?php
+ defined('IN_IA') or exit('Access Denied'); class xc_beauty_plugin_take_numberModule extends WeModule { public function welcomeDisplay() { goto toQKC; JCQgv: header('location: ' . str_replace($_GPC['module_name'], $xcmodule, $this->createWebUrl('webhome'))); goto N_4ET; QRbb9: $xcmodule = 'xc_beauty'; goto JCQgv; toQKC: global $_GPC, $_W; goto QRbb9; N_4ET: } } ?>

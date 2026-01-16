@@ -1,0 +1,53 @@
+<div id="orderInfo">
+    <div class="ico_title">对账单下载测试</div>
+    <div class="form_wrap account">
+        <div class="form_list">
+            <span class="list_title">商户号/连锁商户号/机构号</span>
+            <span class="list_val">
+                <input name="mch_id" value="" maxlength="32" size="32" placeholder="长度32">
+            </span>
+            <i>*</i><em>长度32</em>
+        </div>
+        <div class="form_list">
+            <span class="list_title">机构密钥</span>
+            <span class="list_val">
+                <input name="key" value="" maxlength="32" size="32" placeholder="长度32">
+            </span>
+            <i>*</i><em>长度32</em>
+        </div>
+        <div class="form_list">
+            <span class="list_title">商户类型：</span>
+            <span class="list_val">
+                <select name="service">
+                    <option value="pay.bill.merchant">普通商户</option>
+                    <option value="pay.bill.bigMerchant">连锁商户</option>
+                    <option value="pay.bill.agent">外包服务机构</option>
+                </select>
+            </span>
+            <i>*</i>
+        </div>
+        <div class="form_list">
+            <span class="list_title">对账单类型：</span>
+            <span class="list_val">
+                <select name="bill_type">
+                    <option value="ALL">全部</option>
+                    <option value="SUCCESS">支付成功</option>
+                    <option value="REFUND">转入退款</option>
+                </select>
+            </span>
+            <i>*</i>
+        </div>
+         <div class="form_list">
+            <span class="list_title">对账单日期</span>
+            <span class="list_val">
+                <input name="bill_date" value="" type="date">
+            </span>
+            <i>*</i>
+        </div>
+        
+        <div class="form_list">
+            <span class="list_title"></span>
+            <span class="list_val submit btn btn_blue">确定</span>
+        </div>
+    </div>
+</div>

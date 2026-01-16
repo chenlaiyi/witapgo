@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+<link href="{MODULE_URL}resource/mobile/plugin/css/common.min.css?v=20170802" rel="stylesheet">
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/util.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/require.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js//lib/mui.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/common.js"></script>
+<body class="bgf2">
+<form action="{php echo $this->createMobileUrl('store.intmall_class',array('act'=>'modify'));}" id="form_content" method="post">
+<section class="bgfff">
+    <ul class="publish">
+        <li class="float">
+            <p>分类名称</p>
+            <section class="form_con selectBox">
+                <input class="form_float_txt" datatype="*" id="name" maxlength="20"
+                       name="model[name]" nullmsg="请输入商品分类名称！" placeholder="请输入商品分类名称"
+                       type="text" value="{$model['name']}"/>
+            </section>
+        </li>
+        <li class="float">
+            <p>首页推荐</p>
+            <section class="form_con clearfix">
+                <section class="input_item">
+                    <input type="radio" value="0" name="model[is_index]" id="is_index0" {if $model['is_index']==0} checked {/if}>
+                    <label for="is_index0"></label>
+                    <span>栏目列表</span>
+                </section>
+                <section class="input_item">
+                    <input type="radio" value="1" name="model[is_index]" id="is_index1" {if $model['is_index']==1} checked {/if}>
+                    <label for="is_index1"></label>
+                    <span>首页推荐</span>
+                </section>
+            </section>
+        </li>
+        <li>
+            <p>分类图标<span>(必填)</span></p>
+            <section class="form_con clearfix">
+                <div class="mui-input-cell">
+                    <input type="hidden" id="model[pic_url]" name="model[pic_url]" value=""/>
+                    {php echo tpl_app_form_field_image('pic_url',$model['pic_url'],false);}
+                </div>
+            </section>
+        </li>
+        <li>
+            <p>分类状态</p>
+            <section class="form_con rel">
+                <section class="font26 c9 form_tips">选择信息开启/关闭状态，关闭后该信息将被禁用</section>
+                <span class="switch {if $model['status']==1}switch_on{else}switch_off{/if}">
+                    <i class="slider"></i>
+                    <input type="hidden" name="model[status]" value="{$model['status']}"/>
+                </span>
+            </section>
+        </li>
+        <li class="float">
+            <p>分类排序</p>
+            <section class="form_con selectBox">
+                <input class="form_float_txt"  datatype="n" id="sort" name="model[sort]" nullmsg="信息排序必须填写！" onkeyup="if(isNaN(this.value)) this.value='0';" placeholder="请输入信息排序字段" type="number" value="{$model['sort']}">
+            </section>
+        </li>
+    </ul>
+</section>
+<section class="h24"></section>
+<section class="buttonBox">
+    <section class="buttonFloat clickBtn">
+        <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+        <input name="token" value="{$_W['token']}" type="hidden" />
+        <input type="hidden" name="submit" value="submit"/>
+        <a href="{php echo $this->createMobileUrl('store.intmall_class',array('act'=>'index'))}" class="db font32" style="width: 50%;    float: left;   color: #fff;   border-radius: 0.6rem 0 0 0.6rem;    background: #f92f4a;">返回列表</a>
+        <button type="submit" id="SubmitBtn" style="width: 50%;   float: left;    background: #FFD112;    color: #0e0e0e;border-radius: 0 0.6rem 0.6rem 0;">确认提交</button>
+    </section>
+</section>
+</form>
+<script>
+    $(function(){
+        require(['{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js'], function () {
+        //为formContent 添加验证事件
+        $("#form_content").Validform({
+            tiptype: function (msg, o, cssctl) {
+                if (!o.obj.is("form")) {
+                    if (o.type == 2) {
+                        //loading带文字
+                        layer.open({
+                            type: 2
+                            , content: '数据提交中'
+                            , time: 999 //999秒后自动关闭
+                        });
+                    } else {
+                        layer.closeAll();
+                        layer.open({
+                            content: msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                    }
+                }
+            },
+            ajaxPost: true,
+            tipSweep: true,
+            beforeSubmit: function (curform) {
+                $("input[name='model[pic_url]']").val($("#pic_url").val());
+                $("#SubmitBtn").attr("disabled", true);
+            },
+            callback: function (data) {
+                layer.closeAll();
+                if(data.status == 1){
+                    layer.open({
+                        content: data.msg
+                        , skin: 'msg'
+                        , time: 2 //2秒后自动关闭
+                        , style: 'bottom:0;'
+                    });
+
+                    setTimeout(function () {
+                        window.location.href = "{php echo $this->createMobileUrl('store.intmall_class',array('act'=>'index'));}";
+                    }, 2000);
+
+                }else{
+                    layer.open({
+                        content: data.msg
+                        , skin: 'msg'
+                        , time: 2 //2秒后自动关闭
+                        , style: 'bottom:0;'
+                    });
+                    $("#SubmitBtn").attr("disabled", false);
+                }
+            }
+        });
+        });
+
+        $(".switch").click(function(e) {
+            if($(this).hasClass("switch_on")){
+                $(this).removeClass("switch_on");
+                $(this).addClass("switch_off");
+                $(this).find("input").val(0);
+            }
+            else{
+                $(this).removeClass("switch_off");
+                $(this).addClass("switch_on");
+                $(this).find("input").val(1);
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<view class="page" style="overflow: hidden;position: fixed;width:100%;height:100%;background: url({{bgimg}}) no-repeat;background-size:cover;background-position:center top;" wx:if="{{bgimg}}">
+    <view class="container">
+        <view class="userinfo">
+            <image backgroundSize="cover" class="userinfo-avatar"></image>
+            <text class="userinfo-nickname"></text>
+        </view>
+        <navigator hoverClass="none" url="{{url}}">
+            <view class="usermotto" style="front-color:{{frontColor}};border: 1px solid {{btncolor}};">
+                <text class="btn" style="color:{{btnfontcolor}}">{{btnname}}</text>
+            </view>
+        </navigator>
+        <view class="foot">
+            <text class="copyright" style="color:{{copyrightfontcolor}}">{{copyright}}</text>
+        </view>
+    </view>
+</view>
+<view class="page" style="background: {{bgcolor}};height:100%;" wx:if="{{bgcolor}}">
+    <view class="container">
+        <view class="userinfo">
+            <image backgroundSize="cover" class="userinfo-avatar" src="{{loginimg}}"></image>
+            <text class="userinfo-nickname" style="color:{{imgfontcolor}}">{{imgname}}</text>
+        </view>
+        <navigator hoverClass="none" url="{{url}}">
+            <view class="usermotto" style="front-color:{{frontColor}};border: 1px solid {{btncolor}};">
+                <text class="btn" style="color:{{btnfontcolor}}">{{btnname}}</text>
+            </view>
+        </navigator>
+        <view class="foot">
+            <text class="copyright" style="color:{{copyrightfontcolor}}">{{copyright}}</text>
+        </view>
+    </view>
+</view>
+<view class="common_mb_bg1" wx:if="{{showModal}}"></view>
+<view class="modal-dialog" wx:if="{{showModal}}">
+    <view class="modal-title">授权提醒</view>
+    <view class="modal-content">
+        <view class="modal-input">本程序需要您授权获登录方可使用，请允许授权</view>
+    </view>
+    <view class="modal-footer">
+        <button bindgetuserinfo="getUserInfo" class="btn-confirm" openType="getUserInfo">授权登录</button>
+    </view>
+</view>

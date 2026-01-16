@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>支付设置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+    <style>
+        form{
+            padding-right:15px ;
+        }
+    </style>
+</head>
+<body>
+<form class="layui-form" style="margin-top:21px;">
+  <div class="layui-form-item">
+    <label class="layui-form-label">上传类型</label>
+    <div class="layui-input-block" id="type">
+      <input type="radio" name="type" value="1" title="本地" {if $set['type'] == '1' || $set['type'] == ''}checked{/if} lay-filter="aaa">
+      <input type="radio" name="type" value="2" title="七牛云" {if $set['type'] == '2'}checked{/if} lay-filter="aaa">
+    </div>
+  </div>
+	
+  <div class="xxx" {if $set['type'] == 1|| $set['type'] == ''}style="display:none"{/if}>
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">Accesskey</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="accesskey"  autocomplete="off" class="layui-input" value="{$set['accesskey']}">
+	      <div class="layui-form-mid layui-word-aux">用于签名的公钥</div>
+	    </div>
+	  </div>
+	  
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">Secretkey</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="secretkey" autocomplete="off" class="layui-input" value="{$set['secretkey']}">
+	      <div class="layui-form-mid layui-word-aux">用于签名的私钥</div>
+	    </div>
+	  </div>
+	  
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">Bucket</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="bucket" autocomplete="off" class="layui-input" value="{$set['bucket']}">
+	      <div class="layui-form-mid layui-word-aux">请保证bucket为可公共读取的</div>
+	    </div>
+	  </div>
+	  
+	  <div class="layui-form-item">
+	    <label class="layui-form-label">Url</label>
+	    <div class="layui-input-block">
+	      <input type="text" name="url" autocomplete="off" class="layui-input" value="{$set['url']}">
+	      <div class="layui-form-mid layui-word-aux">七牛支持用户自定义访问域名。注：url开头加http://或https://结尾不加 ‘/’例：http://abc.com</div>
+	    </div>
+	  </div>
+  </div>
+  
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit lay-filter="demo1">立即提交</button>
+    </div>
+  </div>
+  <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+</form>
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use('index');
+
+</script>
+<script>
+    layui.use(['jquery','form', 'layedit', 'laydate','upload'], function(){
+    	var $ = layui.$
+			, form = layui.form
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,upload = layui.upload
+            ,laydate = layui.laydate;
+      
+        
+        upload.render({
+          elem: '#test3'
+          ,url: "{:siteUrl('admin/index/upload','','web')}" //改成您自己的上传接口
+          ,accept: 'file' //普通文件
+          ,done: function(res){
+            layer.msg('上传成功');
+            console.log(res);
+          }
+        });
+        upload.render({
+            elem: '#test4'
+            ,url: "{:siteUrl('admin/index/upload','','web')}" //改成您自己的上传接口
+            ,accept: 'file' //普通文件
+            ,done: function(res){
+              layer.msg('上传成功');
+              console.log(res);
+            }
+          });
+                
+      //监听提交
+        form.on('submit(demo1)', function(data){
+            var admin = layui.admin
+
+            admin.req({
+                url:"{:siteUrl('admin/upload/set_upload','','web')}",
+                data:data.field,
+                type:"POST",
+                done:res=>{
+                    if(res.code == 0 ){
+                		layer.msg("设置成功",function(){
+                			window.location.href="{:siteUrl('admin/upload/index','','web')}";
+                		});
+                	}
+                }
+            })
+            return false
+  
+        });
+        form.on('radio(aaa)', function (data) {
+        	console.log("11111");
+            if ($('#type input[name="type"]:checked ').val() == "1") {
+            	$(".xxx").hide();
+            }
+            else {
+            	$(".xxx").show();
+            }
+            form.render();
+        });
+
+        //表单取值
+        layui.$('#LAY-component-form-getval').on('click', function(){
+            var data = form.val('example');
+            alert(JSON.stringify(data));
+        });
+
+    });
+</script>
+</body>
+</html>

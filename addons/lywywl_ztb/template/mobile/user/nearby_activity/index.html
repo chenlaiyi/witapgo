@@ -1,0 +1,431 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name = "format-detection" content ="telephone=no">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>{$title}</title>
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_CSS__}/base.css">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_CSS__}/mall.css">
+    <style>
+        /*不滚动样式*/
+        .scroll {position: fixed; width: 100%; height:100%; }
+        body {position: static}
+        /*底部导航*/
+        footer{height:1.52rem;}
+        footer section{ background:#333; height:1.52rem;   position:fixed; z-index:100; left:0px; bottom:0px; width:100%;overflow: visible}
+        footer ul li{ width:33.33333%; float:left; text-align:center;}
+        footer ul li a{ color:#fee002; display:block; width:100%; padding-top:0.16rem;}
+        footer ul li a:hover,footer ul li a:link{color:#fcdf02;}
+        footer ul li img{ width:0.6666666666666667rem; height:0.6666666666666667rem; display:block; margin:0 auto}
+        footer ul li:nth-child(2){ position:relative; z-index:1}
+        footer ul li:nth-child(2) a{ margin-top:-0.655rem}
+        footer ul li:nth-child(2) img{ width:1.3333333333rem; height:1.3333333rem;}
+        footer ul li h4{ display:block; font-size:0.32rem; line-height:0.64rem;}
+        /*附近活动*/
+        .nearby ul li{ background:#fff; position:relative; padding:0.32rem 0.32rem 0.32rem 3.30667rem;  min-height:2.6667rem;  border-bottom:1px solid #ededed;}
+        .nearby ul li .main{ width:2.6667rem; height:2.6667rem; display:block; position:absolute; left:0.32rem; top:0.32rem; border-radius:0.2rem;}
+        .nearby ul li figure figcaption{font-size:0.4rem;height:1.06rem; line-height:0.5333rem; overflow:hidden;}
+        .nearby ul li p i{ background:#fe6402; color:#fff; display:inline-block; padding:0 2px; margin-right:0.1333rem}
+        .nearby_map{ width:0.4rem; height:0.4rem; display:inline-block; vertical-align:middle; margin-right:0.032rem; margin-top:-2px;}
+        .col_org{ color:#fe6402;}
+        .shopIcon{ width:0.4rem; height:0.4rem; vertical-align:middle; margin-right:0.032rem; margin-top:-2px;}
+    </style>
+    <!-- 移动端适配 -->
+    <script>
+        var html = document.querySelector('html');
+        changeRem();
+        window.addEventListener('resize', changeRem);
+        function changeRem() {
+            var width = html.getBoundingClientRect().width;
+            html.style.fontSize = width / 10 + 'px';
+        }
+    </script>
+    <script src="{__MOBILE_USER_JS__}/jquery-2.1.4.min.js"></script>
+    <script src="{__PLUGIN__}/layer/mobile/2.0/layer.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script>
+        // jssdk config 对象
+        jssdkconfig = {php echo json_encode($_W['account']['jssdkconfig']);} || {};
+        // 是否启用调试
+        jssdkconfig.debug = false;
+        jssdkconfig.jsApiList = [
+            'checkJsApi',
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'getLocation',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'hideMenuItems'
+        ];
+        wx.config(jssdkconfig);
+        wx.error(function (res) {
+            layer.open({ content: '对不起，微信JSSDK信息验证失败！', skin: 'msg', time: 2 });
+        });
+    </script>
+    <link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+    <style>
+        /*不滚动样式*/
+        .scroll {position: fixed; width: 100%; height:100%; }
+        body {position: static}
+    </style>
+</head>
+<body>
+<!--筛选-->
+<section class="bgf2">
+    <section class="job-module">
+        <dl class="retrie w33">
+            <dt>
+                <a id="distance" href="javascript:;">活动范围<i class="sortIconI"></i> </a>
+                <a id="types" href="javascript:;">活动类型<i class="sortIconI"></i></a>
+            </dt>
+            <dd>
+                <ul class="filter szqy bor-t downlist">
+                    <li><a href="javascript:;" data-types="0" style="height: 0.6rem;" class="selecttmp active selectdistance distanceallselect">附近</a></li>
+                    {loop $distance_types $index $types}
+                    <li><a href="javascript:;" data-distance="{$index}" style="height: 0.6rem;" class="selecttmp selectdistance">{$types}</a></li>
+                    {/loop}
+                </ul>
+            </dd>
+            <dd>
+                <ul class="filter szqy bor-t downlist">
+                    <li><a href="javascript:;" data-types="0" style="height: 0.6rem;" class="selecttmp active selecttype typeallselect">全部</a></li>
+                    {loop $activityTypes $index $types}
+                    <li><a href="javascript:;" data-types="{$index}" style="height: 0.6rem;" class="selecttmp selecttype">{$types}</a></li>
+                    {/loop}
+                </ul>
+            </dd>
+        </dl>
+    </section>
+</section>
+<!--活动列表-->
+<section class="nearby" id="ContentList">
+    <ul id="LoadLists">
+
+    </ul>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li><a href="<%=rows[i].links%>" data-activity_id="<%=rows[i].id%>"><img class="main" src="<%=rows[i]['pic_url']%>" alt=""/>
+        <figure>
+            <figcaption><%=rows[i].title%></figcaption>
+            <%if(rows[i].activity_types==1){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=rows[i].get_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==2){%>
+            <p class=" mt15 c9 font28"><span class="col_org">销售 <%=rows[i].buy_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==3){%>
+            <p class=" mt15 c9 font28"><span class="col_org">销售 <%=rows[i].buy_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==4){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=rows[i].join_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==5){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=rows[i].join_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==6){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=rows[i].get_num%> </span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==7){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=rows[i].get_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==8){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=rows[i].get_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==9){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=rows[i].get_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==10){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=rows[i].get_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==11){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=rows[i].get_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==12){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=rows[i].get_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==13){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=rows[i].get_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==14){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=rows[i].get_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==15){%>
+            <p class=" mt15 c9 font28"><span class="col_org">销售 <%=rows[i].buy_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==16){%>
+            <p class=" mt15 c9 font28"><span class="col_org">销售 <%=rows[i].buy_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==17){%>
+            <p class=" mt15 c9 font28"><span class="col_org">销售 <%=rows[i].buy_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==18){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=(rows[i].get_num + rows[i].buy_num)%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==19){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=rows[i].join_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==20){%>
+            <p class=" mt15 c9 font28"><span class="col_org">报名 <%=rows[i].buy_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==21){%>
+            <p class=" mt15 c9 font28"><span class="col_org">销售 <%=rows[i].buy_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <%if(rows[i].activity_types==22){%>
+            <p class=" mt15 c9 font28"><span class="col_org">参与 <%=rows[i].join_num%></span><span class="fr"><img class="nearby_map" src="{__MOBILE_USER_IMG__}/map.png"  alt=""/><%=rows[i]['distance']%></span></p>
+            <%}%>
+            <p class=" mt15 c9 font28"><span><img class="shopIcon" src="{__MOBILE_USER_IMG__}/shopIcon.png"  alt=""/><%=rows[i].shop_name%></span></p>
+        </figure>
+    </a></li>
+    <% } %>
+</script>
+<script type="text/javascript">
+    window.longitude = "";
+    window.latitude = "";
+    wx.ready(function () {
+        wx.getLocation({
+            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+            success: function (res) {
+                window.longitude = res.longitude;
+                window.latitude = res.latitude;
+                console.log("1latitude"+window.latitude);
+                console.log("2longitude"+window.longitude);
+                $(".distanceallselect").trigger("click");
+            },
+            cancel: function (res) {
+                layer.open({ content: '亲，本活动参与有区域限制，您需要同意授权获取地理位置！', skin: 'msg', time: 2 });
+            }
+        });
+    });
+    $(function () {
+        $('.retrie dt a').click(function(){
+            var $t=$(this);
+            if($t.hasClass('up')){
+                $("#quick-screen1").hide();
+                $(".retrie dt a").removeClass('up');
+                $('.downlist').hide();
+                $('.mask').hide();
+            }else{
+                $("#quick-screen1").show();
+                $(".retrie dt a").removeClass('up');
+                $('.downlist').hide();
+                $t.addClass('up');
+                $('.downlist').eq($(".retrie dt a").index($(this)[0])).show();
+                $('.mask').show();
+            }
+        });
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //点击搜索
+        $('.selecttmp').click(function() {
+            //隐藏筛选弹框
+            $('#distance').removeClass('up');
+            $('#types').removeClass('up');
+            $('.downlist').hide();
+
+            //选中点击选项
+            var $select = $(this);
+            if ($select.hasClass('selectdistance'))
+            {
+                $(".selectdistance").removeClass('active');
+                $select.addClass('active');
+            }else if ($select.hasClass('selecttype')) {
+                $(".selecttype").removeClass('active');
+                $select.addClass('active');
+            }
+
+            //遍历对象获取参数
+            var distanceVal="";
+            $(".selectdistance").each(function(){
+                if ($(this).hasClass('active')) {
+                    distanceVal = $(this).data("distance");
+                }
+            });
+            if (distanceVal=="")
+            {
+                $(".distanceallselect").addClass('active');
+                $(".selectdistance").removeClass('active');
+            }
+
+            //遍历对象获取参数
+            var TypesVal="";
+            $(".selecttype").each(function(){
+                if ($(this).hasClass('active')) {
+                    TypesVal = TypesVal + $(this).data("types");
+                }
+            });
+            if (TypesVal=="")
+            {
+                $(".typeallselect").addClass('active');
+                $(".selecttype").removeClass('active');
+            }
+
+            //筛选参数
+            window.searchDistance = distanceVal;
+            window.searchTypes = TypesVal;
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('user.nearby_activity', array('act' => 'getJsonList'));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "distance":window.searchDistance,
+                                "obj_types":window.searchTypes,
+                                "longitude":window.longitude,
+                                "latitude":window.latitude
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                window.delCount = 0;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false);
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var result = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('user.nearby_activity', array('act' => 'getJsonList','store_id' => $store_id));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "distance":window.searchDistance,
+                                "obj_types":window.searchTypes,
+                                "longitude":window.longitude,
+                                "latitude":window.latitude
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    threshold : 50
+                });
+            }
+
+        });
+        setTimeout(function () {
+            console.log("3latitude"+window.latitude);
+            console.log("4longitude"+window.longitude);
+            if (window.latitude==""||window.longitude=="") {
+            $(".distanceallselect").trigger("click");
+            }
+        },1500);
+    })
+
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+
+    //关闭关闭弹窗
+    function closeWindows(){
+        layer.closeAll();
+        scroll.beforeClose();
+    }
+</script>
+</body>
+</html>

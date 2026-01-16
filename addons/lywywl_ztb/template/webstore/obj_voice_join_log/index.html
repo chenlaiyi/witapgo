@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title} - {$actModel['title']}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">活动</li>
+                <li class="active">{$title}</li>
+                <li class="active">语音识别记录</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebAppUrl('obj_activity', array('act' => 'index'));}">返回活动</a></li>
+                            <li class="active"><a href="">数据列表</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchKey" class="col-sm-1 control-label">用户信息</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="SearchKey" placeholder="OPENID/微信昵称">
+                                            </div>
+											
+											<label class="control-label col-sm-1" for="SearchStore">语音商家</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchStore">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $storeList $key $val}
+													<option value="{$val['id']}">{$val['name']}</option>
+													{/loop}
+                                                </select>
+                                            </div>
+											
+                                            <label class="control-label col-sm-1" for="SearchTime">参与时间</label>
+                                            <div class="col-sm-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control pull-right timer" id="SearchTime" placeholder="开始时间 - 结束时间" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+										<div class="row" style="margin-bottom: 10px;">
+											<label class="control-label col-sm-1" for="SearchUserJoin">参与用户</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchUserJoin">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $userJoinList $key $val}
+													<option {if $val['id']==$join_id}selected{/if} value="{$val['id']}">{$val['nickname']}</option>
+													{/loop}
+                                                </select>
+                                            </div>
+											<label class="control-label col-sm-1" for="SearchStatus">参与状态</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchStatus">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="1">成功</option>
+                                                    <option value="0">失败</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索
+                                            </button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置检索</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="box" class="table-responsive">
+                                <div id="toolbar" class="btn-group">
+                                    <button id="btn_exportdata" type="button" class="btn btn-info">
+                                        <span class="fa fa-download" aria-hidden="true"></span>&nbsp;导出数据
+                                    </button>
+                                </div>
+                                <table id="tb_bandlist" class="table text-nowrap" data-reorderable-columns="true" ></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script>
+    $(function () {
+        SelectNav("我创建的活动");
+
+        require(["daterangepicker"], function () {
+            //时间搜索
+            $('.timer').daterangepicker({
+                format: "YYYY/MM/DD"
+            });
+        });
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            myrequire(['bootstrap-table-zh-cn', 'bootstrap-table-editable','bootstrap-table-fixed-columns'], function () {
+                $(".select2").select2();
+                //1.初始化Table
+                var oTable = new TableInit();
+                oTable.Init();
+                //2.初始化Button的点击事件
+                var oButtonInit = new ButtonInit();
+                oButtonInit.Init();
+            });
+        });
+
+    });
+
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#tb_bandlist').bootstrapTable({
+                url: "{php echo $this->createWebAppUrl('obj_voice_join_log', array('act' => 'getJsonList','aid' => $aid,'userjoin'=>$join_id));}",         //请求后台的URL（*）
+                method: 'get',                      //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: true,                    //是否启用排序
+                sortName: "id",                   //排序字段
+                sortOrder: "desc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: false,                //是否启用点击选中行
+                height: 655,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                fixedColumns: true,                    //冻结列开启关闭
+                fixedNumber: 1,                        //冻结列数量
+                onLoadError: function () {  //加载失败时执行
+                    Command: toastr["error"]("对不起，网络繁忙，请稍后再试！", "错误提示");
+                },
+                columns: [ {
+                    field: 'id',
+                    title: '编号',
+                    titleTooltip: '当前信息的唯一编号，数据主键',
+                    sortable: true
+                },  {
+                    field: 'nickname',
+                    title: '微信昵称',
+                    titleTooltip: '注册用户的微信昵称',
+                    sortable: true,
+                }, {
+                    field: 'headurl',
+                    title: '微信头像',
+                    titleTooltip: '注册用户的微信昵称',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return " <img height='30' width='30' src='"+ value +"' alt='"+ row.nickname +"'>"
+                    }
+                }, {
+                    field: 'openid',
+                    title: 'OPENID',
+                    titleTooltip: '注册用户对于微信公众号的唯一身份标识',
+                    sortable: true,
+                }, {
+                    field: 'store_voice_id',
+                    title: '参与商家',
+                    titleTooltip: '用户语音识别参与的商家',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return  row.store_voice_name;
+                    }
+                }, {
+                    field: 'voice_password_res',
+                    title: '语音识别结果',
+                    titleTooltip: '记录的用户语音信息',
+                    sortable: true,
+					formatter: function (value, row, index) {
+                        return  row.voice_password_res;
+                    }
+                }, {
+                    field: 'voice_matching_degree',
+                    title: '语音识别匹配度',
+                    titleTooltip: '语音识别匹配度',
+                    sortable: true,
+                },{
+                    field: 'draw_id',
+                    title: '中奖信息',
+                    titleTooltip: '用户参与商家语音领奖信息',
+                    sortable: true,
+					formatter: function (value, row, index) {
+                        return  row.draw_name;
+                    }
+                },{
+                    field: 'is_verification',
+                    title: '是否核销',
+                    titleTooltip: '用户获得奖品是否核销',
+                    sortable: true,
+					formatter: function (value, row, index) {
+                        if(value>0){
+							return  "已核销";
+						}else{
+							return  "未核销";
+						}
+                    }
+                },{
+                    field: 'status',
+                    title: '是否成功',
+                    titleTooltip: '用户语音匹配是否达到标准',
+                    sortable: true,
+					formatter: function (value, row, index) {
+                        if(value>0){
+							return  "成功";
+						}else{
+							return  "失败";
+						}
+                    }
+                }, {
+                    field: 'register_data',
+                    title: '登记信息',
+                    titleTooltip: '用户参与活动填写的登记信息',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        var retrunString = "";
+                        for(var i=0,l=value.length;i<l;i++){
+                            retrunString = retrunString +  value[i]['Explain'] +"：" +  value[i]['Value'] +"  ";
+                        }
+                        return retrunString;
+                    }
+                }, {
+                    field: 'ip',
+                    title: 'ip地址',
+                    titleTooltip: '用户参与活动的ip地址',
+                    sortable: true,
+                }, {
+                    field: 'note',
+                    title: '参与详情',
+                    titleTooltip: '用户活动商家参与详情',
+                    sortable: true,
+                }, {
+                    field: 'createtime',
+                    title: '参与时间',
+                    titleTooltip: '创建信息的时间',
+                    sortable: true,
+                },{
+                    field: 'action',
+                    title: '操作',
+                    titleTooltip: '点击下方按钮对信息进行操作',
+                    width: 60,
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                //search: params.search,
+                pageSize: params.limit,  //每页大小
+                page: params.offset / params.limit + 1,//页码
+                sortOrder: params.order,//排序
+                sortName: params.sort,//排序字段
+                openid: $("#SearchKey").val(), //关键词
+                storeid: $("#SearchStore").val(), //关键词
+                userjoin: $("#SearchUserJoin").val(),
+                status: $("#SearchStatus").val(),
+                timer: $("#SearchTime").val()
+            };
+            return temp;
+        };
+        return oTableInit;
+    };
+
+    function operateFormatter(value, row, index) {
+		return [
+			'<button class="remove btn btn-danger btn-xs" href="javascript:void(0)" title="删除">',
+            '<i class="glyphicon glyphicon-remove"></i>删除',
+            '</button>'
+		].join('');
+
+    }
+    window.operateEvents = {
+        'click .remove': function (e, value, row, index) {
+            //询问框
+            layer.open({
+                content: '你确定要删除吗？'
+                , btn: ['确定', '取消']
+                , yes: function (index) {
+                    $.ajax({
+                        type: "post",
+                        url: "{php echo $this->createWebAppUrl('obj_voice_join_log', array('act' => 'del','obj_types'=>$obj_types,'aid' => $aid));}",
+                        data: {
+                            id: row.id
+                        },
+                        success: function (data, status) {
+                            if (data.status == 1) {
+                                Command: toastr["success"](data.msg, "成功提示");
+                                $("#tb_bandlist").bootstrapTable('refresh');
+                            }
+                            else {
+                                Command: toastr["error"](data.msg, "错误提示");
+                            }
+                        }
+                    });
+                    layer.close(index);
+                }
+            });
+        }
+    };
+
+    //加载成功时执行
+    $('#tb_bandlist').on('load-success.bs.table column-switch.bs.table', function (data) {
+        $('#tb_bandlist').bootstrapTable('resetView');
+    });
+
+    var ButtonInit = function () {
+        var oInit = new Object();
+        var postdata = {};
+
+        oInit.Init = function () {
+            //查询操作
+            $("#btn_query").click(function () {
+                $("#tb_bandlist").bootstrapTable('refresh');
+            });
+            //导出数据
+            $("#btn_exportdata").click(function(){
+                var openid=$("#SearchKey").val();
+				var storeid=$("#SearchStore").val(); //关键词
+                var userjoin= $("#SearchUserJoin").val();
+				var status=$("#SearchStatus").val();
+                var timer= $("#SearchTime").val();
+
+                //询问框
+                layer.open({
+                    content: '您确定要导出记录到Excel吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        layer.close(index);
+                        window.location.href = "{php echo $this->createWebAppUrl('obj_voice_join_log', array('act' => 'exportData','aid' => $aid));}&openid="+ openid+"&storeid="+storeid+"&userjoin="+userjoin+"&status="+status+"&timer="+ timer +"";
+                    }
+                });
+            });
+
+        };
+        return oInit;
+    };
+
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<style>
+    .statistics_list {
+        margin: 0rem 0.32rem;
+        padding-bottom: 0.26666666666666666rem;
+    }
+    .statistics_list li {
+        padding: 0.5333rem 0 0 0rem;
+    }
+    .statistics_list li h4 {
+        font-size: 0.4rem;
+        line-height: 0.64rem;
+        padding-bottom: 0.26666666666666666rem;
+    }
+    .statistics_list li p {
+        font-size: 0.3466666666666667rem;
+        padding-left: 1em;
+        line-height: 0.64rem;
+    }
+    .statistics_list li progress {
+        width: 100%;
+    }
+    .statistics_list .statistics_content {
+        border-bottom: 1px solid #f6f6f6;
+        min-height: 1.3333333333333333rem;
+    }
+</style>
+<body>
+<!--中心区域-->
+<section class="bgfff">
+    <h3 style="text-align: center;line-height: 0.64rem;font-size: 0.4rem;">共有{$joinCount}人参与答题</h3>
+    <ul class="statistics_list">
+        {loop $questionList $index $question}
+        <li>
+            <div class="statistics_content" style="padding: 0">
+                <h4>
+                    {php echo $index + 1}.{$question['title']}
+                    {if $question['types'] == 0}
+                    <em style="color: #3ca73f;">[单选]</em>
+                    {else if $question['types'] == 1}
+                    <em style="color: #3ca73f;">[多选]</em>
+                    {else if $question['types'] == 2}
+                    <em style="color: #3ca73f;">[填空(多行)]</em>
+                    {else if $question['types'] == 3}
+                    <em style="color: #3ca73f;">[填空(单行)]</em>
+                    {/if}
+                </h4>
+                {if $question['types'] != 2 && $question['types'] != 3}
+                {loop $question['option'] $index2 $option}
+                <p class="clearfix"><span class="fl">{$option['content']}</span><span class="fr">{php echo  @round($option['select_num'] / $question['total_select_num'] * 100,2)}%（{$option['select_num']}）</span></p>
+                <p><progress value="{php echo  @round($option['select_num'] / $question['total_select_num'] * 100,2)}" max="100"></progress></p>
+                {/loop}
+                {/if}
+            </div>
+        </li>
+        {/loop}
+    </ul>
+</section>
+<section class="h24"></section>
+<section class="buttonBox">
+    <section class="buttonFloat">
+        <a href="{php echo $this->createMobileUrl('store.obj_activity',array('act'=>'index'))}" class="db font32 yellowBtn" style="background: #FFD112;">活动列表</a>
+    </section>
+</section>
+<script>
+    $(function () {
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keywords" http-equiv="{$school['title']}">
+    <link rel="shortcut icon" href="{$_W['siteroot']}{$_W['config']['upload']['attachdir']}/{if !empty($_W['setting']['copyright']['icon'])}{$_W['setting']['copyright']['icon']}{else}images/global/wechat.jpg{/if}" />
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/sp_public.css">
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/index.css">
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/sp_population.css">
+    <title>{$school['title']} - 师生统计</title>
+    <style>
+        #login_wrap{
+            width:318px;height:550px;position: absolute;margin: auto;left: 40%;
+        }
+        #login_info_wrap{
+            width:305px;position: absolute;left:0;top: 25%;
+            background: rgba(206, 191, 191, 0.23);
+            border:2px solid rgba(45, 153, 229, 0.82);
+            border-radius: 10px;
+        }
+        #login_info_inner{
+            padding:40px 20px 20px;text-align:center;
+        }
+
+        .user_info{
+            width:210px;
+            height:38px;
+            line-height: 38px;
+            border:1px solid #ccc;
+            border-radius: 3px;
+            padding-left: 40px;
+            /* margin-top: 20px; */
+            font-size:12px;
+            cursor: pointer;
+        }
+
+
+        .submit_btn{
+            width:250px;
+            background-color: rgb(2, 151, 196);
+            outline: none;
+            border:0;
+            height:46px;
+            text-align: center;
+            color:#fff;
+            font-size: 20px;
+            border-radius: 8px;
+            letter-spacing:10px;
+            word-spacing: 10px;
+            cursor: pointer;
+            margin-top: 50px;
+
+        }
+        .login_title{
+            font-size: 25px;
+            margin-bottom:70px;
+        }
+        .paddgin_box{
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="login_wrap">
+    <div id="login_info_wrap">
+        <div id="login_info_inner" style="">
+            <div class="login_title">{if $schoolset['bgtitle']}{$schoolset['bgtitle']}{else}数据管理系统{/if}</div>
+            <form action="{php echo $this->createMobileUrl('login',array('op'=>'dologin','schoolid'=>$schoolid,'weid'=>$weid))}" method="post" role="form" id="form1">
+                <div >
+                    <input type="password" title="登录密码" name="pwd" placeholder="密码" class="user_info" />
+                </div>
+                <div class="paddgin_box">
+                    <button class="submit_btn" type="submit" id="submit" name="submit" value="登录">登录</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="error_info"></div>
+</div>
+
+
+<script type="text/javascript" src="{MODULE_URL}public/web/js/jquery.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/sp_bg.js"></script>
+
+</body>
+</html>

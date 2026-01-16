@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {template 'common/listhead'}
+    <script type="text/javascript" src="../addons/{$_GPC['m']}/resource/vue/vue.min.js"></script>
+    <!--微擎 -->
+    <!--这个放在最后一切平白安全-->
+    <script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+    <style type="text/css">
+        .goodimg li{width: 120px;text-align: left;}
+        .goodimg li img{width: 100%;}
+        .textarearul{width: 100%;border: none;}
+        .xgroup{text-align: left;margin-bottom: 10px;}
+        .swal2-container, .swal2-container  .swal2-overlay {z-index: 999999;}
+        .swal2-container  .swal2-modal {z-index: 9999999}
+        .modal  .modal-dialog{width: 95%}
+        .modal-dialog .modal-footer, .we7-modal-dialog .modal-footer, .we7-modal-dialog .modal-body,#vuecontents {padding:15px;}
+    </style>
+</head>
+<body class="nav-md">
+<div class="container body">
+
+    <div class="main_container xc_edit_from"  style="overflow-x: hidden;min-height: 100vh;background-color: white">
+        <div class="">
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <input id="copy" type="text" style="position: fixed;top: -500px;left: -500px;"/>
+                <!--<div class="panel panel-info">-->
+                <!--<div class="panel-heading">筛选</div>-->
+                <!--<div class="panel-body">-->
+                <!--<form action=" " method="get" class="form-horizontal" role="form" id="searchform">-->
+                <!--<div class="col-xs-12 col-sm-4 col-md-3 col-lg-3">-->
+                <!--<button class="btn btn-default" type="button" id="btnseach"><i class="fa fa-search"></i> 搜索</button>-->
+                <!--</div>-->
+                <!--</form>-->
+                <!--</div>-->
+                <!--</div>-->
+            </div>
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>   {$xtitleb}  > {$xtitlea}列表</h2>
+
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+
+                        <div class="ibox-content" id="pfrom">
+                            <!--data-detail-view="true"   data-detail-formatter="detailFormatter"-->
+                            <table id="table" class="dotable" data-toggle="table"
+                                   data-url="{php echo $this->createWebUrl($do, array('op'=>'wx_getseachjson'));}"
+                                   data-sort-name="id" data-sort-order="desc" data-query-params="queryparams"
+                                   data-page-number="1" data-page-size="15" data-mobile-responsive="true">
+                                <thead>
+                                <tr>
+                                    <th data-checkbox="true"></th>
+                                    <th data-field="name" data-sortable="true">名称</th>
+                                    <th data-field="roomid" data-sortable="true">房间号</th>
+                                    <th data-field="start_time" data-sortable="true">开始时间</th>
+                                    <th data-field="end_time" data-sortable="true">结束时间</th>
+                                    <th data-field="anchor_name" data-sortable="true">作者</th>
+                                    <th data-field="share_img" data-sortable="true" data-formatter="bimg">分享图片</th>
+                                    <th data-field="cover_img" data-sortable="true" data-formatter="bimg">背景图</th>
+                                    <th data-field="live_status" data-sortable="true" data-formatter="status">直播状态</th>
+                                    <th data-field="goods" data-sortable="true" data-formatter="goods">商品</th>
+                                    <th data-events="operateEvents" data-formatter="operateFormatter" data-width="10%"
+                                        data-title="操作" data-align="center">操作
+                                    </th>
+                                </tr>
+                                </thead>
+                            </table>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="modal fade " id="edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog  modal-lg" role="document">
+        <div class="modal-content">
+            <form class="form-horizontal form" id="form"  method="post">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">录播回调列表</span></h4>
+                </div>
+                <div class="modal-body" id="vuecontents">
+                    <div style="color: red">请保存mp4格式的</div>
+                    <div style="color: red"></div>
+                    <table width="100%">
+                        <tr>
+                            <td width="50"  style="text-align: center">编号</td>
+                            <td  width="100">创建时间</td>
+                            <td >视频链接</td>
+                            <td width="100">操作</td>
+                        </tr>
+                        <tr v-for="(value,index) in live_replay ">
+                            <td style="text-align: center">{{index+1}}</td>
+                            <td v-html="formatdate(value.create_time)">{{formatdate(value.create_time)}}</td>
+                            <td ><textarea class="textarearul">{{value.media_url}}</textarea> </td>
+                            <td >
+                                <a class="btn btn-primary btn-xs" @click="saveas(index)" >保存到回播列表 </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="id"/>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade "  id="histroypale"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog  modal-lg" role="document">
+        <div class="modal-content">
+            <form class="form-horizontal form"  id="histroymodel">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" >保存回放</span></h4>
+                </div>
+                <div class="modal-body" >
+
+                    <div class="form-group">
+                        <label class="col-xs-12 col-sm-3 col-md-2 col-lg-2 control-label">标题</label>
+                        <div class="col-xs-12 col-sm-8">
+                            <input type="text"  v-model="model.name"  class="form-control" placeholder="名称"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-12 col-sm-3 col-md-2 col-lg-2 control-label">作者</label>
+                        <div class="col-xs-12 col-sm-8">
+                            <input type="text"  v-model="model.anchor_name" class="form-control" placeholder="作者"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-12 col-sm-3 col-md-2 col-lg-2 control-label">媒体链接</label>
+                        <div class="col-xs-12 col-sm-8">
+                            <input type="text"  v-model="model.media_url" class="form-control" placeholder="媒体链接"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" @click="savehostroy">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{template 'common/listfoot'}
+<script type="text/javascript">
+    $(".ajax-select").select2({
+        language:'zh-CN',
+        ajax: {
+            url: "{php echo $this->createWebUrl($do, array('op'=>'getseachselect'));}",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term, // search term
+                    page: params.page
+                };
+            },
+            processResults: function (data, params) {
+
+//                console.log(data);
+//             console.log("AAAAAAAAAAAAAAAA");
+//                return {
+//                    results: data
+//                };
+
+
+
+                // parse the results into the format expected by Select2
+                // since we are using custom formatting functions we do not need to
+                // alter the remote JSON data, except to indicate that infinite
+                // scrolling can be used
+                params.page = params.page || 1;
+                return {
+                    results: data.rows,
+                    pagination: {
+                        more: (params.page * 30) < data.total
+                    }
+                };
+
+//
+//                params.page = params.page || 1;
+//                return {
+//                    results: data.rows,
+//                    pagination: {
+//                        more: (params.page * 30) < data.total
+//                    }
+//                };
+            },
+            cache: true
+        },
+        placeholder: '请选择分类',
+        escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+        minimumInputLength: 0,
+        templateResult: formatRepo,
+        templateSelection: formatRepoSelection
+    });
+
+    function formatRepo (repo) {
+
+        if (repo.loading) {
+            return repo.text;
+        }
+        return repo.text;
+//这里可以自定义返回格式
+//        console.log(repo);
+//        var markup = "<div class='select2-result-repository clearfix'>" +
+//            "<div class='select2-result-repository__avatar'><img src='" + repo.owner.avatar_url + "' /></div>" +
+//            "<div class='select2-result-repository__meta'>" +
+//            "<div class='select2-result-repository__title'>" + repo.full_name + "</div>";
+//
+//        if (repo.description) {
+//            markup += "<div class='select2-result-repository__description'>" + repo.description + "</div>";
+//        }
+//
+//        markup += "<div class='select2-result-repository__statistics'>" +
+//            "<div class='select2-result-repository__forks'><i class='fa fa-flash'></i> " + repo.forks_count + " Forks</div>" +
+//            "<div class='select2-result-repository__stargazers'><i class='fa fa-star'></i> " + repo.stargazers_count + " Stars</div>" +
+//            "<div class='select2-result-repository__watchers'><i class='fa fa-eye'></i> " + repo.watchers_count + " Watchers</div>" +
+//            "</div>" +
+//            "</div></div>";
+//
+//        return markup;
+    }
+    function formatRepoSelection (repo) {
+        return repo.text || repo.id;
+    }
+    var htojb={};
+    $saechparas=null;
+    $(function () {
+        $("#btnseach").click(function () {
+            setseach()
+            $("#table").bootstrapTable('refresh');
+        })
+        $(".js-select2").select2({ theme: "bootstrap"});
+        var htpid={};
+        $('[name="pid"]').find("option").each(function () {
+            htpid[$(this).attr("value")]=$(this).text();
+        })
+
+        htojb["pid"]=htpid;
+    })
+    function setseach() {
+        $saechparas = {};
+        $saechparas = $("#searchform").serializeArray();
+
+    }
+    function queryparams(params) {
+
+        if ($saechparas == null) {
+            setseach()
+        }
+
+        $.each($saechparas, function (i, field) {
+            if(field.name.indexOf("[]")>0){
+
+                var kname=field.name.replace("[]","");
+                if( typeof(params[kname]) ==="undefined"){
+                    params[kname]=[];
+                }
+                params[kname].push(field.value)
+            }
+            else
+            {
+                params[field.name] = field.value;
+            }
+
+        });
+
+        return params;
+    }
+    $(function () {
+        $("#delselct").click(function () {
+
+            $pdadta = $("#table").bootstrapTable('getSelections');
+            if ($pdadta.length < 1) {
+                swal({
+                    title: "错误",
+                    text: "选选择删除内容",
+                    type: "error",
+                    timer: 2000
+                });
+            }
+            else {
+                swal({
+                    title: '确认删除吗',
+                    text: "确认删除吗" + $pdadta.length + "记录",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true,
+                    confirmButtonText: "确认",
+                    cancelButtonText: "取消",
+                    preConfirm: function () {
+                        return new Promise(function (resolve) {
+                            var _postdata = {};
+                            var ids = [];
+                            $.each($pdadta, function (i, field) {
+                                ids.push(field["id"]);
+                            });
+                            _postdata["ids"] = ids.join(",");
+                            $.ajax("{php echo $this->createWebUrl($_GPC['do'], array('op'=>'new_delete'));}", {
+                                method: 'POST',
+                                data: _postdata,
+                                dataType: 'json'
+                            }).done(function (response) {
+                                if (parseInt(response["status"]) === 1) {
+                                    xc_edit_message({
+                                        title: "提示",
+                                        text: "删除成功",
+                                        type: "success",
+                                        timer: 1500
+                                    });
+
+                                    $("#table").bootstrapTable('refresh');
+                                }
+                                else {
+                                    xc_edit_message({
+                                        title: "错误",
+                                        text: "删除失败",
+                                        type: "error",
+                                        timer: 2000
+                                    });
+                                }
+                            });
+
+
+                        });
+                    },
+                    allowOutsideClick: false
+                })
+
+            }
+
+        })
+
+    })
+    $saechparas = null;
+    function setseach() {
+        $saechparas = {};
+        $saechparas = $("#searchform").serializeArray();
+    }
+    $.extend($.fn.bootstrapTable.defaults, {
+        method: 'post',
+        pagination: true,
+        sidePagination: 'server',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+//        showRefresh: true,
+        onClickCell: function (field, value, row, $element) {
+
+
+        },
+        onLoadSuccess: function () {
+//            $("#pfrom").find(".per").each(function () {
+//                $(this).qrcode({
+//                    text: $(this).attr("href"),
+//                    height: 150,
+//                    width: 150
+//                });
+//            })
+        }
+    });
+    $.extend($.fn.bootstrapTable.columnDefaults, {
+        align: 'center',
+        valign: 'middle'
+    });
+
+
+    function operateFormatter(value, row, index) {
+        var myhtml = [];
+        myhtml.push(
+                '<a class="btn btn-primary btn-xs gethostory">',
+                '获取录播',
+                '</a>',
+                '<a class="btn btn-primary btn-xs" onclick="copy(this)" data-url="plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id='+row['roomid']+'">',
+                '复制地址',
+                '</a>'
+        );
+        return myhtml.join('');
+    }
+    var actrow='';
+    var operateEvents = {
+        "click a.delete": function (e, value, row, index) {
+            var _postdata = {};
+            _postdata["ids"] = row["id"];
+            swal({
+                title: '确认删除吗',
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true,
+                confirmButtonText: "确认",
+                cancelButtonText: "取消",
+                preConfirm: function () {
+                    return new Promise(function (resolve) {
+                        $.ajax("{php echo $this->createWebUrl($_GPC['do'], array('op'=>'new_delete'));}", {
+                            method: 'POST',
+                            data: _postdata,
+                            dataType: 'json'
+                        }).done(function (response) {
+                            if (parseInt(response["status"]) === 1) {
+                                xc_edit_message({
+                                    title: "提示",
+                                    text: "删除成功",
+                                    type: "success",
+                                    timer: 1500
+                                });
+
+                                $("#table").bootstrapTable('refresh');
+                            }
+                            else {
+                                xc_edit_message({
+                                    title: "错误",
+                                    text: "删除失败",
+                                    type: "error",
+                                    timer: 2000
+                                });
+
+                            }
+                        });
+
+                        //  resolve();
+
+                    });
+                },
+                allowOutsideClick: false
+            })
+        },
+        "click a.gethostory": function (e, value, row, index) {
+            actrow=row;
+            $('#edit').modal('show');
+            var  _postdata={};
+            _postdata["roomid"]=row["roomid"];
+            return new Promise(function (resolve) {
+                $.ajax("{php echo $this->createWebUrl($_GPC['do'], array('op'=>'gethostory'));}", {
+                    method: 'POST',
+                    data: _postdata,
+                    dataType: 'json'
+                }).done(function (response) {
+                    resolve(response)
+                });
+            }).then(function (res) {
+                console.log(res["obj"]["live_replay"]);
+                appvae.live_replay=res["obj"]["live_replay"];
+            });
+        },
+        "click a.banner": function (e, value, row, index) {
+            location.href="{php echo $this->createWebUrl('live_banner', array('op'=>'edit','xtitleb'=> urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}&live=" + JSON.stringify(row);
+        }
+    };
+
+    var appvae = new Vue(
+            {
+                el:"#vuecontents",
+                data:{
+                    "id":1,
+                    "live_replay":[]
+                },
+                methods:{
+                    saveas:function (index) {
+                        $('#histroypale').modal('show');
+                        var tmodel={
+                            goods:actrow["goods"],
+                            name:actrow["name"],
+                            roomid:actrow["roomid"],
+                            anchor_name:actrow["anchor_name"],
+                            cover_img:actrow["cover_img"],
+                            share_img:actrow["share_img"],
+                            media_url:appvae.live_replay[index]["media_url"],
+                        };
+                        histroymodel.model=tmodel;
+
+                    },
+                    formatdate:function(createtime){
+                        var createtime=createtime.replace("Z","");
+                        var arrcreatetime=   createtime.split("T");
+                        return arrcreatetime[0]+"<br/>" +arrcreatetime[1]
+                    }
+
+                }
+            })
+
+    var histroymodel = new Vue({
+        el:"#histroymodel",
+        data:{
+            model:{},
+
+        },
+        methods:{
+            savehostroy:function () {
+                var postdata= {model:this.model} ;
+                return new Promise(function (resolve) {
+                    $.ajax("{php echo $this->createWebUrl($_GPC['do'], array('op'=>'createhistroy'));}", {
+                        method: 'POST',
+                        data: postdata,
+                        dataType: 'json'
+                    }).done(function (response) {
+                        resolve(response)
+                    });
+                }).then(function (res) {
+
+                    if(parseInt(res["status"])==1){
+
+                        swal({
+                            title: "提示",
+                            text: "保存到到回放成功",
+                            type: "success",
+                            timer: 2000
+                        });
+                        $('#histroypale').modal('hide');
+                    }
+                    else {
+                        swal({
+                            title: "提示",
+                            text: "操作失败",
+                            type: "error"
+
+                        });
+
+                    }
+
+                })
+
+            }
+        }
+    })
+
+
+
+    function bimg(value, row, index) {
+        var myhtml = [];
+        if(value!="" && value!=null){
+            myhtml.push(
+                    '<img src="'+value+'" width="100"/>'
+            );
+        }
+        return myhtml.join('');
+    }
+
+    function status(value, row, index){
+        var myhtml = [];
+        if(value==101){
+            myhtml.push('<a class="btn btn-xs btn-primary">直播中</a>');
+        }else if(value==102){
+            myhtml.push('<a class="btn btn-xs btn-danger">未开始</a>');
+        }else if(value==103){
+            myhtml.push('<a class="btn btn-xs btn-info">已结束</a>');
+        }else if(value==104){
+            myhtml.push('<a class="btn btn-xs btn-danger">禁播</a>');
+        }else if(value==105){
+            myhtml.push('<a class="btn btn-xs btn-danger">暂停中</a>');
+        }else if(value==106){
+            myhtml.push('<a class="btn btn-xs btn-danger">异常</a>');
+        }else if(value==107){
+            myhtml.push('<a class="btn btn-xs btn-danger">已过期</a>');
+        }
+        return myhtml.join('');
+    }
+
+    function goods(value, row, index){
+        var myhtml = [];
+        if(value!="" && value!=null){
+            myhtml.push('<ul class="goodimg">');
+            for (var i=0;i<value.length;i++){
+                myhtml.push('<li data-url="'+value[i]['url']+'" style="width: 120px;text-align: left;">' +
+                        '<img src="'+value[i]['cover_img']+'" width="100%">' +
+                        '<div>'+value[i]['name']+'</div>' +
+                        '<div>￥'+parseFloat(value[i]['price'])/100+'</div>' +
+                        '</li>');
+            }
+            myhtml.push('</ul>');
+        }
+        return myhtml.join('');
+    }
+
+    function copy(objc){
+        var url=$(objc).attr("data-url");
+        $("#copy").val(url).select();//选择对象
+        document.execCommand("Copy"); //执行浏览器复制命令
+        swal('复制成功!', '复制成功!', 'success');
+    }
+</script>
+</body>
+</html>

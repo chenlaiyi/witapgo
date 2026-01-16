@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">系统</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li>
+                                <a href="{php echo $this->createWebUrl('sys_config', array('act' => 'index'));}">站点设置</a>
+                            </li>
+                            {if !empty($buy_list)}
+                            <li>
+                                <a href="{php echo $this->createWebUrl('plugins_config', array('act' => 'index'));}">插件设置</a>
+                            </li>
+                            {/if}
+                            <li class="active"><a href="#">接口测试</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content_mchpay" id="form_content_mchpay"
+                                  method="post"
+                                  action="{php echo $this->createWebUrl('sys_test', array('act' => 'sendmchpay'));}">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 微信零钱（企业付款接口）</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="mchpayopenid" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>用户OPENID</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="mchpayopenid"
+                                                       name="mchpayopenid" maxlength="50" nullmsg="请输入用户OPENID！"
+                                                       placeholder="请输入用户OPENID"
+                                                       type="text" value=""/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="mchpaymoney" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>企业付款金额</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">红包金额：</span>
+                                                    <input class="form-control" maxlength="10" name="mchpaymoney"
+                                                           id="mchpaymoney" placeholder="请输入红包金额"
+                                                           onkeyup="if(isNaN(this.value)){this.value='0.00';}else{this.value}"
+                                                           onblur="this.value=FloatMoney(this.value)"
+                                                           min="0.3" step="0.01" datatype="*" nullmsg="请输入红包金额！"
+                                                           type="number" value=""/>
+                                                    <span class="input-group-addon">元</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>
+                                                    单笔最低0.3元，但需要另开通服务(企业付款接口)，请确保微信平台账户资金充足！</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <button type="submit" class="btn btn-primary" id="mchpaySubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <form class="form-horizontal" name="form_content_postsms" id="form_content_postsms"
+                                  method="post"
+                                  action="{php echo $this->createWebUrl('sys_test', array('act' => 'sendsms'));}">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 漫道短信（即刻源码www.jikym.cn）</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="smsmobile" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>接收短信手机</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="smsmobile" name="smsmobile"
+                                                       maxlength="11" nullmsg="请输入接收手机号码！" placeholder="请输入接收手机号码"
+                                                       type="text" value=""/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="smsmobile" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>签名扩展编码</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="smsext" name="smsext"
+                                                       maxlength="11" placeholder="签名扩展编码，不填写为默认签名"
+                                                       type="text" value=""/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="smscontent" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>测试短信内容</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="smscontent"
+                                                       name="smscontent" maxlength="50" nullmsg="请输入测试短信内容！"
+                                                       placeholder="请输入测试短信内容" type="text" value=""/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>请输入短信内容+【签名】，首次调用接口需注册信息
+                                                    可通过：http://sdk2.entinfo.cn:8060/webservice.asmx?op=Register 提交注册信息，
+                                                    如短信发送失败，请根据返回错误编号查找原因！</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <button type="submit" class="btn btn-primary" id="smsSubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+
+                            <form class="form-horizontal" name="form_content_express" id="form_content_express" method="post" action="{php echo $this->createWebUrl('sys_test', array('act' => 'express'));}">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 快递鸟（查询物流接口）</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="fedex_code" class="col-sm-2 control-label"><span class="text-red">(*)</span>快递物流公司</label>
+                                            <div class="col-sm-10">
+                                                <select id="fedex_code" name="fedex_code" class="form-control select2">
+                                                    {loop $fedexList $fedex}
+                                                    <option value="{$fedex['code']}">
+                                                        {$fedex['name']}
+                                                    </option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="fedex_number" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>快递物流单号</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="fedex_number"
+                                                       name="fedex_number" maxlength="50" nullmsg="请输入快递公司物流单号！"
+                                                       placeholder="请输入快递公司物流单号" type="text" value=""/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>请选择快递公司后，填写对应物流公司的订单编号进行查询！
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="fedex_mobile" class="col-sm-2 control-label">寄件人/收件人手机</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" id="fedex_mobile"
+                                                       name="fedex_mobile" maxlength="50"
+                                                       placeholder="请输入寄件人/收件人手机号码" type="text" value=""/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>查询“顺丰快递”需要填写寄件/收件人的手机号码！
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="express_box" style="display: none;">
+                                            <label for="fedex_code" class="col-sm-2 control-label">物流追踪信息</label>
+                                            <div class="col-sm-10" id="express_content">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <button type="submit" class="btn btn-primary" id="expressSubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script id="expresstpl" type="text/html">
+    <%for(i = 0; i < Traces.length; i ++) {%>
+    <p><%=Traces[i]["AcceptTime"]%>：<%=Traces[i]["AcceptStation"]%></p>
+    <%}%>
+</script>
+<script>
+    $(function () {
+        SelectNav("系统配置");
+
+        myrequire(['select2', 'validform'], function () {
+            $(".select2").select2();
+            //为formContent 添加验证事件
+            $("#form_content_mchpay").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#mchpaySubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        setTimeout(function () {
+                            window.location.href = "{php echo $this->createWebUrl('sys_test', array('act' => 'index'));}";
+                        }, 2000);
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#mchpaySubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        $("#mchpaySubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+
+            //为formContent 添加验证事件
+            $("#form_content_postsms").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#smsSubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        setTimeout(function () {
+                            window.location.href = "{php echo $this->createWebUrl('sys_test', array('act' => 'index'));}";
+                        }, 2000);
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#smsSubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        $("#smsSubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+
+            //为formContent 添加验证事件
+            $("#form_content_express").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#expressSubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    $("#expressSubmitBtn").attr("disabled", false);
+                    if (data.status == 1) {
+                        Command: toastr["success"]('恭喜您,获取物流订单成功，请核对物流记录！', "成功提示");
+                        myrequire([ 'arttemplate'], function (template) {
+                            expressHtml = template("expresstpl", data.msg);
+                            $("#express_content").html(expressHtml);
+                            $("#express_box").show();
+                        });
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                    }
+                }
+            });
+
+        });
+    });
+</script>
+</body>
+</html>

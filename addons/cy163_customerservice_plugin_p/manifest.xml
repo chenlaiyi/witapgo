@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.sansuib.com" versionCode="0.8,1.0">
+	<application setting="true">
+		<name><![CDATA[聚合客服PC端]]></name>
+		<identifie><![CDATA[cy163_customerservice_plugin_p]]></identifie>
+		<version><![CDATA[8.1.0]]></version>
+		<type><![CDATA[biz]]></type>
+		<ability><![CDATA[聚合客服PC端插件]]></ability>
+		<description><![CDATA[聚合客服PC端插件]]></description>
+		<author><![CDATA[三岁半资源网]]></author>
+		<url><![CDATA[http://www.sansuib.com]]></url>
+	</application>
+
+	<platform>
+		<subscribes>
+		</subscribes>
+
+		<handles>
+		</handles>
+
+		<rule embed="false" />
+		<card embed="false" />
+		
+		<supports>
+		</supports>
+        <plugins></plugins> 
+        <plugin-main name="cy163_customerservice" />
+
+	</platform>
+
+	<bindings>
+		<cover>
+			<entry title="PC客服工作台" do="kefucenter" state="" direct="false"/>
+			<entry title="PC咨询入口" do="index" state="" direct="false"/>
+		</cover>
+		<menu>
+			<entry title="客服管理" do="cservice" state="" direct="false"/>
+			<entry title="嵌入代码" do="qianru" state="" direct="false"/>
+			<entry title="客服组管理" do="cgroup" state="" direct="false"/>
+		</menu>
+
+	</bindings>
+
+	<permissions>
+	</permissions>
+
+	<install><![CDATA[]]></install>
+	<uninstall><![CDATA[]]></uninstall>
+	<upgrade><![CDATA[]]></upgrade>
+
+</manifest>

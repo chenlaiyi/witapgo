@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li {if !$action} class="layui-this" {/if}>
+						<a href="{php echo webUrl('systemSettings')}">通用设置</a>
+					</li>
+					<!-- <li {if $action == 'individuation'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('systemSettings', ['action' => 'individuation'])}">个性化设置</a>
+					</li> -->
+					<li {if $action == 'personal_fields'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('systemSettings', ['action' => 'personal_fields'])}">个人信息字段</a>
+					</li>
+					<!-- <li {if $action == 'left_menu_order'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('systemSettings', ['action' => 'left_menu_order'])}">左边菜单排序</a>
+					</li> -->
+				</ul>
+			</div>
+
+
+			{if !$action}
+				<form class="layui-form fixed" action="" method="post" enctype="multipart/form-data" id="data-form">
+					<!-- 启用会员等级 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">启用会员等级</label>
+						<div class="layui-input-block">
+							<input type="radio" name="member_level" value="1" title="是"
+								{if $oldData['zdy']['member_level']=='1' }checked{/if}>
+							<input type="radio" name="member_level" value="0" title="否"
+								{if $oldData['zdy']['member_level']==0 }checked{/if}>
+						</div>
+					</div>
+					<!-- 关闭IOS支付 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">关闭IOS支付</label>
+						<div class="layui-input-block">
+							<div>
+								<input type="radio" name="pay_ios_enabled" value="1" title="开启"
+									{if $oldData['zdy']['pay_ios_enabled']=='1' }checked{/if}>
+								<input type="radio" name="pay_ios_enabled" value="0" title="关闭"
+									{if $oldData['zdy']['pay_ios_enabled']=='0' }checked{/if}>
+							</div>
+							<div class="layui-form-mid">
+								<div class="layui-word-aux">
+									<span>安全预防：微信和苹果利益纠纷会牵扯IOS虚拟支付问题，建议选择关闭；</span>
+								</div>
+								<div class="layui-word-aux">
+									<span>如果不关闭有可能受微信限制，然后可以选择关闭，重新提交前端微信审核申诉即可</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- 服务条款 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">服务条款</label>
+						<div class="layui-input-block box-act-body">
+							{php echo tpl_ueditor('service_term', $oldData['service_term'])}
+						</div>
+					</div>
+					<!-- 公司介绍 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">公司介绍</label>
+						<div class="layui-input-block box-act-body">
+							{php echo tpl_ueditor('introduction', $oldData['introduction'])}
+						</div>
+					</div>
+					<!-- 私教规则 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">私教规则</label>
+						<div class="layui-input-block box-act-body">
+							{php echo tpl_ueditor('private_teach_rule', $oldData['private_teach_rule'])}
+						</div>
+					</div>
+					<!-- 会员权益 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">会员权益</label>
+						<div class="layui-input-block box-act-body">
+							{php echo tpl_ueditor('member_rights', $oldData['member_rights'])}
+						</div>
+					</div>
+					<!-- 退款提示 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">退款提示</label>
+						<div class="layui-input-block">
+							<input type="text" name="refund_tip" class="layui-input" value="{$oldData['refund_tip']}">
+						</div>
+					</div> -->
+					<!-- 邀请他人的提示 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">邀请他人的提示</label>
+						<div class="layui-input-block">
+							<input type="text" name="invitation_tip" class="layui-input" value="{$oldData['invitation_tip']}">
+						</div>
+					</div> -->
+					<!-- 联系电话 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">联系电话</label>
+						<div class="layui-input-block">
+							<input type="text" name="tel" class="layui-input" value="{$oldData['tel']}">
+						</div>
+					</div> -->
+					<!-- 小程序名字 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">小程序名字</label>
+						<div class="layui-input-block">
+							<input type="text" name="mini_program_name" lay-verify="required" class="layui-input"
+								value="{$oldData['mini_program_name']}">
+						</div>
+					</div> -->
+					<!-- 版权信息 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">版权信息</label>
+						<div class="layui-input-block">
+							<input type="text" name="copyright" lay-verify="required" class="layui-input"
+								value="{$oldData['copyright']}">
+						</div>
+					</div> -->
+					<!-- 开课前签到时间 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">开课前签到时间</label>
+						<div class="layui-input-block">
+							<input type="text" name="sign_in_time" lay-verify="required" class="layui-input"
+								value="{$oldData['sign_in_time']}">
+							<div class="layui-form-mid layui-word-aux">单位分钟</div>
+						</div>
+					</div> -->
+					<!-- 版权信息 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">技术支持电话</label>
+						<div class="layui-input-block">
+							<input type="text" name="tech_tel" lay-verify="required" class="layui-input"
+								value="{$oldData['tech_tel']}">
+						</div>
+					</div> -->
+					<!-- 一级会员卡分销 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">一级会员卡分销</label>
+						<div class="layui-input-block">
+							<input type="text" name="royalty_rate" class="layui-input"
+								value="{$oldData['royalty_rate']}">
+							<div class="layui-form-mid layui-word-aux">推荐购买奖金占订单金额的比率，单位：0.001，最小1，是整数</div>
+						</div>
+					</div> -->
+					<!-- 二级会员卡分销 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">二级会员卡分销</label>
+						<div class="layui-input-block">
+							<input type="text" name="royalty_rate2" class="layui-input"
+								value="{$oldData['royalty_rate2']}">
+							<div class="layui-form-mid layui-word-aux">推荐购买奖金占订单金额的比率，单位：0.001，最小1，是整数</div>
+						</div>
+					</div> -->
+					<!-- 分销奖励佣金规则 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">分销奖励佣金规则</label>
+						<div class="layui-input-block box-act-body">
+							{php echo tpl_ueditor('distribute_rule', $oldData['distribute_rule'])}
+						</div>
+					</div> -->
+					<!-- LOGO -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">LOGO</label>
+						<div class="layui-input-block">
+							{php echo slwl_tpl_form_field_image('logo', $oldData['logo']);}
+							<div class="layui-form-mid layui-word-aux">分辨率为：100 x 17，或同比例</div>
+						</div>
+					</div> -->
+
+
+					<div class="layui-tab-content fixed" id="data-submit">
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button class="layui-btn" lay-submit lay-filter="systemSettings">保存</button>
+								<input type="hidden" name="token" value="{$_W['token']}" />
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<script>
+					layui.use('form', function(){
+						var form = layui.form;
+
+						form.on('submit(systemSettings)', function(data){
+							let url = "{php echo webUrl('systemSettings')}";
+							var $obj = $(this);
+
+							if (!$obj.hasClass('lock')) {
+								$obj.addClass('lock'); // 不能再点击
+
+								$.ajax({
+									type: "POST",
+									url: url,
+									dataType: 'json',
+									data: data.field,
+									success: function (rs) {
+										if (rs && rs.code.toString() === '0') {
+											layer.msg('保存成功' , {
+												time: 500
+											}, function () {
+												window.location.href = "{php echo webUrl('systemSettings')}";
+											});
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+											});
+										}
+										$obj.removeClass('lock');
+									},
+									error: function () {
+										layer.msg('保存过程发生错误，请与管理员联系', {
+											offset: '20%',
+										});
+										$obj.removeClass('lock');
+									}
+								});
+							}
+
+							return false;
+						});
+					});
+				</script>
+			{/if}
+
+
+			{if $action == 'individuation'}
+				<form class="layui-form fixed" action="" method="post" enctype="multipart/form-data" id="data-form">
+					<!-- 活动背景图片 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">活动背景图片</label>
+						<div class="layui-input-block">
+							{php echo slwl_tpl_form_field_image('training_bg_image', $oldData['training_bg_image']);}
+							<div class="layui-form-mid layui-word-aux">推荐尺寸：335 x 240，或同比例</div>
+						</div>
+					</div> -->
+					<!-- 活动提示 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">活动提示</label>
+						<div class="layui-input-block">
+							<input type="text" name="activity_tip" class="layui-input"
+								value="{$oldData['activity_tip']}">
+							<div class="layui-form-mid layui-word-aux">小程序首页‘活动’的替换文本</div>
+						</div>
+					</div> -->
+					<!-- 门店背景图片 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">门店背景图片</label>
+						<div class="layui-input-block">
+							{php echo slwl_tpl_form_field_image('store_bg_image', $oldData['zdy']['store_bg_image']);}
+							<div class="layui-form-mid layui-word-aux">推荐尺寸：335 x 240，或同比例</div>
+						</div>
+					</div> -->
+					<!-- 门店文字 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">门店文字</label>
+						<div class="layui-input-block">
+							<input type="text" name="store_tip" class="layui-input"
+								value="{$oldData['store_tip']}">
+							<div class="layui-form-mid layui-word-aux">小程序首页‘门店’的替换文本</div>
+						</div>
+					</div> -->
+					<!-- 教练背景图片 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">教练背景图片</label>
+						<div class="layui-input-block">
+							{php echo slwl_tpl_form_field_image('coach_bg_image', $oldData['zdy']['coach_bg_image']);}
+							<div class="layui-form-mid layui-word-aux">推荐尺寸：335 x 240，或同比例</div>
+						</div>
+					</div> -->
+					<!-- 教练文字 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">教练文字</label>
+						<div class="layui-input-block">
+							<input type="text" name="coach_tip" class="layui-input"
+								value="{$oldData['coach_tip']}">
+							<div class="layui-form-mid layui-word-aux">小程序首页‘教练’的替换文本</div>
+						</div>
+					</div> -->
+					<!-- 优质推荐课程背景图片 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">优质推荐课程背景图片</label>
+						<div class="layui-input-block">
+							{php echo slwl_tpl_form_field_image('recommend_bg_image', $oldData['recommend_bg_image']);}
+							<div class="layui-form-mid layui-word-aux">推荐尺寸：345 x 100，或同比例</div>
+						</div>
+					</div> -->
+					<!-- 我的页面顶部背景图片 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">我的页面顶部背景图片</label>
+						<div class="layui-input-block">
+							{php echo slwl_tpl_form_field_image('my_top_bg_image', $oldData['my_top_bg_image']);}
+							<div class="layui-form-mid layui-word-aux">推荐尺寸：375 x 130，或同比例</div>
+						</div>
+					</div> -->
+					<!-- 首页tab文字 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">首页tab文字</label>
+						<div class="layui-input-block">
+							<input type="text" name="home_text" class="layui-input"
+								value="{$oldData['home_text']}">
+						</div>
+					</div> -->
+					<!-- 私教tab文字 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">私教tab文字</label>
+						<div class="layui-input-block">
+							<input type="text" name="private_text" class="layui-input"
+								value="{$oldData['private_text']}">
+						</div>
+					</div> -->
+					<!-- 门店tab文字 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">门店tab文字</label>
+						<div class="layui-input-block">
+							<input type="text" name="store_text" class="layui-input"
+								value="{$oldData['store_text']}">
+						</div>
+					</div> -->
+					<!-- 我tab文字 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">我tab文字</label>
+						<div class="layui-input-block">
+							<input type="text" name="me_text" class="layui-input"
+								value="{$oldData['me_text']}">
+						</div>
+					</div> -->
+					<!-- 老师列表页面标题 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">老师列表页面标题</label>
+						<div class="layui-input-block">
+							<input type="text" name="coach_title" class="layui-input"
+								value="{$oldData['zdy']['coach_title']}">
+						</div>
+					</div> -->
+					<!-- 签到页面右边标题 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">签到页面右边标题</label>
+						<div class="layui-input-block">
+							<input type="text" name="signin_left_title" class="layui-input"
+								value="{$oldData['zdy']['signin_left_title']}">
+						</div>
+					</div> -->
+					<!-- 视频tab文字 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">视频tab文字</label>
+						<div class="layui-input-block">
+							<input type="text" name="video_text" class="layui-input"
+								value="{$oldData['zdy']['video_text']}">
+						</div>
+					</div> -->
+					<!-- 隐藏视频tab -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">隐藏视频tab</label>
+						<div class="layui-input-block">
+							<input type="radio" name="hide_video" value="1" title="是" {if $oldData['zdy']['hide_video']==1 }checked{/if}>
+							<input type="radio" name="hide_video" value="0" title="否" {if $oldData['zdy']['hide_video']==0 }checked{/if}>
+						</div>
+					</div> -->
+					<!-- 首页方块菜单文字颜色 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">首页方块菜单文字颜色</label>
+						<div class="layui-input-block">
+							<div style="width: 50%;">
+								{php echo slwl_tpl_form_field_color('home_color', $oldData['zdy']['home_color']);}
+							</div>
+						</div>
+					</div> -->
+					<!-- 约课提醒 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">约课提醒</label>
+						<div class="layui-input-block">
+							<textarea name="book_tip" class="layui-textarea">{$oldData['zdy']['book_tip']}</textarea>
+						</div>
+					</div>
+
+					<div class="layui-tab-content fixed" id="data-submit">
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button class="layui-btn" lay-submit lay-filter="two">保存</button>
+								<input type="hidden" name="token" value="{$_W['token']}" />
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<script>
+					layui.use('form', function(){
+						var form = layui.form;
+
+						form.on('submit(two)', function(data){
+							let url = "{php echo webUrl('systemSettings', ['action' => 'individuation'])}";
+							var $obj = $(this);
+
+							if (!$obj.hasClass('lock')) {
+								$obj.addClass('lock'); // 不能再点击
+
+								$.ajax({
+									type: "POST",
+									url: url,
+									dataType: 'json',
+									data: data.field,
+									success: function (rs) {
+										if (rs && rs.code.toString() === '0') {
+											layer.msg('保存成功' , {
+												time: 500
+											}, function () {
+												window.location.href = "{php echo webUrl('systemSettings', ['action' => 'individuation'])}";
+											});
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+											});
+										}
+										$obj.removeClass('lock');
+									},
+									error: function () {
+										layer.msg('保存过程发生错误，请与管理员联系', {
+											offset: '20%',
+										});
+										$obj.removeClass('lock');
+									}
+								});
+							}
+
+							return false;
+						});
+					});
+				</script>
+			{/if}
+
+
+			{if $action == 'personal_fields'}
+				<form class="layui-form fixed" action="" method="post" enctype="multipart/form-data" id="data-form">
+					<!-- 姓名 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">姓名</label>
+						<div class="layui-input-block">
+							<input type="radio" name="rname" value="1" title="必填" {if $oldData['zdy']['name']==1 }checked{/if}>
+							<input type="radio" name="rname" value="0" title="选填" {if $oldData['zdy']['name']==0 }checked{/if}>
+						</div>
+					</div>
+					<!-- 电话 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">电话</label>
+						<div class="layui-input-block">
+							<input type="radio" name="tel" value="1" title="必填" {if $oldData['zdy']['tel']==1 }checked{/if}>
+							<input type="radio" name="tel" value="0" title="选填" {if $oldData['zdy']['tel']==0 }checked{/if}>
+						</div>
+					</div>
+					<!-- 腰围 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">腰围</label>
+						<div class="layui-input-block">
+							<input type="radio" name="waistline" value="1" title="必填" {if $oldData['zdy']['waistline']==1 }checked{/if}>
+							<input type="radio" name="waistline" value="0" title="选填" {if $oldData['zdy']['waistline']==0 }checked{/if}>
+						</div>
+					</div>
+					<!-- 身高 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">身高</label>
+						<div class="layui-input-block">
+							<input type="radio" name="height" value="1" title="必填" {if $oldData['zdy']['height']==1 }checked{/if}>
+							<input type="radio" name="height" value="0" title="选填" {if $oldData['zdy']['height']==0 }checked{/if}>
+						</div>
+					</div>
+					<!-- 体重 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">体重</label>
+						<div class="layui-input-block">
+							<input type="radio" name="weight" value="1" title="必填" {if $oldData['zdy']['weight']==1 }checked{/if}>
+							<input type="radio" name="weight" value="0" title="选填" {if $oldData['zdy']['weight']==0 }checked{/if}>
+						</div>
+					</div>
+					<!-- 腿围 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">腿围</label>
+						<div class="layui-input-block">
+							<input type="radio" name="thigh" value="1" title="必填" {if $oldData['zdy']['thigh']==1 }checked{/if}>
+							<input type="radio" name="thigh" value="0" title="选填" {if $oldData['zdy']['thigh']==0 }checked{/if}>
+						</div>
+					</div>
+					<!-- 胸围 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">胸围</label>
+						<div class="layui-input-block">
+							<input type="radio" name="bust" value="1" title="必填" {if $oldData['zdy']['bust']==1 }checked{/if}>
+							<input type="radio" name="bust" value="0" title="选填" {if $oldData['zdy']['bust']==0 }checked{/if}>
+						</div>
+					</div>
+					<!-- 身份证 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">身份证</label>
+						<div class="layui-input-block">
+							<input type="radio" name="idcard" value="1" title="必填" {if $oldData['zdy']['idcard']==1 }checked{/if}>
+							<input type="radio" name="idcard" value="0" title="选填" {if $oldData['zdy']['idcard']==0 }checked{/if}>
+						</div>
+					</div> -->
+					<!-- 照片 -->
+					<!-- <div class="layui-form-item">
+						<label class="layui-form-label">照片</label>
+						<div class="layui-input-block">
+							<input type="radio" name="image" value="1" title="必填" {if $oldData['zdy']['image']==1 }checked{/if}>
+							<input type="radio" name="image" value="0" title="选填" {if $oldData['zdy']['image']==0 }checked{/if}>
+						</div>
+					</div> -->
+					<!-- 性别 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">性别</label>
+						<div class="layui-input-block">
+							<input type="radio" name="gender" value="1" title="必填" {if $oldData['zdy']['gender']==1 }checked{/if}>
+							<input type="radio" name="gender" value="0" title="选填" {if $oldData['zdy']['gender']==0 }checked{/if}>
+						</div>
+					</div>
+					<!-- 年龄 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">年龄</label>
+						<div class="layui-input-block">
+							<input type="radio" name="age" value="1" title="必填" {if $oldData['zdy']['age']==1 }checked{/if}>
+							<input type="radio" name="age" value="0" title="选填" {if $oldData['zdy']['age']==0 }checked{/if}>
+						</div>
+					</div>
+					<!-- 隐藏选填字段 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">隐藏选填字段</label>
+						<div class="layui-input-block">
+							<input type="radio" name="hide_option" value="1" title="隐藏" {if $oldData['zdy']['hide_option']==1 }checked{/if}>
+							<input type="radio" name="hide_option" value="0" title="显示" {if $oldData['zdy']['hide_option']==0 }checked{/if}>
+						</div>
+					</div>
+
+					<div class="layui-tab-content fixed" id="data-submit">
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button class="layui-btn" lay-submit lay-filter="three">保存</button>
+								<input type="hidden" name="token" value="{$_W['token']}" />
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<script>
+					layui.use('form', function(){
+						var form = layui.form;
+
+						form.on('submit(three)', function(data){
+							let url = "{php echo webUrl('systemSettings', ['action' => 'personal_fields'])}";
+							var $obj = $(this);
+
+							if (!$obj.hasClass('lock')) {
+								$obj.addClass('lock'); // 不能再点击
+
+								$.ajax({
+									type: "POST",
+									url: url,
+									dataType: 'json',
+									data: data.field,
+									success: function (rs) {
+										if (rs && rs.code.toString() === '0') {
+											layer.msg('保存成功' , {
+												time: 500
+											}, function () {
+												window.location.href = "{php echo webUrl('systemSettings', ['action' => 'personal_fields'])}";
+											});
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+											});
+										}
+										$obj.removeClass('lock');
+									},
+									error: function () {
+										layer.msg('保存过程发生错误，请与管理员联系', {
+											offset: '20%',
+										});
+										$obj.removeClass('lock');
+									}
+								});
+							}
+
+							return false;
+						});
+					});
+				</script>
+			{/if}
+
+
+			{if $action == 'left_menu_order'}
+				<div class="layui-form">
+					<table class="layui-table">
+						<thead>
+						<tr>
+							<th>ID</th>
+							<th>菜单名</th>
+							<th>显示顺序</th>
+							<th>操作</th>
+						</tr>
+						</thead>
+						<tbody>
+						{loop $list $index $item}
+						<tr>
+							<td class="wmin20">{$item['id']}</td>
+							<td>{$item['title']}</td>
+							<td>{$item['display_order']}</td>
+							<td class="td-button">
+								<a href="{php echo webUrl('editLeftMenuOrder', ['title'=>$item['title'],'id'=>$item['id'],'display_order'=>$item['display_order']])}"
+									class="layui-btn layui-btn-sm">编辑</a>
+							</td>
+						</tr>
+						{/loop}
+						</tbody>
+					</table>
+					<div class="pager">
+						{$pager}
+					</div>
+				</div>
+			{/if}
+
+
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

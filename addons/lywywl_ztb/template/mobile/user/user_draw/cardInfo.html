@@ -1,0 +1,42 @@
+<section>
+    <ul class="cardList">
+        <li>
+            <div class="txtContent">
+                {if $userDrawModel['card_use_num'] <= 0 }
+                <span class="receive white">使用<br>完毕</span>
+                {else}
+                {if  $userDrawModel['card_end_time'] < TIMESTAMP}
+                <span class="receive white">卡券<br>过期</span>
+                {else}
+                <span class="receive white" style="font-size: 0.326rem;">可用{$userDrawModel['card_use_num']}<br>已用{$userDrawModel['card_writeoff_num']}</span>
+                {/if}
+                {/if}
+                <a href="javascript:;">
+                    <dl>
+                        <dd>
+                            <p>{$userDrawModel['card_name']}</p>
+                            <p>{$userDrawModel['store_name']}&nbsp;&nbsp;<span></span></p>
+                            <p>面值:{$userDrawModel['card_money']}元</p>
+                        </dd>
+                    </dl>
+                </a>
+                <section><span class="fr">{$userDrawModel['card_use_limit']}</span><span class="c6">到期时间：{php echo date('Y-m-d H:i', $userDrawModel['card_end_time'])}</span></section>
+            </div>
+            <figure><img src="{php echo tomedia($userDrawModel['card_pic_url'])}" width="100%"></figure>
+        </li>
+    </ul>
+    <section>
+        <h3 class="titHeXiao">核销记录</h3>
+        <ul class="prizeUser" id="ContentList">
+            {loop $cardWriteoffList $index $item}
+            <li> <img src="{php echo tomedia($item['admin_headurl'])}" class="headPic">
+                <h4>{$item['admin_nickname']}<span class="ml10 cf35">{$userDrawModel['card_name']}</span></h4>
+                <p>核销时间：{php echo date('Y-m-d H:i', $item['createtime'])}</p>
+            </li>
+            {/loop}
+        </ul>
+    </section>
+
+    <a href="javascript:closeWindows()" style="position: fixed;bottom: 10%;right: 8%;background: #fee002;width: 1.5rem;height: 1.5rem;border-radius: 0.75rem;text-align: center;line-height: 1.5rem">返回</a>
+    <section class="buttonFloat"><a href="javascript:showCardQRCode({$userDrawModel['id']},'{$userDrawModel['writecode']}');" class="db font32">点击出示核销码</a></section>
+</section>

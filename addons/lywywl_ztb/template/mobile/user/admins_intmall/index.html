@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'user/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<style>
+    .scroll {
+        position: fixed;
+        width: 100%;
+    }
+    body {position: static}
+    .layui-m-layercont{
+        padding:20px 0;
+    }
+    .tabContainer ul.tabHd li {
+        width: 33.33%;
+    }
+</style>
+<body style="background-color:#fff;">
+<section>
+    <section class="tabContainer">
+        <ul id="tabHd" class="tabHd">
+            <li><a href="{php echo $this->createMobileUrl('user.admins_product',array('act'=>'index','store_id'=>$store_id))}"><span>商品核销</span></a></li>
+            <li><a href="{php echo $this->createMobileUrl('user.admins_card',array('act'=>'index','store_id'=>$store_id))}"><span>卡券核销</span></a></li>
+            <li class="active"><a href="{php echo $this->createMobileUrl('user.admins_intmall',array('act'=>'index','store_id'=>$store_id))}"><span>商城核销</span></a></li>
+        </ul>
+    </section>
+    <section id="ContentList">
+        <section id="LoadLists">
+
+        </section>
+    </section>
+</section>
+<section class="buttonBox"></section>
+<!--底部浮动操作按钮-->
+<div class="pro_fix">
+    <ul>
+        <li id="btnCode" class="code"> <a href="javascript:void(0);">手动核销</a> </li>
+        <li id="btnScan" class="scan"> <a href="javascript:void(0);">扫码核销</a> </li>
+    </ul>
+</div>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <section class="staff_draw">
+        <section class="draw_hd font28 clearfix">
+            <span class="c9 fl">核销时间：<%= rows[i].updatetime %></span>
+            <span class="fr green">已核销</span>
+        </section>
+        <section class="draw_item">
+            <ul>
+                <li>
+                    <section class="rel">
+                        <img src="<%= rows[i].product_thumb %>" alt="">
+                        <section class="draw_con">
+                            <h3 class="fn font28 mb10"><%= rows[i].product_title %></h3>
+                            <p class="gift_name font32 main_red">兑换会员：<%= rows[i].username %></p>
+                        </section>
+                    </section>
+                </li>
+            </ul>
+        </section>
+        <section class="draw_fd font28 c6">核销员工：<img src="<%= rows[i].admins_headurl %>" alt=""><span><%= rows[i].admins_nickname %></span></section>
+    </section>
+    <% } %>
+</script>
+<?php
+//加载common文件注册jssdk
+load()->app('common');
+register_jssdk();
+?>
+<script>
+    $(function(){
+        //dropload
+        var page = 0;
+        var pageSize = 10;
+
+        $('#ContentList').dropload({
+            scrollArea : window,
+            domUp : {
+                domClass   : 'dropload-up',
+                domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+            },
+            domDown : {
+                domClass   : 'dropload-down',
+                domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+            },
+            loadUpFn : function(me){
+                $.ajax({
+                    type: 'GET',
+                    url: "{php echo $this->createMobileUrl('user.admins_intmall', array('act' => 'getJsonList','store_id' => $store_id));}",
+                    data:{
+                        "page":1,
+                        "pageSize":pageSize
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        var html = template("listtpl", data);
+                        $('#LoadLists').html(html);
+                        // 每次数据加载完，必须重置
+                        me.resetload();
+                        // 重置页数，重新获取loadDownFn的数据
+                        page = 1;
+                        // 解锁loadDownFn里锁定的情况
+                        me.unlock();
+                        me.noData(false)
+                    },
+                    error: function(xhr, type){
+                        layer.open({
+                            content: '系统错误，稍后重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            loadDownFn : function(me){
+                page++;
+                // 拼接HTML
+                var html = '';
+                $.ajax({
+                    type: 'GET',
+                    url: "{php echo $this->createMobileUrl('user.admins_intmall', array('act' => 'getJsonList','store_id' => $store_id));}",
+                    data:{
+                        "page":page,
+                        "pageSize":pageSize,
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        var arrLen = data.rows.length;
+                        if(arrLen > 0){
+                            var html = template("listtpl", data);
+                            // 如果没有数据
+                        }else{
+                            // 锁定
+                            me.lock();
+                            // 无数据
+                            me.noData();
+                        }
+
+                        // 插入数据到页面，放到最后面
+                        $('#LoadLists').append(html);
+                        // 每次数据插入，必须重置
+                        me.resetload()
+                    },
+                    error: function(xhr, type){
+                        layer.open({
+                            content: '系统错误，稍后重试！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+            },
+            threshold : 50
+        });
+
+        //手动核销
+        $("#btnCode").click(function () {
+            layer.open({
+                title: [
+                    "手动核销",
+                    'background-color:#fee002; color:#000;'
+                ],
+                content: "<input id='code' name='code' placeholder='请输入核销码' style='border:none; width:90%; padding:0 2%; border:1px solid #e4e4e4; height: 46px;font-size: 16px;'>",
+                btn: ['确定','取消'],
+                yes:function (index) {
+                    var code = $("#code").val();
+                    writeoff(code);
+                }
+            });
+        })
+        //扫码核销
+        $("#btnScan").click(function () {
+            wx.scanQRCode({
+                needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+                scanType: ["qrCode"], // 可以指定扫二维码还是一维码，默认二者都有
+                success: function (res) {
+                    window.location.href = res.resultStr;
+                }
+            });
+        })
+
+        wx.error(function(res){
+            alert(JSON.stringify(res));
+        });
+
+    });
+    //核销方法
+    function writeoff(code){
+        $.ajax({
+            url: "{php echo $this->createMobileUrl('user.admins_intmall',array('act'=>'getOrderIntmallInfo','store_id'=>$store_id))}",
+            type: "post",
+            dataType: "json",
+            data: {writecode: code},
+            success: function (result) {
+                if (result.status === 1) {
+                    layer.open({
+                        title: [
+                            "核销商品信息",
+                            'background-color:#fee002; color:#000;'
+                        ],
+                        content: "<img src='"+result.product_thumb+"' style='max-width: 150px;max-height: 150px;' alt=''><br/><span>"+result.product_title+"</span>",
+                        btn: ['核销','取消'],
+                        yes:function (index) {
+                            $.ajax({
+                                url: "{php echo $this->createMobileUrl('user.admins_intmall',array('act'=>'confirmWrite','store_id'=>$store_id))}",
+                                type: "post",
+                                dataType: "json",
+                                data: {writecode: code},
+                                success: function (result) {
+                                    if (result.status === 1) {
+                                        layer.open({
+                                            title: [
+                                                "成功提示",
+                                                'background-color:#fee002; color:#000;'
+                                            ],
+                                            content: result.msg,
+                                            btn:['确定'],
+                                            yes:function () {
+                                                window.location.href="{php echo $this->createMobileUrl('user.admins_intmall',array('act'=>'index','store_id'=>$store_id))}";
+                                            }
+                                        });
+                                    } else {
+                                        layer.open({
+                                            title: [
+                                                "错误提示",
+                                                'background-color:#fee002; color:#000;'
+                                            ],
+                                            content: result.msg,
+                                            btn:['确定'],
+                                            yes:function () {
+                                                window.location.href="{php echo $this->createMobileUrl('user.admins_intmall',array('act'=>'index','store_id'=>$store_id))}";
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }else {
+                    layer.open({
+                        title: [
+                            "错误提示",
+                            'background-color:#fee002; color:#000;'
+                        ],
+                        content: result.msg,
+                        btn:['确定'],
+                        yes:function (index) {
+                            window.location.href="{php echo $this->createMobileUrl('user.admins_intmall',array('act'=>'index','store_id'=>$store_id))}";
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    var writecode = '{$writecode}';
+    if(writecode!=""){
+        writeoff(writecode);
+    }
+</script>
+</body>
+</html>

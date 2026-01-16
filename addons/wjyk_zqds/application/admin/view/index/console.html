@@ -1,0 +1,201 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>layuiAdmin 控制台主页一</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+  <script src="__PUBLIC__/static/layuiadmin/layui/echarts.min.js"></script>
+</head>
+<body>
+  
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md8">
+        <div class="layui-row layui-col-space15">
+          <div class="layui-col-md6">
+            <div class="layui-card">
+              <div class="layui-card-header">快捷方式</div>
+              <div class="layui-card-body">
+                
+                <div class="layui-carousel layadmin-carousel layadmin-shortcut">
+                  <div carousel-item>
+                    <ul class="layui-row layui-col-space10">
+                      <li class="layui-col-xs3">
+                        <a lay-href="{:siteUrl('admin/category/index','','web')}">
+                          <i class="layui-icon layui-icon-cart"></i>
+                          <cite>商城</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="{:siteUrl('admin/commission/index','','web')}">
+                          <i class="layui-icon layui-icon-rmb"></i>
+                          <cite>提现</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="{:siteUrl('admin/brokerage/set','','web')}">
+                          <i class="layui-icon layui-icon-release"></i>
+                          <cite>分销</cite>
+                        </a>
+                      </li>
+
+                      <li class="layui-col-xs3">
+                        <a lay-href="{:siteUrl('admin/user/index','','web')}">
+                          <i class="layui-icon layui-icon-user"></i>
+                          <cite>用户</cite>
+                        </a>
+                      </li>
+                      <li class="layui-col-xs3">
+                        <a lay-href="{:siteUrl('admin/system/index','','web')}">
+                          <i class="layui-icon layui-icon-set"></i>
+                          <cite>设置</cite>
+                        </a>
+                      </li>
+                    </ul>
+                    
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+          <div class="layui-col-md6">
+            <div class="layui-card">
+              <div class="layui-card-header">待办事项</div>
+              <div class="layui-card-body">
+
+                <div class="layui-carousel layadmin-carousel layadmin-backlog">
+                  <div carousel-item>
+                    <ul class="layui-row layui-col-space10">
+                      <li class="layui-col-xs6">
+                        <a lay-href="{:siteUrl('admin/commission/wait','','web')}" class="layadmin-backlog-body">
+                          <h3>待审提现</h3>
+                          <p><cite>{$count}</cite></p>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="layui-col-md12">
+            <div class="layui-card">
+              <div class="layui-card-header">数据概览</div>
+              <div class="layui-card-body">
+                
+                <div class="layui-carousel layadmin-carousel layadmin-dataview" id="main" data-anim="fade" lay-filter="LAY-index-dataview">
+					
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="layui-col-md4">
+        <div class="layui-card">
+          <div class="layui-card-header">版本信息</div>
+          <div class="layui-card-body layui-text">
+            <table class="layui-table">
+              <colgroup>
+                <col width="100">
+                <col>
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td>当前版本</td>
+                  <td>
+                    <script type="text/html" template>
+                      v{$_W['current_module']['version']}
+                    </script>
+                  </td>
+                </tr>
+                <tr>
+                  <td>PHP 版本</td>
+                  <td>
+                    <script type="text/html" template>
+                      	PHP Version {$_W['php']}
+                    </script>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Mysql 版本</td>
+                  <td>
+                    <script type="text/html" template>
+                      	{$_W['mysql']}
+                    </script>
+                  </td>
+                </tr>
+                
+              </tbody>
+            </table>
+          </div>
+        </div>
+       <div class="layui-card">
+		  <div class="layui-card-header">链接</div>
+		  <div class="layui-card-body layadmin-takerates">
+		    <div class="layui-collapse">
+			  <div class="layui-colla-item">
+			    <h2 class="layui-colla-title">首页</h2>
+			    <div class="layui-colla-content layui-show">{$url}</div>
+			  </div>
+			</div>			<div class="layui-collapse">			  <div class="layui-colla-item">			    <h2 class="layui-colla-title">CPS定时任务</h2>			    <div class="layui-colla-content layui-show">{$cpsUrl}</div>			  </div>			</div>						{if $system['manor_open'] == 1}			<div class="layui-collapse">			  <div class="layui-colla-item">			    <h2 class="layui-colla-title">庄园定时任务</h2>			    <div class="layui-colla-content layui-show">{$timeUrl}</div>			    <div class="layui-upload-list"  id="ImgPreview" style="display: flex;"> 		        	<img style='width:100%;height: 270px;' src="__PUBLIC__/timing.jpg" ></img>		        </div>			  </div>			</div>			{/if}
+		  </div>
+		</div>
+      </div>
+      
+    </div>
+  </div>
+	
+  <script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+  <script>
+  layui.config({
+    base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index','jquery', 'console'],function(){
+	  var $ = layui.$
+      , form = layui.form;
+	  $('#ImgPreview img').on('click', function () {	        layer.photos({	            photos: '#ImgPreview',	            shadeClose: false,	            closeBtn: 2,	            anim: 0	        });	    })
+	  var myChart = echarts.init(document.getElementById('main'));
+      myChart.showLoading();
+      $.get("{:siteUrl('admin/user/user_statis','','web')}", function (data) {
+      	console.log(data);
+      	myChart.hideLoading();  // 隐藏 loading 效果
+	    myChart.setOption({
+	    	title: {
+                text: '新增用户数量'
+            },
+            tooltip: {},
+            legend: {
+                data:['用户数量']
+            },
+            xAxis: {
+                data: data.data.dateList
+            },
+            yAxis: {},
+            series: [{
+                name: '用户数量',
+                type: 'line',
+                data: data.data.totalList
+            }]
+	    })
+	 }, 'json')
+  });
+  </script>
+</body>
+<div class="layui-footer" style="position:absolute;bottom:0;text-align:center;width:100%">
+	{include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}
+</div>
+</html>
+
+
+

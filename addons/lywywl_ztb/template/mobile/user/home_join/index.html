@@ -1,0 +1,686 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name = "format-detection" content ="telephone=no">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>{$title}</title>
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_TMP_CSS__}/base.css?v=20200331">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_PLUGIN__}/home/css/index.css?v=20200219">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_CSS__}/swiper.min.css">
+    <!-- 移动端适配 -->
+    <script>
+        var html = document.querySelector('html');
+        changeRem();
+        window.addEventListener('resize', changeRem);
+
+        function changeRem() {
+            var width = html.getBoundingClientRect().width;
+            html.style.fontSize = width / 10 + 'px';
+        }
+    </script>
+    <script src="{__MOBILE_USER_JS__}/jquery-2.1.4.min.js"></script>
+    <script src="{__MOBILE_USER_JS__}/jquery.flexslider-min.js"></script>
+    <script src="{__PLUGIN__}/layer/mobile/2.0/layer.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script>
+        // jssdk config 对象
+        jssdkconfig = {php echo json_encode($_W['account']['jssdkconfig']);} || {};
+        // 是否启用调试
+        jssdkconfig.debug = false;
+        jssdkconfig.jsApiList = [
+            'checkJsApi',
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'getLocation',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'hideMenuItems'
+        ];
+        wx.config(jssdkconfig);
+        wx.error(function (res) {
+            layer.open({ content: '对不起，微信JSSDK信息验证失败！', skin: 'msg', time: 2 });
+        });
+        wx.ready(function () {
+            var title = "{php echo replaceShareInfo($config['share_title'])}";
+            var imgUrl = "{php echo $config['share_thumb'] ? tomedia($config['share_thumb']) : getMemberAvatar()}";
+            var link = "{php echo replaceDieDomain($config, __MURL('user.home_activity', array('act' => 'index'), true, true),0,0,0);}";
+            var desc = "{php echo replaceShareInfo($config['share_desc'])}";
+
+            if (wx.onMenuShareTimeline) {
+                //转发到朋友圈
+                wx.onMenuShareTimeline({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                //转发给朋友
+                wx.onMenuShareAppMessage({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    type: 'link',
+                    dataUrl: '',
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareQQ({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareWeibo({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+            }
+            else{
+                //新版发送朋友圈
+                wx.updateTimelineShareData({
+                    title: title, // 分享标题
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+                wx.updateAppMessageShareData({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+            }
+        });
+    </script>
+    <link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+    <script src="{__MOBILE_STORE_JS__}/swiper.jquery.min.js"></script>
+    <link rel="stylesheet" href="{__PLUGIN__}/clipboard/clipboard.min.js">
+    <style>
+        /*不滚动样式*/
+        .scroll {position: fixed; width: 100%; height:100%; }
+        body {position: static}  .tabContainer ul.tabHd li {width: 33.33%;}
+        .layui-m-layercont {padding: 20px 20px;line-height: 22px;text-align: center;}
+    </style>
+</head>
+<body>
+<section class="myOrder tabContainer"  >
+    <ul class="tabHd" id="tabHd" >
+        <li class="active" data-status=""><span>全部</span></li>
+        <li data-status="0"><span>未核销</span></li>
+        <li data-status="1"><span>已核销</span></li>
+    </ul>
+</section>
+<section id="ContentList">
+    <section class="mt24" id="LoadLists">
+
+    </section>
+</section>
+<!--底部导航-->
+<footer class="clearfix">
+    <section>
+        <ul>
+            {if $is_show_activity == 1}
+            <li style="width:{$navWidth}%;"><a href="{php echo $this->createMobileUrl('user.home_activity',array('act'=>'index'))}"><img src="{php echo tomedia(getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_activity_icon'))}">
+                <h4 class="fn">{php echo getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_activity_name')}</h4></a>
+            </li>
+            {/if}
+            {if $is_show_nearby == 1}
+            <li style="width:{$navWidth}%;"><a href="{php echo $this->createMobileUrl('user.home_nearby',array('act'=>'index'))}"><img src="{php echo tomedia(getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_nearby_icon'))}">
+                <h4 class="fn">{php echo getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_nearby_name')}</h4></a>
+            </li>
+            {/if}
+            {if $is_show_store == 1}
+            <li style="width:{$navWidth}%;"><a href="{php echo $this->createMobileUrl('user.home_store',array('act'=>'index'))}"><img src="{php echo tomedia(getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_store_icon'))}">
+                <h4 class="fn">{php echo getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_store_name')}</h4></a>
+            </li>
+            {/if}
+            {if $is_show_join == 1}
+            <li style="width:{$navWidth}%;"><a href="{php echo $this->createMobileUrl('user.home_join',array('act'=>'index'))}"><img src="{php echo tomedia(getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_join_onicon'))}">
+                <h4 class="fn">{php echo getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_home', 'footer_join_name')}</h4></a>
+            </li>
+            {/if}
+        </ul>
+    </section>
+</footer>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <section class="order_item  ">
+        <section class="order_num clearfix">
+            <a href="<%= rows[i].store_links %>" class="orderLogo mb10">
+                <span class="fr font24 c6">进入会员中心></span>
+                <span class="">
+                    <img src="<%= rows[i].store_logo %>">
+                </span> <%= rows[i].store_name %>
+            </a>
+            <section class="font22 c9 ">时间：<%= rows[i].createtime %></section>
+        </section>
+        <section class="order_goods">
+            <figure>
+                <img src="<%= rows[i].prize_pic_url %>">
+                <figcaption class="tc" style="background: #fee002;">
+                    <%if(rows[i].status==0){%>
+                    <span class="font28 main_red">未核销</span>
+                    <%}else{%>
+                    <span class="font28 main_green">已核销</span>
+                    <%}%>
+                </figcaption>
+            </figure>
+            <h3>
+                <%if(rows[i].types==-1){%>
+                <span class=" bgFDD borR10 cfff pd0_10 font26 mr10" style="background: #39cccc;color:#fff;">参与活动</span>&nbsp;
+                <%}else{%>
+                    
+                    <%if(rows[i].activity_types==2 || rows[i].activity_types==3 || rows[i].activity_types==15 ||rows[i].activity_types==16 || rows[i].activity_types==17 || rows[i].activity_types==20 || rows[i].activity_types==21 ){%>
+                        <span class=" bgFDD borR10 cfff pd0_10 font26 mr10" style="background: #dd4b39;color:#fff;">奖品返利</span>&nbsp;
+                    <%}else{%>
+                        <span class=" bgFDD borR10 cfff pd0_10 font26 mr10" style="background: #dd4b39;color:#fff;">获得奖品</span>&nbsp;
+                    <%}%>
+                <%}%>
+                <%= rows[i].activity_name %>
+            </h3>
+            <%if(rows[i].types==0){%>
+            <p class="c6 font26"><%= rows[i].name %></p>
+            <%}%>
+            <%if(rows[i].types==1){%>
+            <p class="c6 font26"><%= rows[i].name %>：<%= rows[i].score %> 积分</p>
+            <%}%>
+            <%if(rows[i].types==2){%>
+            <p class="c6 font26"><%= rows[i].name %>：<%= rows[i].sys %> 元</p>
+            <%}%>
+            <%if(rows[i].types==3){%>
+            <p class="c6 font26"><%= rows[i].name %>：<%= rows[i].money %> 元</p>
+            <%}%>
+            <%if(rows[i].types==4){%>
+            <p class="c6 font26"><%= rows[i].name %></p>
+            <%}%>
+            <%if(rows[i].types==5){%>
+            <p class="c6 font26"><%= rows[i].name %></p>
+            <%}%>
+            <%if(rows[i].types == -1){%>
+            <%if(rows[i].activity_types == 20){%>
+            <p class="c6 font26">报名项目：<%= rows[i].project_title %></p>
+            <%}%>
+            <%}%>
+        </section>
+        <%if(rows[i].types==0 || rows[i].types==1 || rows[i].types==2 || rows[i].types==3){%>
+        <section class="order_operate clearfix">
+            <section class="fr">
+            <a href="{php echo $this->createMobileUrl('scan');}&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动详情</a>
+            </section>
+        </section>
+        <%}%>
+        <%if(rows[i].types==4){%>
+        <section class="order_operate clearfix">
+            <section class="fr">
+            <%if(rows[i].writeoff_types==0 && rows[i].status==0){%>
+            <a href="javascript:showProductQRCode(<%= rows[i].id %>,'<%= rows[i].writecode %>',<%= rows[i].is_expires %>,<%= rows[i].expires_time %>,'<%= rows[i].expires_datetime %>');">我要核销</a>
+            <%}%>
+            <%if(rows[i].writeoff_types==1){%>
+            <%if(rows[i].ordernumber==''){%>
+            <a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'submit'))}&draw_id=<%=rows[i].id%>&store_id=<%=rows[i].store_id%>">立即发货</a>
+            <%} else {%>
+            <a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'detail'))}&ordernumber=<%=rows[i].ordernumber%>&store_id=<%=rows[i].store_id%>">物流订单</a>
+            <%}%>
+            <%}%>
+            <a href="javascript:showPrizeInfo(<%= rows[i].prize_id %>);">奖品详情</a>
+            <a href="{php echo $this->createMobileUrl('scan');}&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动详情</a>
+            </section>
+        </section>
+        <%}%>
+        <%if(rows[i].types==5){%>
+        <section class="order_operate clearfix">
+            <section class="fr">
+            <a href="javascript:showCardInfo(<%= rows[i].id %>);">卡券详情</a>
+            <a href="{php echo $this->createMobileUrl('scan');}&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动详情</a>
+            </section>
+        </section>
+        <%}%>
+        <%if(rows[i].types == -1){%>
+        <section class="order_operate clearfix">
+            <section class="fr">
+            <%if(rows[i].activity_types == 2){%>
+            <%if(rows[i].writeoff_types==0 && rows[i].status==0){%>
+            <%if(rows[i].activity_object['models'] ==2){%>
+            <a href="javascript:showGroupQRCode('<%= rows[i].group_name %>','<%= rows[i].group_qrcode %>','<%= rows[i].writecode %>',<%= rows[i].is_expires %>,<%= rows[i].expires_time %>,'<%= rows[i].expires_datetime %>');">群二维码</a>
+            <%} else if(rows[i].activity_object['models'] ==0) {%>
+            <a href="javascript:showProductQRCode(<%= rows[i].id %>,'<%= rows[i].writecode %>',<%= rows[i].is_expires %>,<%= rows[i].expires_time %>,'<%= rows[i].expires_datetime %>');">我要核销</a>
+            <%}%>
+            <%}%>
+            <%if(rows[i].writeoff_types==1){%>
+            <%if(rows[i].ordernumber==''){%>
+            <a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'submit'))}&draw_id=<%=rows[i].id%>&store_id=<%=rows[i].store_id%>">立即发货</a>
+            <%} else {%>
+            <a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'detail'))}&ordernumber=<%=rows[i].ordernumber%>&store_id=<%=rows[i].store_id%>">物流订单</a>
+            <%}%>
+            <%}%>
+            <%if(rows[i].activity_object['models'] ==3){%>
+            <a href="<%=rows[i].activity_object['models_link']%>">活动订单</a>
+            <%} else {%>
+            <a href="{php echo $this->createMobileUrl('obj_soliciting',array('act'=>'detail'))}&pay_number=<%=rows[i].pay_number%>&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动订单</a>
+            <%}%>
+            <a href="{php echo $this->createMobileUrl('scan');}&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动详情</a>
+            <%}%>
+            <%if(rows[i].activity_types == 3){%>
+            <a href="{php echo $this->createMobileUrl('obj_union', array('act'=>'myCard'));}&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">我的卡包</a>
+            <a href="{php echo $this->createMobileUrl('scan');}&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动详情</a>
+            <%}%>
+            <%if(rows[i].activity_types == 15){%>
+            <%if(rows[i].writeoff_types==0 && rows[i].status==0){%>
+            <%if(rows[i].activity_object['models'] ==2){%>
+            <a href="javascript:showGroupQRCode('<%= rows[i].group_name %>','<%= rows[i].group_qrcode %>','<%= rows[i].writecode %>',<%= rows[i].is_expires %>,<%= rows[i].expires_time %>,'<%= rows[i].expires_datetime %>');">群二维码</a>
+            <%} else if(rows[i].activity_object['models'] ==0) {%>
+            <a href="javascript:showProductQRCode(<%= rows[i].id %>,'<%= rows[i].writecode %>',<%= rows[i].is_expires %>,<%= rows[i].expires_time %>,'<%= rows[i].expires_datetime %>');">我要核销</a>
+            <%}%>
+            <%}%>
+            <%if(rows[i].writeoff_types==1){%>
+            <%if(rows[i].ordernumber==''){%>
+            <a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'submit'))}&draw_id=<%=rows[i].id%>&store_id=<%=rows[i].store_id%>">立即发货</a>
+            <%} else {%>
+            <a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'detail'))}&ordernumber=<%=rows[i].ordernumber%>&store_id=<%=rows[i].store_id%>">物流订单</a>
+            <%}%>
+            <%}%>
+            <%if(rows[i].activity_object['models'] ==3){%>
+            <a href="<%=rows[i].activity_object['models_link']%>">活动订单</a>
+            <%} else {%>
+            <a href="{php echo $this->createMobileUrl('obj_cut',array('act'=>'detail'))}&pay_number=<%=rows[i].pay_number%>&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动订单</a>
+            <%}%>
+            <a href="{php echo $this->createMobileUrl('scan');}&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动详情</a>
+            <%}%>
+            <%if(rows[i].activity_types == 16){%>
+            <%if(rows[i].writeoff_types==0 && rows[i].status==0){%>
+            <%if(rows[i].activity_object['models'] ==2){%>
+            <a href="javascript:showGroupQRCode('<%= rows[i].group_name %>','<%= rows[i].group_qrcode %>','<%= rows[i].writecode %>',<%= rows[i].is_expires %>,<%= rows[i].expires_time %>,'<%= rows[i].expires_datetime %>');">群二维码</a>
+            <%} else if(rows[i].activity_object['models'] ==0) {%>
+            <a href="javascript:showProductQRCode(<%= rows[i].id %>,'<%= rows[i].writecode %>',<%= rows[i].is_expires %>,<%= rows[i].expires_time %>,'<%= rows[i].expires_datetime %>');">我要核销</a>
+            <%}%>
+            <%}%>
+            <%if(rows[i].writeoff_types==1){%>
+            <%if(rows[i].ordernumber==''){%>
+            <a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'submit'))}&draw_id=<%=rows[i].id%>&store_id=<%=rows[i].store_id%>">立即发货</a>
+            <%} else {%>
+            <a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'detail'))}&ordernumber=<%=rows[i].ordernumber%>&store_id=<%=rows[i].store_id%>">物流订单</a>
+            <%}%>
+            <%}%>
+            <%if(rows[i].activity_object['models'] ==3){%>
+            <a href="<%=rows[i].activity_object['models_link']%>">活动订单</a>
+            <%} else {%>
+            <a href="{php echo $this->createMobileUrl('obj_collage',array('act'=>'detail'))}&pay_number=<%=rows[i].pay_number%>&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动订单</a>
+            <%}%>
+            <a href="{php echo $this->createMobileUrl('scan');}&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动详情</a>
+            <%}%>
+            <%if(rows[i].activity_types == 17){%>
+            <%if(rows[i].writeoff_types==0 && rows[i].status==0){%>
+            <a href="javascript:showProductQRCode(<%= rows[i].id %>,'<%= rows[i].writecode %>',<%= rows[i].is_expires %>,<%= rows[i].expires_time %>,'<%= rows[i].expires_datetime %>');">我要核销</a>
+            <%}%>
+            <%if(rows[i].writeoff_types==1){%>
+            <%if(rows[i].ordernumber==''){%>
+            <a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'submit'))}&draw_id=<%=rows[i].id%>&store_id=<%=rows[i].store_id%>">立即发货</a>
+            <%} else {%>
+            <a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'detail'))}&ordernumber=<%=rows[i].ordernumber%>&store_id=<%=rows[i].store_id%>">物流订单</a>
+            <%}%>
+            <%}%>
+            <a href="{php echo $this->createMobileUrl('obj_ladder',array('act'=>'detail'))}&pay_number=<%=rows[i].pay_number%>&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动订单</a>
+            <a href="{php echo $this->createMobileUrl('scan');}&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动详情</a>
+            <%}%>
+            <%if(rows[i].activity_types == 20){%>
+            <%if(rows[i].writeoff_types==0 && rows[i].status==0){%>
+            <a href="javascript:showProductQRCode(<%= rows[i].id %>,'<%= rows[i].writecode %>',<%= rows[i].is_expires %>,<%= rows[i].expires_time %>,'<%= rows[i].expires_datetime %>');">我要核销</a>
+            <%}%>
+            <a href="{php echo $this->createMobileUrl('obj_enroll',array('act'=>'detail'))}&pay_number=<%=rows[i].pay_number%>&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动订单</a>
+            <a href="{php echo $this->createMobileUrl('scan');}&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动详情</a>
+            <%}%>
+            <%if(rows[i].activity_types == 21){%>
+            <%if(rows[i].writeoff_types==0 && rows[i].status==0){%>
+            <%if(rows[i].activity_object['models'] ==2){%>
+            <a href="javascript:showGroupQRCode('<%= rows[i].group_name %>','<%= rows[i].group_qrcode %>','<%= rows[i].writecode %>',<%= rows[i].is_expires %>,<%= rows[i].expires_time %>,'<%= rows[i].expires_datetime %>');">群二维码</a>
+            <%} else if(rows[i].activity_object['models'] ==0) {%>
+            <a href="javascript:showProductQRCode(<%= rows[i].id %>,'<%= rows[i].writecode %>',<%= rows[i].is_expires %>,<%= rows[i].expires_time %>,'<%= rows[i].expires_datetime %>');">我要核销</a>
+            <%}%>
+            <%}%>
+            <%if(rows[i].writeoff_types==1){%>
+            <%if(rows[i].ordernumber==''){%>
+            <a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'submit'))}&draw_id=<%=rows[i].id%>&store_id=<%=rows[i].store_id%>">立即发货</a>
+            <%} else {%>
+            <a href="{php echo $this->createMobileUrl('user.order_obj',array('act'=>'detail'))}&ordernumber=<%=rows[i].ordernumber%>&store_id=<%=rows[i].store_id%>">物流订单</a>
+            <%}%>
+            <%}%>
+            <%if(rows[i].activity_object['models'] ==3){%>
+            <a href="<%=rows[i].activity_object['models_link']%>">活动订单</a>
+            <%} else {%>
+            <a href="{php echo $this->createMobileUrl('obj_whole',array('act'=>'detail'))}&pay_number=<%=rows[i].pay_number%>&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动订单</a>
+            <%}%>
+            <a href="{php echo $this->createMobileUrl('scan');}&token=<%=rows[i].activity_token%>&origin_id=<%=rows[i].origin_id%>">活动详情</a>
+            <%}%>
+            </section>
+        </section>
+        <%}%>
+    </section>
+    <% } %>
+</script>
+<script>
+    $(function(){
+        //dropload
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //状态切换
+        $('.tabHd li').on('click',function(){
+            var status = $(this).data('status');
+            $(this).siblings().removeClass('active').end().addClass('active');
+
+            //筛选参数
+            window.searchStatus = status;
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('user.home_join', array('act' => 'getJsonList','types' => $types));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "status":window.searchStatus
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false)
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var html = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('user.home_join', array('act' => 'getJsonList','types' => $types));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "status":window.searchStatus
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    threshold : 50
+                });
+            }
+
+        });
+
+        $('.tabHd li')[0].click();
+    });
+
+    //实物奖品详情
+    function showPrizeInfo(prize_id){
+        $.ajax({
+            type: "get",
+            url: "{php echo $this->createMobileUrl('user.home_join',array('act'=>'prizeInfo'))}",
+            data:{id:prize_id},
+            success: function (data) {
+                var html = data;
+                layer.open({
+                    type: 1,
+                    title: ""
+                    ,content: html
+                    ,anim: 'up'
+                    ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+                });
+            },
+            beforeSend: function () {
+                //loading
+                layer.open({
+                    type: 2
+                    , time: 0.2 //999秒后自动关闭
+                });
+            }
+        });
+
+        scroll.afterOpen();
+        //清空浏览器历史记录
+        window.history.pushState({title: "title",url:"#"}, "title", "#");
+        //监听浏览器后退事件
+        window.addEventListener("popstate",
+            function(e) {
+                //后退关闭弹窗
+                closeWindows();
+            }, false);
+    }
+
+    //商家卡券详情
+    function showCardInfo(id){
+        $.ajax({
+            type: "get",
+            url: "{php echo $this->createMobileUrl('user.home_join',array('act'=>'cardInfo'))}",
+            data:{id:id},
+            success: function (data) {
+                var html = data;
+                layer.open({
+                    type: 1,
+                    title: ""
+                    ,content: html
+                    ,anim: 'up'
+                    ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+                });
+            },
+            beforeSend: function () {
+                //loading
+                layer.open({
+                    type: 2
+                    , time: 0.2 //999秒后自动关闭
+                });
+            }
+        });
+
+        scroll.afterOpen();
+        //清空浏览器历史记录
+        window.history.pushState({title: "title",url:"#"}, "title", "#");
+        //监听浏览器后退事件
+        window.addEventListener("popstate",
+            function(e) {
+                //后退关闭弹窗
+                closeWindows();
+            }, false);
+    }
+
+    //核销实物二维码
+    function showProductQRCode(id,writecode,is_expires,expires_time,expires_datetime) {
+        var html = "<img src='{php echo $this->createMobileUrl('user.home_join',array('act'=>'getProductQRCode'))}&id="+id+"' width='200' alt='核销码："+writecode+"'><br>核销码：" + writecode ;
+        if (expires_time>0)
+        {
+            if(is_expires==1)
+            {
+                html = html + "<br/> 已于" + expires_datetime +"过期";
+            }
+            else
+            {
+                html = html + "<br/> 请于" + expires_datetime +"前核销";
+            }
+        }
+        layer.open({
+            title: [
+                "请向工作人员出示核销二维码",
+                'background-color:#fee002; color:#000;'
+            ],
+            content: html,
+            btn: '确定'
+        });
+    }
+
+    //核销商家卡券二维码
+    function showCardQRCode(id,writecode) {
+        layer.open({
+            title: [
+                "请向工作人员出示核销二维码",
+                'background-color:#fee002; color:#000;'
+            ],
+            content: "<img src='{php echo $this->createMobileUrl('user.home_join',array('act'=>'getCardQRCode'))}&id="+id+"' width='200' alt='核销码："+writecode+"'><br>核销码：" + writecode,
+            btn: '确定'
+        });
+    }
+
+    //核销群组二维码
+    function showGroupQRCode(group_name,group_qrcode,writecode,is_expires,expires_time,expires_datetime) {
+        var html = "<img src='"+ group_qrcode +"' width='200' alt='核销码："+writecode+"'><br>邀请码：" + writecode;
+        if (expires_time>0)
+        {
+            if(is_expires==1)
+            {
+                html = html + "<br/> 已于" + expires_datetime +"过期";
+            }
+            else
+            {
+                html = html + "<br/> 请于" + expires_datetime +"前核销";
+            }
+        }
+        layer.open({
+            title: [
+                "识别二维码入群：" + group_name,
+                'background-color:#fee002; color:#000;'
+            ],
+            content: html,
+            btn: '确定'
+        });
+    }
+
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+
+    //关闭关闭弹窗
+    function closeWindows(){
+        layer.closeAll();
+        scroll.beforeClose();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+{template 'common/header'}
+{template 'public/comhead'}
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#">平台设置</a></li>
+</ul>
+{if $operation == 'addcategory'}   
+<div class="main">
+		<div class="panel panel-default">
+            <div class="panel-body">
+                {if $_W['isfounder'] && !ShowSomeThing()}
+                    <div class="alert alert-success">
+                        温馨提示:</br>
+                        发布通知的时候可以调用当前通知模板的内容,利于快速编辑
+                    </div>	
+                {/if}		
+                <div class="row" style="margin-left: 15px;">
+                    {template 'public/ctrl_nave'}
+                </div>	
+                <ul class="nav nav-tabs" style="margin: 10px 0 10px 0;">
+                    <li {if $_GPC['op'] == 'display' || $_GPC['op'] == 'addcategory'}class="active"{/if}><a href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'display' ))}">分类管理</a></li>
+                    <li {if $_GPC['op'] == 'library' || $_GPC['op'] == 'addtemp'}class="active"{/if}><a href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'library' ))}">模板管理</a></li>
+                </ul>
+                <div class="header">
+                    <h3>添加模板分类</h3>
+                </div>
+                <form action="" method="post" class="form-horizontal form"	enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="col-xs-12 col-sm-3 col-md-2 control-label">排序</label>
+                        <div class="col-sm-2 col-xs-12">
+                            <input type="text" name="ssort" class="form-control" value="{$item['ssort']}" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-12 col-sm-3 col-md-2 control-label"><span style="color:red">*</span>标题</label>
+                        <div class="col-sm-2 col-xs-12">
+                            <input type="text" name="name" class="form-control" value="{$item['name']}" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-12 col-sm-3 col-md-2 control-label">选择学校类型</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <select name="type" style="width: 248px;">
+                                <option value="0" {if $item['type'] == 0}selected{/if}>通用</option>
+                                <option value="1" {if $item['type'] == 1}selected{/if}>培训学校</option>
+                                <option value="2" {if $item['type'] == 2}selected{/if}>公立学校</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-12 col-sm-3 col-md-2 control-label">是否启用</label>
+                        <div class="col-sm-6 col-xs-12">
+                            <label class='radio-inline'>
+                                <input type='radio' name='status' value='1' {if $item['status']==1 || !$item['status']}checked{/if} /> 是
+                            </label>
+                            <label class='radio-inline'>
+                                <input type='radio' name='status' value='2' {if $item['status']==2}checked{/if} /> 否
+                            </label>
+                        </div>
+                    </div>
+                    <input type="hidden" name='id' value="{$item['id']}">
+                
+                    <div class="form-group col-sm-12">
+                        <input type="submit" name="submit" value="提交" class="btn btn-primary col-lg-1" />
+                        <input type="hidden" name="token" value="{$_W['token']}" />
+                    </div>
+                </form>
+            </div>
+		</div>
+</div>
+{elseif $operation == 'display'}
+<div class="main">
+	<div class="panel panel-default">
+		<div class="panel-body">
+		{if $_W['isfounder'] && !ShowSomeThing()}
+		    <div class="alert alert-success">
+                温馨提示:</br>
+				发布通知的时候可以调用当前通知模板的内容,利于快速编辑
+            </div>	
+		{/if}	
+            <div class="row" style="margin-left: 15px;">
+                {template 'public/ctrl_nave'}
+            </div>
+            <ul class="nav nav-tabs" style="margin: 10px 0 10px 0;">
+                <li {if $_GPC['op'] == 'display'}class="active"{/if}><a href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'display' ))}">分类管理</a></li>
+                <li {if $_GPC['op'] == 'library'}class="active"{/if}><a href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'library' ))}">模板管理</a></li>
+            </ul>			
+			<form method="post" class="form-horizontal" id="formfans">
+				<div class="row-fluid">
+					<div class="control-group" style="padding-bottom: 10px;">
+                        <a class="btn btn-default" href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'addcategory' ))}"><i class="fa fa-plus"></i>添加分类</a>
+                        {if $showrecovery}
+                        <a class="btn btn-primary" href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'recovery'))}">恢复默认</a>
+                        {else}
+                        <a class="btn btn-danger" href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'truncate' ))}" onclick="return confirm('确认清空所有数据吗？确定后模板库数据也将进行清空哦！');return false;">一键清空</a>
+                        {/if}
+                    </div>
+                   
+				</div>			
+                <div style="position:relative">
+                    <div class="panel-body table-responsive">
+                        <table class="table table-hover" style="position:relative">
+                            <thead class="navbar-inner">
+                                <tr>
+                                    <th style="text-align: center;">排序</th>
+                                    <th style="text-align: center;">标题</th>
+                                    <th style="text-align: center;">学校类型</th>
+                                    <th style="text-align: center;">状态</th>
+                                    <th style="text-align: center;">手机端模板</th>
+                                    <th style="text-align: center;">电脑端模板</th>
+                                    <th style="text-align: center;">创建时间</th>
+                                    <th style="text-align: center;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody style="text-align: center;">
+                                {loop $list $item}
+                                    <tr>
+                                        <td>{$item['ssort']}</td>
+                                        <td>{$item['name']}</td>
+                                        <td>
+                                            {if $item['type'] == 1}
+                                                培训学校
+                                            {else if $item['type'] == 2}
+                                                公立学校
+                                            {else}
+                                                通用
+                                            {/if}
+                                        </td>
+                                        <td>{if $item['status'] == 1}显示{else}隐藏{/if}</td>
+                                        <td>{$item['mobilenum']}个</td>
+                                        <td>{$item['webnum']}个</td>
+                                        <td>{php echo date('Y-m-d H:i',$item['createtime'])}</td>
+                                        <td>
+                                            <a href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'addcategory', 'id' => $item['id']))}" data-toggle="tooltip" data-placement="top"  class="btn btn-default btn-sm manage"><i class="fa fa-edit"></i>修改</a>
+                                            <a href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'delcategory', 'id' => $item['id']))}" data-toggle="tooltip" data-placement="top"  class="btn btn-default btn-sm manage"  onclick="return confirm('确认删除此分类吗？');return false;"><i class="fa fa-times"></i>删除</a> 
+                                        </td>
+                                    </tr>
+                                {/loop}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+			</form>
+			{$pager}
+		</div>
+	</div>	
+</div>
+{elseif $operation == 'library'}
+<style>
+    .card-body{
+        margin: 10px;
+    }
+    .card h4{
+        padding: 0 2% 0 2%;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
+    }
+    .text_over{     
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 8;
+        height: 160px;
+        overflow: hidden;
+        padding: 0 8% 8% 8%;
+    }
+</style>
+<div class="main">
+    <div class="panel panel-default ">
+        <div class="panel-body">
+            {if $_W['isfounder'] && !ShowSomeThing()}
+                <div class="alert alert-success">
+                    温馨提示:</br>
+                    发布通知的时候可以调用当前通知模板的内容,利于快速编辑
+                </div>	
+            {/if}	
+            <div class="row" style="margin-left: 15px;">
+                {template 'public/ctrl_nave'}
+            </div>
+            <ul class="nav nav-tabs" style="margin: 10px 0 10px 0;">
+                <li {if $_GPC['op'] == 'display'}class="active"{/if}><a href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'display' ))}">分类管理</a></li>
+                <li {if $_GPC['op'] == 'library'}class="active"{/if}><a href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'library' ))}">模板管理</a></li>
+            </ul>	
+            <div class="row-fluid">
+                <div class="control-group" style="padding-bottom: 10px;">
+                    <select style="width: 200px;" onchange="selectcate(this)">
+                        <option value="0">请选择</option>
+                        {loop $cateList $row}
+                        <option value="{$row['id']}" {if $_GPC['cate_id'] == $row['id']}selected{/if} >{$row['name']}</option>
+                        {/loop}
+                    </select>
+                    <a class="btn btn-default" href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'addtemp' ))}"><i class="fa fa-plus"></i>添加模板</a>
+                </div>
+            </div>	
+            <div class="list" style="display: flex;flex-wrap: wrap;justify-content: right;">
+                {loop $list $row}
+                <div class="card" style="width:12%;margin: 1% 1% 1% 0;box-shadow: 8px 12px 18px 8px rgba(25, 42, 70, 0.13);">
+                    {if $row['status'] == 1}
+                    <img class="card-img-top"  style="object-fit: cover; width: 100%; height: 170px;border-radius: 5px 5px 0px 0px;" src="{php echo tomedia($row['thumb'])}" alt="Card image" >
+                    <h4>{$row['name']}</h4>
+                    {else}
+                    <h4 style="height: auto !important;">{$row['name']}</h4>
+                    <div class="text_over">{$row['content']}</div>
+                    {/if}
+                    <div class="card-body">
+                    <p class="card-text">{$row['catename']}
+                        {if $row['status'] == 1}
+                        <label class="lable label-info" style=" font-size: 12px; border-radius: 10px; padding: 2px;color:#fff">电脑端</label>
+                        {else}
+                        <label class="lable label-success" style=" font-size: 12px; border-radius: 10px; padding: 2px;color:#fff">手机端</label>
+                        {/if}
+                    </p>
+                    <a href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'addtemp', 'id' => $row['id'],'schoolid' => $schoolid))}" class="btn btn-primary btn-xs">修改</a>
+                    <a href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'deltemp', 'id' => $row['id'],'schoolid' => $schoolid))}" class="btn btn-danger btn-xs">删除</a>
+                    </div>
+                </div>
+                {/loop}
+            </div>
+        
+            {$pager}
+        </div>
+    </div>
+</div>
+<script>
+    function selectcate(e){
+        let cate_id = $(e).val();
+        location.href = "{php echo $this->createWebUrl('templatelibrary', array('op' => 'library','schoolid' => $schoolid))}&cate_id="+cate_id
+    }
+</script>
+{elseif $operation == 'addtemp'}   
+<style>
+    .modal.in .modal-dialog {
+    transform: translate(0%,-0%);
+}
+</style>
+<div class="main">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            {if $_W['isfounder'] && !ShowSomeThing()}
+            <div class="alert alert-success">
+                温馨提示:</br>
+                发布通知的时候可以调用当前通知模板的内容,利于快速编辑
+            </div>	
+            {/if}	
+            <div class="row" style="margin-left: 15px;">
+                {template 'public/ctrl_nave'}
+            </div>	
+            <ul class="nav nav-tabs" style="margin: 10px 0 10px 0;">
+                <li {if $_GPC['op'] == 'display' || $_GPC['op'] == 'addcategory'}class="active"{/if}><a href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'display' ))}">分类管理</a></li>
+                <li {if $_GPC['op'] == 'library' || $_GPC['op'] == 'addtemp'}class="active"{/if}><a href="{php echo $this->createWebUrl('templatelibrary', array('op' => 'library' ))}">模板管理</a></li>
+            </ul>	
+            <div class="header">
+                <h3>添加模板分类</h3>
+            </div>
+            <form action="" method="post" class="form-horizontal form"	enctype="multipart/form-data">
+                <div class="form-group">
+                    <label class="col-xs-12 col-sm-3 col-md-2 control-label">排序</label>
+                    <div class="col-sm-2 col-xs-12">
+                        <input type="text" name="ssort" class="form-control" value="{$item['ssort']}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-12 col-sm-3 col-md-2 control-label"><span style="color:red">*</span>标题</label>
+                    <div class="col-sm-2 col-xs-12">
+                        <input type="text" name="name" class="form-control" value="{$item['name']}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-12 col-sm-3 col-md-2 control-label">选择分类</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <select name="cate_id" style="width: 248px;">
+                            <option value="0">请选择</option>
+                            {loop $cateList $row}
+                            <option value="{$row['id']}" {if $item['cate_id'] == $row['id']}selected{/if}>{$row['name']}</option>
+                            {/loop}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-12 col-sm-3 col-md-2  control-label">图片</label>
+                    <div class="col-sm-6">
+                        {php echo tpl_form_field_image('thumb', $item['thumb'])}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-xs-12 col-sm-3 col-md-2  control-label">描述</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" name="description" value="{$item['description']}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-12 col-sm-3 col-md-2 control-label">电脑端或手机端</label>
+                    <div class="col-sm-6 col-xs-12">
+                        <label class='radio-inline'>
+                            <input type='radio' name='status' value='1' {if $item['status']==1 || !$item['status']}checked{/if} /> 电脑端
+                        </label>
+                        <label class='radio-inline'>
+                            <input type='radio' name='status' value='2' {if $item['status']==2}checked{/if} /> 手机端
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group web" {if $item['status']==1 || !$item['status']}{else}style="display: none;"{/if}>
+                    <label class="col-xs-12 col-sm-3 col-md-2 control-label">内容</label>
+                    <div class="col-sm-6">
+                        {php echo tpl_ueditor('content', $item['content']);}
+                    </div>
+                </div>
+                <div class="form-group mobile" {if $item['status'] != 2}style="display: none;"{/if}>
+                    <label class="col-xs-12 col-sm-3 col-md-2  control-label">内容</label>
+                    <div class="col-sm-6">
+                        <textarea name="mobilecontent" cols="105" rows="5" style="resize: none; border-color: #ccc;">{$item['content']}</textarea>
+                    </div>
+                </div>
+                <input type="hidden" name='id' value="{$item['id']}">
+                <div class="form-group col-sm-12">
+                    <input type="submit" name="submit" value="提交" class="btn btn-primary col-lg-1" />
+                    <input type="hidden" name="token" value="{$_W['token']}" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $("input[name=status]").change(function(){
+        console.log($(this).val());
+        if($(this).val() == 1){
+            $(".web").show()
+            $(".mobile").hide()
+        }else{
+            $(".mobile").show()
+            $(".web").hide()
+        }
+    })
+</script>
+{/if}
+{template 'common/footer'}

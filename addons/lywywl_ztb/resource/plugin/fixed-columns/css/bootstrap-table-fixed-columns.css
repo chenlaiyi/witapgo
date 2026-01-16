@@ -1,0 +1,32 @@
+.fixed-table-header-columns
+{
+    position: absolute;
+    background-color: #fff;
+    display: none;
+    box-sizing: border-box;
+    overflow: hidden;
+    right: 0;
+}
+.fixed-table-body-columns {
+    position: absolute;
+    background-color: #fff;
+    display: none;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.fixed-table-header-columns .table,
+.fixed-table-body-columns .table {
+    border-left: 1px solid #ddd;
+    z-index: 1;
+}
+
+.fixed-table-header-columns .table.table-no-bordered,
+.fixed-table-body-columns .table.table-no-bordered {
+    border-left: 1px solid transparent;
+}
+
+.fixed-table-body-columns table {
+    position: absolute;
+    animation: none;
+}

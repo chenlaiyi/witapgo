@@ -1,0 +1,73 @@
+﻿@charset "utf-8";
+/****************商家分销**可放在index.css后面**************/
+.retail li{ width:50%; float:left;text-align:center;}
+.Assets .retail li .money_info h2{ text-align:center; float:none; display:inline-block }
+.Assets .retail li .money_info .cash_a{ float:none; top:-0.1rem; position:relative}
+.retalMenu{ margin-top:-1rem}
+.retalMenu li{ width:50%; float:left; position:relative; padding-left:2.2rem; box-sizing:border-box; height:2rem; border-bottom:1px solid #f0f0f0; padding-top:0.55rem; padding-bottom:0.5rem }
+.retalMenu li:nth-child(even){ border-left:1px solid #f0f0f0}
+.retalMenu li a{ display:block;}
+.retalMenu li a img{ width:1.06rem; position:absolute; left:0.64rem; top:0.5rem}
+.retalMenu li a h6{ font-size:0.37rem; font-weight:normal; line-height:0.5rem}
+
+.pd5_10{ padding: 0.13rem}
+
+/*排行榜*/
+.rankingRetail{ line-height:1.13rem; position:relative; height:1.13rem;  border-radius:0.26rem ; background:#fff; padding-left:2rem}
+.rankingRetail .myRanking{ text-align:center; position:absolute; width:2rem; left:0}
+.rankingRetail em img{ position:relative; margin-left:0.13rem; top:0.13rem}
+.rankingRetail figure{ height:1.13rem}
+.rankingRetail figure img{ width:1.13rem; height:1.13rem; border-radius:50%;}
+.rankingRetail figure figcaption{ position:absolute; left:3.39rem; top:0.3rem }
+.rankingTitRetail  a{display:inline-block; border:1px solid #ffd213; border-right:0; text-align:center; padding:0.2rem; background:#fff}
+.rankingTitRetail a.selected{background: #ffd213;border: 1px solid #ffd213;}
+.rankingTitRetail a:first-child{border-radius:0.6rem 0 0 0.6rem;}
+.rankingTitRetail a:last-child{border-radius: 0 0.6rem 0.6rem 0;border-right:1px solid #ffd213;}
+/*-----排行列表--*/
+.rankingListRetail li{ height:1rem; line-height:1rem; border-bottom:1px solid #eee; padding:0.2rem 0; overflow:hidden; position:relative;}
+.rankingListRetail li span{ width:1rem; font-size:0.4rem; text-align:center; color:#999 }
+.rankingListRetail li span,.paihang li em{ display:block; float:left}
+.rankingListRetail li span img{ width:0.53rem; height:auto; display:block; margin:0.1rem 0 0 0.2rem;}
+.rankingListRetail li em{ float:right}
+.rankingListRetail li em img,.rankingRetail .coin img{ width:0.56rem; position:relative; top:0.12rem; margin-left:0.13rem}
+.rankingListRetail li dl{ float:left; }
+.rankingListRetail li dl span,.paihang li em{font-size:0.373rem; position:absolute; right:0;}
+.rankingListRetail li dl dt{ width:1.12rem; float:left}
+.rankingListRetail li dl dd{ width:3.2rem; line-height:0.5rem; float:left; padding-left:0.2rem; font-size:0.373rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.rankingListRetail li dl span{ width:100%;  }
+.rankingListRetail li dl dt img{ width:1rem; height:1rem; border-radius:50%; -webkit-border-radius:50%; display:block;}
+
+/*-----排行列表--*/
+.marketingInfoListRetail li{ line-height:1rem; border-bottom:1px solid #eee; padding:0.2rem 0; overflow:hidden; position:relative;}
+.marketingInfoListRetail li span{ width:1rem; font-size:0.4rem; text-align:center; color:#999 }
+.marketingInfoListRetail li span,.paihang li em{ display:block; float:left}
+.marketingInfoListRetail li span img{ width:0.53rem; height:auto; display:block; margin:0.1rem 0 0 0.2rem;}
+.marketingInfoListRetail li em{ float:right}
+.marketingInfoListRetail li em img,.rankingRetail .coin img{ width:0.56rem; position:relative; top:0.12rem; margin-left:0.13rem}
+.marketingInfoListRetail li dl{ float:left; }
+.marketingInfoListRetail li dl span,.paihang li em{font-size:0.373rem; position:absolute; right:0;}
+.marketingInfoListRetail li dl dt{ width:1.12rem; float:left}
+.marketingInfoListRetail li dl dd{ width:3.2rem; line-height:0.5rem; float:left; padding-left:0.2rem; font-size:0.373rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.marketingInfoListRetail li dl span{ width:100%;  }
+.marketingInfoListRetail li dl dt img{ width:1rem; height:1rem; border-radius:50%; -webkit-border-radius:50%; display:block;}
+
+.cf69{ color:#f69802}
+
+.obj_preview ul { text-align: center; margin-top:0.4rem}
+.obj_preview li{ width:90%; display:inline-block; font-size:0.3733333333333333rem; text-align:center; margin-top:0.4rem;}
+.obj_preview .copybtn{ background:#ebebeb; display:inline-block; margin-bottom:0.13rem; padding: 0 0.4rem; border-radius:0.6rem; width:auto!important; height:auto!important; color:#000}
+.obj_preview .copyimg{height:0.6rem;line-height:0.6rem; display:inline-block; vertical-align:middle; margin-right:0.1333rem}
+.copytxt{word-wrap:break-word;word-break:break-all;text-align:justify; border:1px dashed #000; padding:0.13rem 0.32rem; border-radius:0.13rem; margin-top:0.3rem; line-height:0.8rem}
+
+.recordRet li{ line-height:0.8rem; background:#fff; border-bottom:1px solid #e4e4e4}
+.ewmRetail img{ width:46%}
+.recordRet li em img{ width:0.56rem; position:relative; top:0.12rem; margin-left:0.13rem}
+
+.pcOWap{ padding:0 0.62rem; height:0.8rem; line-height:0.8rem; background:#ffd213; border-radius:0 0.6rem 0.6rem 0; font-size:0.42rem; margin-top:0.2rem; display:inline-block}
+.ewmRetail .billEwm img{ width:60%}
+
+.tabContainer ul.teamTitle{position: absolute; left: 2rem;top: 0;    z-index: 20;    width: 80%; height:1.08rem; line-height:1.08rem}
+.tabContainer ul.teamTitle li span{ height:1.08rem; line-height:1.08rem}
+
+.retail_user_info img{ display:inline-block; margin-right:0.133rem; width:0.68rem; height:0.68rem; border-radius:50%; vertical-align: middle; }
+.recordRet li h2{ overflow:hidden}

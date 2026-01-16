@@ -1,0 +1,73 @@
+# 数据目录
+data/
+attachment/
+runtime/
+cache/
+logs/
+tmp/
+temp/
+
+# 配置文件（敏感信息）
+wp-confiq.php
+*.config.php
+config.php
+
+# 备份文件
+*.bak
+*.backup
+*.old
+*_backup_*
+
+# 压缩包
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# 编辑器文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 日志文件
+*.log
+*.txt
+debug_*.txt
+ps_*.txt
+nginx_*.txt
+server_*.txt
+php_*.txt
+
+# 临时文件
+2pMyw37cCB.txt
+7262262489.txt
+H34QEhLkS5.txt
+I9YKXwUiz0.txt
+KBKsvtnEJs.txt
+ktsKOcsBAv.txt
+Nfry3yqTCQ.txt
+oE3WgTEQg0.txt
+RneWAL71zv.txt
+Ss7pboYRue.txt
+TIp4sMJmHJ.txt
+ytkxlPftjJ.txt
+
+# APK 文件
+*.apk
+
+# MACOSX
+__MACOSX/
+
+# Claude 配置（可选）
+.claude/
+
+# 微信验证文件
+MP_verify_*.txt
+WW_verify_*.txt

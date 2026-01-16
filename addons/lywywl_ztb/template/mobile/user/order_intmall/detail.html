@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'user/common/header'}
+<body>
+<!--订单详情-->
+<section class="order_state">
+    <span class="unpaid font30">{php echo $orderIntmallAppStatus[$model['status']]}</span>
+</section>
+{if $model['status']>2}
+{if $model['fedex_id']==0}
+<section class="bg_fff f-yahei">
+    <span class="item_addr clearfix">
+        <div class="addr van fl">
+            <p class="green">商品由商家提供上门服务，请保证电话畅通耐心等待服务人员上门服务，服务完毕后请点击收货。</p>
+        </div>
+        <span></span>
+    </span>
+</section>
+{else}
+<section class="bg_fff f-yahei">
+    <a href="{php echo $this->createMobileUrl('user.order_logistics',array('act'=>'index','store_id'=>$store_id,'ordernumber'=>$model['ordernumber'],'types'=>1))}" class="item_addr clearfix">
+        <div class="addr van fl" id="content">
+            <p class="green">查询中，请稍等……</p>
+        </div>
+        <span></span>
+    </a>
+</section>
+<script type="text/javascript">
+    $(function () {
+        getOrderTraces();
+    })
+</script>
+{/if}
+{else}
+<section class="bg_fff f-yahei">
+    <span class="item_addr clearfix">
+        <div class="addr van fl">
+            <p class="green">商家未发货，请耐心等待或拨打电话：<a href="tel:{$store['mobile']}">{$store['mobile']}</a>咨询！</p>
+        </div>
+        <span></span>
+    </span>
+</section>
+{/if}
+<section>
+    <section class="order_item order_detail_item">
+        <section class="order_goods">
+            <img src="{php echo tomedia($model['product_thumb'])}"/>
+            <h3>{$model['product_title']}</h3>
+            <p class="font26 c9">
+                <span class="font30 main_red price">{$model['score']}</span>积分
+                {if $model['total_money']>0}
+                <span class="font30 black plus">+</span><span class="font30 main_red price">{$model['total_money']}</span>元
+                {/if}
+            </p>
+        </section>
+    </section>
+    <div class="order_detail_price bg_fff">
+        <ul class="font30">
+            <li><span class="fr">{$model['score']}</span><span class="c9 font28">积分支付</span></li>
+            <li><span class="fr">￥{$model['sys_money']}</span><span class="c9 font28">余额抵扣</span></li>
+            <li><span class="fr main_red">¥{$model['pay_money']}</span><span class="font28">微信支付</span></li>
+        </ul>
+    </div>
+</section>
+{if $model['is_fedex']==0}
+<!--收货信息-->
+<section class="order_detail_title font30 c9">收货信息（到店自提）</section>
+<section class="order_detail_info font28">
+    <ul>
+        <li><span>收货人：</span>{$model['username']}</li>
+        <li><span>手机号码：</span>{$model['mobile']}</li>
+    </ul>
+</section>
+{/if}
+<!--订单备注-->
+<section class="order_detail_info font28">
+    <ul>
+        <li><span>订单备注：</span>{$model['note']}</li>
+    </ul>
+</section>
+<!--订单编号-->
+<section class="order_detail_info font28" style="margin-bottom:0">
+    <ul>
+        <li><span>订单编号：</span>{$model['ordernumber']}</li>
+        {loop $logList $index $item}
+        <li>
+            {if $item['status'] == 1}
+            <span>下单时间：</span>
+            {elseif $item['status'] == 2}
+            <span>支付时间：</span>
+            {elseif $item['status'] == 3}
+            <span>发货时间：</span>
+            {elseif $item['status'] == 4}
+            <span>收货时间：</span>
+            {else}
+            <span>取消时间：</span>
+            {/if}
+            {php echo date('Y-m-d H:i:s', $item['createtime'])}</li>
+        {/loop}
+    </ul>
+</section>
+{if $model['status']==1}
+<section class="pay_submit">
+    <input id="submit" type="button" class="button" value="去支付"/>
+</section>
+{/if}
+<script type="text/javascript">
+    $(function () {
+        $("#submit").click(function () {
+            window.location.href="{php echo $this->createMobileUrl('user.order_pay',array('act'=>'index','store_id'=>$store_id,'ordernumber'=>$model['ordernumber']))}";
+        })
+    })
+    function getOrderTraces() {
+        $.ajax({
+            type: "post",
+            url: "{php echo $this->createMobileUrl('user.order_logistics', array('act' => 'getOrderTraces','store_id'=>$store_id));}",
+            data: {
+                "code": '{$model['fedex_code']}',
+                "number": '{$model['fedex_number']}',
+                "mobile": '{$model['mobile']}'
+            },
+            dataType:'json',
+            success: function (result) {
+                if (result.status === 1) {
+                    var jsonData = JSON.parse(result.tracesData);
+                    var expressHtml = "";
+                    if(jsonData['Success']){
+                        var item = jsonData['Traces'][jsonData['Traces'].length-1];
+                        expressHtml="<p class='green'>"+(item['AcceptStation'])+"</p><time class='cb4 font28' style='margin-left: 0.8rem;'>"+(item['AcceptTime'])+"</time>";
+                    }else{
+                        expressHtml="<p class='green'>获取物流信息失败，请稍后重试！</p>";
+                    }
+                    $("#content").html(expressHtml);
+                } else {
+                    layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

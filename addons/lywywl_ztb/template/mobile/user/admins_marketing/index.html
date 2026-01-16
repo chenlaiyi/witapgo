@@ -1,0 +1,661 @@
+<!doctype html>
+<html>
+{template 'user/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/clipboard/clipboard.min.js">
+<style>
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {position: static}
+    .layui-m-layercont {padding: 20px 20px;line-height: 22px;text-align: center;}
+
+    .obj_preview ul { text-align: center; margin-top:0.4rem}
+    .obj_preview li{ width:90%; display:inline-block; font-size:0.3733333333333333rem; text-align:center; margin-top:0.4rem;}
+    .obj_preview li .ewm{ width:60%; display:block; margin:0 auto 0.32rem;}
+    .obj_preview .copybtn{ background:#ebebeb; display:inline-block; margin-bottom:15px; padding: 0.2rem 0.4rem; border-radius:0.6rem;}
+    .obj_preview .copyimg{height:0.6rem;line-height:0.6rem; display:inline-block; vertical-align:middle; margin-right:0.1333rem}
+
+</style>
+<body >
+<!--中心区域-->
+<section class="trace">
+    <span class="attation">关注公众号, 实时接收信息</span>
+    <section class="trace_info tc "><img src="{php echo tomedia($userModel['headurl'])}" alt="{$userModel['name']}"/>
+        <h2 class="fn font34 mt10">{$userModel['name']}</h2>
+        <p><span class="exclusive_link"  style="padding:0.16rem 0.48rem;font-size:0.36rem;animation:myfirst 1s infinite;">进入活动</span></p>
+        <p class="font30 mt15">{$teamModel['name']}<span class="ml10 power">{php echo $userModel['is_manager']==1?'团队管理':'团队成员'} {if !empty($userModel['mobile'])}电话：{$userModel['mobile']}{/if}</span>
+        </p>
+    </section>
+    {if $activity_types_name=='分享红包' || $activity_types_name=='红包拓客' || $activity_types_name=='联盟拓客' || $activity_types_name=='锦鲤抽奖' || $activity_types_name=='助力砍价' || $activity_types_name=='经典拼团' || $activity_types_name=='阶梯拼团' || $activity_types_name=='全民投票' || $activity_types_name=='问卷调查' || $activity_types_name=='报名拓客' || $activity_types_name=='全民拼团' || $activity_types_name=='挑战10秒'|| $activity_types_name=='进阶团'||  $activity_types_name=='团中团'}
+
+    {if $activity_types_name=='分享红包'}
+    <section class="pd24">
+        <ul class="trace_statis clearfix">
+            <li>团队排行/浏览<h2>{$teamRanking}/{$teamMarketing}</h2></li>
+            <li>我的排行/浏览<h2>{$userRanking}/{$userModel['share_view_num']}</h2></li>
+        </ul>
+    </section>
+    {/if}
+
+    {if $activity_types_name=='锦鲤抽奖'}
+    <section class="pd24">
+        <ul class="trace_statis clearfix">
+            <li>团队排行/抽奖码<h2>{$teamRanking}/{$teamMarketing}</h2></li>
+            <li>我的排行/抽奖码<h2>{$userRanking}/{$userModel['fish_code_num']}</h2></li>
+        </ul>
+    </section>
+    {/if}
+
+    {if $activity_types_name=='红包拓客' || $activity_types_name=='联盟拓客' || $activity_types_name=='助力砍价' || $activity_types_name=='经典拼团' || $activity_types_name=='阶梯拼团' || $activity_types_name=='报名拓客' || $activity_types_name=='全民拼团'|| $activity_types_name=='进阶团' || $activity_types_name=='团中团'}
+    <section class="pd24">
+        <ul class="trace_statis clearfix">
+            <li>团队排行/销售<h2>{$teamRanking}/{$teamMarketing}</h2></li>
+            <li>我的排行/销售<h2>{$userRanking}/{$userModel['marketing_num']}</h2></li>
+        </ul>
+    </section>
+    {/if}
+
+    {if $activity_types_name=='全民投票'}
+    <section class="pd24">
+        <ul class="trace_statis clearfix">
+            <li>团队排行/投票<h2>{$teamRanking}/{$teamMarketing}</h2></li>
+            <li>我的排行/投票<h2>{$userRanking}/{php echo ($userModel['get_num'] + $userModel['buy_num'])}</h2></li>
+        </ul>
+    </section>
+    {/if}
+
+    {if $activity_types_name=='问卷调查' || $activity_types_name=='挑战10秒'}
+    <section class="pd24">
+        <ul class="trace_statis clearfix">
+            <li>团队排行/参与<h2>{$teamRanking}/{$teamMarketing}</h2></li>
+            <li>我的排行/参与<h2>{$userRanking}/{$userModel['join_num']}</h2></li>
+        </ul>
+    </section>
+    {/if}
+
+    {else}
+    <section class="pd24">
+        <ul class="trace_statis clearfix">
+            <li>团队排行/奖品<h2>{$teamRanking}/{$teamMarketing}</h2></li>
+            <li>我的排行/奖品<h2>{$userRanking}/{$userModel['get_num']}</h2></li>
+        </ul>
+    </section>
+    {/if}
+</section>
+<section class="h100"></section>
+{if $userModel['is_manager'] == 1}
+<section class="trace_bg"><h2 class="fn"><span class=" d_ib rel">团队排行榜</span></h2></section>
+<section class="trace_list bgfff" style=" border-radius:10px;">
+    {if $activity_types_name=='分享红包' || $activity_types_name=='红包拓客' || $activity_types_name=='联盟拓客' || $activity_types_name=='集赞拓客' || $activity_types_name=='锦鲤抽奖' || $activity_types_name=='助力砍价' || $activity_types_name=='经典拼团' || $activity_types_name=='阶梯拼团' || $activity_types_name=='全民投票' || $activity_types_name=='问卷调查' || $activity_types_name=='报名拓客' || $activity_types_name=='全民拼团' || $activity_types_name=='挑战10秒' || $activity_types_name=='进阶团'|| $activity_types_name=='语音红包'|| $activity_types_name=='团中团'}
+
+    {if $activity_types_name=='分享红包'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 20%;">曝光</span><span style="width: 20%;">转发</span><span style="width: 20%;">奖品</span><span style="width: 20%;">浏览</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 20%;">{$team['click_num']}</span><span style="width: 20%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 20%;">{$team['today_get_num']}/{$team['get_num']}</span><span style="width: 20%;">{$team['today_share_view_num']}/{$team['share_view_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='红包拓客'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 13.33%;">曝光</span><span style="width: 13.33%;">转发</span><span style="width: 13.33%;">参与</span><span style="width: 13.33%;">返利</span><span style="width: 13.33%;">直销</span><span style="width: 13.33%;">销售</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 13.33%;">{$team['click_num']}</span><span style="width: 13.33%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 13.33%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 13.33%;">{$team['today_get_num']}/{$team['get_num']}</span><span style="width: 13.33%;">{$team['today_buy_num']}/{$team['buy_num']}</span><span style="width: 13.33%;">{$team['today_marketing_num']}/{$team['marketing_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='联盟拓客'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 13.33%;">曝光</span><span style="width: 13.33%;">转发</span><span style="width: 13.33%;">参与</span><span style="width: 13.33%;">返利</span><span style="width: 13.33%;">直销</span><span style="width: 13.33%;">销售</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 13.33%;">{$team['click_num']}</span><span style="width: 13.33%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 13.33%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 13.33%;">{$team['today_get_num']}/{$team['get_num']}</span><span style="width: 13.33%;">{$team['today_buy_num']}/{$team['buy_num']}</span><span style="width: 13.33%;">{$team['today_marketing_num']}/{$team['marketing_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='集赞拓客'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 16%;">曝光</span><span style="width: 16%;">转发</span><span style="width: 16%;">参与</span><span style="width: 16%;">奖品</span><span style="width: 16%;">获赞</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 16%;">{$team['click_num']}</span><span style="width: 16%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 16%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 16%;">{$team['today_get_num']}/{$team['get_num']}</span><span style="width: 16%;">{$team['today_praise_click_num']}/{$team['praise_click_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='锦鲤抽奖'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 20%;">曝光</span><span style="width: 20%;">转发</span><span style="width: 20%;">参与</span><span style="width: 20%;">抽奖码</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 20%;">{$team['click_num']}</span><span style="width: 20%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 20%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 20%;">{$team['today_fish_code_num']}/{$team['fish_code_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='助力砍价'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 13.33%;">曝光</span><span style="width: 13.33%;">转发</span><span style="width: 13.33%;">参与</span><span style="width: 13.33%;">返利</span><span style="width: 13.33%;">直销</span><span style="width: 13.33%;">销售</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 13.33%;">{$team['click_num']}</span><span style="width: 13.33%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 13.33%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 13.33%;">{$team['today_get_num']}/{$team['get_num']}</span><span style="width: 13.33%;">{$team['today_buy_num']}/{$team['buy_num']}</span><span style="width: 13.33%;">{$team['today_marketing_num']}/{$team['marketing_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='经典拼团'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 13.33%;">曝光</span><span style="width: 13.33%;">转发</span><span style="width: 13.33%;">参团</span><span style="width: 13.33%;">返利</span><span style="width: 13.33%;">直销</span><span style="width: 13.33%;">销售</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 13.33%;">{$team['click_num']}</span><span style="width: 13.33%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 13.33%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 13.33%;">{$team['today_get_num']}/{$team['get_num']}</span><span style="width: 13.33%;">{$team['today_buy_num']}/{$team['buy_num']}</span><span style="width: 13.33%;">{$team['today_marketing_num']}/{$team['marketing_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='阶梯拼团'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 13.33%;">曝光</span><span style="width: 13.33%;">转发</span><span style="width: 13.33%;">参团</span><span style="width: 13.33%;">返利</span><span style="width: 13.33%;">直销</span><span style="width: 13.33%;">销售</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 13.33%;">{$team['click_num']}</span><span style="width: 13.33%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 13.33%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 13.33%;">{$team['today_get_num']}/{$team['get_num']}</span><span style="width: 13.33%;">{$team['today_buy_num']}/{$team['buy_num']}</span><span style="width: 13.33%;">{$team['today_marketing_num']}/{$team['marketing_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='全民投票'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 16%;">曝光</span><span style="width: 16%;">转发</span><span style="width: 16%;">报名</span><span style="width: 16%;">投票</span><span style="width: 16%;">礼物</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 16%;">{$team['click_num']}</span><span style="width: 16%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 16%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 16%;">{$team['today_get_num']}/{$team['get_num']}</span><span style="width: 16%;">{$team['today_buy_num']}/{$team['buy_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='问卷调查'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 13.33%;">曝光</span><span style="width: 13.33%;">转发</span><span style="width: 13.33%;">参与</span><span style="width: 13.33%;">中奖</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 13.33%;">{$team['click_num']}</span><span style="width: 13.33%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 13.33%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 13.33%;">{$team['today_get_num']}/{$team['get_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='报名拓客'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 13.33%;">曝光</span><span style="width: 13.33%;">转发</span><span style="width: 13.33%;">参与</span><span style="width: 13.33%;">返利</span><span style="width: 13.33%;">直销</span><span style="width: 13.33%;">销售</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 13.33%;">{$team['click_num']}</span><span style="width: 13.33%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 13.33%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 13.33%;">{$team['today_get_num']}/{$team['get_num']}</span><span style="width: 13.33%;">{$team['today_buy_num']}/{$team['buy_num']}</span><span style="width: 13.33%;">{$team['today_marketing_num']}/{$team['marketing_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='全民拼团'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 15%;">团队名称</span><span style="width: 12.1%;">曝光</span><span style="width: 12.1%;">转发</span><span style="width: 12.1%;">参与</span><span style="width: 12.1%;">参团</span><span style="width: 12.1%;">返利</span><span style="width: 12.1%;">直销</span><span style="width: 12.1%;">销售</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 15%;">{$team['name']}/{$team['count']}</span><span style="width: 12.1%;">{$team['click_num']}</span><span style="width: 12.1%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 12.1%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 12.1%;">{$team['today_group_num']}/{$team['group_num']}</span><span style="width: 12.1%;">{$team['today_get_num']}/{$team['get_num']}</span><span style="width: 12.1%;">{$team['today_buy_num']}/{$team['buy_num']}</span><span style="width: 12.1%;">{$team['today_marketing_num']}/{$team['marketing_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='挑战10秒'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 20%;">曝光</span><span style="width: 20%;">转发</span><span style="width: 20%;">参与</span><span style="width: 20%;">奖品</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 20%;">{$team['click_num']}</span><span style="width: 20%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 20%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 20%;">{$team['today_get_num']}/{$team['get_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='进阶团'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 13.33%;">曝光</span><span style="width: 13.33%;">转发</span><span style="width: 13.33%;">参团</span><span style="width: 13.33%;">返利</span><span style="width: 13.33%;">直销</span><span style="width: 13.33%;">销售</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 13.33%;">{$team['click_num']}</span><span style="width: 13.33%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 13.33%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 13.33%;">{$team['today_get_num']}/{$team['get_num']}</span><span style="width: 13.33%;">{$team['today_buy_num']}/{$team['buy_num']}</span><span style="width: 13.33%;">{$team['today_marketing_num']}/{$team['marketing_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+    
+    {if $activity_types_name=='语音红包'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 20%;">曝光</span><span style="width: 20%;">转发</span><span style="width: 20%;">参与</span><span style="width: 20%;">返利</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 20%;">{$team['click_num']}</span><span style="width: 20%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 20%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 20%;">{$team['today_get_num']}/{$team['get_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+
+    {if $activity_types_name=='团中团'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 20%;">团队名称</span><span style="width: 13.33%;">曝光</span><span style="width: 13.33%;">转发</span><span style="width: 13.33%;">参团</span><span style="width: 13.33%;">返利</span><span style="width: 13.33%;">直销</span><span style="width: 13.33%;">销售</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 20%;">{$team['name']}/{$team['count']}</span><span style="width: 13.33%;">{$team['click_num']}</span><span style="width: 13.33%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 13.33%;">{$team['today_join_num']}/{$team['join_num']}</span><span style="width: 13.33%;">{$team['today_get_num']}/{$team['get_num']}</span><span style="width: 13.33%;">{$team['today_buy_num']}/{$team['buy_num']}</span><span style="width: 13.33%;">{$team['today_marketing_num']}/{$team['marketing_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {else}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder"><span style="width: 25%;">团队名称</span><span style="width: 25%;">曝光</span><span style="width: 25%;">转发</span><span style="width: 25%;">参与</span></li>
+        {loop $teamList $team}
+        <li class="clearfix"><span style="width: 25%;">{$team['name']}/{$team['count']}</span><span style="width: 25%;">{$team['click_num']}</span><span style="width: 25%;">{$team['today_repost_num']}/{$team['repost_num']}</span><span style="width: 25%;">{$team['today_get_num']}/{$team['get_num']}</span></li>
+        {/loop}
+    </ul>
+    {/if}
+</section>
+{/if}
+<section class="trace_bg"><h2 class="fn"><span class=" d_ib rel">成员排行榜</span></h2></section>
+<section class="pb10 font20 tc">（点击统计数据查看详细）</section>
+<section class="trace_list bgfff" style=" border-radius:10px;">
+    {if $activity_types_name=='分享红包' || $activity_types_name=='红包拓客' || $activity_types_name=='联盟拓客' || $activity_types_name=='集赞拓客' || $activity_types_name=='锦鲤抽奖' || $activity_types_name=='助力砍价' || $activity_types_name=='经典拼团' || $activity_types_name=='阶梯拼团' || $activity_types_name=='全民投票' || $activity_types_name=='问卷调查' || $activity_types_name=='报名拓客' || $activity_types_name=='全民拼团' || $activity_types_name=='挑战10秒' || $activity_types_name=='语音红包'|| $activity_types_name=='团中团'}
+    {if $activity_types_name=='分享红包'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 20%;">曝光</span>
+            <span style="width: 20%;">分享</span>
+            <span style="width: 20%;">奖品</span>
+            <span style="width: 20%;">浏览</span></li>
+        {loop $userList $user}
+        <li class="clearfix">
+            <span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 20%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 20%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 20%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'浏览','origin_id'=>$user['id']));}" ><span style="width: 20%;">{$user['today_share_view_num']}/{$user['share_view_num']}</span></a>
+            </li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='红包拓客'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 13.33%;">曝光</span>
+            <span style="width: 13.33%;">转发</span>
+            <span style="width: 13.33%;">参与</span>
+            <span style="width: 13.33%;">返利</span>
+            <span style="width: 13.33%;">直销</span>
+            <span style="width: 13.33%;">销售</span>
+        </li>
+        {loop $userList $user}
+        <li class="clearfix"><span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 13.33%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参与','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'直销','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_buy_num']}/{$user['buy_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'销售','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_marketing_num']}/{$user['marketing_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='联盟拓客'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 13.33%;">曝光</span>
+            <span style="width: 13.33%;">转发</span>
+            <span style="width: 13.33%;">参与</span>
+            <span style="width: 13.33%;">返利</span>
+            <span style="width: 13.33%;">直销</span>
+            <span style="width: 13.33%;">销售</span>
+        </li>
+        {loop $userList $user}
+        <li class="clearfix"><span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 13.33%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参与','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'直销','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_buy_num']}/{$user['buy_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'销售','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_marketing_num']}/{$user['marketing_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='集赞拓客'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 16%;">曝光</span>
+            <span style="width: 16%;">转发</span>
+            <span style="width: 16%;">参与</span>
+            <span style="width: 16%;">奖品</span>
+            <span style="width: 16%;">获赞</span>
+        </li>
+        {loop $userList $user}
+        <li class="clearfix"><span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 16%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 16%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参与','origin_id'=>$user['id']));}" ><span style="width: 16%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 16%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'点赞','origin_id'=>$user['id']));}" ><span style="width: 16%;">{$user['today_praise_click_num']}/{$user['praise_click_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='锦鲤抽奖'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 20%;">曝光</span>
+            <span style="width: 20%;">转发</span>
+            <span style="width: 20%;">参与</span>
+            <span style="width: 20%;">抽奖码</span>
+        </li>
+        {loop $userList $user}
+        <li class="clearfix">
+            <span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 20%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 20%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参与','origin_id'=>$user['id']));}" ><span style="width: 20%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'获码','origin_id'=>$user['id']));}" ><span style="width: 20%;">{$user['today_fish_code_num']}/{$user['fish_code_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='助力砍价'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 13.33%;">曝光</span>
+            <span style="width: 13.33%;">转发</span>
+            <span style="width: 13.33%;">参与</span>
+            <span style="width: 13.33%;">返利</span>
+            <span style="width: 13.33%;">直销</span>
+            <span style="width: 13.33%;">销售</span>
+        </li>
+        {loop $userList $user}
+        <li class="clearfix"><span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 13.33%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参与','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'直销','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_buy_num']}/{$user['buy_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'销售','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_marketing_num']}/{$user['marketing_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='经典拼团'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 13.33%;">曝光</span>
+            <span style="width: 13.33%;">转发</span>
+            <span style="width: 13.33%;">参团</span>
+            <span style="width: 13.33%;">返利</span>
+            <span style="width: 13.33%;">直销</span>
+            <span style="width: 13.33%;">销售</span>
+        </li>
+        {loop $userList $user}
+        <li class="clearfix"><span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 13.33%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参与','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'直销','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_buy_num']}/{$user['buy_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'销售','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_marketing_num']}/{$user['marketing_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='阶梯拼团'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 13.33%;">曝光</span>
+            <span style="width: 13.33%;">转发</span>
+            <span style="width: 13.33%;">参团</span>
+            <span style="width: 13.33%;">返利</span>
+            <span style="width: 13.33%;">直销</span>
+            <span style="width: 13.33%;">销售</span>
+        </li>
+        {loop $userList $user}
+        <li class="clearfix"><span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 13.33%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参与','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'直销','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_buy_num']}/{$user['buy_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'销售','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_marketing_num']}/{$user['marketing_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='全民投票'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 16%;">曝光</span>
+            <span style="width: 16%;">转发</span>
+            <span style="width: 16%;">报名</span>
+            <span style="width: 16%;">投票</span>
+            <span style="width: 16%;">礼物</span>
+        </li>
+        {loop $userList $user}
+        <li class="clearfix"><span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 16%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 16%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'报名','origin_id'=>$user['id']));}" ><span style="width: 16%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'投票','origin_id'=>$user['id']));}" ><span style="width: 16%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'礼物','origin_id'=>$user['id']));}" ><span style="width: 16%;">{$user['today_buy_num']}/{$user['buy_num']}</span></a></li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='问卷调查'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 13.33%;">曝光</span>
+            <span style="width: 13.33%;">转发</span>
+            <span style="width: 13.33%;">参与</span>
+            <span style="width: 13.33%;">中奖</span>
+        </li>
+        {loop $userList $user}
+        <li class="clearfix">
+            <span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 13.33%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参与','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='报名拓客'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 13.33%;">曝光</span>
+            <span style="width: 13.33%;">转发</span>
+            <span style="width: 13.33%;">参与</span>
+            <span style="width: 13.33%;">返利</span>
+            <span style="width: 13.33%;">直销</span>
+            <span style="width: 13.33%;">销售</span></li>
+        {loop $userList $user}
+        <li class="clearfix"><span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 13.33%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参与','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'直销','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_buy_num']}/{$user['buy_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'销售','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_marketing_num']}/{$user['marketing_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='全民拼团'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 15%;">成员名称</span>
+            <span style="width: 12.1%;">曝光</span>
+            <span style="width: 12.1%;">转发</span>
+            <span style="width: 12.1%;">参与</span>
+            <span style="width: 12.1%;">参团</span>
+            <span style="width: 12.1%;">返利</span>
+            <span style="width: 12.1%;">直销</span>
+            <span style="width: 12.1%;">销售</span>
+        </li>
+        {loop $userList $user}
+        <li class="clearfix"><span style="width: 15%;">{$user['name']}</span>
+            <span style="width: 12.1%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 12.1%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参与','origin_id'=>$user['id']));}" ><span style="width: 12.1%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参团','origin_id'=>$user['id']));}" ><span style="width: 12.1%;">{$user['today_group_num']}/{$user['group_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 12.1%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'直销','origin_id'=>$user['id']));}" ><span style="width: 12.1%;">{$user['today_buy_num']}/{$user['buy_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'销售','origin_id'=>$user['id']));}" ><span style="width: 12.1%;">{$user['today_marketing_num']}/{$user['marketing_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='挑战10秒'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 20%;">曝光</span>
+            <span style="width: 20%;">转发</span>
+            <span style="width: 20%;">参与</span>
+            <span style="width: 20%;">奖品</span></li>
+        {loop $userList $user}
+        <li class="clearfix"><span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 20%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 20%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参与','origin_id'=>$user['id']));}" ><span style="width: 20%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 20%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+
+    {if $activity_types_name=='进阶团'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 13.33%;">曝光</span>
+            <span style="width: 13.33%;">转发</span>
+            <span style="width: 13.33%;">参团</span>
+            <span style="width: 13.33%;">返利</span>
+            <span style="width: 13.33%;">直销</span>
+            <span style="width: 13.33%;">销售</span>
+        </li>
+        {loop $userList $user}
+        <li class="clearfix"><span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 13.33%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参与','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'直销','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_buy_num']}/{$user['buy_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'销售','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_marketing_num']}/{$user['marketing_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+    {if $activity_types_name=='语音红包'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 20%;">曝光</span>
+            <span style="width: 20%;">转发</span>
+            <span style="width: 20%;">参与</span>
+            <span style="width: 20%;">返利</span>
+        </li>
+        {loop $userList $user}
+        <li class="clearfix"><span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 20%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 20%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参与','origin_id'=>$user['id']));}" ><span style="width: 20%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 20%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+    {if $activity_types_name=='团中团'}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 20%;">成员名称</span>
+            <span style="width: 13.33%;">曝光</span>
+            <span style="width: 13.33%;">转发</span>
+            <span style="width: 13.33%;">参团</span>
+            <span style="width: 13.33%;">返利</span>
+            <span style="width: 13.33%;">直销</span>
+            <span style="width: 13.33%;">销售</span>
+        </li>
+        {loop $userList $user}
+        <li class="clearfix"><span style="width: 20%;">{$user['name']}</span>
+            <span style="width: 13.33%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'参与','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_join_num']}/{$user['join_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'直销','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_buy_num']}/{$user['buy_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'销售','origin_id'=>$user['id']));}" ><span style="width: 13.33%;">{$user['today_marketing_num']}/{$user['marketing_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+    {else}
+    <ul>
+        <li class="clearfix" style=" background-color:#fdfdfd; font-weight:bolder">
+            <span style="width: 25%;">成员名称</span>
+            <span style="width: 25%;">曝光</span>
+            <span style="width: 25%;">转发</span>
+            <span style="width: 25%;">参与</span>
+        </li>
+        {loop $userList $user}
+        <li class="clearfix"><span style="width: 25%;">{$user['name']}</span>
+            <span style="width: 25%;">{$user['click_num']}</span>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'分享','origin_id'=>$user['id']));}" ><span style="width: 25%;">{$user['today_repost_num']}/{$user['repost_num']}</span></a>
+            <a href ="{php echo $this->createMobileUrl('user.admins_marketing_info', array('store_id' => $store_id, 'activity_id' => $activity_id,'info_name'=>$user['name'],'info_type'=>'奖品','origin_id'=>$user['id']));}" ><span style="width: 25%;">{$user['today_get_num']}/{$user['get_num']}</span></a>
+        </li>
+        {/loop}
+    </ul>
+    {/if}
+</section>
+
+<section class="forceAttention" style="display: none;">
+    <section class="mask"></section>
+    <section class="attentionCon" style="margin-top: 105px;">
+        <section class="wechatInfo">
+            <h4>关注公众号</h4>
+            <section class="wechatCode"><img src="{php echo tomedia($config['wx_qrcode'])}"></section>
+            <p>长按识别图中二维码 </p>
+            <p>关注后平台消息及时推送给您！</p>
+            <section class="finger"><img src="{__MOBILE_TMP_IMG__}/finger.png"></section>
+        </section>
+        <img src="{__MOBILE_TMP_IMG__}/close.png" class="followClose"> </section>
+</section>
+
+<script>
+    $(function () {
+
+        //一键关注
+        $(".attation").click(function(e) {
+            $(".forceAttention").show();
+            $(".attentionCon").css("margin-top",($(window).height()-$(".attentionCon").height())/2+"px");
+        });
+        $(".forceAttention .followClose").click(function(e) {
+            $(".forceAttention").hide();
+        });
+
+        //专属链接
+        $(".exclusive_link").click(function(e) {
+            window.location.href = "{php echo replaceDieDomain($config, __MURL('scan', array('token' => $actModel['token'], 'origin_id' => $userModel['id']), true, true), 0, $actModel['id'], 0)}";
+        });
+
+    });
+
+
+</script>
+</body>
+</html>

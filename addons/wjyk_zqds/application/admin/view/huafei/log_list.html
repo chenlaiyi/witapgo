@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>服务记录</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+</head>
+<style>
+
+.layui-table-cell, .layui-table-tool-panel li {
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+
+
+  }
+</style>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">充值订单</div>
+                <div class="layui-card-body">
+					<div class="demoTable" style="margin-bottom:10px;display: flex;">
+					
+						<div class="layui-form" action="">
+				            <div class="layui-input-inline">
+				            	<label class="layui-form-label">充值方式</label>
+							    <div class="layui-input-block">
+							      <select  lay-verify="" id="way">
+					              	<option value="0">请选择充值方式</option>
+					              	<option value="1">自动充值</option>
+							        <option value="2">手动充值</option>
+							        <option value="3">代理充值</option>
+							      </select>
+							    </div>
+						  	</div>
+					    </div>
+					
+						<div class="layui-form" action="">
+				            <div class="layui-input-inline">
+				            	<label class="layui-form-label">充值类型</label>
+							    <div class="layui-input-block">
+							      <select  lay-verify="" id="type">
+					              	<option value="0">请选择充值类型</option>
+					              	<option value="1">慢充</option>
+							        <option value="2">快充</option>
+							      </select>
+							    </div>
+						  	</div>
+					    </div>
+
+			            <div class="layui-form" action="">
+				            <div class="layui-input-inline">
+				            	<label class="layui-form-label">订单状态</label>
+							    <div class="layui-input-block">
+							      <select  lay-verify="" id="is_status">
+					              	<option value="0">请选择订单状态</option>
+					              	<option value="1">待充值</option>
+							        <option value="2">充值成功</option>
+							        <option value="3">充值失败</option>
+							      </select>
+							    </div>
+						  	</div>
+					    </div>
+			            <div class="layui-inline">
+					      <label class="layui-form-label">时间范围</label>
+					      <div class="layui-input-inline">
+					        <input type="text" class="layui-input" id="test10" placeholder=" - " readonly style="width: 280px;">
+					      </div>
+					    </div>
+			            <button class="layui-btn" style="margin-left:20px;" data-type="reload">搜索</button>
+						<button type="button" class="layui-btn layui-btn-warm" id="exportExcel" name="exportExcel">
+                        <i class="layui-icon"></i>导出Excel</button>
+					</div>
+					
+
+                    <table class="layui-hide" id="test-table-operate" lay-filter="test-table-operate"></table>
+					<script type="text/html" id="test-table-operate-barDemo">
+						{{#  if(d.is_status == 1 && d.way == 2){ }}
+							<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="finish">确认成功</a>
+							<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="refund">手动退款</a>
+  						{{#  } }}
+						{{#  if(d.is_status == 2){ }}
+							<a class="layui-btn layui-btn-xs" >充值成功</a>
+  						{{#  } }}
+						{{#  if(d.is_status == 3){ }}
+							<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="refund">手动退款</a>
+							{{#  if(d.fail_msg != ''){ }}
+								<a class="layui-btn  layui-btn-warm layui-btn-xs" lay-event="view">查看原因</a>
+							{{#  } }}
+							
+  						{{#  } }}
+						{{#  if(d.is_status == 4){ }}
+							<a class="layui-btn layui-btn-danger layui-btn-xs" >已退款</a>
+						{{#  } }}	
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+        ,excel: '../layui/layui_exts/excel/excel',
+    }).use(['jquery','index', 'table', 'excel','laydate','form'], function(){
+        var $ = layui.$
+        	,table = layui.table
+            ,admin = layui.admin
+            ,excel = layui.excel
+            ,form = layui.form
+            ,laydate = layui.laydate;
+        	
+
+            
+        laydate.render({
+            elem: '#test10'
+           	,range: true
+           	,trigger: 'click'
+   	    	,type: 'datetime'
+   	    	,format: 'yyyy/MM/d HH:mm:ss'
+          });
+        	
+
+        table.render({
+            elem: '#test-table-operate'
+            ,url:"{:siteUrl('admin/huafei/log_list','','web')}"
+           	,cellMinWidth: 80
+           	,cols: [[
+                 {field:'orderid', title: '订单编号', sort: true}
+                 ,{field:'uid', title: '下单用户',templet:function(d){
+                   	return "<img style='max-width:25px;' src='"+d.avatar+"'></img>"+d.nickname;
+                 }}
+                 ,{field:'mobile', title: '手机号码'}
+                 
+                 ,{field:'money', title: '充值金额', sort: true}
+                 ,{field:'price', title: '支付金额', sort: true}
+                 
+                 ,{field:'integral', title: '抵扣{$name}', sort: true}
+                 
+                 ,{field:'way', title: '充值方式', sort: true,templet:function(d){
+                 	if(d.way == 1){
+                   		return "自动充值";
+                   	}else if(d.way == 2){
+                   		return "手动充值";
+                   	}else if(d.way == 3){
+                   		return "代理充值";
+                   	}
+                  }}
+                 ,{field:'type', title: '充值类型', sort: true,templet:function(d){
+                	if(d.type == 1){
+                   		return "慢充";
+                   	}else{
+                   		return "快充";
+                   	}
+                 }}
+
+                 ,{field:'is_status', title: '订单状态', sort: true,templet:function(d){
+                	if(d.pay_status == 1){
+                		return "支付中";
+                	} else {
+                		if(d.is_status == 1){
+                       		return "待充值";
+                       	}else if(d.is_status == 2){
+                       		return "<span style='color:#19be6b;'>充值成功</span>";
+                       	}else if(d.is_status == 3){
+                       		return "<span style='color:#FFB800;'>充值失败</span>";
+                       	}else if(d.is_status == 4){
+                       		return "<span style='color:#ed4014;'>已退款</span>";
+                       	}
+                	}
+                	
+                 }}
+                 ,{field:'createtime', align:'center', title: '下单时间', sort: true ,templet:function(d){
+                 	return layui.util.toDateString(d.createtime*1000, "yyyy-MM-dd HH:mm");
+                 }}
+                 ,{width:180,title: '操作',align:'center', toolbar: '#test-table-operate-barDemo'}
+             ]]
+            ,page: true
+        });
+        
+      //监听工具条
+        table.on('tool(test-table-operate)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'finish'){
+                layer.confirm('确定完成该订单吗？', function(index){
+                	window.location.href="{:siteUrl('admin/huafei/finish_order','','web')}&id="+data.id;
+                    layer.close(index);
+                });
+            }else if(obj.event === 'view'){
+            	layer.open({
+           		  title: '失败原因'
+           		  ,content: data.fail_msg
+           		});     
+            		  
+            }else if(obj.event === 'refund'){
+            	layer.confirm('确定手动退款该订单吗？', function(index){
+            		$.ajax({
+                        url:"{:siteUrl('admin/huafei/refund_order','','web')}&id="+data.id,
+                        type:"POST",
+                        success: function(data){
+                        	var res = JSON.parse(data);
+                        	console.log(res);
+                        	if(res.code == 1 ){
+                        		layer.msg(res.msg,{icon: 1,time:2000},function(){
+                        			window.location.href="{:siteUrl('admin/huafei/log_index','','web')}";
+                        		});
+                        	}else{
+                        		layer.msg(res.msg,{icon: 2,time:3000},function(){
+                        			window.location.href="{:siteUrl('admin/huafei/log_index','','web')}";
+                        		});
+                        	}
+                        }
+                    })
+                });  
+              		  
+            }
+        });
+      
+        form.on('submit(demo1)', function(data){
+            var admin = layui.admin
+
+            $.ajax({
+                url:"{:siteUrl('admin/goodsOrder/deliver_order','','web')}",
+                data:data.field,
+                type:"POST",
+                success: function(res){
+                	
+                	if(res.code == 1 ){
+                		layer.msg(res.msg,{icon: 1,time:2000},function(){
+                			window.location.href="{:siteUrl('admin/goodsOrder/index','','web')}";
+                		});
+                	}else{
+                		layer.msg(res.msg,{icon: 2,time:3000},function(){
+                			window.location.href="{:siteUrl('admin/goodsOrder/index','','web')}";
+                		});
+                	}
+                }
+            })
+            return false
+  
+        });
+        
+        $('#exportExcel').on('click', function(){
+        	var demoReload = $('#test-table-demoReload');
+            var status = $('#is_status');
+            var con_time = $('#test10');
+			// 模拟从后端接口读取需要导出的数据
+			$.ajax({
+				url: "{:siteUrl('admin/huafei/log_list_export','','web')}"
+				,data :{
+					'type': $('#type').val(),
+                    'way': $('#way').val(),
+                    'is_status': $('#is_status').val(),
+                    'con_time': con_time.val()
+				}
+				,dataType: 'json'
+				,success(res) {
+					var data = res.data;
+					console.log(data);
+					// 重点！！！如果后端给的数据顺序和映射关系不对，请执行梳理函数后导出
+					data = excel.filterExportData(data, [
+					    'orderid'
+						,'nickname'
+						,'mobile'
+						,'price'
+						,'money'
+						,'way'
+						,'type'
+						,'is_status'
+						,'createtime'
+					]);
+					// 重点2！！！一般都需要加一个表头，表头的键名顺序需要与最终导出的数据一致
+					
+					var sDate =new Date();
+					
+					
+					var year = sDate.getFullYear();
+		            var month = sDate.getMonth() + 1 < 10 ? "0" + (sDate.getMonth() + 1) : sDate.getMonth() + 1;
+		            var date = sDate.getDate() < 10 ? "0" + sDate.getDate() : sDate.getDate();
+		            var hour = sDate.getHours()< 10 ? "0" + sDate.getHours() : sDate.getHours();
+		            var minute = sDate.getMinutes()< 10 ? "0" + sDate.getMinutes() : sDate.getMinutes();
+		            var second = sDate.getSeconds()< 10 ? "0" + sDate.getSeconds() : sDate.getSeconds();
+		            
+		            var dataStr = year +"" + month+"" + date;
+					data.unshift({ 
+						orderid: "订单编号"
+						, nickname: "用户昵称"
+						, mobile: "手机号码"
+						, price: "支付金额"
+						, money: "充值金额"
+						, way: "充值方式"
+						, type: "充值类型"
+						, is_status: "订单状态"
+						, createtime:"提交时间"
+					});
+
+					var colConf = LAY_EXCEL.makeColConfig({
+		            	'A': 150,
+                        'B': 150,
+                        'I': 150,
+                    }, 100)
+                    // 3. 第1行行高40，第二行行高30，默认20
+                    var rowConf = LAY_EXCEL.makeRowConfig(20)
+
+					excel.exportExcel(data, '话费充值记录列表'+dataStr+'.xlsx', 'xlsx',{
+					    extend: {
+					    	'!cols': colConf
+		                    , '!rows': rowConf
+					    }
+					});
+				}
+				,error() {
+					layer.alert('获取数据失败，请检查是否部署在本地服务器环境下');
+				}
+			});
+		  }); 	
+        
+        
+        var $ = layui.$, active = {
+            getCheckData: function(){ //获取选中数据
+                var checkStatus = table.checkStatus('test-table-operate')
+                    ,data = checkStatus.data;
+                layer.alert(JSON.stringify(data));
+            }
+        };
+
+        $('.test-table-operate-btn .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        
+        var $ = layui.$, active = {
+             reload: function(){
+                 var demoReload = $('#test-table-demoReload');
+                 var status = $('#is_status');
+                 var con_time = $('#test10');
+                 //执行重载 --id
+                 table.reload('test-table-operate', {
+                   page: {
+                     curr: 1 //重新从第 1 页开始
+                   }
+                   ,where: {
+                     'type': $('#type').val(),
+                     'way': $('#way').val(),
+                     'is_status': $('#is_status').val(),
+                     'con_time': con_time.val()
+                   }
+                 });
+               }
+         };
+
+         $('.demoTable .layui-btn').on('click', function(){
+             var type = $(this).data('type');
+             active[type] ? active[type].call(this) : '';
+         });
+
+    });
+</script>
+</body>
+<div class="layui-footer" style="margin-top:20px;display: flex;justify-content: center;align-items: flex-end;">
+	{include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}
+</div>
+</html>

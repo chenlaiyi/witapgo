@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keywords" http-equiv="{$school['title']}">
+    <link rel="shortcut icon" href="https://manger.daren007.com/attachment/images/global/wechat.jpg">
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/sp_public.css">
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/index.css">
+    <script src="{MODULE_URL}public/web/js/faceMap.js?v=5.61" type="text/javascript"></script>
+    <title>{$school['title']} - 财务统计</title>
+    <style>
+        .textC {position:relative;float:left;min-width:1rem;margin-top: 0.01rem;overflow:hidden;line-height:0.3rem;height:0.3rem;margin-right: 0.1rem;}
+        .textC span {color: #13BEEC;font-size: 0.3rem;position: absolute;}
+        .c-left_mix{width:50%;padding-left:0.15rem}
+        .teacher_sex {position: relative;width: 45%;height: 100%;margin-bottom: 1%;float:left;}
+        .student_sex {position: relative;width: 45%;height: 100%;margin-bottom: 1%;float:right;}
+        .activity-img{padding: 0.05rem;float:left}
+        .activity-desc{float:left;width:calc(100% - 0.6rem)}
+        .activity-desc h5{ height: 0.2rem;line-height: 0.2rem;padding-top: 0.05rem}
+        .activity-time{font-weight: lighter;background-color: rgba(255, 255, 255, 0.12);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .activity-bj{font-weight: lighter;background-color: rgba(58, 102, 239, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .pull-right{float:right !important;}
+        .activity-bjtz{font-weight: lighter;background-color: rgba(129, 117, 199, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .activity-xyqf{font-weight: lighter;background-color: rgba(255, 108, 96, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .activity-zytz{font-weight: lighter;background-color: rgba(89, 172, 226, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_text{font-weight: lighter;background-color: rgba(169, 216, 110, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_voice{font-weight: lighter;background-color: rgba(252, 179, 34, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_vedio{font-weight: lighter;background-color: rgba(255, 108, 96, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_share{font-weight: lighter;background-color: rgba(129, 117, 199, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_media{font-weight: lighter;background-color: rgba(89, 172, 226, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .in_check_list{height: 100%;width:60%;float:left}
+        .in_check_detail{height: 100%;width:40%;float:left}
+        .head_image{border:1px solid rgba(42, 197, 243, 0.5);width:2rem;height:2rem;margin-left:0.8rem;margin-top:0.2rem}
+        .check_name{margin-left:0.8rem;height: 0.5rem;line-height: 0.5rem;font-size: 0.25rem;width:78%;overflow: hidden;white-space: nowrap;/*不换行*/
+            text-overflow:ellipsis;/*超出部分文字以...显示*/
+        }
+    </style>
+</head>
+<body class="background">
+<div class="expand">
+    <div class="expand_left"></div>
+    <div class="expand_right"></div>
+    <div class="expand_circle"></div>
+</div>
+<div class="open-page">
+    <div class="circle-red">
+        <div class="circle-blue">
+            <div class="circle-yellow"></div>
+        </div>
+    </div>
+</div>
+{template 'common/header_base'}
+<section class="c-content-pop l-center-flex l-content-pop">
+    <div class="c-content_item l-content_item">
+        <div class="o-box c-content_box-up1"></div>
+        <div class="o-box c-content_box-down1"></div>
+    </div>
+    <div class="c-content_item l-content_item">
+        <div class="o-box c-content_box-up2"></div>
+        <div class="o-box c-content_box-down2"></div>
+    </div>
+</section>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/jquery.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/echarts.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/index.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/sp_bg.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/title.js"></script>
+<script type="text/javascript">
+    var GPC_do = "{$_GPC['do']}";
+    $.ajax({
+        url: "{php echo $this->createWebUrl('bdmoney',array('op'=>'firstdata','schoolid'=>$schoolid))}",
+        type: "POST",
+        dataType: "json",
+        success: function (res) {
+            drawCharts($('.c-content_box-up1')[0], res.pay_series);
+            drawCharts($('.c-content_box-up2')[0], res.now_annual_income);
+            drawCharts($('.c-content_box-down1')[0], res.pay_ob_series_data);
+            drawCharts($('.c-content_box-down2')[0], res.order_status);
+        }
+    });
+    //打开时加载动画
+    setTimeout(function () {
+        $(".expand_circle").css({"display": "none"});
+        $(".expand_left").css({"transform": "translateX(100%)"});
+        $(".expand_right").css({"transform": "translateX(-100%)"});
+        setTimeout(function () {
+            $(".expand").css({"z-index": -1});
+        }, 500)
+    }, 1000);
+</script>
+</body>
+</html>

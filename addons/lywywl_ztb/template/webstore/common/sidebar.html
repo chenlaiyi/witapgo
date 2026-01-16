@@ -1,0 +1,128 @@
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <div class="user-panel">
+            <div class="pull-left info">
+                <a href="{php echo $this->createWebAppUrl('home');}" style="font-size: 16px;" title="首页"><i class="fa fa-home"></i>&nbsp;</a>
+                <a href="javascript:window.location.reload();" style="font-size: 16px;" title="刷新"><i class="fa fa-refresh"></i>&nbsp;</a>
+                <a href="javascript:window.history.back();" style="font-size: 16px;" title="后退"><i class="fa fa-backward"></i>&nbsp;</a>
+                <a href="javascript:window.history.forward();" style="font-size: 16px;" title="前进"><i class="fa fa-forward"></i>&nbsp;</a>
+            </div>
+        </div>
+        <form action="#" method="get" class="sidebar-form">
+            <div class="input-group">
+                <input type="text" name="nav_key" id="nav_key" class="form-control" placeholder="搜索">
+            <span class="input-group-btn">
+                <button type="button" name="nav_key_btn" id="nav_key_btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+            </span>
+            </div>
+        </form>
+        <ul class="sidebar-menu" id="nav_list">
+            <li class="header" id="search_header">导航菜单</li>
+            <li class="treeview" nav_name="系统配置">
+                <a href="">
+                    <i class="fa fa-gear"></i> <span>系统配置</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li nav_name="数据控制面板"><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-circle-o"></i>数据控制面板</a></li>
+                    <li nav_name="商户信息配置"><a href="{php echo $this->createWebAppUrl('store_account');}"><i class="fa fa-circle-o"></i>商户信息配置</a></li>
+                    <li nav_name="核销员工管理"><a href="{php echo $this->createWebAppUrl('store_staff');}"><i class="fa fa-circle-o"></i>核销员工管理</a></li>
+                    <li nav_name="商家卡券管理"><a href="{php echo $this->createWebAppUrl('store_card');}"><i class="fa fa-circle-o"></i>商家卡券管理</a></li>
+                </ul>
+            </li>
+            <li class="treeview" nav_name="活动管理">
+                <a href="">
+                    <i class="fa fa-trophy"></i> <span>活动管理</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li nav_name="我要创建活动"><a href="{php echo $this->createWebAppUrl('sys_tmp');}"><i class="fa fa-circle-o"></i>我要创建活动</a></li>
+                    <li nav_name="我创建的活动"><a href="{php echo $this->createWebAppUrl('obj_activity');}"><i class="fa fa-circle-o"></i>我创建的活动</a></li>
+                    <li nav_name="中奖返利管理"><a href="{php echo $this->createWebAppUrl('user_draw');}"><i class="fa fa-circle-o"></i>中奖返利管理</a></li>
+                </ul>
+            </li>
+            <li class="treeview" nav_name="用户会员">
+                <a href="">
+                    <i class="fa fa-users"></i> <span>用户会员</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li nav_name="用户信息管理"><a href="{php echo $this->createWebAppUrl('user_account');}"><i class="fa fa-circle-o"></i>用户信息管理</a></li>
+                    <li nav_name="用户收藏商品"><a href="{php echo $this->createWebAppUrl('intmall_collect');}"><i class="fa fa-circle-o"></i>用户收藏商品</a></li>
+                    <li nav_name="用户积分流水"><a href="{php echo $this->createWebAppUrl('user_score');}"><i class="fa fa-circle-o"></i>用户积分流水</a></li>
+                    <li nav_name="用户资金流水"><a href="{php echo $this->createWebAppUrl('user_bill');}"><i class="fa fa-circle-o"></i>用户资金流水</a></li>
+                    <li nav_name="用户提现管理"><a href="{php echo $this->createWebAppUrl('user_refund');}"><i class="fa fa-circle-o"></i>用户提现管理</a></li>
+                    
+                </ul>
+            </li>
+            <li class="treeview" nav_name="积分商城">
+                <a href="">
+                    <i class="fa fa-shopping-cart"></i> <span>积分商城</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li nav_name="商品分类管理"><a href="{php echo $this->createWebAppUrl('intmall_class');}"><i class="fa fa-circle-o"></i>商品分类管理</a></li>
+                    <li nav_name="商城商品管理"><a href="{php echo $this->createWebAppUrl('intmall_product');}"><i class="fa fa-circle-o"></i>商城商品管理</a></li>
+                </ul>
+            </li>
+            {if getPluginStatus($_W['uniacid'],'lywywl_ztb_plugin_storeinvite') && $store['is_invite'] == 1}
+            <li class="treeview" nav_name="分销管理">
+                <a href="">
+                    <i class="fa  fa-sitemap"></i> <span>分销管理</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    {if getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_storeinvite', 'is_show_share')}
+                    <li nav_name="专属分享链接"><a href="{php echo $this->createWebAppUrl('invite_share');}"><i class="fa fa-circle-o"></i>专属分享链接</a></li>
+                    {/if}
+                    {if getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_storeinvite', 'is_show_promoter')}
+                    <li nav_name="分销业务专员"><a href="{php echo $this->createWebAppUrl('invite_promoter');}"><i class="fa fa-circle-o"></i>分销业务专员</a></li>
+                    {/if}
+                    {if getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_storeinvite', 'is_show_team')}
+                    <li nav_name="我的下线商家"><a href="{php echo $this->createWebAppUrl('invite_team');}"><i class="fa fa-circle-o"></i>我的下线商家</a></li>
+                    {/if}
+                    {if getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_storeinvite', 'is_show_ranking')}
+                    <li nav_name="分销佣金排行"><a href="{php echo $this->createWebAppUrl('invite_ranking');}"><i class="fa fa-circle-o"></i>分销佣金排行</a></li>
+                    {/if}
+                    {if getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_storeinvite', 'is_show_draw')}
+                    <li nav_name="消费返利记录"><a href="{php echo $this->createWebAppUrl('invite_draw');}"><i class="fa fa-circle-o"></i>消费返利记录</a></li>
+                    {/if}
+                    {if getPluginConfig($_W['uniacid'], 'lywywl_ztb_plugin_storeinvite', 'is_show_refund')}
+                    <li nav_name="业务专员结算"><a href="{php echo $this->createWebAppUrl('invite_refund');}"><i class="fa fa-circle-o"></i>业务专员结算</a></li>
+                    {/if}
+                </ul>
+            </li>
+            {/if}
+            <li class="treeview" nav_name="订单管理">
+                <a href="">
+                    <i class="fa fa-truck"></i> <span>订单管理</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li nav_name="活动订单管理"><a href="{php echo $this->createWebAppUrl('order_obj');}"><i class="fa fa-circle-o"></i>活动订单管理</a></li>
+                    <li nav_name="商城订单管理"><a href="{php echo $this->createWebAppUrl('order_intmall');}"><i class="fa fa-circle-o"></i>商城订单管理</a></li>
+                </ul>
+            </li>
+            <li class="treeview" nav_name="资金管理">
+                <a href="">
+                    <i class="fa fa-paypal"></i> <span>资金管理</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li nav_name="商家账户充值"><a href="{php echo $this->createWebAppUrl('store_recharge');}"><i class="fa fa-circle-o"></i>商家账户充值</a></li>
+                    <li nav_name="商家账户续费"><a href="{php echo $this->createWebAppUrl('store_renew');}"><i class="fa fa-circle-o"></i>商家账户续费</a></li>
+                    <li nav_name="商家短信充值" style="display: {if $config['sms_obj']!=1}none{/if};"><a href="{php echo $this->createWebAppUrl('store_sms');}"><i class="fa fa-circle-o"></i>商家短信充值</a></li>
+                    <li nav_name="账户资金提现"><a href="{php echo $this->createWebAppUrl('store_refund');}"><i class="fa fa-circle-o"></i>账户资金提现</a></li>
+                    <li nav_name="账户资金流水"><a href="{php echo $this->createWebAppUrl('store_bill');}"><i class="fa fa-circle-o"></i>账户资金流水</a></li>
+                </ul>
+            </li>
+            <li class="treeview" nav_name="日志管理">
+                <a href="">
+                    <i class="fa fa-shield"></i> <span>日志管理</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li nav_name="用户支付日志"><a href="{php echo $this->createWebAppUrl('sys_pay');}"><i class="fa fa-circle-o"></i>用户支付日志</a></li>
+                    <li nav_name="奖品补发管理"><a href="{php echo $this->createWebAppUrl('sys_reissue');}"><i class="fa fa-circle-o"></i>奖品补发管理</a></li>
+                    <li nav_name="用户转发日志"><a href="{php echo $this->createWebAppUrl('user_share');}"><i class="fa fa-circle-o"></i>用户转发日志</a></li>
+                    <li nav_name="短信发送日志" style="display: {if $config['sms_obj']!=1}none{/if};"><a href="{php echo $this->createWebAppUrl('sys_sms');}"><i class="fa fa-circle-o"></i>短信发送日志</a></li>
+                </ul>
+            </li>
+            <li class="header">快捷操作</li>
+            <li><a href="{php echo $this->createWebAppUrl('store_account',array('act' => 'modify_pwd'));}"><i class="fa fa-circle-o text-aqua"></i><span>修改密码</span></a></li>
+            <li><a href="{php echo $this->createWebAppUrl('login',array('act' => 'loginout'));}" ><i class="fa fa-circle-o text-red"></i><span>退出系统</span></a></li>
+        </ul>
+    </section>
+</aside>

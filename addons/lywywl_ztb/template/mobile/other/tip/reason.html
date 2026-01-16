@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+<meta name = "format-detection" content ="telephone=no">
+<meta http-equiv="Cache-Control" content="no-cache" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<title>错误提示页</title>
+  <link rel="stylesheet" type="text/css" href="{__MOBILE_TMP_CSS__}/base.css">
+<!-- 移动端适配 -->
+<script>
+	var html = document.querySelector('html');
+	changeRem();
+	window.addEventListener('resize', changeRem);
+	function changeRem() {
+		var width = html.getBoundingClientRect().width;
+		html.style.fontSize = width / 10 + 'px';
+	}
+    //防止页面后退
+    history.pushState(null, null, document.URL);
+    window.addEventListener('popstate', function () {
+      history.pushState(null, null, document.URL);
+    });
+</script>
+    <script src="{__MOBILE_TMP_JS__}/jquery-2.1.4.min.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script>
+        // jssdk config 对象
+        jssdkconfig = {php echo json_encode($_W['account']['jssdkconfig']);} || {};
+        // 是否启用调试
+        jssdkconfig.debug = false;
+        jssdkconfig.jsApiList = [
+            'checkJsApi',
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'getLocation',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'hideMenuItems'
+        ];
+        wx.config(jssdkconfig);
+        wx.error(function (res) {
+            layer.open({ content: '对不起，微信JSSDK信息验证失败！', skin: 'msg', time: 2 });
+        });
+        wx.ready(function () {
+            wx.hideAllNonBaseMenuItem();
+        });
+    </script>
+</head>
+<body class="bgfff">
+<section class="pd24 font28 lh50">
+    <h5 class="font30">页面为什么显示不存在或已删除?原因如下:</h5>
+    <p>1.商家删除了此活动</p>
+    <p> 2.账号使用已到期</p>
+    <p> 3.其他原因</p>
+   <section class="mt50 c6">
+       <p>及时联系商家反馈哦!</p>
+       <p>商家电话: <span class="blue">
+        <a href="tel:{pho echo $Contact_tel}">{pho echo $Contact_tel}</a>
+       </span></p>
+   </section>
+</section>
+
+</body>
+</html>

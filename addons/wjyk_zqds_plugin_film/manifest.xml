@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.we7.cc" versionCode="0.8,1.0">
+	<application setting="false">
+		<name><![CDATA[特价电影票]]></name>
+		<identifie><![CDATA[wjyk_zqds_plugin_film]]></identifie>
+		<version><![CDATA[1.0.2]]></version>
+		<type><![CDATA[business]]></type>
+		<ability><![CDATA[赚钱大师电影插件]]></ability>
+		<description><![CDATA[赚钱大师电影插件]]></description>
+		<author><![CDATA[ 壹锋源码]]></author>
+		<url><![CDATA[http://www.we7.cc/]]></url>
+	</application>
+
+	<platform>
+		<subscribes>
+		</subscribes>
+
+		<handles>
+		</handles>
+
+		<rule embed="false" /> 
+		<card embed="false" />
+		<oauth type="1" />
+		
+		<supports>
+			<item type="wxapp" />
+		</supports>
+		<plugin-main name="wjyk_zqds" />
+	</platform>
+
+	<bindings>
+		<menu>
+			<entry title="电影" do="film" state="" direct="false"/>
+		</menu>
+	</bindings>
+
+	<permissions>
+	</permissions>
+
+	<install><![CDATA[
+CREATE TABLE IF NOT EXISTS `ims_wjyk_zqds_film_set` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uniacid` int(11) NOT NULL,
+  `appid` varchar(255) NOT NULL COMMENT 'appid',
+  `appsecret` varchar(255) NOT NULL COMMENT 'appsecret',
+  `film_rebate` decimal(10,2) DEFAULT '0.00' COMMENT '购买电影分销比例',
+  `key` varchar(100) DEFAULT NULL COMMENT '腾讯地图key',
+  `explain` text COMMENT '购票须知',
+  `createtime` int(10) NOT NULL,
+  `discount_open` smallint(1) DEFAULT '2' COMMENT '1-开启  2-关闭',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='电影设置表';
+
+INSERT INTO ims_wjyk_zqds_module_plugin VALUES 
+('1','2','1','2');
+INSERT INTO ims_wjyk_zqds_module_plugin VALUES 
+('2','2','4','1');
+INSERT INTO ims_wjyk_zqds_module_plugin VALUES 
+('3','2','2','1');
+INSERT INTO ims_wjyk_zqds_module_plugin VALUES 
+('4','2','3','1');
+INSERT INTO ims_wjyk_zqds_module_plugin VALUES 
+('5','2','6','1');
+INSERT INTO ims_wjyk_zqds_module_plugin VALUES 
+('6','2','5','1');
+INSERT INTO ims_wjyk_zqds_plugin VALUES 
+('1','0','外卖配置','wjyk_zqds_plugin_takeout','外卖配置','2','1631610740');
+INSERT INTO ims_wjyk_zqds_plugin VALUES 
+('2','0','我的庄园','wjyk_zqds_plugin_manor','我的庄园','2','1631610754');
+INSERT INTO ims_wjyk_zqds_plugin VALUES 
+('3','0','新闻资讯','wjyk_zqds_plugin_news','新闻资讯','2','1631610726');
+INSERT INTO ims_wjyk_zqds_plugin VALUES 
+('4','0','数字商品','wjyk_zqds_plugin_digital','数字商品','2','1631610479');
+INSERT INTO ims_wjyk_zqds_plugin VALUES 
+('5','0','芒果电影','wjyk_zqds_plugin_film','芒果电影','2','1636966619');
+INSERT INTO ims_wjyk_zqds_plugin VALUES 
+('6','0','聚合电商','wjyk_zqds_plugin_cps','聚合电商','2','1636544276');
+]]></install>
+	<uninstall><![CDATA[DROP TABLE IF EXISTS `ims_wjyk_zqds_film_set`;
+]]></uninstall>
+	<upgrade><![CDATA[ru_rpgrade.php]]></upgrade>
+
+</manifest>

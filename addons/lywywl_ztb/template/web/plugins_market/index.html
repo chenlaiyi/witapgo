@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<style type="text/css">
+    .text-sm{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+</style>
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">模板</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="javascript:;" id="btn_all">全部应用</a></li>
+                            <li><a href="javascript:;" id="btn_free">免费应用</a></li>
+                            <li><a href="javascript:;" id="btn_paid">付费应用</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active">
+                                <section id="objlist">
+                                <h4 class="page-header">活动类</h4>
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-6 col-xs-12 free">
+                                        <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                            <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugins_wholegroup.png"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 免费<small></small></span></span>
+                                            <div class="info-box-content">
+                                                <span class="info-box-text"><strong>全民拼团</strong></span>
+                                                <span class="info-box-text text-sm" style="white-space:unset;">全民拼团是一款致力于社交流量变现的拼团工具。商家在进行简单配置后，即可发布拼团活动……</span>
+                                                {if in_array("lywywl_ztb_plugin_wholegroup",$buy_list)}
+                                                <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                {else}
+                                                <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-26954.html" target="_blank">立即购买</a></div>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6 col-xs-12 free">
+                                        <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                            <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugins_obj_10second.png"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 免费<small></small></span></span>
+                                            <div class="info-box-content">
+                                                <span class="info-box-text"><strong>挑战10秒</strong></span>
+                                                <span class="info-box-text text-sm" style="white-space:unset;">自从在短视频APP上红了之后，“10秒挑战”逐渐风靡街头，越来越多的年轻人开始玩这个游戏。</span>
+                                                {if in_array("lywywl_ztb_plugin_10second",$buy_list)}
+                                                <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                {else}
+                                                <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-26878.html" target="_blank">立即购买</a></div>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6 col-xs-12 paid">
+                                        <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                            <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugins_obj_voice.png"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 600.00<small>元</small></span></span>
+                                            <div class="info-box-content">
+                                                <span class="info-box-text"><strong>语音红包拓客</strong></span>
+                                                <span class="info-box-text text-sm" style="white-space:unset;">用户说出一段您指定的语音消息，就可以奖励用户一个微信红包或者优惠券，喊声越大，红包越大哦！</span>
+                                                {if in_array("lywywl_ztb_plugin_voice",$buy_list)}
+                                                <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                {else}
+                                                <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-29297.html" target="_blank">立即购买</a></div>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6 col-xs-12">
+                                        <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                            <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugins_more.png"><span style="font-size: 14px; font-weight: 400; line-height: 24px; ">&nbsp;</span></span>
+                                            <div class="info-box-content">
+                                                <span class="info-box-text"><strong>更多玩法</strong></span>
+                                                <span class="info-box-text text-sm" style="white-space:unset;">我们将持续为您研发更多有趣的玩法，尽情关注我们的官方门店，总有一款适合您！</span>
+                                                <div class="btn-group-vertical"><button class="btn btn-block btn-info"  onclick="javascript:window.location.href = 'https://s.w7.cc/developer/index/294101'">立即查看</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                                <section id="salelist">
+                                    <h4 class="page-header">营销类</h4>
+                                    <div class="row">
+                                        <div class="col-md-4 col-sm-6 col-xs-12 paid">
+                                            <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                                <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugins_two_invite.png"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 330.00<small>元</small></span></span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text"><strong>二级分销</strong></span>
+                                                    <span class="info-box-text text-sm" style="white-space:unset;">通过此插件可开启系统拓客类活动的二级分销选项，用户可自主选择活动的分销层级。</span>
+                                                    {if in_array("lywywl_ztb_plugin_twoinvite",$buy_list)}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                    {else}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-23872.html" target="_blank">立即购买</a></div>
+                                                    {/if}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12 paid">
+                                            <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                                <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugins_store_invite.png"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 850.00<small>元</small></span></span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text"><strong>商家分销</strong></span>
+                                                    <span class="info-box-text text-sm" style="white-space:unset;">通过此插件可开启商家分销选项，商家邀请其他商家入驻购买套餐，可获得指定金额返佣。</span>
+                                                    {if in_array("lywywl_ztb_plugin_storeinvite",$buy_list)}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                    {else}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-24432.html" target="_blank">立即购买</a></div>
+                                                    {/if}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12 paid">
+                                            <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                                <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugins_rategroup.png"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 300.00<small>元</small></span></span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text"><strong>费率分组</strong></span>
+                                                    <span class="info-box-text text-sm" style="white-space:unset;">通过此模块可对助推宝商户费率进行分组配置，更人性化的区分不同客户不同费率，包含充值和支付费率。</span>
+                                                    {if in_array("lywywl_ztb_plugin_rategroup",$buy_list)}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                    {else}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-26205.html" target="_blank">立即购买</a></div>
+                                                    {/if}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12 paid">
+                                            <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                                <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugins_appad.png"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 400.00<small>元</small></span></span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text"><strong>劫流广告</strong></span>
+                                                    <span class="info-box-text text-sm" style="white-space:unset;">通过此插件可开启活动多平台广告选项，用户在活动中指定操作后，开启常用APP可弹出设置的口令广告。</span>
+                                                    {if in_array("lywywl_ztb_plugin_appad",$buy_list)}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                    {else}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-26682.html" target="_blank">立即购买</a></div>
+                                                    {/if}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12 paid">
+                                            <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                                <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugins_ladder_invite.png"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 600.00<small>元</small></span></span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text"><strong>阶梯分销</strong></span>
+                                                    <span class="info-box-text text-sm" style="white-space:unset;">通过此插件可开启系统拓客类活动的阶梯分销选项，用户可自主选择活动的返利需要邀请的人数。</span>
+                                                    {if in_array("lywywl_ztb_plugin_ladderinvite",$buy_list)}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                    {else}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-30392.html" target="_blank">立即购买</a></div>
+                                                    {/if}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                                <section id="helplist">
+                                    <h4 class="page-header">辅助类</h4>
+                                    <div class="row">
+                                        <div class="col-md-4 col-sm-6 col-xs-12 free">
+                                            <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                                <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugins_adcheck.png"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 免费<small></small></span></span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text"><strong>广告词检测</strong></span>
+                                                    <span class="info-box-text text-sm" style="white-space:unset;">此插件可在系统开启活动审核时，用于检测活动内容是否包含广告法禁止的敏感词和自定义设置的关键词。</span>
+                                                    {if in_array("lywywl_ztb_plugin_adcheck",$buy_list)}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                    {else}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-25723.html" target="_blank">立即购买</a></div>
+                                                    {/if}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12 paid">
+                                            <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                                <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugins_home.png"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 600.00<small>元</small></span></span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text"><strong>聚合首页</strong></span>
+                                                    <span class="info-box-text text-sm" style="white-space:unset;">通过此插件可将商家发布的活动集中分类展示，提升平台体验，方便运营宣传，终端用户更容易形成粘性。</span>
+                                                    {if in_array("lywywl_ztb_plugin_home",$buy_list)}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                    {else}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-27212.html" target="_blank">立即购买</a></div>
+                                                    {/if}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12 paid">
+                                            <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                                <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugins_vaptcha.png"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 500.00<small>元</small></span></span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text"><strong>VAPTCHA验证码</strong></span>
+                                                    <span class="info-box-text text-sm" style="white-space:unset;">通过此插件可开启活动人机验证选项，用户参与活动需要进行人机验证，有效避免群控、刷票等行为。</span>
+                                                    {if in_array("lywywl_ztb_plugin_vaptcha",$buy_list)}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                    {else}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-29040.html" target="_blank">立即购买</a></div>
+                                                    {/if}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12 paid">
+                                            <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                                <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugin_shareborrow.png"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 1000.00<small>元</small></span></span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text"><strong>分享借权</strong></span>
+                                                    <span class="info-box-text text-sm" style="white-space:unset;">此功能可以根据不同活动类型单独设置公众号分享接口借权功能，尽最大程度解决您的后顾之忧。</span>
+                                                    {if in_array("lywywl_ztb_plugin_shareborrow",$buy_list)}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                    {else}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-29176.html" target="_blank">立即购买</a></div>
+                                                    {/if}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12 paid">
+                                            <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                                <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugin_refundtool.jpg"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 400.00<small>元</small></span></span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text"><strong>退款助手</strong></span>
+                                                    <span class="info-box-text text-sm" style="white-space:unset;">此插件为助推宝支付类活动的退款插件, 由商户后台发起申请, 总后台审批通过后调用微信退款接口资金原路返回。</span>
+                                                    {if in_array("lywywl_ztb_plugin_refundtool",$buy_list)}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                    {else}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-30391.html" target="_blank">立即购买</a></div>
+                                                    {/if}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12 free">
+                                            <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                                <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plugiu_texttoaudio.jpg"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 免费<small></small></span></span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text"><strong>语音合成</strong></span>
+                                                    <span class="info-box-text text-sm" style="white-space:unset;">此插件可自定义生成语音文件，供商家在创建活动时使用，可作为活动内容介绍或者玩法讲解，提高活动趣味性和防封能力，满足不同商家的营销拓客需求。</span>
+                                                    {if in_array("lywywl_ztb_plugin_texttoaudio",$buy_list)}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                    {else}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-30391.html" target="_blank">立即购买</a></div>
+                                                    {/if}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6 col-xs-12 free">
+                                            <div class="info-box" style="box-shadow: none;border: 1px solid #efefef;padding: 10px;min-height: 130px;font-size: 14px; line-height: 24px; ">
+                                                <span class="info-box-icon" style="background: rgba(0, 0, 0, 0);font-size: 14px; line-height: 24px; padding-top: 10px;"><img src="{__IMG__}/plug_bigscreen.jpg"><span style="font-size: 14px; font-weight: 400; line-height: 24px; "> 600.00<small>元</small></span></span>
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text"><strong>数据投屏</strong></span>
+                                                    <span class="info-box-text text-sm" style="white-space:unset;">通过此插件商家可随时掌握每场活动各项数据，实现活动数据透明化，方便商家根据活动当前趋势调整营销策略。</span>
+                                                    {if in_array("lywywl_ztb_plugin_bigscreen",$buy_list)}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="{php echo $this->createWebUrl('plugins_owner');}">已经购买</a></div>
+                                                    {else}
+                                                    <div class="btn-group-vertical"><a class="btn btn-block btn-info" href="https://s.w7.cc/module-30714.html" target="_blank">立即购买</a></div>
+                                                    {/if}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script>
+    $(function () {
+        SelectNav("应用市场");
+
+        //全部插件
+        $("#btn_all").click(function () {
+            $(".paid").show();
+            $(".free").show();
+
+            $("#btn_all").parent('li').addClass('active');
+            $("#btn_free").parent('li').removeClass('active');
+            $("#btn_paid").parent('li').removeClass('active');
+        });
+
+        //免费插件
+        $("#btn_free").click(function () {
+            $(".paid").hide();
+            $(".free").show();
+
+            $("#btn_all").parent('li').removeClass('active');
+            $("#btn_free").parent('li').addClass('active');
+            $("#btn_paid").parent('li').removeClass('active');
+        });
+
+        //付费插件
+        $("#btn_paid").click(function () {
+            $(".paid").show();
+            $(".free").hide();
+
+            $("#btn_all").parent('li').removeClass('active');
+            $("#btn_free").parent('li').removeClass('active');
+            $("#btn_paid").parent('li').addClass('active');
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.we7.cc" versionCode="0.8,1.0">
+	<application setting="false">
+		<name><![CDATA[美容取号]]></name>
+		<identifie><![CDATA[xc_beauty_plugin_take_number]]></identifie>
+		<version><![CDATA[1.0.0]]></version>
+		<type><![CDATA[other]]></type>
+		<ability><![CDATA[美容取号]]></ability>
+		<description><![CDATA[美容取号]]></description>
+		<author><![CDATA[微擎]]></author>
+		<url><![CDATA[http://www.we7.cc/]]></url>
+	</application>
+
+	<platform>
+		<subscribes>
+		</subscribes>
+
+		<handles>
+		</handles>
+
+		<rule embed="false" /> 
+		<card embed="false" />
+		<oauth type="1" />
+		
+		<supports>
+			<item type="wxapp" />
+		</supports>
+		<plugin-main name="xc_beauty" />
+	</platform>
+
+	<bindings>
+	</bindings>
+
+	<permissions>
+	</permissions>
+
+	<install><![CDATA[]]></install>
+	<uninstall><![CDATA[]]></uninstall>
+	<upgrade><![CDATA[ru_rpgrade.php]]></upgrade>
+
+</manifest>

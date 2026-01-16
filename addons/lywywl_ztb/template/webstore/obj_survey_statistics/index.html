@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title} - {$objModel['title']}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">活动管理</li>
+                <li class="active">{$title}</li>
+                <li class="active">问卷统计</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebAppUrl('obj_activity', array('act' => 'index'));}">返回活动</a></li>
+                            <li class="active"><a href="">问卷统计</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <h4 style="background-color:#f7f7f7; font-size: 18px; text-align: center; padding: 7px 10px; margin-top: 0;">共有{$joinCount}人参与答题</h4>
+                            {loop $questionList $index $question}
+                            <div class="box">
+                                <div class="box-header">
+                                    <h3 class="box-title">
+                                        {php echo $index + 1}.{$question['title']}
+                                        {if $question['types'] == 0}
+                                        <a href="javascript:;">[单选]</a>
+                                        {else if $question['types'] == 1}
+                                        <a href="javascript:;">[多选]</a>
+                                        {else if $question['types'] == 2}
+                                        <a href="javascript:;">[填空(多行)]</a>
+                                        {else if $question['types'] == 3}
+                                        <a href="javascript:;">[填空(单行)]</a>
+                                        {/if}
+                                    </h3>
+                                </div>
+                                {if $question['types'] != 2 && $question['types'] != 3}
+                                <!-- /.box-header -->
+                                <div class="box-body no-padding">
+                                    <table class="table table-condensed">
+                                        <tbody>
+                                        {loop $question['option'] $index2 $option}
+                                        <tr>
+                                            <td style="width: 15px"></td>
+                                            <td>
+                                                <div class="clearfix">
+                                                    <span class="pull-left">{$option['content']}</span>
+                                                    <small class="pull-right">{php echo  @round($option['select_num'] / $question['total_select_num'] * 100,2)}%</small>
+                                                </div>
+                                                <div class="progress">
+                                                    <div class="progress-bar progress-bar-success" style="width: {php echo  @round($option['select_num'] / $question['total_select_num'] * 100,2)}%">{$option['select_num']}</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {/loop}
+                                        </tbody></table>
+                                </div>
+                                <!-- /.box-body -->
+                                {/if}
+                            </div>
+                            {/loop}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+</div>
+<script>
+    $(function () {
+        SelectNav("我创建的活动");
+    });
+
+</script>
+</body>
+</html>

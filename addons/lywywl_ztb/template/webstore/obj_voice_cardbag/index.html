@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>{$title} - {$objModel['title']}</h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">活动管理</li>
+                <li class="active">{$title}</li>
+                <li class="active">领券日志</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            {if !empty($objModel)}
+                            <li><a href="{php echo $this->createWebAppUrl('obj_activity', array('act' => 'index'));}">返回活动</a></li>
+                            {/if}
+                            <li class="active"><a href="">数据列表</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchKey" class="col-sm-1 control-label">用户信息</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="SearchKey"
+                                                       placeholder="OPENID">
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchTypes">卡券状态</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchTypes">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="1">未过期</option>
+                                                    <option value="2">已过期</option>
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchTime">领取时间</label>
+                                            <div class="col-sm-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control pull-right" id="SearchTime"
+                                                           placeholder="开始时间 - 结束时间" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {if !empty($objModel)}
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label class="control-label col-sm-1" for="SearchvoiceStore">隶属商家</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchvoiceStore">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $voiceStoreList $store}
+                                                    <option value="{$store['id']}">{$store['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        {else}
+                                        <div class="col-sm-3" style="display: none;">
+                                            <select class="form-control select2" id="SearchvoiceStore">
+                                                <option value="" selected="selected">请选择</option>
+                                            </select>
+                                        </div>
+                                        {/if}
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索
+                                            </button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置检索</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="box" class="table-responsive">
+                                <div id="toolbar" class="btn-group">
+                                    <button id="btn_exportdata" type="button" class="btn btn-info">
+                                        <span class="fa fa-download" aria-hidden="true"></span>&nbsp;导出数据
+                                    </button>
+                                </div>
+                                <table id="tb_bandlist" class="table text-nowrap" data-reorderable-columns="true"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script>
+    $(function () {
+        SelectNav("我创建的活动");
+
+        require(["daterangepicker"], function () {
+            //时间搜索
+            $('#SearchTime').daterangepicker({
+                format: "YYYY/MM/DD"
+            });
+        });
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            myrequire(['bootstrap-table-zh-cn', 'bootstrap-table-editable', 'bootstrap-table-fixed-columns'], function () {
+                $(".select2").select2();
+                //1.初始化Table
+                var oTable = new TableInit();
+                oTable.Init();
+                //2.初始化Button的点击事件
+                var oButtonInit = new ButtonInit();
+                oButtonInit.Init();
+
+                if ($("#SearchObj").length > 0) {
+                    $("#SearchObj").change(function () { getStoreList(); });
+                }
+            });
+        });
+
+    });
+
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#tb_bandlist').bootstrapTable({
+                url: "{php echo $this->createWebAppUrl('obj_voice_cardbag', array('act' => 'getJsonList','aid' => $aid));}",         //请求后台的URL（*）
+                method: 'get',                      //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: true,                    //是否启用排序
+                sortName: "id",                   //排序字段
+                sortOrder: "desc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: false,                //是否启用点击选中行
+                height: 575,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                fixedColumns: true,                    //冻结列开启关闭
+                fixedNumber: 1,                        //冻结列数量
+                onLoadError: function () {  //加载失败时执行
+                    Command: toastr["error"]("对不起，网络繁忙，请稍后再试！", "错误提示");
+                },
+                columns: [{
+                    checkbox: true
+                }, {
+                    field: 'id',
+                    title: '编号',
+                    titleTooltip: '当前信息的唯一编号，数据主键',
+                    sortable: true
+                }, {
+                    field: 'u_store_id',
+                    title: '隶属商家',
+                    titleTooltip: '领取卡券隶属商家',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return row.u_store_name;
+                    }
+                }, {
+                    field: 'name',
+                    title: '卡券名称',
+                    titleTooltip: '领取卡券名称',
+                    sortable: true,
+                }, {
+                    field: 'nickname',
+                    title: '微信昵称',
+                    titleTooltip: '注册用户的微信昵称',
+                    sortable: true,
+                }, {
+                    field: 'headurl',
+                    title: '微信头像',
+                    titleTooltip: '注册用户的微信昵称',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return " <img height='30' width='30' src='"+ value +"' alt='"+ row.nickname +"'>"
+                    }
+                }, {
+                    field: 'openid',
+                    title: 'OPENID',
+                    titleTooltip: '注册用户对于微信公众号的唯一身份标识',
+                    sortable: true,
+                }, {
+                    field: 'use_num',
+                    title: '可核销',
+                    titleTooltip: '领取优惠券可核销次数',
+                    sortable: true,
+                }, {
+                    field: 'writeoff_num',
+                    title: '已核销',
+                    titleTooltip: '领取优惠券已核销次数',
+                    sortable: true,
+                }, {
+                    field: 'money',
+                    title: '卡券面值',
+                    titleTooltip: '领取卡券可抵消金额',
+                    sortable: true,
+                }, {
+                    field: 'pay_money',
+                    title: '满足金额',
+                    titleTooltip: '用户消费满足金额后可用',
+                    sortable: true,
+                }, {
+                    field: 'use_limit',
+                    title: '使用门槛',
+                    titleTooltip: '使用优惠券的条件',
+                    sortable: true,
+                }, {
+                    field: 'end_time',
+                    title: '到期时间',
+                    titleTooltip: '优惠券使用到期时间 过期作废',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (row.is_end == 0) {
+                            return value + " <span class='label bg-green'>未到期</span>";
+                        }else {
+                            return value + " <span class='label bg-red'>已到期</span>";
+                        }
+                    }
+                },{
+                    field: 'createtime',
+                    title: '领劵时间',
+                    titleTooltip: '创建信息的时间',
+                    sortable: true,
+                }]
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                //search: params.search,
+                pageSize: params.limit,  //每页大小
+                page: params.offset / params.limit + 1,//页码
+                sortOrder: params.order,//排序
+                sortName: params.sort,//排序字段
+                openid: $("#SearchKey").val(), //关键词
+                u_store_id: $("#SearchvoiceStore").val(), //卡券商家
+                types: $("#SearchTypes").val(), //信息状态
+                timer: $("#SearchTime").val() //信息状态
+            };
+            return temp;
+        };
+        return oTableInit;
+    };
+
+    function operateFormatter(value, row, index) {
+        return [
+
+        ].join('');
+    }
+    window.operateEvents = {
+
+    };
+
+    //加载成功时执行
+    $('#tb_bandlist').on('load-success.bs.table column-switch.bs.table', function (data) {
+        $('#tb_bandlist').bootstrapTable('resetView');
+    });
+
+    var ButtonInit = function () {
+        var oInit = new Object();
+        var postdata = {};
+
+        oInit.Init = function () {
+
+            //查询操作
+            $("#btn_query").click(function () {
+                $("#tb_bandlist").bootstrapTable('refresh');
+            });
+            //导出数据
+            $("#btn_exportdata").click(function(){
+                var openid=$("#SearchKey").val();
+                var u_store_id=$("#SearchvoiceStore").val();
+                var types=$("#SearchTypes").val();
+                var timer= $("#SearchTime").val();
+
+                //询问框
+                layer.open({
+                    content: '您确定要导出记录到Excel吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        layer.close(index);
+                        window.location.href = "{php echo $this->createWebAppUrl('obj_voice_cardbag', array('act' => 'exportData','aid' => $aid));}&openid="+ openid +"&u_store_id="+ u_store_id +"&types="+ types +"&timer="+ timer +"";
+                    }
+                });
+            });
+        };
+        return oInit;
+    };
+
+</script>
+</body>
+</html>

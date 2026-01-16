@@ -1,0 +1,175 @@
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name = "format-detection" content ="telephone=no">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>{$title} - {$config['name']}</title>
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_CSS__}/base.css">
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_STORE_CSS__}/index.css?v=20191121">
+    <script>
+        window.sysinfo = {
+            'family': '{IMS_FAMILY}',
+                'module' : {'url' : '{if defined('MODULE_URL')}{MODULE_URL}{/if}', 'name' : '{if defined('IN_MODULE')}{IN_MODULE}{/if}'},
+        };
+    </script>
+    <!-- 移动端适配 -->
+    <script>
+        var html = document.querySelector('html');
+        changeRem();
+        window.addEventListener('resize', changeRem);
+        function changeRem() {
+            var width = html.getBoundingClientRect().width;
+            html.style.fontSize = width / 10 + 'px';
+        }
+
+        function FloatMoney(value) {
+            if (value == "")
+            {
+                return "0.00";
+            }
+            var value = Math.round(parseFloat(value) * 100) / 100;
+            var xsd = value.toString().split(".");
+            if (xsd.length == 1) {
+                value = value.toString() + ".00";
+                return value;
+            }
+            if (xsd.length > 1) {
+                if (xsd[1].length == 1) {
+                    value = value.toString() + "0";
+                }
+                else if (xsd[1].length < 2) {
+                    value = value.toString();
+                }
+                return value;
+            }
+        }
+    </script>
+    <script src="{__MOBILE_STORE_JS__}/jquery-2.1.4.min.js"></script>
+    <script src="{__PLUGIN__}/layer/mobile/2.0/layer.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script>
+        // jssdk config 对象
+        jssdkconfig = {php echo json_encode($_W['account']['jssdkconfig']);} || {};
+        // 是否启用调试
+        jssdkconfig.debug = false;
+        jssdkconfig.jsApiList = [
+            'checkJsApi',
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'getLocation',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'hideMenuItems'
+        ];
+        jssdkconfig.openTagList = ['wx-open-subscribe'];
+        wx.config(jssdkconfig);
+        wx.error(function (res) {
+            //layer.open({ content: '对不起，微信JSSDK信息验证失败！', skin: 'msg', time: 2 });
+        });
+        wx.ready(function () {
+            var title = "{php echo replaceShareInfo($config['share_title'])}";
+            var imgUrl = "{php echo $config['share_thumb'] ? tomedia($config['share_thumb']) : getMemberAvatar()}";
+            var link = "{php echo replaceDieDomain($config, __MURL('store.sys_tmp', array('act' => 'index'), true, true),0,0,0);}";
+            var desc = "{php echo replaceShareInfo($config['share_desc'])}";
+
+            if (wx.onMenuShareTimeline) {
+                //转发到朋友圈
+                wx.onMenuShareTimeline({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                //转发给朋友
+                wx.onMenuShareAppMessage({
+                    title: title,
+                    desc: desc,
+                    link: link,
+                    imgUrl: imgUrl,
+                    type: 'link',
+                    dataUrl: '',
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareQQ({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+                wx.onMenuShareWeibo({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接
+                    imgUrl: imgUrl, // 分享图标
+                    success: function () {
+
+                    },
+                    cancel: function () {
+                        layer.open({ content: '对不起，转发失败请重试！', skin: 'msg', time: 2 });
+                    }
+                });
+            }
+            else{
+                //新版发送朋友圈
+                wx.updateTimelineShareData({
+                    title: title, // 分享标题
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+                wx.updateAppMessageShareData({
+                    title: title, // 分享标题
+                    desc: desc, // 分享描述
+                    link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                    imgUrl: imgUrl, // 分享图标
+                }, function(res) {
+
+                });
+            }
+        });
+        $(function(){
+            <!-- 解决引用mui时ios输入框失去焦点页面跳到顶部问题 -->
+            $("input").on("blur", function () {
+                $("body").removeClass("mui-focusin");
+            });
+            $("textarea").on("blur", function () {
+                $("body").removeClass("mui-focusin");
+            });
+        });
+    </script>
+    {if $_W['store']['endtime'] < TIMESTAMP && $_GPC['do'] != "store.store_renew" && $_GPC['do'] != "store.login" && $_GPC['do'] != "store.register" && $_GPC['do'] != "store.resetpsd" && $_GPC['do'] != "store.sys_tmp" && strtolower($_SERVER['REQUEST_METHOD']) == "get"}
+    <!-- 是否到期判断 -->
+    <script>
+        $(function(){
+            layer.open({
+                content: '<a href="{php echo $this->createMobileUrl('store.store_renew');}"><img src="{__MOBILE_STORE_IMG__}/renew.png" style="width:5.6rem;height: 7.28rem; " /></a>'
+                ,style: 'position:fixed;top:50%; margin-top:-4.6rem; margin-left: -45%; max-width:inherit; border:none;background-color: transparent;'
+                ,shadeClose: false
+            });
+        });
+    </script>
+    {/if}
+</head>

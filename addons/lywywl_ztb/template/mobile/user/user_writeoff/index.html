@@ -1,0 +1,239 @@
+<!doctype html>
+<html>
+{template 'user/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<style>
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {position: static}
+    .tabContainer ul.tabHd li {
+        width: 33.33%;
+    }
+    /*-----优惠券-------*/
+    .cardList {padding:0.32rem}
+    .cardList li{ display:block; margin-bottom:0.267rem;  }
+    .cardList li figure{ position:relative}
+    .cardList li .txtContent{ position:absolute; z-index:1; width:9.6rem}
+    .cardList li .txtContent span.receive{ display:block; float:right; border-left:1px dashed #fff; width:20%; height:1.81rem; padding-top:0.33rem; position:absolute; right:0; top:0; font-size:0.526rem; line-height:0.7rem;text-align: center;}
+    .cardList li a{ width:76%; display:block;color:#fff}
+    .cardList li dl{ padding-left:2.7%; height:1.81rem; padding-top:0.32rem}
+    .cardList li dl dt{ width:1.306rem; height:1.306rem;float:left; }
+    .cardList li dl dt img{ width:100%; height:100%; border-radius:50%; }
+    .cardList li dl dd{ float:left; padding-left:0.13rem; width:5.2rem; overflow:hidden}
+    .cardList li dl dd p{ height:0.45rem; line-height:0.45rem; overflow:hidden; font-size:0.32rem}
+    .cardList li dl dd p:nth-child(1){ font-size:0.426rem; height:0.52rem; line-height:0.52rem; margin-bottom:0.1rem; overflow:hidden}
+    .cardList li .txtContent section {
+        height: 0.8rem;
+        line-height: 0.8rem;
+        overflow: hidden;
+        font-size: 0.32rem;
+        color: #282828;
+        display: block;
+        padding: 0 4.7% 0 2.7%
+    }
+    .gray {
+        color: #808080;
+    }
+    /*-----参与用户-------*/
+    .user_info{ margin-top:0.4rem; position:relative; padding-left:1.013rem; min-height:0.8rem;line-height: 0.8rem;}
+    .user_info img{ width:0.8rem; height:0.8rem; display:block; position:absolute; left:0; top:0.04em; border-radius:50%;}
+</style>
+<body>
+<section id="ContentList">
+    <section id="LoadLists">
+
+    </section>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <section class="order_item writeoff_item">
+        <section class="order_num clearfix"><span class="font28 c9">核销时间：<%= rows[i].updatetime %></span>
+            <%if(rows[i].writeoff_types==0){%>
+            <span class="fr font28 main_red">线下核销</span>
+            <%}else{%>
+            <span class="fr font28 main_green">线上核销</span>
+            <%}%>
+        </section>
+        <section class="order_goods"> <img src="<%= rows[i].prize_pic_url %>">
+            <h3><%= rows[i].activity_name %></h3>
+            <%if(rows[i].types==0){%>
+            <p class="font30 main_red"><%= rows[i].name %></p>
+            <%}%>
+            <%if(rows[i].types==1){%>
+            <p class="font30 main_red"><%= rows[i].name %>：<%= rows[i].score %> 积分</p>
+            <%}%>
+            <%if(rows[i].types==2){%>
+            <p class="font30 main_red"><%= rows[i].name %>：<%= rows[i].sys %> 元</p>
+            <%}%>
+            <%if(rows[i].types==3){%>
+            <p class="font30 main_red"><%= rows[i].name %>：<%= rows[i].money %> 元</p>
+            <%}%>
+            <%if(rows[i].types==4){%>
+            <p class="font30 main_red"><%= rows[i].name %></p>
+            <%}%>
+            <%if(rows[i].types==5){%>
+            <p class="font30 main_red"><%= rows[i].name %></p>
+            <%}%>
+            <%if(rows[i].types == -1){%>
+            <!--<p class="font30 main_red"><%= rows[i].name %></p>-->
+            <%}%>
+        </section>
+        <section class="pd24">
+            <section class="user_info" style=" margin-top:inherit;">
+                <img src="<%= rows[i].headurl %>" alt=""><p class="font24 c6"><%= rows[i].nickname %></p>
+            </section>
+        </section>
+        <!--<section class="order_num"><span class="font28">参与用户：<img src="<%= rows[i].headurl %>" width="25px"> <%= rows[i].nickname %></span></section>-->
+    </section>
+    <% } %>
+</script>
+<script>
+    $(function(){
+
+        //dropload
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //重新从第一页加载
+        if(dropload_me){
+            $('#LoadLists').empty();
+            page = 0;
+            dropload_me.unlock();
+            dropload_me.noData(false);
+            dropload_me.resetload();
+        }
+
+        if(is_first){
+            is_first = false;
+            $('#ContentList').dropload({
+                scrollArea : window,
+                domUp : {
+                    domClass   : 'dropload-up',
+                    domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                    domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                    domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                },
+                domDown : {
+                    domClass   : 'dropload-down',
+                    domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                    domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                    domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                },
+                loadUpFn : function(me){
+                    $.ajax({
+                        type: 'GET',
+                        url: "{php echo $this->createMobileUrl('user.user_writeoff', array('act' => 'getJsonList','store_id' => $store_id));}",
+                        data:{
+                            "page":1,
+                            "pageSize":pageSize
+                        },
+                        dataType: 'json',
+                        success: function(data){
+                            var html = template("listtpl", data);
+                            $('#LoadLists').html(html);
+                            // 每次数据加载完，必须重置
+                            me.resetload();
+                            // 重置页数，重新获取loadDownFn的数据
+                            page = 1;
+                            // 解锁loadDownFn里锁定的情况
+                            me.unlock();
+                            me.noData(false)
+                        },
+                        error: function(xhr, type){
+                            layer.open({
+                                content: '系统错误，稍后重试！'
+                                ,skin: 'msg'
+                                ,time: 2 //2秒后自动关闭
+                            });
+                            // 即使加载出错，也得重置
+                            me.resetload();
+                        }
+                    });
+                },
+                loadDownFn : function(me){
+                    dropload_me = me;
+                    page++;
+                    // 拼接HTML
+                    var html = '';
+                    $.ajax({
+                        type: 'GET',
+                        url: "{php echo $this->createMobileUrl('user.user_writeoff', array('act' => 'getJsonList','store_id' => $store_id));}",
+                        data:{
+                            "page":page,
+                            "pageSize":pageSize,
+                            "status":window.searchStatus
+                        },
+                        dataType: 'json',
+                        success: function(data){
+                            var arrLen = data.rows.length;
+                            if(arrLen > 0){
+                                var html = template("listtpl", data);
+                                // 如果没有数据
+                            }else{
+                                // 锁定
+                                me.lock();
+                                // 无数据
+                                me.noData();
+                            }
+
+                            // 插入数据到页面，放到最后面
+                            $('#LoadLists').append(html);
+                            // 每次数据插入，必须重置
+                            me.resetload()
+                        },
+                        error: function(xhr, type){
+                            layer.open({
+                                content: '系统错误，稍后重试！'
+                                ,skin: 'msg'
+                                ,time: 2 //2秒后自动关闭
+                            });
+                            // 即使加载出错，也得重置
+                            me.resetload();
+                        }
+                    });
+                },
+                threshold : 50
+            });
+        }
+    });
+
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+
+    //关闭关闭弹窗
+    function closeWindows(){
+        layer.closeAll();
+        scroll.beforeClose();
+    }
+
+
+</script>
+</body>
+</html>

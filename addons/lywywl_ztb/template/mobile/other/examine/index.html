@@ -1,0 +1,50 @@
+<div id="btnActivityExamine" style="position:fixed;top:200px;background:#000;font-size:18px;color:#fff;padding:10px;z-index:9999;text-align:center;">
+    {if !empty($activity)}
+        {if $activity['check_status'] == 1}
+        <p style="margin-bottom:5px;">活动待审核</p>
+        <button data-status="3" style="border:0;color:#fff;background:red;padding:5px 10px;border-radius:5px;">驳回</button>
+        <button data-status="2" style="border:0;color:#fff;background:green;padding:5px 10px;border-radius:5px;margin-left:10px;">通过</button>
+        {elseif $activity['check_status'] == 3}
+        <p style="margin-bottom:5px;">审核已驳回</p>
+        {/if}
+    {elseif !empty($object)}
+        {if $object['check_status'] == 1}
+        <p style="margin-bottom:5px;">活动待审核</p>
+        <button data-status="3" style="border:0;color:#fff;background:red;padding:5px 10px;border-radius:5px;">驳回</button>
+        <button data-status="2" style="border:0;color:#fff;background:green;padding:5px 10px;border-radius:5px;margin-left:10px;">通过</button>
+        {elseif $object['check_status'] == 3}
+        <p style="margin-bottom:5px;">审核已驳回</p>
+        {/if}
+    {/if}
+</div>
+<script src="{__MOBILE_TMP_JS__}/jquery-2.1.4.min.js"></script>
+<script src="{__PLUGIN__}/layer/mobile/2.0/layer.js"></script>
+<script type="text/javascript">
+    $("#btnActivityExamine button").click(function(){   
+        var status = $(this).data("status");
+        var text = $(this).text();
+        var index = layer.open({
+            content: '您确定要'+text+'审核吗？'
+            ,btn: [text, '再看看']
+            ,yes: function(index){
+                $.ajax({
+                    url: "{php echo $this->createMobileUrl('public', array('act' => 'checkActivity', 'token' => $token));}",
+                    type: "post",
+                    data: {"status" : status},
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.status === 1) {
+                            layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                            setTimeout(function(){
+                                location.href = location.href;
+                            },2000);
+                        } else {
+                            layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                        }
+                    }
+                });
+            }
+        });
+        $("#layui-m-layer"+index).find(".layui-m-layercont").css({"text-align":"center"});
+    });
+</script>

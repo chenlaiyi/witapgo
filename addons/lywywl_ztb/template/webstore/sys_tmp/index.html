@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<style>
+
+</style>
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">活动管理</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="">模板列表</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchTypes" class="col-sm-1 control-label">模板分类</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchTypes">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $objList $type}
+                                                    <option value="{$type['id']}">{$type['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchFestival">适用节日</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchFestival">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $festivalList $festival}
+                                                    <option value="{$festival['id']}">{$festival['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchIndustry">适用行业</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchIndustry">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $industryList $industry}
+                                                    <option value="{$industry['id']}">{$industry['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label class="col-sm-1 control-label" for="SearchActivityType">活动类别</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchActivityType">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $activityTypes $index $activity}
+                                                    <option value="{$index}">{$activity}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                       </div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索</button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置检索</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="table-responsive">
+                                <ul class="mailbox-attachments clearfix" id="box" >
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script id="temptpl" type="text/html">
+    <%for(i = 0; i < rows.length; i ++) {%>
+    <li style="overflow: hidden; height:296px ;"><em><%=rows[i]["activity_types"]%></em>
+        <span class="mailbox-attachment-icon">
+            <a href="{php echo $this->createWebAppUrl('obj_activity', array('act' => 'index'));}&tmp_id=<%=rows[i]["tid"]%>" >
+            <img src='<%=rows[i]["thumb_url"]%>' width="100%" height="100%" onerror="this.src='{__WEBAPP_IMG__}/nopic.png';this.onerror=null"></a>
+        </span>
+        <div class="mailbox-attachment-info">
+            <a href="{php echo $this->createWebAppUrl('obj_activity', array('act' => 'index'));}&tmp_id=<%=rows[i]["tid"]%>" class="mailbox-attachment-name"style="height: 14px; overflow: hidden; display: inline-block; text-overflow: ellipsis; white-space: nowrap; width: 100%;"><i class="fa fa-circle"></i> <%=rows[i]["name"]%></a>
+            <span class="mailbox-attachment-size">
+                <div title="模板使用次数"><i class="fa fa-thumbs-o-up"></i>&nbsp;<%=rows[i]["use_num"]%></div>
+                <div class="btn-group">
+                                        <button type="button" class="btn btn-warning btn-xs btn-flat showIntro" data-title="<%=rows[i]['name']%>" data-types="<%=rows[i]['activity_types']%>" data-intro1="<%=rows[i]['intro1']%>" data-intro2="<%=rows[i]['intro2']%>"  title="查看模板功能介绍"><i class="fa fa-info"></i> 介绍</button>
+                    <%if (rows[i]["token"]==""){%>
+                    <button type="button" class="btn btn-info btn-xs btn-flat noCase disabled" title="查看次模板案例活动"><i class="fa fa-eye"></i> 案例</button>
+                    <%}else{%>
+                    <button type="button" class="btn btn-info btn-xs btn-flat showCase" data-clone_activity_url="<%=rows[i]["clone_activity_url"]%>" data-token="<%=rows[i]["token"]%>" data-token_links="<%=rows[i]["token_links"]%>" data-token_id="<%=rows[i]["token_id"]%>" title="查看模板案例活动"><i class="fa fa-eye"></i> 案例</button>
+                    <%}%>
+                    {if $is_show_promulgate}
+                    <button type="button" class="btn btn-success btn-xs btn-flat showPromulgate" data-url="<%=rows[i]["activity_url"]%>" title="使用此模板创建活动"><i class="fa fa-plus"></i> 制作</button>
+                    {else}
+                    <button type="button" class="btn btn-success btn-xs btn-flat" title="使用此模板创建活动" onclick="javascrtpt:window.location.href='<%=rows[i]["activity_url"]%>'"><i class="fa fa-plus"></i> 制作</button>
+                    {/if}
+                </div>
+            </span>
+        </div>
+    </li>
+    <%}%>
+</script>
+<script>
+    $(function () {
+        SelectNav("我要创建活动");
+
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            $(".select2").select2();
+            myrequire([ 'arttemplate'], function (template) {
+
+                LoadData();
+
+                //加载数据
+                function LoadData() {
+                    $("#box").html("<div class='load-down'><div class='load-load'><span class='loading'></span>模板数据加载中...</div></div>");
+                    $.ajax({
+                        type: "post",
+                        dataType:'json',
+                        url: "{php echo $this->createWebAppUrl('sys_tmp', array('act' => 'getJsonList'));}",
+                        data: { obj_types: $("#SearchTypes").val(),festival: $("#SearchFestival").val(),industry: $("#SearchIndustry").val(),activityType: $("#SearchActivityType").val()},
+                        success: function (data) {
+                            var html = template("temptpl", data);
+                            $("#box").html(html);
+                        }
+                    });
+                }
+
+                //模板筛选
+                $("#btn_query").click(function () {
+                    LoadData();
+                });
+            });
+        });
+
+        //暂无案例
+        $(document).delegate(".noCase", "click", function() {
+            Command: toastr["error"]("亲，案例正在制作中，请稍后查看！", "错误提示");
+        });
+
+        //查看案例
+        $(document).delegate(".showCase", "click", function() {
+            var token = $(this).data("token");
+            var token_links = $(this).data("token_links");
+            var token_id = $(this).data("token_id");
+            var clone_activity_url = $(this).data("clone_activity_url");
+            require(["jquery", "util"], function(){
+                /*{if $is_show_promulgate}*/
+                var footer = '<button type="button" class="btn btn-default showPromulgate" data-url="'+clone_activity_url+'" >使用案例</button>';
+                /*{else}*/
+                var footer = '<button type="button" class="btn btn-default" onclick="location.href=\''+clone_activity_url+'\'" >使用案例</button>';
+                /*{/if}*/
+                var modalobj = util.dialog('案例活动展示','<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebAppUrl('sys_tmp', array('act' => 'objQrPreview' ));}&token='+ token +'&id='+ token_id +'><p>请用打开微信扫一扫，即可预览案例活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ token_links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                modalobj.modal({'keyboard': true});
+                modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                modalobj.modal('show');
+            });
+
+            require(["clipboard"], function (Clipboard) {
+                //复制预览网址
+                new Clipboard('#btn_copy', {
+                    text: function(trigger) {
+                        $("#copyTarget").text(''+ token_links +'');  /*放入目标对象*/
+                        return trigger.getAttribute('aria-label');
+                    }
+                });
+            });
+        });
+
+        //查看功能介绍
+        $(document).delegate(".showIntro","click",function(){
+            var types = $(this).data("types");
+            var title = $(this).data("title") + "（"+types+"）";
+            var intro1 = $(this).data("intro1");
+            var intro2 = $(this).data("intro2");
+            var content='<div style="text-align:left;max-height: 300px;overflow-y: auto;margin-top: -30px"><h4>功能特点</h4><p>'+intro1+'</p><h4>功能说明</h4><p>'+intro2+'</p></div>';
+            layer.open({
+                title: [
+                    title,
+                    'background-color:#fee002; color:#000;margin-top:-20px'
+                ],
+                content: content
+            });
+        });
+
+        //创建活动
+        $(document).delegate(".showPromulgate", "click", function() {
+            var url = $(this).data("url");
+            layer.open({
+                content: '<div style="text-align:left;max-height: 300px;overflow-y: auto;">{php echo htmlspecialchars_decode($config['promulgate'])}</div>'
+                ,btn: ['同意并创建']
+                ,yes: function(index){
+                    window.location.href = url;
+                    layer.close(index);
+                }
+            });
+        });
+
+        <!--{if $store['create_num'] == 0}-->
+        layer.open({
+            content: '您当前已经没有可创建活动次数了，请购买套餐后，再创建活动。'
+            ,btn: ['确定']
+            ,shadeClose: false
+            ,yes: function(index){
+                window.location.href = "{php echo $this->createWebAppUrl('store_renew', array('act' => 'setmeal'));}";
+                layer.close(index);
+            }
+        });
+        <!--{else if $store['create_num'] != -1}-->
+        layer.open({
+            content: '当前剩余可创建活动次数为<span style="color:red">{$store['create_num']}</span>次'
+            ,btn: ['确定']
+            ,yes: function(index){
+                layer.close(index);
+            }
+        });
+        <!--{/if}-->
+
+    });
+</script>
+</body>
+</html>

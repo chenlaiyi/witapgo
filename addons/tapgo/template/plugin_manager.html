@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>插件管理</title>
+    <link rel="stylesheet" href="path/to/your/css/style.css">
+</head>
+<body>
+    <h1>插件管理</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>插件名称</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 循环输出插件列表 -->
+            <?php foreach ($plugins as $plugin): ?>
+            <tr>
+                <td><?php echo $plugin['name']; ?></td>
+                <td><?php echo $plugin['status']; ?></td>
+                <td>
+                    <!-- 根据插件状态显示不同的操作按钮 -->
+                    <?php if ($plugin['status'] == '启用'): ?>
+                        <button onclick="disablePlugin('<?php echo $plugin['name']; ?>')">禁用</button>
+                    <?php else: ?>
+                        <button onclick="enablePlugin('<?php echo $plugin['name']; ?>')">启用</button>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <script>
+        function disablePlugin(pluginName) {
+            // 发送请求禁用插件
+            alert('禁用插件: ' + pluginName);
+        }
+
+        function enablePlugin(pluginName) {
+            // 发送请求启用插件
+            alert('启用插件: ' + pluginName);
+        }
+    </script>
+</body>
+</html>

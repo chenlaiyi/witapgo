@@ -1,0 +1,83 @@
+ {template '_header'}
+ <div class="page-header">
+     当前位置：<span class="text-primary">机构分润等级</span>
+</div>
+ <div class="page-content">
+ <!--    <div class="page-toolbar">-->
+ <!--        <span class=''>-->
+
+	<!--	 {ifp 'unionpay.level.add'}-->
+ <!--                           <a class='btn btn-primary btn-sm' data-toggle='ajaxModal' href="{php echo webUrl('unionpay/level/add')}"><i class="fa fa-plus"></i> 添加新等级</a>-->
+	<!--	 {/if}-->
+
+	<!--</span>-->
+ <!--    </div>-->
+   <div class='alert alert-primary'>
+    提示: 代理机构必需设置代理等级后才会计算分润。
+</div>
+            <table class="table table-responsive table-hover">
+                <thead>
+                    <tr>
+                        <th>等级</th>
+                        <th style='width:160px;'>等级名称</th>
+                        <th>新生费率1</th>
+                        <th>新生费率2</th>
+                        <th>新大陆费率1</th>
+                        <th>新大陆费率2</th>
+                        <th>升级条件</th>
+                        <th>灌树奖现金</th>
+                        <th>灌树奖分红</th>
+                        <th>灌树奖条件</th>
+                        <th style="width: 65px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {loop $list $row}
+                    <tr {if $row['id']=='default'}style='background:#f2f2f2'{/if}>
+                        <td>L{$row['upagentlevel']}</td>
+                        <td>{$row['levelname']}</td>
+                        <td>{php echo number_format((float)$row['hnapay_feilv']*100,2)}%</td>
+                        <td>{php echo number_format((float)$row['hnapay_upfeilv']*100,2)}%</td>
+                        <td>{php echo number_format((float)$row['newland_feilv']*100,2)}%</td>
+                        <td>{php echo number_format((float)$row['newland_upfeilv']*100,2)}%</td>
+                        <td>{if !empty($row['downcount'])|$row['downcount']!=0}团队规模{$row['downcount']}人{/if}
+                            {if !empty($row['tradessum'])|$row['tradessum']!=0}</br>或业绩{php echo number_format((float)$row['tradessum']/10000,0)}万
+                            {else}-{/if}
+                        </td>
+                        <td>{if empty($row['cashreward'])|$row['cashreward']==0}-{else}{php echo number_format((float)$row['cashreward'],0)}元{/if}</td>
+                        <td>{if empty($row['dividends'])|$row['dividends']==0}-{else}万{php echo number_format((float)$row['dividends']*10000,1)}{/if}</td>
+                        <td>{if !empty($row['zhituiagent'])|$row['zhituiagent']!=0}直推{$row['zhituiagent']}个代理
+                            {elseif !empty($row['zhituichannel'])|$row['zhituichannel']!=0}直推{$row['zhituichannel']}个机构{else}-{/if}
+                            {if !empty($row['monthtrades'])|$row['monthtrades']!=0}</br>且月交易额{php echo number_format((float)$row['monthtrades']/100000000,0)}亿以上{/if}
+                        </td>
+                        <td>
+							<!--{ifp 'unionpay.level.edit'}-->
+       <!--                     <a class='btn btn-default btn-sm btn-op btn-operation' data-toggle='ajaxModal'  href="{php echo webUrl('unionpay/level/edit', array('id' => $row['id']))}">-->
+       <!--                         <span data-toggle="tooltip" data-placement="top" title="" data-original-title="{ifp 'unionpay.level.edit'}编辑{else}查看{/if}">-->
+       <!--                             {ifp 'unionpay.level.edit'}-->
+       <!--                             <i class='icow icow-bianji2'></i>-->
+       <!--                             {else}-->
+       <!--                             <i class='icow icow-chakan-copy'></i>-->
+       <!--                             {/if}-->
+       <!--                        </span>-->
+       <!--                     </a>-->
+       <!--                     {/if} -->
+       <!--                     {if $row['id']!='default'}-->
+							<!--    {ifp 'unionpay.level.delete'}-->
+							<!--	    <a class='btn btn-default btn-sm btn-op btn-operation' data-toggle='ajaxRemove'  href="{php echo webUrl('unionpay/level/delete', array('id' => $row['id']))}" data-confirm="确认删除此等级吗？">-->
+       <!--                                 <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">-->
+       <!--                                     <i class='icow icow-shanchu1'></i>-->
+       <!--                                 </span>-->
+       <!--                             </a>-->
+       <!--                         {/if}-->
+						 <!--   {/if}-->
+                        </td>
+						
+                    </tr>
+                    {/loop}
+                
+                </tbody>
+            </table>
+ </div>
+ {template '_footer'}
+

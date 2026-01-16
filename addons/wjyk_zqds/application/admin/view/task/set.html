@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>提现设置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+    <style>
+		.layui-form-label{
+			width:145px;
+        }
+		.layui-input-block{
+			margin-left:175px;
+		}
+        form{
+            padding-right:15px ;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">任务中心设置</div>
+                <div class="layui-card-body" pad15>
+					<form class="layui-form " style="margin-top:21px;">
+					  <input type="hidden" name="id" value="{$set['id']}">
+					  <div class="layui-form-item">
+					    <label class="layui-form-label" >是否开启</label>
+					    <div class="layui-input-block" id="IsPurchased">
+					      <input type="radio" name="is_open" value="1" title="开启" {if $set['is_open'] == '1'}checked{/if} lay-filter="aaa">
+					      <input type="radio" name="is_open" value="2" title="隐藏" {if $set['is_open'] == '2'  || $set['is_open'] == ''}checked{/if} lay-filter="aaa">
+					    </div>
+					  </div>					  <div class="layui-form-item">					    <label class="layui-form-label">广告标题</label>					    <div class="layui-input-inline">					      <input type="text" name="advert_name"   autocomplete="off" class="layui-input" value="{$set['advert_name']}">					    </div>					  </div>					  					  <div class="layui-form-item">					      <label class="layui-form-label">广告图标</label>					      <button type="button" class="layui-btn" id="test1">上传图片</button>					      <div class="layui-form-mid layui-word-aux">建议上传74px * 74px尺寸</div>					      <div class="layui-input-block">					          <img class="layui-upload-img" id="demo1" style="margin-top: 10px;width: 74px;height: 74px;" {if $set['advert_icon']==''}{else}src="{$set['advert_icon']}"{/if}">					          <input type="hidden" name="advert_icon" id="advert_icon" value="{$set['advert_icon']}">					      </div>					  </div>					  					  <div class="layui-form-item">					    <label class="layui-form-label">完成广告任务可得{$name}</label>					    <div class="layui-input-inline">					      <input type="number" name="advert_integral"   autocomplete="off" class="layui-input" value="{$set['advert_integral']}">					    </div>					    <div class="layui-form-mid layui-word-aux">        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户完成每日广告任务可获得{$name}数量</div>					  </div>					  					  <div class="layui-form-item">					    <label class="layui-form-label">邀请好友标题</label>					    <div class="layui-input-inline">					      <input type="text" name="invite_name"   autocomplete="off" class="layui-input" value="{$set['invite_name']}">					    </div>					  </div>					  					  <div class="layui-form-item">					      <label class="layui-form-label">邀请好友图标</label>					      <button type="button" class="layui-btn" id="test2">上传图片</button>					      <div class="layui-form-mid layui-word-aux">建议上传74px * 74px尺寸</div>					      <div class="layui-input-block">					          <img class="layui-upload-img" id="demo2" style="margin-top: 10px;width: 74px;height: 74px;" {if $set['invite_icon']==''}{else}src="{$set['invite_icon']}"{/if}">					          <input type="hidden" name="invite_icon" id="invite_icon" value="{$set['invite_icon']}">					      </div>					  </div>				  	  				  	  <div class="layui-form-item">					    <label class="layui-form-label">邀请好友数量</label>					    <div class="layui-input-inline">					      <input type="number" name="invite_count"   autocomplete="off" class="layui-input" value="{$set['invite_count']}">					    </div>					  </div>					  					  					  <div class="layui-form-item">					    <label class="layui-form-label">邀请好友可得{$name}数量</label>					    <div class="layui-input-inline">					      <input type="number" name="invite_integral"   autocomplete="off" class="layui-input" value="{$set['invite_integral']}">					    </div>					    <div class="layui-form-mid layui-word-aux">        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户完成每日邀请好友任务可获得{$name}数量</div>					  </div>					  					  <div class="layui-form-item">					      <label class="layui-form-label">话费图标</label>					      <button type="button" class="layui-btn" id="test3">上传图片</button>					      <div class="layui-form-mid layui-word-aux">建议上传74px * 74px尺寸</div>					      <div class="layui-input-block">					          <img class="layui-upload-img" id="demo3" style="margin-top: 10px;width: 74px;height: 74px;" {if $set['huafei_icon']==''}{else}src="{$set['huafei_icon']}"{/if}">					          <input type="hidden" name="huafei_icon" id="huafei_icon" value="{$set['huafei_icon']}">					      </div>					  </div>					  					  <div class="layui-form-item">					    <label class="layui-form-label">充话费标题</label>					    <div class="layui-input-inline">					      <input type="text" name="huafei_name"   autocomplete="off" class="layui-input" value="{$set['huafei_name']}">					    </div>					  </div>					  					  <div class="layui-form-item">					    <label class="layui-form-label">每日充话费次数</label>					    <div class="layui-input-inline">					      <input type="number" name="huafei_count"   autocomplete="off" class="layui-input" value="{$set['huafei_count']}">					    </div>					  </div>					  					  					  <div class="layui-form-item">					    <label class="layui-form-label">充话费可得{$name}数量</label>					    <div class="layui-input-inline">					      <input type="number" name="huafei_integral"   autocomplete="off" class="layui-input" value="{$set['huafei_integral']}">					    </div>					    <div class="layui-form-mid layui-word-aux">        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户完成每日充话费任务可获得{$name}数量</div>					  </div>					  					  					  {if $system['news_open'] == 1}					  <div class="layui-form-item">					    <label class="layui-form-label">新闻标题</label>					    <div class="layui-input-inline">					      <input type="text" name="news_name"   autocomplete="off" class="layui-input" value="{$set['news_name']}">					    </div>					  </div>					  					  	<div class="layui-form-item">					      <label class="layui-form-label">新闻图标</label>					      <button type="button" class="layui-btn" id="test4">上传图片</button>					      <div class="layui-form-mid layui-word-aux">建议上传74px * 74px尺寸</div>					      <div class="layui-input-block">					          <img class="layui-upload-img" id="demo4" style="margin-top: 10px;width: 74px;height: 74px;" {if $set['news_icon']==''}{else}src="{$set['news_icon']}"{/if}">					          <input type="hidden" name="news_icon" id="news_icon" value="{$set['news_icon']}">					      </div>					  </div>					  					  					  <div class="layui-form-item">					    <label class="layui-form-label">每日看新闻次数</label>					    <div class="layui-input-inline">					      <input type="number" name="news_count"   autocomplete="off" class="layui-input" value="{$set['news_count']}">					    </div>					  </div>					  					  					  <div class="layui-form-item">					    <label class="layui-form-label">看新闻可得{$name}数量</label>					    <div class="layui-input-inline">					      <input type="number" name="news_integral"   autocomplete="off" class="layui-input" value="{$set['news_integral']}">					    </div>					    <div class="layui-form-mid layui-word-aux">        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户完成每日看新闻任务可获得{$name}数量</div>					  </div>					  					  {/if}					  {if $system['manor_open'] == 1}					  					  	<div class="layui-form-item">					    <label class="layui-form-label">喂牛标题</label>					    <div class="layui-input-inline">					      <input type="text" name="manor_name"   autocomplete="off" class="layui-input" value="{$set['manor_name']}">					    </div>					  </div>					  					  					  	<div class="layui-form-item">					      <label class="layui-form-label">喂牛图标</label>					      <button type="button" class="layui-btn" id="test5">上传图片</button>					      <div class="layui-form-mid layui-word-aux">建议上传74px * 74px尺寸</div>					      <div class="layui-input-block">					          <img class="layui-upload-img" id="demo5" style="margin-top: 10px;width: 74px;height: 74px;" {if $set['manor_icon']==''}{else}src="{$set['manor_icon']}"{/if}">					          <input type="hidden" name="manor_icon" id="manor_icon" value="{$set['manor_icon']}">					      </div>					  </div>					  					  <div class="layui-form-item">					    <label class="layui-form-label">每日喂牛次数</label>					    <div class="layui-input-inline">					      <input type="number" name="manor_count"   autocomplete="off" class="layui-input" value="{$set['manor_count']}">					    </div>					  </div>					  					  					  <div class="layui-form-item">					    <label class="layui-form-label">喂牛可得{$name}数量</label>					    <div class="layui-input-inline">					      <input type="number" name="manor_integral"   autocomplete="off" class="layui-input" value="{$set['manor_integral']}">					    </div>					    <div class="layui-form-mid layui-word-aux">        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户完成每日喂牛次数可获得{$name}数量</div>					  </div>					  					  {/if}					  
+					  <div class="layui-form-item">
+					    <div class="layui-input-block">
+					      <button class="layui-btn" lay-submit lay-filter="demo1">立即提交</button>
+					    </div>
+					  </div>
+					  <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+					</form>
+			</div>
+        </div>
+    </div>
+</div>
+</div>
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script type="text/javascript" src="__PUBLIC__/static/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/static/ueditor/ueditor.all.js"></script>
+<script>
+    layui.config({
+        base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use('index');
+</script>
+<script>
+    layui.use(['jquery','form', 'laydate','upload'], function(){
+    	var $ = layui.$
+    		,form = layui.form
+            ,layer = layui.layer
+            , upload = layui.upload;
+    	upload.render({            elem: '#test1'            	,exts: 'jpg|png|jpeg|gif'            ,url: "{:siteUrl('admin/index/upload','','web')}"             ,done: function(res){                if(res.code < 0){                    return layer.msg('上传失败');                }else{                    $('#demo1').attr('src', res.msg);                     $('#advert_icon').val(res.msg);                }            }        });    	    	upload.render({            elem: '#test2'            	,exts: 'jpg|png|jpeg|gif'            ,url: "{:siteUrl('admin/index/upload','','web')}"             ,done: function(res){                if(res.code < 0){                    return layer.msg('上传失败');                }else{                    $('#demo2').attr('src', res.msg);                     $('#invite_icon').val(res.msg);                }            }        });    	    	upload.render({            elem: '#test3'            	,exts: 'jpg|png|jpeg|gif'            ,url: "{:siteUrl('admin/index/upload','','web')}"             ,done: function(res){                if(res.code < 0){                    return layer.msg('上传失败');                }else{                    $('#demo3').attr('src', res.msg);                     $('#huafei_icon').val(res.msg);                }            }        });    	    	upload.render({            elem: '#test4'            	,exts: 'jpg|png|jpeg|gif'            ,url: "{:siteUrl('admin/index/upload','','web')}"             ,done: function(res){                if(res.code < 0){                    return layer.msg('上传失败');                }else{                    $('#demo4').attr('src', res.msg);                     $('#news_icon').val(res.msg);                }            }        });    	    	upload.render({            elem: '#test5'            	,exts: 'jpg|png|jpeg|gif'            ,url: "{:siteUrl('admin/index/upload','','web')}"             ,done: function(res){                if(res.code < 0){                    return layer.msg('上传失败');                }else{                    $('#demo5').attr('src', res.msg);                     $('#manor_icon').val(res.msg);                }            }        });
+      //监听提交 
+        form.on('submit(demo1)', function(data){
+            var admin = layui.admin
+            admin.req({
+                url:"{:siteUrl('admin/task/set_task','','web')}",
+                data:data.field,
+                type:"POST",
+                done:res=>{
+                	if(res.code == 0 ){
+                		layer.msg("设置成功");
+                	}
+                }
+            })
+            return false
+        });
+        var ue = UE.getEditor('ueditor', {
+	 		         zIndex: 99,
+	 		         maximumWords: 999,
+	 		         scaleEnabled: true,
+	 		         initialFrameWidth: 800,
+	 		         initialFrameHeight: 300,
+	 		         autoHeightEnabled: false,}
+	 		         );
+        //表单取值
+        layui.$('#LAY-component-form-getval').on('click', function(){
+            var data = form.val('example');
+            alert(JSON.stringify(data));
+        });
+
+    });
+</script>
+</body>
+<div class="layui-footer" style="margin-top:20px;display: flex;justify-content: center;align-items: flex-end;">
+	{include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}
+</div>
+</html>

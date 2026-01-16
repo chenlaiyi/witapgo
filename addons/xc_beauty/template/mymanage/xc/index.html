@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {template 'common/edithead'}
+    <!--微擎 -->
+    <!--这个放在最后一切平白安全-->
+    <style>
+        .container .type3,.type2,.type1{display: none;}
+        .parameter>li{display:-webkit-flex; display:-webkit-box; display:-ms-flexbox; display:-moz-flex; display:flex;}
+        .parameter>li input{-webkit-flex:1; -webkit-box-flex:1; -ms-flex:1; -moz-flex:1; flex:1;}
+        .parameter>li .input-group-btn{width: auto;}
+        .income li.income_top>input:nth-child(1),.income li.income_top>input:nth-child(2){width: 50%;}
+        .income li.income_bottom>input:nth-child(2),.income li.income_bottom>input:nth-child(3),.income li.income_bottom>input:nth-child(4),.income li.income_bottom>input:nth-child(5),.income li.income_bottom>input:nth-child(6){width: 25%;}
+        .type1,.type2.type3{display: none;}
+    </style>
+    <script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+    <script type="text/javascript">
+        //编辑器里使用
+        var urobj=[];
+    </script>
+</head>
+<body class="nav-md" style="min-width: 800px">
+<div>
+    <div class="container xc_edit_from" >
+        <div class="main_container" style="overflow-x: hidden;min-height: calc(100vh - 20px);background-color: white;width: 100%;">
+            <div class="col-md-12 col-xs-12">
+                <div class="x_panel">
+                    <ul class="we7-page-tab">
+                        <li >
+                            <a  href="{php echo $this->createWebUrl($do, array('op'=>'list','xtitleb'=>urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}">
+                                {$xtitleb}- {$xtitlea}列表  </a></li>
+                        <li><a a href="{php echo $this->createWebUrl($do, array('op'=>'edit','xtitleb'=>urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}">{$xtitleb}- {$xtitlea}增加</a></li>
+                    </ul>
+                    <div class="x_content">
+                        <br/>
+                        <form id="sign-form" class="form-horizontal" role="form" method="post" action="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'savemodel','version_id'=>$_GPC['version_id'])}" name="submit" style="padding: 20px 0;">
+                            <input type="hidden" name="id" value="{$list['id']}">
+                            <input type="hidden" name="format">
+                            <div class="form-group">
+                                <label class="control-label col-md-2 col-sm-3 col-xs-12">用户名</label>
+                                <div class="col-md-10 col-sm-9 col-xs-12">
+                                    <input type="text" class="form-control" placeholder="用户名" name="xc[username]" value="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2 col-sm-3 col-xs-12">密码</label>
+                                <div class="col-md-10 col-sm-9 col-xs-12">
+                                    <input type="text" class="form-control" placeholder="密码" name="xc[password]" value="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2 col-sm-3 col-xs-12">确认密码</label>
+                                <div class="col-md-10 col-sm-9 col-xs-12">
+                                    <input type="text" class="form-control" placeholder="确认密码" name="xc[repassword]" value="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2 col-sm-3 col-xs-12">备注</label>
+                                <div class="col-md-10 col-sm-9 col-xs-12">
+                                    <input type="text" class="form-control" placeholder="备注" name="xc[remark]" value="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <input type="button" name="submit" class="btn btn-default" value="提交">
+                                    <a type="button" class="btn btn-default"  href="{php echo $this->createWebUrl($do, array('op'=>'list','xtitleb'=> urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}" >返回</a>
+                                    <input id="res" name="res" type="reset" style="display:none;" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{template 'common/editfoot'}
+<script>
+    $(function(){
+        $("input[name='submit']").click(function(){
+            getjson();
+            var data=$(".form-horizontal").serialize();
+            $.ajax({
+                type:"post",
+                url:"{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'create','version_id'=>$_GPC['version_id'])}",
+                data:data,
+                dataType:'json',
+                success:function(res){
+                    if(res.status==1){
+                        if($("input[name='id']").val()==""){
+
+                        }
+                        swal('操作成功!', '操作成功!', 'success');
+                    }else{
+                        swal('操作失败!',res.msg, 'error');
+                    }
+                }
+            })
+        });
+    });
+    function getjson(){
+        var format=[];
+        $(".parameter").find("li").each(function(){
+            var name=$(this).find("input[name='format_name']").val();
+            var price=$(this).find("input[name='format_price']").val();
+            var kucun=$(this).find("input[name='format_kucun']").val();
+            if(name!=""){
+                var data={name:name,price:price,kucun:kucun};
+                format.push(data);
+            }
+        });
+        if(format.length>0){
+            $("input[name='format']").val(JSON.stringify(format));
+        }
+    }
+</script>
+</body>
+</html>

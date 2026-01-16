@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'store/common/header'}
+<script src="{__PLUGIN__}/clipboard/clipboard.min.js"></script>
+<body>
+<!--商家中心-->
+<section class="bgfff">
+    <section class="business_info">
+        <section class="info_toux">
+            <section class="rel">
+                <img src="{php echo tomedia($_W['store_user']['headurl'])}" alt="商家头像"/>
+                {if $store['is_vip']}
+                <span class="VIP tc">VIP</span>
+                {/if}
+            </section>
+        </section>
+        <h2 class="font32 fn ">{$_W['store']['name']}</h2>
+        <section class="time_info">
+            <time class="font22">{php echo date('Y-m-d H:i:s',$store['endtime'])} 到期</time>
+            <a href="{php echo $this->createMobileUrl('store.store_renew',array('act'=>'index'))}"><span>续费<i></i></span></a></section>
+    </section>
+    <!--总资产-->
+    <section class="pd0_24">
+        <section class="Assets">
+            <span class="font26 c9">账户余额（未结算：{$settlementtotal}元）</span>
+            <section class="money_info clearfix">
+                <h2 class="fn">{$store['money']}</h2>
+                <a href="{php echo $this->createMobileUrl('store.store_refund',array('act'=>'index'))}" class="font24 c9 cash_a">提现</a>
+            </section>
+            <section class="recharge">
+                <a href="{php echo $this->createMobileUrl('store.store_recharge',array('act'=>'index'))}"><img src="{__MOBILE_STORE_IMG__}/recharge.png"  alt=""/><span class="font26">充值</span><i></i></a>
+            </section>
+        </section>
+    </section>
+    {if $config['is_show_storebannerads']==1}
+    <section class="advBanner">
+        {if empty($config['storebannerads_link'])}
+        <img src="{php echo tomedia($config['storebannerads_url'])}" width="100%">
+        {else}
+        <a href="{$config['storebannerads_link']}"><img src="{php echo tomedia($config['storebannerads_url'])}" width="100%"></a>
+        {/if}
+    </section>
+    {/if}
+    <!--功能列表-->
+    <section {if $config['is_show_storebannerads']==0} style=" margin-top:-1.2rem;" {/if}>
+        <section class=" font32 mt30 pl30">活动管理</section>
+        <ul class="CurrencyList clearfix" style=" border-bottom:1px solid #ebebeb;">
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.obj_activity',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon01.png" alt="我的活动"/>
+                    <p class="font26 c6">我的活动</p>
+                </a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.store_staff',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon02.png" alt="我的员工">
+                    <p class="font26 c6">我的员工</p>
+                </a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.user_draw',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon11.png" alt="中奖返利">
+                    <p class="font26 c6">中奖返利</p>
+                </a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.sys_reissue',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon25.png" alt="奖品补发">
+                    <p class="font26 c6">奖品补发</p>
+                </a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.store_card',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon03.png" alt="卡券管理">
+                    <p class="font26 c6">卡券管理</p>
+                </a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.intmall_class',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon14.png" alt="商城分类">
+                    <p class="font26 c6">商城分类</p>
+                </a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.intmall_product',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon06.png" alt="商城产品">
+                    <p class="font26 c6">商城产品</p>
+                </a>
+            </li>
+        </ul>
+    </section>
+    <section>
+        <section class=" font32 mt30 pl30">资金管理</section>
+        <ul class="CurrencyList clearfix" style=" border-bottom:1px solid #ebebeb;">
+            {if $config['sms_obj']==1}
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.store_sms',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon23.png" alt="短信充值">
+                    <p class="font26 c6">短信充值</p>
+                </a>
+            </li>
+            {/if}
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.store_refund',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon13.png" alt="资金提现">
+                    <p class="font26 c6">资金提现</p>
+                </a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.store_bill',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon05.png" alt="资金流水">
+                    <p class="font26 c6">资金流水</p>
+                </a>
+            </li>
+        </ul>
+    </section>
+    <section>
+        <section class=" font32 mt30 pl30">用户管理</section>
+        <ul class="CurrencyList clearfix" style=" border-bottom:1px solid #ebebeb;">
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.user_account',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon12.png" alt="用户信息">
+                    <p class="font26 c6">用户信息</p>
+                </a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.intmall_collect',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon16.png" alt="用户收藏">
+                    <p class="font26 c6">用户收藏</p>
+                </a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.user_score',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon17.png" alt="用户积分">
+                    <p class="font26 c6">用户积分</p>
+                </a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.user_bill',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon18.png" alt="用户资金">
+                    <p class="font26 c6">用户资金</p>
+                </a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.user_refund',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon19.png" alt="用户提现">
+                    <p class="font26 c6">用户提现</p>
+                </a>
+            </li>
+        </ul>
+    </section>
+    {if $plug_storeinvite && $store['is_invite'] == 1}
+    <section class="bgfff mt24" style=" border-bottom:1px solid #ebebeb;">
+        <h2 class="InfoTit fn">
+            <a href="{php echo $this->createMobileUrl('store.invite_center',array('act'=>'index'))}" class="fn fr c9 font28">分销中心</a>
+            <span class="font32 d_ib">分销管理</span><i class="arrow"></i>
+        </h2>
+        <ul class="CurrencyList clearfix">
+            {if getPluginConfig($uniacid,'lywywl_ztb_plugin_storeinvite','is_show_share')==1}
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.invite_share',array('act'=>'index'))}">
+                    <div class="rel"><img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/icon01.png" alt="分享链接"></div>
+                    <p class="font26 c6">分享链接</p>
+                </a>
+            </li>
+            {/if}
+            {if getPluginConfig($uniacid,'lywywl_ztb_plugin_storeinvite','is_show_promoter')==1}
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.invite_promoter',array('act'=>'index'))}">
+                    <div class="rel"><img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/icon02.png" alt="分销业务员"></div>
+                    <p class="font26 c6">分销业务员</p>
+                </a>
+            </li>
+            {/if}
+            {if getPluginConfig($uniacid,'lywywl_ztb_plugin_storeinvite','is_show_team')==1}
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.invite_team',array('act'=>'index'))}">
+                    <div class="rel"><img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/icon03.png" alt="下线商家"></div>
+                    <p class="font26 c6">下线商家</p>
+                </a>
+            </li>
+            {/if}
+            {if getPluginConfig($uniacid,'lywywl_ztb_plugin_storeinvite','is_show_ranking')==1}
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.invite_ranking',array('act'=>'index'))}">
+                    <div class="rel"><img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/icon04.png" alt="分销排行"></div>
+                    <p class="font26 c6">分销排行</p>
+                </a>
+            </li>
+            {/if}
+            {if getPluginConfig($uniacid,'lywywl_ztb_plugin_storeinvite','is_show_draw')==1}
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.invite_draw',array('act'=>'index'))}">
+                    <div class="rel"><img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/icon05.png" alt="返利记录"></div>
+                    <p class="font26 c6">返利记录</p>
+                </a>
+            </li>
+            {/if}
+            {if getPluginConfig($uniacid,'lywywl_ztb_plugin_storeinvite','is_show_refund')==1}
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.invite_refund',array('act'=>'index'))}">
+                    <div class="rel"><img src="{__MOBILE_STORE_PLUGIN__}/storeinvite/images/icon06.png" alt="业务员结算"></div>
+                    <p class="font26 c6">业务员结算</p>
+                </a>
+            </li>
+            {/if}
+        </ul>
+    </section>
+    {/if}
+    <section>
+        <section class=" font32 mt30 pl30">日志管理</section>
+        <ul class="CurrencyList clearfix" style=" border-bottom:1px solid #ebebeb;">
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.sys_pay',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon24.png" alt="">
+                    <p class="font26 c6">支付日志</p>
+                </a>
+            </li>
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.user_share',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon26.png" alt="">
+                    <p class="font26 c6">转发日志</p>
+                </a>
+            </li>
+            {if $config['sms_obj']==1}
+            <li>
+                <a href="{php echo $this->createMobileUrl('store.sys_sms',array('act'=>'index'))}">
+                    <img src="{__MOBILE_STORE_IMG__}/icon27.png" alt="">
+                    <p class="font26 c6">短信日志</p>
+                </a>
+            </li>
+            {/if}
+        </ul>
+    </section>
+    <section class="bgfff mt24" style=" border-bottom:1px solid #ebebeb;">
+    <h2 class="InfoTit fn">
+        <a href="{php echo $this->createMobileUrl('store.order_obj',array('act'=>'index'))}" class="fn fr c9 font28">查看全部</a>
+        <span class="font32 d_ib">活动订单</span><i class="arrow"></i>
+    </h2>
+    <ul class="CurrencyList clearfix">
+        <li>
+            <a href="{php echo $this->createMobileUrl('store.order_obj',array('act'=>'index','status'=>1))}">
+                <div class="rel"><img src="{__MOBILE_STORE_IMG__}/icon08.png" alt=""> {if $orderObjTotal1>0}<i>{$orderObjTotal1}</i>{/if}</div>
+                <p class="font26 c6">待发货</p>
+            </a>
+        </li>
+        <li>
+            <a href="{php echo $this->createMobileUrl('store.order_obj',array('act'=>'index','status'=>2))}">
+                <div class="rel"><img src="{__MOBILE_STORE_IMG__}/icon09.png" alt=""> {if $orderObjTotal2>0}<i>{$orderObjTotal2}</i>{/if}</div>
+                <p class="font26 c6">已发货</p>
+            </a>
+        </li>
+        <li>
+            <a href="{php echo $this->createMobileUrl('store.order_obj',array('act'=>'index','status'=>3))}">
+                <div class="rel"><img src="{__MOBILE_STORE_IMG__}/icon10.png" alt=""> {if $orderObjTotal3>0}<i>{$orderObjTotal3}</i>{/if}</div>
+                <p class="font26 c6">已完成</p>
+            </a>
+        </li>
+    </ul>
+</section>
+    <section class="bgfff mt24"  style=" border-bottom:1px solid #ebebeb;">
+    <h2 class="InfoTit fn">
+        <a href="{php echo $this->createMobileUrl('store.order_intmall',array('act'=>'index'))}" class="fn fr c9 font28">查看全部</a>
+        <span class="font32 d_ib">商城订单</span><i class="arrow"></i>
+    </h2>
+    <ul class="CurrencyList clearfix">
+        <li>
+            <a href="{php echo $this->createMobileUrl('store.order_intmall',array('act'=>'index','status'=>1))}">
+                <div class="rel"><img src="{__MOBILE_STORE_IMG__}/icon07.png" alt=""> {if $orderIntmallTotal1>0}<i>{$orderIntmallTotal1}</i>{/if}</div>
+                <p class="font26 c6">待付款</p>
+            </a>
+        </li>
+        <li>
+            <a href="{php echo $this->createMobileUrl('store.order_intmall',array('act'=>'index','status'=>2))}">
+                <div class="rel"><img src="{__MOBILE_STORE_IMG__}/icon08.png" alt=""> {if $orderIntmallTotal2>0}<i>{$orderIntmallTotal2}</i>{/if}</div>
+                <p class="font26 c6">待发货</p>
+            </a>
+        </li>
+        <li>
+            <a href="{php echo $this->createMobileUrl('store.order_intmall',array('act'=>'index','status'=>3))}">
+                <div class="rel"><img src="{__MOBILE_STORE_IMG__}/icon09.png" alt=""> {if $orderIntmallTotal3>0}<i>{$orderIntmallTotal3}</i>{/if}</div>
+                <p class="font26 c6">已发货</p>
+            </a>
+        </li>
+        <li>
+            <a href="{php echo $this->createMobileUrl('store.order_intmall',array('act'=>'index','status'=>4))}">
+                <div class="rel"><img src="{__MOBILE_STORE_IMG__}/icon10.png" alt=""> {if $orderIntmallTotal4>0}<i>{$orderIntmallTotal4}</i>{/if}</div>
+                <p class="font26 c6">已完成</p>
+            </a>
+        </li>
+    </ul>
+</section>
+<!--列表-->
+<ul class="business_list bgfff mt24 mb24">
+    <li>
+        <a href="{php echo $this->createMobileUrl('store.store_account',array('act'=>'index'))}" class="font32 db">账户设置<i class="arrow"></i></a>
+    </li>
+    <li>
+        <a href="{php echo $this->createMobileUrl('wx_template',array('act'=>'index','types'=>2))}" class="font32 db">订阅通知<i class="arrow"></i></a>
+    </li>
+    <li>
+        <a href="{php echo $this->createMobileUrl('store.sys_faq',array('act'=>'class'))}" class="font32 db">帮助中心<i class="arrow"></i></a>
+    </li>
+    <li>
+        <a href="javascript:;" id="wxService" class="font32 db">在线客服<i class="arrow"></i></a>
+    </li>
+    <li>
+        <a href="javascript:;" id="pcManage" class="font32 db">电脑终端<i class="arrow"></i></a>
+    </li>
+    <li>
+        <a href="{php echo $this->createMobileUrl('store.login',array('act'=>'loginout'))}" class="font32 db">退出登录<i class="arrow"></i></a>
+    </li>
+</ul>
+{template 'store/common/footer'}
+    <script>
+        $(function(){
+            //联系客服
+            $("#wxService").click(function(){
+                $.ajax({
+                    type: "get",
+                    url: "{php echo $this->createMobileUrl('store.login',array('act'=>'kefu'))}",
+                    success: function (data) {
+                        var html = data;
+                        layer.open({
+                            type: 1,
+                            title: "{$config['name']}微信客服"
+                            ,content: html
+                            ,anim: 'up'
+                            ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+                        });
+                    },
+                    beforeSend: function () {
+                        //loading
+                        layer.open({
+                            type: 2
+                            , time: 0.2 //999秒后自动关闭
+                        });
+                    }
+                });
+            });
+
+        });
+        //关闭layer弹窗
+        function closeWindows(){
+            layer.closeAll();
+        }
+    </script>
+<!-- 是否关注公众号 -->
+{if $_W['store']['endtime'] < TIMESTAMP && $_GPC['do'] != "store.store_renew" && $_GPC['do'] != "store.login" && $_GPC['do'] != "store.register" && $_GPC['do'] != "store.resetpsd" && strtolower($_SERVER['REQUEST_METHOD']) == "get"}
+{else}
+{if $is_follow}
+<section class="forceAttention" style="display:none;">
+    <section class="mask"></section>
+    <section class="attentionCon">
+        <section class="wechatInfo">
+            <h4>关注公众号</h4>
+            <section class="wechatCode"><img src="{php echo tomedia($config['wx_qrcode'])}"></section>
+            <p>长按识别图中二维码 </p>
+            <p>关注后平台消息及时推送给您！</p>
+            <p>关注公众号后，请刷新页面</p>
+            <section class="finger"><img src="{__MOBILE_TMP_IMG__}/finger.png"></section>
+        </section>
+    </section>
+</section>
+<script>
+    $(document).ready(function(e) {
+        $(".forceAttention").show();
+        $(".attentionCon").css("margin-top", ($(window).height() - $(".attentionCon").height()) / 2 + "px");
+    });
+</script>
+{else}
+    {if $_GPC['do'] == 'store.store_member' && $isShowExpireTips}
+    <script>
+        //信息框
+        layer.open({
+            content: "欢迎您成为{$config['name']}平台会员，您的账户截止<span style='color:red'>{php echo date('Y-m-d H:i:s', $_W['store']['endtime'])}</span>到期，为避免对您活动造成影响请及时续费。"
+            ,btn: '我知道了'
+        });
+    </script>
+    {/if}
+{/if}
+{/if}
+    <!--PC终端弹层-->
+    <section class="popUp" >
+        <img src="{__MOBILE_STORE_IMG__}/pcToM.png" width="100%">
+        <h2 class="font32 fn">电脑终端管理平台</h2>
+        <section class="pd24">
+            <section class="tl pd24 font28 links" style="line-height:0.6667rem;">
+                <section class="copy_text">
+                {php echo replaceDieDomain($config, __PURL('login', array('act' => 'index'), true, true),0,0,0);}
+                </section>
+            </section>
+            <input type="button" class="" value="复制链接" id="btnCopy" data-clipboard-action="copy" data-clipboard-target=".copy_text">
+        </section>
+    </section>
+    <section class="bgBlack"></section>
+    <script>
+        var oBgBlack = document.querySelector('.bgBlack');
+        var oButton = document.querySelector('#pcManage');
+        var oPopUp = document.querySelector('.popUp');
+        oBgBlack.onclick=function(){
+            this.style.visibility='hidden';
+            oPopUp.style.visibility='hidden'
+        }
+        oButton.onclick	=function(){
+            oBgBlack.style.visibility='visible';
+            oPopUp.style.visibility='visible';
+            oPopUp.style.top=($(window).height() - $(".popUp").height()) / 2 + "px";
+        }
+
+        var btn = document.getElementById('btnCopy');
+        var clipboard = new Clipboard(btn);
+
+        clipboard.on('success', function (e) {
+            layer.open({ content: '内容已复制', skin: 'msg', time: 2 });
+        });
+
+        clipboard.on('error', function (e) {
+            layer.open({ content: '对不起，浏览器不支持，请手动复制内容！', skin: 'msg', time: 2 });
+        });
+    </script>
+</body>
+</html>

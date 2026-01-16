@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+<link href="{MODULE_URL}resource/mobile/plugin/css/common.min.css?v=20170802" rel="stylesheet">
+<style type="text/css">
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {position: static}
+    /**定义编辑器冲突样式**/
+    .Eleditor-area{min-height: 200px;}
+    .Eleditor-controller{z-index:2;}
+    .Eleditor-controller .webuploader-pick{color:#000;}
+    .Eleditor-controller ul li{padding:0 0 0 10%;border-bottom: 1px solid #ddd !important;}
+    .Eleditor-textEditor{z-index:3;}
+    #contentEditor_miaoshu img,#contentEditor_shop img,#contentEditor_rule img,#contentEditor_goods img,#contentEditor5 img{  width: 100%;  }
+    .Eleditor-controller{  z-index: 30;  }
+    .Eleditor-textStyle .Eleditor-textStyle-item-upImg{  display: none;  }
+</style>
+<script src="{__MOBILE_STORE_JS__}/Eleditor.min.js"></script>
+<script src="{__MOBILE_STORE_JS__}/webuploader.min.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/util.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/require.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/lib/mui.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/common.js"></script>
+<body class="bgf2">
+<form action="{php echo $this->createMobileUrl('store.obj_vote_player_wait',array('act'=>'modify','aid' => $aid));}" id="form_content" method="post">
+    <section class="bgfff pt20">
+        <ul class="publish">
+            <li class="float">
+                <p>选手名称</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" datatype="*" id="name" maxlength="100"
+                           name="model[name]" nullmsg="请输入活动选手名称！" placeholder="请输入活动选手名称"
+                           type="text" value="{$model['name']}"/>
+                </section>
+            </li>
+            <li class="float">
+                <p>选手编号</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" datatype="n" id="number" name="model[number]" maxlength="10"
+                           nullmsg="请输入活动选手编号！" placeholder="请输入活动选手编号" onkeyup="if(isNaN(this.value)) this.value='0';"
+                           type="number" value="{$model['number']}"/>
+                </section>
+            </li>
+            <li>
+                <p>选手封面<span></span></p>
+                <section class="form_con clearfix">
+                    <div class="mui-input-cell">
+                        <input type="hidden" id="model[pic_url]" name="model[pic_url]" value=""/>
+                        {php echo tpl_app_form_field_image('pic_url',$model['pic_url'] ,false);}
+                    </div>
+                </section>
+                <section class="font26 c9 lh15">
+                    <strong>提示：</strong>  单图模式 建议上传678*420 双图模式 建议上传344*258 三图模式 建议上传208*282 图文模式 建议上传208*282
+                </section>
+            </li>
+            <li class="float">
+                <p>隶属分组</p>
+                <section class="form_con selectBox">
+                    <select id="group_id" name="model[group_id]" class="font28">
+                        <option value="">请选择</option>
+                        {loop $groupList $index $group}
+                        <option value="{$index}" {if $index == $model['group_id']}selected="selected"{/if} >{$group}</option>
+                        {/loop}
+                    </select>
+                </section>
+                <section class="font26 c9 lh15">
+                    <strong>提示：</strong> 请选择选手隶属的分组，每个分组的排名单独核算。
+                </section>
+            </li>
+            <li>
+                <p>参赛宣言<span></span></p>
+                <section class="form_con clearfix">
+                    <section class="txt_item">
+                        <textarea style="width:100%" rows = "3" name="model[declaration]" datatype="*" id="declaration" class="form_area" placeholder = "请输入选手参赛宣言"  nullmsg="请输入选手参赛宣言！" maxlength="200" >{$model['declaration']}</textarea>
+                    </section>
+                </section>
+                <section class="font26 c9 lh15">
+                    <strong>提示：</strong> 请输入选手参赛宣言 宣言将用于用户拉票时展示在分享内容中。
+                </section>
+            </li>
+            {if $objModel['is_video'] == 0}
+            <li>
+                <p>选手展示<span></span></p>
+                <section class="form_con clearfix">
+                    <div class="mui-input-cell">
+                        {php echo tpl_app_form_field_image('banner_url',$model['banner_url'],true);}
+                    </div>
+                </section>
+                <section class="font26 c9 lh15">
+                    <strong>提示：</strong> 请上传选手展示图片 建议大小750*400像素
+                </section>
+            </li>
+            {else}
+            <li>
+                <p>选手视频<span></span></p>
+                <section class="form_con clearfix">
+                    <div class="mui-input-cell">
+                        <div class="mui-table-view-chevron">
+                            <div class="mui-image-uploader">
+                                <input type="hidden" value="{$model['video_url']}" name="video_url" id="video_url">
+                                <a href="javascript:;" class="mui-upload-btn mui-pull-left js-image-video_url webuploader-container" {if !empty($model['video_url'])}style="position: absolute; opacity: 0;"{/if}><div class="webuploader-pick">
+                            </div><div id="rt_rt_video_url" style="position: absolute; inset: 0px auto auto 0px; width: 40px; height: 40px; overflow: hidden;"><input type="file" name="file" id="video_file" accept="video/mp4" class="webuploader-element-invisible"><label style="opacity: 0; width: 100%; height: 100%; display: block; cursor: pointer; background: rgb(255, 255, 255);"></label></div></a>
+                                <div class="mui-image-preview js-image-preview mui-pull-left">
+                                    {if !empty($model['video_url'])}
+                                    <img src="{__MOBILE_STORE_IMG__}/video.jpg">
+                                    {/if}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </li>
+            {/if}
+
+            {if !empty($attrFields)}
+            {loop $attrFields $index $item}
+            {if $item['Type'] == 'number'}
+            <li class="float">
+                <p>{$item['Explain']}</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" datatype="n" id="attr_{$item['Name']}" name="attr_{$item['Name']}"
+                           nullmsg="{$item['Tips']}！"  onkeyup="if(isNaN(this.value)) this.value='0';"
+                           placeholder="{$item['Tips']}" type="number" value="{$model['attr_data'][$index]['Value']}"/>
+                </section>
+            </li>
+            {/if}
+            {if $item['Type'] == 'radio'}
+            <li class="float">
+                <p>{$item['Explain']}</p>
+                <section class="form_con clearfix">
+                    {loop $item['items'] $index2 $item2}
+                    {if empty($model['id'])}
+                    <section class="input_item">
+                        <input type="radio" id="rd_join_{php echo $index.'_'.$index2.'_'.$item2['key']}"  name="attr_{$item['Name']}" value="{$item2['value']}" {php echo $index2==0?'checked':''}>
+                        <label for="rd_join_{php echo $index.'_'.$index2.'_'.$item2['key']}"></label>
+                        <span> {$item2['value']}</span>
+                    </section>
+                    {else}
+                    <section class="input_item">
+                        <input type="radio" id="rd_join_{php echo $index.'_'.$index2.'_'.$item2['key']}"  name="attr_{$item['Name']}" value="{$item2['value']}" {php echo $model['attr_data'][$index]['Value']==$item2['value'] ?'checked':''}>
+                        <label for="rd_join_{php echo $index.'_'.$index2.'_'.$item2['key']}"></label>
+                        <span> {$item2['value']}</span>
+                    </section>
+                    {/if}
+                    {/loop}
+                </section>
+            </li>
+            {/if}
+            {if $item['Type'] == 'checkbox'}
+            <li class="float">
+                <p>{$item['Explain']}</p>
+                <section class="form_con clearfix">
+                    {loop $item['items'] $index2 $item2}
+                    <section class="input_item">
+                        <input type="checkbox" id="ck_join_{php echo $index.'_'.$index2.'_'.$item2['key']}"  name="attr_{$item['Name']}[]" value="{$item2['value']}" {php echo strpos(','.$model['attr_data'][$index]['Value'].',',','.$item2['value'].',') !==false ?'checked':''}>
+                        <label for="ck_join_{php echo $index.'_'.$index2.'_'.$item2['key']}"></label>
+                        <span> {$item2['value']}</span>
+                    </section>
+                    {/loop}
+                </section>
+            </li>
+            {/if}
+            {if $item['Type'] == 'select'}
+            <li class="float">
+                <p>{$item['Explain']}</p>
+                <section class="form_con selectBox">
+                    <select id="attr_{$item['Name']}" name="attr_{$item['Name']}" class="font28">
+                        {loop $item['items'] $index2 $item2}
+                        <option value="{$item2['value']}" {php echo $model['attr_data'][$index]['Value']==$item2['value'] ?'selected':''}>{$item2['value']}</option>
+                        {/loop}
+                    </select>
+                </section>
+            </li>
+            {/if}
+            {if $item['Type'] == 'textarea'}
+            <li>
+                <p>{$item['Explain']}<span></span></p>
+                <section class="form_con clearfix">
+                    <section class="txt_item">
+                        <textarea style="width:100%" rows = "3" name="attr_{$item['Name']}" id="attr_{$item['Name']}" class="form-control" placeholder="{$item['Tips']}" datatype = "*"  nullmsg = "{$item['Tips']}">{$model['attr_data'][$index]['Value']}</textarea>
+                    </section>
+                </section>
+            </li>
+            {/if}
+            {if $item['Type'] == 'text'}
+            <li class="float">
+                <p>{$item['Explain']}</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt"  maxlength="100"  datatype="*" id="attr_{$item['Name']}" name="attr_{$item['Name']}"
+                           nullmsg="{$item['Tips']}！" placeholder="{$item['Tips']}" type="text" value="{$model['attr_data'][$index]['Value']}"/>
+                </section>
+            </li>
+            {/if}
+            {/loop}
+            {/if}
+            <li>
+                <p>选手简介/选手说明<span></span></p>
+                <section class="form_con clearfix">
+                    <section class="txt_item">
+                        <textarea rows = "3" name="model[content]" id="content" class="form_area" style="display: none;" placeholder = "请输入选手简介/选手说明" >{$model['content']}</textarea>
+                        <div id="contentEditor"></div>
+                    </section>
+                </section>
+            </li>
+            {if $objModel['player_is_register']==1 }
+            {loop $registerFields $index $item}
+            {if $item['Type'] == 'number'}
+            <li class="float">
+                <p>{$item['Explain']}</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt" datatype="n" id="reg_{$item['Name']}" name="reg_{$item['Name']}"
+                           nullmsg="{$item['Tips']}！"  onkeyup="if(isNaN(this.value)) this.value='0';"
+                           placeholder="{$item['Tips']}" type="number" value="{$model['register_data'][$index]['Value']}"/>
+                </section>
+            </li>
+            {/if}
+            {if $item['Type'] == 'radio'}
+            <li class="float">
+                <p>{$item['Explain']}</p>
+                <section class="form_con clearfix">
+                    {loop $item['items'] $index2 $item2}
+                    {if empty($model['id'])}
+                    <section class="input_item">
+                        <input type="radio" id="rd_reg_{php echo $index.'_'.$index2.'_'.$item2['key']}"  name="reg_{$item['Name']}" value="{$item2['value']}" {php echo $index2==0?'checked':''}>
+                        <label for="rd_reg_{php echo $index.'_'.$index2.'_'.$item2['key']}"></label>
+                        <span> {$item2['value']}</span>
+                    </section>
+                    {else}
+                    <section class="input_item">
+                        <input type="radio" id="rd_reg_{php echo $index.'_'.$index2.'_'.$item2['key']}"  name="reg_{$item['Name']}" value="{$item2['value']}" {php echo $model['register_data'][$index]['Value']==$item2['value'] ?'checked':''}>
+                        <label for="rd_reg_{php echo $index.'_'.$index2.'_'.$item2['key']}"></label>
+                        <span> {$item2['value']}</span>
+                    </section>
+                    {/if}
+                    {/loop}
+                </section>
+            </li>
+            {/if}
+            {if $item['Type'] == 'checkbox'}
+            <li class="float">
+                <p>{$item['Explain']}</p>
+                <section class="form_con clearfix">
+                    {loop $item['items'] $index2 $item2}
+                    <section class="input_item">
+                        <input type="checkbox" id="ck_reg_{php echo $index.'_'.$index2.'_'.$item2['key']}"  name="reg_{$item['Name']}[]" value="{$item2['value']}" {php echo strpos(','.$model['register_data'][$index]['Value'].',',','.$item2['value'].',') !==false ?'checked':''}>
+                        <label for="ck_reg_{php echo $index.'_'.$index2.'_'.$item2['key']}"></label>
+                        <span> {$item2['value']}</span>
+                    </section>
+                    {/loop}
+                </section>
+            </li>
+            {/if}
+            {if $item['Type'] == 'select'}
+            <li class="float">
+                <p>{$item['Explain']}</p>
+                <section class="form_con selectBox">
+                    <select id="reg_{$item['Name']}" name="reg_{$item['Name']}" class="font28">
+                        {loop $item['items'] $index2 $item2}
+                        <option value="{$item2['value']}" {php echo $model['register_data'][$index]['Value']==$item2['value'] ?'selected':''}>{$item2['value']}</option>
+                        {/loop}
+                    </select>
+                </section>
+            </li>
+            {/if}
+            {if $item['Type'] == 'textarea'}
+            <li>
+                <p>{$item['Explain']}<span></span></p>
+                <section class="form_con clearfix">
+                    <section class="txt_item">
+                        <textarea style="width:100%" rows = "3" name="reg_{$item['Name']}" id="reg_{$item['Name']}" class="form-control" placeholder="{$item['Tips']}" datatype = "*"  nullmsg = "{$item['Tips']}">{$model['register_data'][$index]['Value']}</textarea>
+                    </section>
+                </section>
+            </li>
+            {/if}
+            {if $item['Type'] == 'text'}
+            <li class="float">
+                <p>{$item['Explain']}</p>
+                <section class="form_con selectBox">
+                    <input class="form_float_txt"  maxlength="100"  datatype="*" id="reg_{$item['Name']}" name="reg_{$item['Name']}"
+                           nullmsg="{$item['Tips']}！" placeholder="{$item['Tips']}" type="text" value="{$model['register_data'][$index]['Value']}"/>
+                </section>
+            </li>
+            {/if}
+            {/loop}
+            {/if}
+
+            <li>
+                <p>绑定会员OPENID<span></span></p>
+                <section class="form_con clearfix">
+                    <section class="txt_item">
+                        <textarea style="width:100%" rows = "3" name="model[openid]" datatype="*" id="openid" class="form_area" placeholder = "请输入会员的OPENID 多个人员请用（,）分割"  nullmsg="请输入核销人员的OPENID！" >{$model['openid']}</textarea>
+                    </section>
+                </section>
+                <section class="font26 c9 lh15">
+                    <strong>提示：</strong> 多个人员请用","分割,例如："oIJyhjs1VVYa6enCPsvHebYa79aU,ogaIJ0y00qDCbILPw8Kiv-gDeDYk"。
+                </section>
+                <section class=" clearfix"><a href="javascript:;" class="c9 fr link clickBtn" id="showEwmDialog">获取OPENID</a><a href="javascript:;" class="c9 fr link clickBtn" id="showAdminsEwmDialog">管理入口</a></section>
+            </li>
+            <li class="float">
+                <p>审核状态</p>
+                <section class="form_con clearfix">
+                    <section class="input_item">
+                        <input type="radio" id="auditing0" name="model[auditing]" class="auditing" value="1" {if $model['auditing']!=2} checked {/if}>
+                        <label for="auditing0"></label>
+                        <span>通过</span>
+                    </section>
+                    <section class="input_item">
+                        <input type="radio" id="auditing1" name="model[auditing]" class="auditing" value="2" {if $model['auditing']==2} checked {/if}>
+                        <label for="auditing1"></label>
+                        <span>驳回</span>
+                    </section>
+                </section>
+            </li>
+            <li  id="auditing_box" style="display: {if $model['auditing'] != 2} none{/if};">
+                <p>驳回原因<span></span></p>
+                <section class="form_con clearfix">
+                    <section class="txt_item">
+                        <textarea style="width:100%" rows = "3" name="model[cause]" id="cause" class="form_area" placeholder="请输入选手申请驳回原因..." >{$model['cause']}</textarea>
+                    </section>
+                </section>
+            </li>
+        </ul>
+    </section>
+    <section class="h24"></section>
+    <section class="buttonBox">
+        <section class="buttonFloat clickBtn">
+            <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+            <input type="hidden" name="token" value="{$_W['token']}"/>
+            <input type="hidden" name="submit" value="submit"/>
+            <a href="{php echo $this->createMobileUrl('store.obj_vote_player_wait',array('act'=>'index','aid'=>$aid))}" class="db font32" style="width: 50%;    float: left;   color: #fff;   border-radius: 0.6rem 0 0 0.6rem;    background: #f92f4a;">返回列表</a>
+            <button type="submit" id="SubmitBtn" style="width: 50%;   float: left;    background: #FFD112;    color: #0e0e0e;border-radius: 0 0.6rem 0.6rem 0;">审核选手</button>
+        </section>
+    </section>
+</form>
+<section class="mask" id="EwmDialog">
+    <section class="content">
+        <h2 class="font32 fn">扫码获取OPENID</h2>
+        <img src="{php echo $this->createMobileUrl('store.obj_vote_player_wait', array('act' => 'openidQrPreview','aid' => $aid));}" />
+        <p class="font28 c6">请用参赛选手的微信扫描二维码</p>
+    </section>
+</section>
+<section class="mask" id="AdminsEwmDialog">
+    <section class="content">
+        <h2 class="font32 fn">参赛选手管理入口</h2>
+        <img src="{php echo $this->createMobileUrl('store.obj_vote_player_wait', array('act' => 'adminsQrPreview','aid' => $aid));}"/>
+        <p class="font28 c6">请用参赛选手的微信扫描二维码</p>
+    </section>
+</section>
+<script>
+    // 实例化 编辑器
+    var artEditor = new Eleditor({
+        el: "#contentEditor",
+        upload:{
+            server: "{php echo $this->createMobileUrl('file',array('act'=>'upload','type'=>'image','thumb'=>0));}",
+            formData: {
+                'module':"umiacp_bargain",
+            },
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png,webp',
+                mimeTypes: 'image/*'
+            },
+            compress: false,
+            fileSizeLimit: 2
+        },
+    });
+    // 初始化编辑器内容
+    artEditor.append($("#content").val());
+</script>
+<script>
+    $(function(){
+        var oMask = document.querySelector('#EwmDialog');
+        var oButton = document.querySelector('#showEwmDialog');
+        var oContent = document.querySelector('#EwmDialog .content');
+        var oMarginTop=-(parseInt(oContent.offsetHeight)/2);
+        oContent.style.marginTop=oMarginTop+'px';
+        oMask.onclick=function(){
+            this.style.visibility='hidden'
+        };
+        oButton.onclick	=function(){
+            oMask.style.visibility='visible'
+        };
+
+        var aMask = document.querySelector('#AdminsEwmDialog');
+        var aButton = document.querySelector('#showAdminsEwmDialog');
+        var aContent = document.querySelector('#AdminsEwmDialog .content');
+        var aMarginTop=-(parseInt(aContent.offsetHeight)/2);
+        aContent.style.marginTop=aMarginTop+'px';
+        aMask.onclick=function(){
+            this.style.visibility='hidden'
+        };
+        aButton.onclick	=function(){
+            aMask.style.visibility='visible'
+        };
+
+        //选择是否驳回申请选项卡
+        $('.auditing').on('click', function (event) {
+            var obj_types = $(this).val();
+            if(obj_types==2)
+            {
+                $("#auditing_box").show();
+            }
+            else
+            {
+                $("#auditing_box").hide();
+            }
+        });
+
+        require(['{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js'], function () {
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                                , style: 'bottom:0;'
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    //赋值封面图片
+                    $("input[name='model[pic_url]']").val($("#pic_url").val());
+                    //赋值编辑器内容
+                    $("#content").val(artEditor.getContent());
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if(data.status == 1){
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+
+                        setTimeout(function () {
+                            window.location.href = "{php echo $this->createMobileUrl('store.obj_vote_player_wait',array('act'=>'index','aid' => $aid));}";
+                        }, 2000);
+
+                    }else{
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+        });
+
+        $(".switch").click(function(e) {
+            if($(this).hasClass("switch_on")){
+                $(this).removeClass("switch_on");
+                $(this).addClass("switch_off");
+                $(this).find("input").val(0);
+            }
+            else{
+                $(this).removeClass("switch_off");
+                $(this).addClass("switch_on");
+                $(this).find("input").val(1);
+            }
+        });
+
+        $('.js-image-video_url').click(function(e){
+            e.stopPropagation();
+            $('#video_file').click();
+        });
+
+        $('#video_file').click(function(e){
+            e.stopPropagation();
+        });
+
+        $('#video_file').change(function(){
+            var filePath=$(this).val();
+            var myform = new FormData();
+            myform.append('file', $(this)[0].files[0]);
+
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: "{php echo $this->createMobileUrl('file',array('act'=>'upload','type'=>'video'));}",
+                data: myform,
+                async: true,
+                contentType: false,
+                processData: false,
+                beforeSend: function () {
+                    //loading带文字
+                    layer.open({
+                        type: 2
+                        ,content: '上传中'
+                        ,shadeClose: false
+                    });
+                },
+                success: function (jsonData, status) {
+                    layer.closeAll();
+                    if (jsonData.status == 1) {
+                        //赋值上传文件路径
+                        $("#video_url").attr("value", jsonData.attachment);
+                        $(".js-image-video_url").css({"position":"absolute" ,"opacity":"0"});
+                        $(".js-image-video_url").next("div").html("<img src={__MOBILE_STORE_IMG__}/video.jpg />");
+                        layer.open({
+                            content: '上传成功！'
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                    }
+                    else {
+                        layer.open({
+                            content: jsonData.msg
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                    }
+                },
+                error: function (e) {
+                    layer.open({
+                        content: '上传失败，请重试！'
+                    });
+                }
+            });
+
+        });
+
+    });
+
+</script>
+</body>
+</html>

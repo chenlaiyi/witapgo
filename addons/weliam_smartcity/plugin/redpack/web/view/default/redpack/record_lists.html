@@ -1,0 +1,139 @@
+{php include wl_template('common/header');}
+<ul class="nav nav-tabs">
+    <li class="active"><a href="javascript:;">领取记录</a></li>
+</ul>
+<div class="app-content">
+    <div class="panel panel-stat">
+        <div class="panel-body">
+            <div class="col-md-3">
+                <div class="title">红包总数(个)</div>
+                <div class="num-wrapper">
+                    <a class="num" href="javascript:;">{$all_num}</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="title">已使用(个)</div>
+                <div class="num-wrapper">
+                    <a class="num" href="javascript:;">{$use_num}</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="title">使用率(%)</div>
+                <div class="num-wrapper">
+                    <a class="num" href="javascript:;">{$use_rate}</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="title">已过期(个)</div>
+                <div class="num-wrapper">
+                    <a class="num" href="javascript:;">{$end_num}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="app-filter">
+        <div class="filter-list">
+            <form class="form-horizontal" action="{php echo web_url('redpack/redpack/record_lists')}" method="post">
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">红包名称</div>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="name" value="{$name}" placeholder="请输入红包名称">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label"></div>
+                    <div class="col-sm-9">
+                        <button class="btn btn-primary" type="submit">搜索</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="app-table-list">
+        {if !empty($lists)}
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center"><input type="checkbox" /></th>
+                        <th class="text-center">红包标题</th>
+                        <th class="text-center">用户信息</th>
+                        <th class="text-center">手机号</th>
+                        <th class="text-center">红包来源</th>
+                        <th class="text-center">状态</th>
+                        <th class="text-center">领取时间</th>
+                        <th class="text-center">使用时间</th>
+                        <th class="text-center">节日红包</th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {loop $lists $list}
+                    <tr class="text-center">
+                        <td>
+                            <input type="checkbox" value="{$list['id']}" />
+                        </td>
+                        <td>
+                            {$list['pack']['title']}
+                        </td>
+                        <td class="name text-left">
+                            <div style="display: flex">
+                                <img class="img-40" src="{$list['member']['avatar']}" style="border-radius:50%;border:1px solid #efefef;" onerror="this.src='../addons/{MODULE_NAME}/web/resource/images/nopic-small.jpg'" height="40" width="40">
+                                <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
+                                    {$list['member']['nickname']}
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            {$list['member']['mobile']}
+                        </td>
+                        <td>
+                            {if $list['type'] == 1}
+                            后台发送
+                            {elseif $list['type'] == 2}
+                            抽奖领取
+                            {else}
+                                自主领取
+                            {/if}
+                        </td>
+                        <td>
+                            <span class='label {if $list['status']==0}label-primary{elseif $list['status']==1}label-default{else}btn-danger active{/if}'>
+                            {if $list['status']==0}未使用{elseif $list['status']==1}已使用{else}已过期{/if}</span>
+                        </td>
+                        <td>
+                            {$list['createtime']}
+                        </td>
+                        <td>
+                            {$list['usetime']}
+                        </td>
+                        <td>
+                            {$list['festival_name']}
+                        </td>
+                        <td>
+                            {if $list['status']==0}
+                                <a class="btn btn-sm btn-primary" data-toggle="ajaxPost" href="{php echo web_url('redpack/redpack/record_use', array('id' => $list['id']))}" data-confirm="确定使用当前红包？">使用</a>
+                            {/if}
+                            <a class="btn btn-sm btn-danger"  data-toggle="ajaxRemove" href="{php echo web_url('redpack/redpack/record_del', array('id' => $list['id']))}" data-confirm="确定删除当前红包？">删除</a>
+                        </td>
+                    </tr>
+                    {/loop}
+                </tbody>
+            </table>
+        </div>
+        <div class="app-table-foot clearfix">
+            <div class="pull-left">
+                <button class="btn btn-default" type="button" data-toggle='batch-remove' data-confirm="确定删除当前选择的红包？" data-href="{php echo web_url('redpack/redpack/record_del')}">批量删除</button>
+                <button class="btn btn-default" type="button" data-toggle='batch' data-href="{php echo web_url('redpack/redpack/record_use')}">批量使用</button>
+            </div>
+            <div class="pull-right">
+                {$pager}
+            </div>
+        </div>
+        {else}
+        <div class="no-result">
+            <p>还没有相关数据</p>
+        </div>
+        {/if}
+    </div>
+</div>
+{php include wl_template('common/footer');}

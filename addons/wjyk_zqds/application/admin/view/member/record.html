@@ -1,0 +1,152 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>积分会员列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+</head>
+<style>
+    .layui-table-cell{
+        display:table-cell;
+        vertical-align: middle;
+    }
+</style>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">会员充值列表</div>
+                <div class="layui-card-body">
+					<div class="demoTable layui-form"  style="margin-bottom:10px">
+					     <div class="layui-input-inline">
+			            	<label class="layui-form-label">用户昵称</label>
+						    <div class="layui-inline">
+				              <input class="layui-input" placeholder="请输入用户昵称" name="id" id="test-table-demoReload" autocomplete="off">
+				            </div>
+				        </div>
+			            <div class="layui-input-inline">
+			            	<label class="layui-form-label">类型</label>
+						    <div class="layui-input-block">
+						      <select  lay-verify="" id="type">
+				              	<option value="0">请选择类型</option>
+						        <option value="1">购买</option>
+						        <option value="2">卡密</option>
+						      </select>
+						    </div>
+					  	</div>
+			            <button class="layui-btn" data-type="reload">搜索</button>
+					</div>
+                    <table class="layui-hide" id="test-table-operate" lay-filter="test-table-operate"></table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table'], function(){
+        var table = layui.table
+            ,admin = layui.admin;
+
+        table.render({
+            elem: '#test-table-operate'
+            ,url:"{:siteUrl('admin/member/log_list','','web')}"
+            ,cols: [[
+                {field:'uid', title: '用户信息',templet:function(d){
+                        return "<img style='max-width:25px;' src='"+d.avatar+"'></img>"+d.nickname;
+                    }}
+                ,{field:'count', title: '时间（天）', sort: true}
+                ,{field:'type', title: '类型', sort: true,templet:function(d){
+					if(d.type == 1){
+                   		return "购买";
+                   	}else if(d.type == 2){
+                   		return "卡密";
+                   	}
+                }}
+                ,{field:'price',  title: '价格', sort: true}
+                ,{field:'integral',  title: '抵扣{$name}', sort: true}
+                ,{field:'deduction',  title: '抵扣金额', sort: true}
+                ,{field:'createtime',  title: '操作时间', sort: true ,templet:function(d){
+                        return layui.util.toDateString(d.createtime*1000, "yyyy-MM-dd HH:mm");
+                    }}
+
+            ]]
+            ,page: true
+        });
+
+
+
+        //监听表格复选框选择
+        table.on('checkbox(test-table-operate)', function(obj){
+            console.log(obj)
+        });
+        //监听工具条
+        table.on('tool(test-table-operate)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){
+                window.location.href="{:siteUrl('admin/member/edit_member','','web')}&id="+data.id;
+            } else if(obj.event === 'del'){
+                layer.confirm('确定删除该会员吗？', function(index){
+                    window.location.href="{:siteUrl('admin/member/del_member','','web')}&id="+data.id;
+                    layer.close(index);
+                });
+            } else if(obj.event === 'edit'){
+                window.location.href="{:siteUrl('admin/member/edit_member','','web')}&id="+data.id;
+            }
+        });
+
+        table.on('toolbar(test-table-operate)', function(obj){
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch(obj.event){
+                case 'add':
+                    window.location.href="{:siteUrl('admin/member/edit_member','','web')}";
+                    break;
+            };
+        });
+
+        var $ = layui.$, active = {
+            reload: function(){
+                var demoReload = $('#test-table-demoReload');
+
+                //执行重载 --id
+                table.reload('test-table-operate', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        'type': $('#type').val(),
+                        'nickname': $('#test-table-demoReload').val()
+                    }
+                });
+            },
+            addmember:function(){
+                window.location.href="{:siteUrl('admin/member/edit_member','','web')}";
+            }
+        };
+
+        $('.demoTable .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+</script>
+</body>
+<div class="layui-footer" style="margin-top:20px;display: flex;justify-content: center;align-items: flex-end;">
+    {include file='../addons/wjyk_zqds/application/admin/view/index/footer.html' /}
+</div>
+</html>

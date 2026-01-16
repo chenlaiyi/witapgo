@@ -1,0 +1,104 @@
+<style type="text/css">
+	.spectable td,.spectable th {border:1px solid #ccc; vertical-align: middle;text-align:center;}
+	.spectable th { font-weight: bold;}
+	.spectableinput { text-align: center;}
+	.f {border-color: #b94a48;-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);}
+	.table.table-bordered tr th,.table.table-bordered tr td{overflow:hidden; text-overflow:ellipsis;}
+	.alert a {color: #bbb;text-decoration: underline;}
+</style>
+<div class="form-group">
+	<label class="checkbox-inline col-xs-12 col-sm-2 col-md-2 control-label">
+		<input type="checkbox" id="hasoption"  value="{$model['hasoption']}"  name="model[hasoption]" {if $model['hasoption']==1}checked{/if} />启用商品规格
+	</label>
+	<div class="col-sm-9 col-xs-12">
+		<span class="help-block">启用商品规格</span>
+	</div>
+</div>
+<div id='tboption' style='{if $model['hasoption']!=1}display:none{/if}'>
+	<div id='specs'>
+		{loop $allspecs $spec}
+		{php include $this->template('web/obj_laddercm/spec')}
+		{/loop}
+	</div>
+	<table class="table">
+		<tr>
+			<td>
+				<h4><a href="javascript:;" class='btn btn-primary' id='add-spec' onclick="addSpec()" style="margin-top:10px;margin-bottom:10px;" title="添加规格"><i class='fa fa-plus'></i> 添加规格</a>
+				</h4>
+			</td>
+		</tr>
+	</table>
+</div>
+<script language="javascript">
+	$(function(){
+		$('#specs').sortable({
+			stop: function(){
+				window.optionchanged = true;
+			}
+		});
+		$('.spec_item_items').sortable(
+				{
+					handle:'.fa-arrows',
+					stop: function(){
+						window.optionchanged = true;
+					}
+				}
+			);
+		$("#hasoption").click(function(){
+			var obj = $(this);
+			if (obj.get(0).checked){
+				obj.val(1);
+				$("#tboption").show();
+			}else{
+				obj.val(0);
+				$("#tboption").hide();
+			}
+		});
+	})
+	function addSpec(){
+	$("#add-spec").html("正在处理...").attr("disabled", "true").toggleClass("btn-primary");
+		var url = "{php echo $this->createWebUrl('obj_laddercm', array('act' => 'spec'));}";
+		$.ajax({
+			"url": url,
+			success:function(data){
+				$("#add-spec").html('<i class="fa fa-plus"></i> 添加规格').removeAttr("disabled").toggleClass("btn-primary");
+				$('#specs').append(data);
+				var len = $(".add-specitem").length -1;
+				$(".add-specitem:eq(" +len+ ")").focus();
+				window.optionchanged = true;
+			}
+		});
+	}
+	function removeSpec(specid){
+		if (confirm('确认要删除此规格?')){
+			$("#spec_" + specid).remove();
+			window.optionchanged = true;
+		}
+	}
+	function addSpecItem(specid){
+	$("#add-specitem-" + specid).html("正在处理...").attr("disabled", "true");
+		var url = "{php echo $this->createWebUrl('obj_laddercm', array('act' => 'specitem'))}" + "&specid=" + specid;
+		$.ajax({
+			"url": url,
+			success:function(data){
+				$("#add-specitem-" + specid).html('<i class="fa fa-plus"></i> 添加规格项').removeAttr("disabled");
+				$('#spec_item_' + specid).append(data);
+				var len = $("#spec_" + specid + " .spec_item_title").length -1;
+				$("#spec_" + specid + " .spec_item_title:eq(" +len+ ")").focus();
+				window.optionchanged = true;
+			}
+		});
+	}
+	function removeSpecItem(obj){
+		$(obj).parent().parent().parent().remove();
+	}
+	function showItem(obj){
+		var show = $(obj).get(0).checked?"1":"0";
+		$(obj).next().val(show);
+	}
+	function nofind(){
+		var img=event.srcElement;
+		img.src="./resource/image/module-nopic-small.jpg";
+		img.onerror=null; 
+	}
+</script>

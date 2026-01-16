@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">系统</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content" id="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#">清单列表</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content" id="form_content" method="post">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 用户移动端</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">系统案例中心</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('user.sys_case', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">微信OPENID</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('user.user_openid', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">附近商家活动</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('user.nearby_activity', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {if getPluginStatus($_W['uniacid'], 'lywywl_ztb_plugin_home')}
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">活动聚合首页</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('user.home_activity', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {/if}
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">订阅通知(平台)</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('wx_template', array('act' => 'index', 'types' => 1), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">订阅通知(商家)</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('wx_template', array('act' => 'index', 'types' => 2), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">订阅通知(用户)</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('wx_template', array('act' => 'index', 'types' => 3), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 商家移动端</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商家账户登录</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('store.login', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商家账户注册</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('store.register', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">账户密码找回</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('store.resetpsd', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商户管理中心</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('store.store_member', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商户信息配置</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('store.store_account', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">我要制作活动</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('store.sys_tmp', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商户资金明细</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('store.store_bill', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商户账户充值</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('store.store_recharge', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商户资金提现</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('store.store_refund', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商户账户续费</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('store.store_renew', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商家卡券管理</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('store.store_card', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">核销员工管理</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('store.store_staff', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商城订单管理</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('store.order_intmall', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">活动订单管理</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('store.order_obj', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 商家电脑端</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商家账户登录</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __PURL('login', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商家账户注册</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __PURL('register', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">账户密码找回</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __PURL('resetpsd', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 平台手机端</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">商家活动审核</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo replaceDieDomain($config, __MURL('platform.activity_check', array('act' => 'index'), true, true),0,0,0);}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> 平台电脑端</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">系统独立登录</label>
+                                            <div class="col-sm-9">
+                                                <span class="help-block">{php echo $_W['siteroot'].'web/ztb.php?c=user&a=login&uniacid='.$_W['uniacid']}</span>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <button type="button" class="btn btn-primary pull-right">
+                                                    <i class="fa fa-copy"></i> 复制
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script>
+    $(function () {
+        //设置选中导航
+        SelectNav("链接清单");
+
+        require(["clipboard"], function (Clipboard) {
+            $("#content button").click(function () {
+                var btn = $(this);
+                var text = $(this).parent().prev().children().text();
+                //复制内容
+                var clipboard =new Clipboard('#content button', {
+                    text: function(trigger) {return text;}
+                });
+                clipboard.on('success', function(e) {
+                    btn.addClass('btn-success').html('<i class="fa "></i> 已复制');
+                    e.clearSelection();
+                });
+                clipboard.on('error', function(e) {
+                    e.clearSelection();
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

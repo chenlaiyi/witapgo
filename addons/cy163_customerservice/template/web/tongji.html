@@ -1,0 +1,210 @@
+{template 'common/header'}
+<style>
+.kflist{
+	margin-bottom:20px;
+	border:solid 1px #ccc;
+	border-radius:10px;
+	text-align:center;
+	padding:10px 10px 0 10px;
+}
+.kflist img{
+	width:50px;
+	height:50px;
+	border-radius:100%;
+}
+.kflist .name{
+	color:#333;
+	font-size:14px;
+	margin-top:5px;
+}
+.kflist .nums{
+	margin-top:10px;
+}
+
+.account-stat{overflow:hidden; color:#666;}
+.account-stat .account-stat-btn{width:100%; overflow:hidden;}
+.account-stat .account-stat-btn > div{text-align:center; margin-bottom:5px;float:left;width:33.33%; height:80px; padding-top:10px;font-size:16px; border-left:1px #DDD solid;}
+.account-stat .account-stat-btn > div:first-child{border-left:0;}
+.account-stat .account-stat-btn > div span{display:block; font-size:30px; font-weight:bold}
+</style>
+<ul class="nav nav-tabs">
+	<li {if $operation == 'display'}class="active"{/if}><a href="{php echo $this->createWebUrl('tongji')}">客服统计</a></li>
+	<li {if $operation == 'detail'}class="active"{/if}><a href="{php echo $this->createWebUrl('tongji',array('op'=>'detail'))}">详细统计</a></li>
+	{if $operation == 'new'}
+		<li class="active"><a href="{php echo $this->createWebUrl('tongji',array('op'=>'new','openid'=>$openid))}">新增客户统计</a></li>
+	{/if}
+</ul>
+
+{if $operation == 'display'}
+<div class="main">
+	<div class="panel panel-default col-md-12" style="padding:10px;">
+		<div class="account-stat">
+			<div class="account-stat-btn">
+				<div>总客服数 <span>{php echo count($cservicelist);}</span></div>
+				<div>总接待 <span>{$alljd}</span></div>
+				<div>总回复量 <span>{$alltotal}</span></div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		{loop $cservicelist $row}
+		<div class="col-md-4">
+			<div class="kflist">
+				<img src="{php echo tomedia($row['thumb']);}" />
+				<div class="name">{$row['name']}</div>
+				<div class="name">
+					{if $row['online'] == 1}
+						<span class="label label-success">在线</span>
+					{else}
+						<span class="label label-danger">离线</span>
+					{/if}
+				</div>
+				<div class="nums">
+					<div class="panel panel-info">
+					  <div class="panel-heading">今日新增客户</div>
+					  <div class="panel-body">
+						<span class="label label-success">{$row['todaynewnum']}</span>
+						<a class="btn btn-sm btn-info" href="{php echo $this->createWebUrl('tongji',array('op'=>'new','openid'=>$row['content']))}">明细</a>
+					  </div>
+					</div>
+				</div>
+				<div class="nums">
+					<div class="panel panel-info">
+					  <div class="panel-heading">接待人数</div>
+					  <div class="panel-body">
+						<span class="label label-success">今日{$row['todayjdnum']}</span>
+						<span class="label label-primary">本周{$row['weekjdnum']}</span>
+						<span class="label label-warning">本月{$row['monthjdnum']}</span>
+					  </div>
+					</div>
+				</div>
+				<div class="nums">
+					<div class="panel panel-success">
+					  <div class="panel-heading">回复次数</div>
+					  <div class="panel-body">
+						<span class="label label-success">今日{$row['todayhfnum']}</span>
+						<span class="label label-primary">本周{$row['weekhfnum']}</span>
+						<span class="label label-warning">本月{$row['monthhfnum']}</span>
+					  </div>
+					</div>
+				</div>
+				<div class="nums">
+					<div class="panel panel-warning">
+					  <div class="panel-heading">聊天记录</div>
+					  <div class="panel-body">
+						<a class="btn btn-warning btn-sm" href="{php echo $this->createWebUrl('kehu',array('kefuopenid'=>$row['content']))}">点击查看</a>
+					  </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{/loop}
+	</div>
+</div>
+{elseif $operation == 'new'}
+<div class="main">
+	<div class="panel panel-info">
+		<div class="panel-heading">筛选</div>
+		<div class="panel-body">
+			<form action="./index.php" method="get" class="form-horizontal" role="form" id="form1">
+				<input type="hidden" name="c" value="site" />
+				<input type="hidden" name="a" value="entry" />
+				<input type="hidden" name="m" value="cy163_customerservice" />
+				<input type="hidden" name="do" value="tongji" />
+				<input type="hidden" name="op" value="new" />
+				<input type="hidden" name="openid" value="{$openid}" />
+				
+				<div class="form-group">
+					<label class="col-xs-12 col-sm-2 control-label">日期范围</label>
+					<div class="col-sm-4 col-xs-12">
+						{php echo tpl_form_field_daterange('time', array('start'=>date('Y-m-d', $stime),'end'=>date('Y-m-d', $etime)));}
+					</div>
+					<div class="col-sm-4 col-xs-12">
+						<button class="btn btn-default"><i class="fa fa-search"></i> 搜索，共{$todaynewnum}个新增客户</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	<div class="panel panel-info">
+	  <div class="panel-heading">新增客户列表</div>
+	  <div class="panel-body">
+		<table class="table table-hover table-striped table-condensed">
+			<thead>
+				<tr>
+					<th style="width:50%;">客户</th>
+					<th style="text-align:right;width:50%;">时间</th>
+				</tr>
+			</thead>
+			<tbody>
+			{loop $fans $row}
+			<tr>
+				<td>{$row['fansnickname']}</td>
+				<td style="text-align:right;">
+					{php echo date('Y/m/d H:i:s',$row['intime'])}
+				</td>
+			</tr>
+			{/loop}
+			</tbody>
+		</table>
+	  </div>
+	</div>
+</div>
+{elseif $operation == 'detail'}
+<div class="main">
+	<div class="panel panel-info">
+		<div class="panel-heading">筛选</div>
+		<div class="panel-body">
+			<form action="./index.php" method="get" class="form-horizontal" role="form" id="form1">
+				<input type="hidden" name="c" value="site" />
+				<input type="hidden" name="a" value="entry" />
+				<input type="hidden" name="m" value="cy163_customerservice" />
+				<input type="hidden" name="do" value="tongji" />
+				<input type="hidden" name="op" value="detail" />
+				
+				<div class="form-group">
+					<label class="col-xs-12 col-sm-2 control-label">时间范围</label>
+					<div class="col-sm-4 col-xs-12">
+						{php echo tpl_form_field_daterange('time', array('start'=>date('Y-m-d', $starttime),'end'=>date('Y-m-d', $endtime)));}
+					</div>
+					<div class="col-sm-4 col-xs-12">
+						<button class="btn btn-default"><i class="fa fa-search"></i> 搜索</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading">详细统计</div>
+		<div class="panel-body table-responsive">
+			<table class="table table-hover table-striped table-condensed">
+				<thead>
+					<tr>
+						<th style="width:15%;">客服人员</th>
+						<th style="width:15%;">接待人次</th>
+						<th style="width:30%;">回复消息数</th>
+						<th style="text-align:right;">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+				{loop $cservicelist $row}
+				<tr>
+					<td>{$row['name']}</td>
+					<td>{$row['jdnum']}</td>
+					<td>{$row['hfnum']}</td>
+					<td style="text-align:right;">
+						<a href="{php echo $this->createWebUrl('kehu', array('op' => 'display', 'kefuopenid' => $row['content'],'start'=>$starttime,'end'=>$endtime))}" class="btn btn-info btn-sm">详细数据</a>
+					</td>
+				</tr>
+				{/loop}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{$pager}
+</div>
+{/if}
+{template 'common/footer'}

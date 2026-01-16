@@ -1,0 +1,317 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<body>
+<!--中心区域-->
+<section class="rel" style="height: 1.08rem;">
+    <h2 class="screen fn font28 bgfff" style=" position: fixed;z-index: 10;width: 100%;">
+        <dl class="retrie">
+            <dt class="bor_b pd0_24">
+                <a id="filter" href="javascript:;" style="width:auto!important">筛选<i class="sortIconI"></i> </a>
+            </dt>
+            <dd class="default">
+                <form>
+                    <!--筛选弹出层-->
+                    <section class="interal_filter downlist">
+                        <ul class="form">
+                            <li><span>奖项名称：</span><section><input type="text" placeholder="奖项名称/奖项编号" id="searchKey"></section></li>
+                            <li><span>奖项类型：</span><section >
+                                <p class="select_box rel">
+                                    <select id="searchTypes">
+                                        <option value="" selected="selected">请选择</option>
+                                        {loop $prizeTypes $type $value}
+                                        <option value="{$type}">{$value}</option>
+                                        {/loop}
+                                    </select>
+                                </p>
+                            </section></li>
+                        </ul>
+                        <section class="retrieval mt24 clearfix">
+                            <button type="reset" class="recharge_but font32"> 重置</button>
+                            <button type="button" class="submit_but font32" id="btnSearch"> 搜索</button>
+                        </section>
+                    </section>
+                </form>
+            </dd>
+        </dl>
+    </h2>
+</section>
+<section class="mt24 pdBtm98" id="ContentList">
+    <ul class="goodsList currency" id="LoadLists">
+
+    </ul>
+</section>
+<section class="buttonBox"></section>
+<section class="buttonFloat clickBtn">
+    <a href="{php echo $this->createMobileUrl('store.obj_activity',array('act'=>'index'))}" class="db font32" style="width: 50%; float: left; color: #fff; border-radius: 0.6rem 0 0 0.6rem; background: #f92f4a;">活动列表</a>
+    <a href="{php echo $this->createMobileUrl('store.obj_tiger_prize', array('act' => 'modify','aid'=>$aid ));}" style="width: 50%;   float: left;    background: #FFD112;    color: #0e0e0e;border-radius: 0 0.6rem 0.6rem 0;"  class="db font32">添加奖项</a>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li data-id="<%= rows[i].id %>"> <a href="javascript:;">
+        <figure class="f-yahei">
+            <div class="left"> <img src="<%= rows[i].icon %>"> </div>
+            <figcaption><%= rows[i].name %></figcaption>
+            <%if(rows[i].types == 0){%>
+            <p><span class="bgOrg label">谢谢参与</span></p>
+            <%}else if(rows[i].types == 1){%>
+            <p><span class="bgOrg label">账户积分</span></p>
+            <%}else if(rows[i].types == 2){%>
+            <p><span class="bgOrg label">账户余额</span></p>
+            <%}else if(rows[i].types == 3){%>
+            <p><span class="bgOrg label">微信红包</span></p>
+            <%}else if(rows[i].types == 4){%>
+            <p><span class="bgOrg label">实物商品</span></p>
+            <%}else if(rows[i].types == 5){%>
+            <p><span class="bgOrg label">商家卡券</span></p>
+            <%}%>
+            <h2 class=" font28 fn">
+                <span class="main_red">中奖概率:<%= rows[i].odds %></span>
+                <%if(rows[i].types == 0){%>
+                <span class=" ml15">谢谢参与：感谢您的参与！</span>
+                <%}else if(rows[i].types == 1){%>
+                <span class=" ml15">账户积分:<%= rows[i].score %></span>
+                <%}else if(rows[i].types == 2){%>
+                <span class=" ml15">账户余额:<%= rows[i].sys %></span>
+                <%}else if(rows[i].types == 3){%>
+                <span class=" ml15">微信红包:<%= rows[i].money %></span>
+                <%}else if(rows[i].types == 4){%>
+                <span class=" ml15">实物商品:<%= rows[i].name %></span>
+                <%}else if(rows[i].types == 5){%>
+                <span class=" ml15">商家卡券:<%= rows[i].card_name %></span>
+                <%}%>
+            </h2>
+            <h2 class=" font26 fn"><span>奖品数量:<%= rows[i].number %></span><span class=" ml15">剩余数量:<%= rows[i].surplus %></span></h2>
+            <p class="c9">排序:<%= rows[i].sort %></p>
+            <p class="c9">创建时间：<%= rows[i].createtime %></p>
+            <p class="c9">编辑时间：<%= rows[i].updatetime %></p>
+        </figure>
+        <%if(rows[i].status == 1){%>
+        <span class="switch switch_on"><i class="slider"></i></span>
+        <%}else{%>
+        <span class="switch switch_off"><i class="slider"></i></span>
+        <%}%>
+    </a>
+        <section class="operation clearfix"> <a href="{php echo $this->createMobileUrl('store.obj_tiger_prize', array('act' => 'modify','aid'=>$aid));}&id=<%= rows[i].id %>" class="edit bor_r font28"><span>编辑</span></a> <a href="javascript:;" class="delete font28"><span>删除</span></a> </section>
+    </li>
+    <% } %>
+</script>
+<script>
+    $(function(){
+        //点击筛选
+        $('#filter').click(function(){
+            var $filter = $(this);
+            if($filter.hasClass('up')){
+                $filter.removeClass('up');
+                $('.downlist').hide();
+            }else{
+                $filter.addClass('up');
+                $('.downlist').show();
+            }
+        });
+
+        //dropload
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //点击搜索
+        $('#btnSearch').click(function(){
+            //隐藏筛选弹框
+            $('#filter').removeClass('up');
+            $('.downlist').hide();
+
+            //筛选参数
+            window.searchKey = $('#searchKey').val();
+            window.searchTypes = $('#searchTypes').val();
+            window.delCount = 0;
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.obj_tiger_prize', array('act' => 'getJsonList','aid'=>$aid));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "key":window.searchKey,
+                                "types":window.searchTypes,
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                window.delCount = 0;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false)
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var html = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.obj_tiger_prize', array('act' => 'getJsonList','aid'=>$aid));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "delCount":window.delCount,
+                                "key":window.searchKey,
+                                "types":window.searchTypes,
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    threshold : 50
+                });
+            }
+
+        }).trigger("click");
+
+        //删除
+        $('#LoadLists').on('click','li .delete',function(){
+            var delid = $(this).parents('li').data('id');
+            $that = $(this);
+            //询问框
+            layer.open({
+                content: '您确定要删除奖项吗？'
+                , btn: ['确定', '取消']
+                , yes: function (index) {
+                    $.ajax({
+                        type: "get",
+                        url: "{php echo $this->createMobileUrl('store.obj_tiger_prize', array('act' => 'del','aid'=>$aid));}",
+                        data: {"id": delid},
+                        success: function (data, status) {
+                            if (data.status == 1) {
+                                layer.open({
+                                    content: data.msg
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                window.delCount= window.delCount+1;
+                                $that.parents('li').remove();
+                            }
+                            else {
+                                layer.open({
+                                    content:data.msg
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                            }
+                        }
+                    });
+                    layer.close(index);
+                }
+            });
+
+        });
+
+        //状态开关
+        $('#LoadLists').on('click','.switch',function(){
+            var switchobj = $(this);
+            var status = switchobj.hasClass("switch_on") ? 0 : 1;
+            var Rowid = switchobj.parents('li').data("id");
+            $.ajax({
+                type: "post",
+                dataType:'json',
+                url: "{php echo $this->createMobileUrl('store.obj_tiger_prize', array('act' => 'setStatus','aid'=>$aid));}",
+                data: {
+                    "id": Rowid,
+                    "status": status
+                },
+                success: function (jsonData, status) {
+                    if (jsonData.status == 1) {
+                        if(switchobj.hasClass("switch_on")){
+                            switchobj.removeClass("switch_on");
+                            switchobj.addClass("switch_off");
+                        }
+                        else{
+                            switchobj.removeClass("switch_off");
+                            switchobj.addClass("switch_on");
+                        }
+                    }
+                    else {
+                        layer.open({
+                            content: jsonData.msg
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

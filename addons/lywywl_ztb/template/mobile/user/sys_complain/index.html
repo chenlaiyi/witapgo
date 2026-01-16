@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+{template 'user/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+<script src="{MODULE_URL}resource/mobile/plugin/js/require.js"></script>
+<body style="background-color:#EEEEF3;">
+<form action="{php echo $this->createMobileUrl('user.sys_complain',array('store_id'=>$store_id,'activity_id'=>$activity_id));}" id="user_form" method="post">
+<div id="header_text" style="display: block;">请选择投诉原因</div>
+<div id="comhead" style="display: block;">
+    {loop $complainTypes $index $value}
+    <div class="comhead_ind">
+        <div class="comhead_cont">
+            <p class="comhead_val">{$value}</p>
+            <a class="comhead_key">
+                <input type="radio" name="model[types]" value="{$index}" id="tousu{$index}" {php echo $index==1?"checked":""}>
+                <label for="tousu{$index}"></label>
+            </a></div>
+    </div>
+    {/loop}
+</div>
+<div class="xiayibu_div" id="hiddenxyb" style="display: block;">
+    <button type="button" id="xiayibu" onClick="xyb_djyc(1)">下一步</button>
+</div>
+
+<div id="content_div" style="display: none;">
+    <div class="textarea_text">
+        <div class="complain_miaoshu">投诉描述</div>
+        <div id="textarea_div">
+            <textarea id="qianyue-area" maxlength="200" name="model[content]"></textarea>
+            <i><span class="count-change">0</span>/200</i></div>
+    </div>
+    <div class="textarea_text">
+        <div class="complain_miaoshu">联系方式</div>
+        <div id="input_mobile">
+            <input type="tel" placeholder="请填写您的手机号码,以便联系" class="mobiles_lix" id="mobile" name="model[mobile]" datatype="m" maxlength="11" nullmsg="请输入您的手机号码！" value="">
+        </div>
+    </div>
+    <div class="xiayibu_div">
+        <button type="submit" class="Button" id="SubmitBtn">提交</button>
+    </div>
+    <div class="xiayibu_div">
+        <button id="next_syb" type="button" onClick="xyb_djyc(2)" class="pre">上一步</button>
+    </div>
+</div>
+</form>
+
+<script type="text/javascript">
+    //监测从后台获取的可编辑文字、键盘输入的文字字数的变化，并赋值给span
+    $(function () {
+        var text = $('#qianyue-area').val();
+        var len = text.length;
+        $('#qianyue-area').next().find('span').html(len);
+        $('textarea').keyup(function () {
+            var text = $(this).val();
+            len = text.length;
+            if (len > 200) {
+                return false;
+            }
+            $(this).next().find('span').html(len);
+        });
+
+        require(['{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js'], function () {
+            //为formContent 添加验证事件
+            $("#user_form").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                                , style: 'bottom:0;'
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if(data.status == 1){
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createMobileUrl('scan',array('act'=>'index','token'=>$actModel['token'],'origin_id'=>$origin_id))}";
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }else{
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+        });
+    });
+
+    function xyb_djyc(nub) {
+        if (nub == 1) {
+            var va = $('input:radio[name="model[types]"]:checked').val();
+            if (!va) {
+                layer.open({content: '请选择投诉类型', skin: 'msg', time: 2});
+            } else {
+                $('#header_text').hide();
+                $('#comhead').hide();
+                $('#hiddenxyb').hide();
+                $('#content_div').show();
+            }
+        }
+        if (nub == 2) {
+            $('#header_text').show();
+            $('#comhead').show();
+            $('#hiddenxyb').show();
+            $('#content_div').hide();
+        }
+    }
+
+</script>
+</body>
+</html>

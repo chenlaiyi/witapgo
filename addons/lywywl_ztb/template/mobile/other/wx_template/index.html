@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name = "format-detection" content ="telephone=no">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>{$title}</title>
+    <link rel="stylesheet" type="text/css" href="{__MOBILE_USER_CSS__}/base.css">
+    <!-- 移动端适配 -->
+    <script>
+        var html = document.querySelector('html');
+        changeRem();
+        window.addEventListener('resize', changeRem);
+        function changeRem() {
+            var width = html.getBoundingClientRect().width;
+            html.style.fontSize = width / 10 + 'px';
+        }
+        function FloatMoney(value) {
+            if (value == "")
+            {
+                return "0.00";
+            }
+            var value = Math.round(parseFloat(value) * 100) / 100;
+            var xsd = value.toString().split(".");
+            if (xsd.length == 1) {
+                value = value.toString() + ".00";
+                return value;
+            }
+            if (xsd.length > 1) {
+                if (xsd[1].length == 1) {
+                    value = value.toString() + "0";
+                }
+                else if (xsd[1].length < 2) {
+                    value = value.toString();
+                }
+                return value;
+            }
+        }
+    </script>
+    <script src="{__MOBILE_USER_JS__}/jquery-2.1.4.min.js"></script>
+    <script src="{__PLUGIN__}/layer/mobile/2.0/layer.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script>
+        // jssdk config 对象
+        jssdkconfig = {php echo json_encode($_W['account']['jssdkconfig']);} || {};
+        // 是否启用调试
+        jssdkconfig.debug = false;
+        jssdkconfig.jsApiList = [
+            'checkJsApi',
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'getLocation',
+            'hideAllNonBaseMenuItem',
+            'showAllNonBaseMenuItem',
+            'hideMenuItems',
+            'showMenuItems'
+        ];
+        jssdkconfig.openTagList = ['wx-open-subscribe'];
+        wx.config(jssdkconfig);
+        wx.error(function (res) {
+            layer.open({ content: '对不起，微信JSSDK信息验证失败！', skin: 'msg', time: 2 });
+        });
+        wx.ready(function () {
+            wx.hideMenuItems({
+                menuList: ["menuItem:share:timeline", "menuItem:share:appMessage", "menuItem:share:qq", "menuItem:share:weiboApp", "menuItem:share:facebook", "menuItem:share:QZone",  "menuItem:openWithQQBrowser", "menuItem:openWithSafari", "menuItem:share:email"] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮
+            });
+        });
+    </script>
+</head>
+<body class="bgf2">
+<div class="pd24 font28 bgfff m20">
+    <p style="color:red;">微信官方为提升用户体验，公众号模板消息后续将调整为订阅通知，接收订阅通知消息需要您授权才能发送。请您订阅相关通知消息，每订阅一次可增加一次发送消息机会。</p>
+</div>
+{loop $priTemplateList $index $item}
+{if !empty($config[$item['name']]) && strpos(','.$item['types'].',',','.$types.',')!==false }
+<div class="pd24 font28 bgfff m20">
+    <div class="fl">{$item['title']}</div>
+    <div class="fr">
+    <div class="fl pr10 subscribe-num-{$index}" data-num="0" style="color:gray;"></div>
+    <wx-open-subscribe template="{$config[$item['name']]}" id="subscribe-btn-{$index}">
+        <template slot="style">
+            <style>
+                .subscribe-btn {width: 50px;height: 26px;padding: 2px;border-radius: 5px;border: 0;font-size: 16px;color: #fff;background-color: #07c160;}
+            </style>
+        </template>
+        <template>
+            <button class="subscribe-btn">订阅</button>
+        </template>
+    </wx-open-subscribe>
+    <script>
+        document.getElementById('subscribe-btn-{$index}').addEventListener('success', function (e) {
+            var status = JSON.parse(JSON.parse(e.detail.subscribeDetails)["{$config[$item['name']]}"])["status"];
+            if(status == 'accept'){
+                layer.open({content: '订阅成功，获得一次模版消息提醒！', skin: 'msg', time: 2});
+                var $num = $('.subscribe-num-{$index}');
+                $num.data('num', $num.data('num')+1);
+                $num.text('+'+$num.data('num'));
+            }
+        });
+    </script>
+    </div>
+    <div class="clearfix"></div>
+</div>
+{/if}
+{/loop}
+</body>
+</html>

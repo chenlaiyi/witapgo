@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.we7.cc" versionCode="0.8,1.0">
+	<application setting="false">
+		<name><![CDATA[看新闻赚金币]]></name>
+		<identifie><![CDATA[wjyk_zqds_plugin_news]]></identifie>
+		<version><![CDATA[1.0.0]]></version>
+		<type><![CDATA[business]]></type>
+		<ability><![CDATA[赚钱大师新闻资讯]]></ability>
+		<description><![CDATA[赚钱大师新闻资讯]]></description>
+		<author><![CDATA[壹锋源码]]></author>
+		<url><![CDATA[http://www.we7.cc/]]></url>
+	</application>
+
+	<platform>
+		<subscribes>
+		</subscribes>
+
+		<handles>
+		</handles>
+
+		<rule embed="false" /> 
+		<card embed="false" />
+		<oauth type="1" />
+		
+		<supports>
+			<item type="wxapp" />
+		</supports>
+		<plugin-main name="wjyk_zqds" />
+	</platform>
+
+	<bindings>
+		<menu>
+			<entry title="新闻" do="news" state="" direct="false"/>
+		</menu>
+	</bindings>
+
+	<permissions>
+	</permissions>
+
+	<install><![CDATA[INSERT INTO ims_wjyk_zqds_address VALUES 
+('1','697','14','夏恒','13520835125','北京市','北京市','东城区','北京市-北京市-东城区','测试地址','1','1612679855');
+INSERT INTO ims_wjyk_zqds_address VALUES 
+('2','697','27','谢谢你','18802615066','北京市','北京市','东城区','北京市-北京市-东城区','55555','1','1613903643');
+INSERT INTO ims_wjyk_zqds_address VALUES 
+('3','759','53','王图图','13104918995','广东省','广州市','白云区','广东省-广州市-白云区','大岭中街3号','1','1618159888');
+INSERT INTO ims_wjyk_zqds_address VALUES 
+('4','759','58','小仙女','17836327421','山西省','朔州市','怀仁市','山西省-朔州市-怀仁市','山西省朔州市怀仁市陶职大学院快递驿站','1','1621346299');
+INSERT INTO ims_wjyk_zqds_address VALUES 
+('5','759','60','可可','13542892824','广东省','汕头市','濠江区','广东省-汕头市-濠江区','安乐巷12号','1','1622376801');
+INSERT INTO ims_wjyk_zqds_address VALUES 
+('6','1001','67','jvgy','13452285632','北京市','北京市','东城区','北京市-北京市-东城区','m hjj','1','1627284710');
+]]></install>
+	<uninstall><![CDATA[]]></uninstall>
+	<upgrade><![CDATA[ru_rpgrade.php]]></upgrade>
+
+</manifest>

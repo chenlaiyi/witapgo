@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {template 'common/edithead'}
+    <!--微擎 -->
+    <!--这个放在最后一切平白安全-->
+    <style>
+        .left-content{  width: 30%;  float: left;position: relative;font-size: 20px;}
+        .left-content>.box{padding: 10px 10px 20px 10px;width: 100%;box-sizing: border-box;border: #dddddd 1px solid;background: #FFFFFF;position: relative;height: auto;}
+        .content-text{width: 100%;height: 100%;overflow: hidden;word-break: break-all;}
+        .box>img{max-width: 100%;}
+        .box.curr{border: 2px solid #079200;}
+        .right_content{width: 70%;float: left;font-size: 20px;}
+        #pcontents {line-height: 30px;}
+        #psortlist li {width: 420px;display: inline-block;margin-left: 1%;  }
+        .photos .control-label {height: 25px;line-height: 25px;  }
+        #templist a {margin-bottom: 5px;}
+        #templist a.btn + a.btn, #sysvar a.btn + a.btn {margin-left: 0px;  }
+        #userlist li{  width: 130px;  overflow: hidden;  }
+        #userlist li img{  width: 130px;}
+        .messagestep{  width: 33%;  float: left;  padding: 5px;  }
+        #opstep  canvas, #opstep  img{  max-width: 100%;  }
+        #userlist li{  float: left;  margin-right: 5px;  }
+        #userlist li  .input-group-addon{  font-size: 12px;  }
+    </style>
+    <script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+    <script type="text/javascript">
+        //编辑器里使用
+        var urobj=[];
+    </script>
+</head>
+<body class="nav-md" style="min-width: 800px">
+<div>
+    <div class="container xc_edit_from" >
+        <div class="main_container" style="overflow-x: hidden;min-height: calc(100vh - 20px);background-color: white;width: 100%;">
+            <div class="col-md-12 col-xs-12">
+                <div class="x_panel">
+                    <ul class="we7-page-tab">
+                        <li >
+                            <a  href="{php echo $this->createWebUrl($do, array('op'=>'list','xtitleb'=>urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}">
+                                {$xtitleb}- {$xtitlea}列表  </a></li>
+                        <li><a a href="{php echo $this->createWebUrl($do, array('op'=>'edit','xtitleb'=>urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}">{$xtitleb}- {$xtitlea}增加</a></li>
+                    </ul>
+                    <div class="x_content">
+                        <br/>
+                        <form class="form-horizontal" role="form" method="post" action="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'savemodel','version_id'=>$_GPC['version_id'])}" name="submit" style="padding: 20px 0;">
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">名称</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="name" id="name" value="{$list['name']}">
+                                    <input type="hidden" name="id" value="{$list['id']}">
+                                    <input type="hidden" name="content">
+                                    <input type="hidden" name="userlist">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">logo（120*120）</label>
+                                <div class="col-sm-8">
+                                    {php echo tpl_form_field_image('simg',$list['simg']);}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">封面</label>
+                                <div class="col-sm-8">
+                                    {php echo tpl_form_field_image('bimgs',$list['bimg']);}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">电话</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="mobile" id="mobile" value="{$list['mobile']}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">营业时间</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="plan_date" id="plan_date" value="{$list['plan_date']}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">地址</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control"  name="address" id="address" value="{$list['address']}">
+                                </div>
+                                <div class="col-sm-4">
+                                    <button type="button" class="btn btn-default search" style="margin-right:5px;">查询</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">地图</label>
+                                <div class="col-sm-10">
+                                    <div id="container" style="width: 100%;height: 400px;"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label"></label>
+                                <label for="name" class="col-sm-2 control-label" style="width: auto;padding-left: 15px;">经度</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control"  name="longitude" value="{$list['map']['longitude']}">
+                                </div>
+                                <label for="name" class="col-sm-2 control-label" style="width: auto;">纬度</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control"  name="latitude" value="{$list['map']['latitude']}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">上门服务距离限制功能</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" class="js-switch" value="1" name="distance_status"
+                                           data-value="{$list['distance_status']}" data-field="status">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">限制距离</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="distance" id="distance" value="{$list['distance']}">
+                                    <span class="help-block">单位：km</span>
+                                </div>
+                            </div>
+                            {if $xc && $xc['status']==1}
+                            {if $xc['type']==1}
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">接收短信手机号</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="sms" id="sms" value="{$list['sms']}">
+                                </div>
+                            </div>
+                            {else if $xc['type']==2}
+                            <div class="form-group" style="display: none" id="stepcontents">
+                                <label class="control-label col-md-2 col-sm-3 col-xs-12">操作步骤</label>
+                                <div class="col-md-10 col-sm-9 col-xs-12">
+                                    <div id="opstep">
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2 col-sm-3 col-xs-12">信息接受人</label>
+                                <div class="col-md-10 col-sm-9 col-xs-12">
+                                    <ul id="userlist">
+
+                                        {loop  $list["userlist"] $uxkey $uxval}
+                                        <li data-openid="{$uxval['openid']}" data-nickname="{$uxval['nickname']}" data-headimgurl="{$uxval['headimgurl']}" ><img src="{$uxval['headimgurl']}">
+
+                                            <div class="input-group">
+                                                <span class="input-group-btn"> <button  class=" btn btn-default" type="button"><span><i class="fa fa-remove"></i></span></button></span>
+                                                <span class="input-group-addon" style="width:100px;border-left:none;overflow: hidden;">{$uxval['nickname']}</span>
+
+                                            </div>
+                                        </li>
+                                        {/loop}
+                                    </ul>
+                                    <div style="clear: both;"></div>
+                                    <button type="button" class="btn btn-default"  id="btnop">增加接受人员</button>
+                                </div>
+                            </div>
+                            <script>
+                                var parameter = {
+                                    parameter_add: function (objc) {
+                                        $(objc).parent().after('<li class="input-group"> <input type="text" class="form-control"  data-name="attr"value=""> <input type="text" class="form-control" data-name="value" value=""> <span class="input-group-btn" onclick="parameter.parameter_add(this)"> <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button> </span> <span class="input-group-btn" onclick="parameter.parameter_del(this)"> <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button> </span></li>');
+                                    },
+                                    parameter_del: function (objc) {
+                                        if ($(objc).parent().siblings().length > 0) {
+                                            $(objc).parent().remove();
+                                        }
+                                    }
+                                }
+                            </script>
+                            {/if}
+                            {/if}
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">分店打印功能</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" class="js-switch" value="1" name="print_status"
+                                           data-value="{$list['print_status']}" data-field="status">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">分店打印(易联云)</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="machine_code" id="machine_code" value="{$list['machine_code']}">
+                                    <span class="help-block">打印机终端号</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">分店打印(易联云)</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="msign" id="msign" value="{$list['msign']}">
+                                    <span class="help-block">打印机终端密钥</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">分店打印(飞鹅云)</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="sn" id="sn" value="{$list['sn']}">
+                                    <span class="help-block">打印机编号</span>
+                                </div>
+                            </div>
+                            {if $list['id']}
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">提成店长</label>
+                                <div class="col-sm-8">
+                                    <select class="show-tick form-control bs-select-hidden js-select2" data-live-search="true" name="store_manager">
+                                        <option value="0" hassubinfo="true">请选择提成店长</option>
+                                        {loop $user_list $index $vo}
+                                        <option value="{$vo['openid']}" {if $vo['openid']==$list['store_manager']}selected{/if}>{$vo['nick']}</option>
+                                        {/loop}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">店长提成金额</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control"  name="store_fee" id="store_fee" value="{$list['store_fee']}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">%</button>
+                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">提成子管理员</label>
+                                <div class="col-sm-8">
+                                    <select class="show-tick form-control bs-select-hidden js-select2" data-live-search="true" name="store_admin">
+                                        <option value="0" hassubinfo="true">请选择提成子管理员</option>
+                                        {loop $user_admin $index $vo}
+                                        <option value="{$vo['openid']}" {if $vo['openid']==$list['store_admin']}selected{/if}>{$vo['nick']}</option>
+                                        {/loop}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">子管理员提成金额</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control"  name="store_admin_fee" id="store_admin_fee" value="{$list['store_admin_fee']}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">%</button>
+                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            {/if}
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">状态</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" class="js-switch" value="1" name="status"
+                                           data-value="{$list['status']}" data-field="status">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">排序</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="sort" value="{$list['sort']}">
+                                </div>
+                            </div>
+                            <div class="form-group item_content">
+                                <label class="col-sm-2 control-label">详情</label>
+                                <div class="col-sm-10" style="overflow: hidden;">
+                                    <div class="left-content">
+                                        {loop $list['content'] $index $item}
+                                        {if $item['type']==1}
+                                        <div class="box curr" data-type="1" style="min-height: 20px;font-size: 20px;"> <div class="ibox-tools" style="position: absolute;bottom: 0;"> <i class="fa fa-arrow-up" onclick="cmove(this,1)"></i> <i class="fa fa-arrow-down" onclick="cmove(this,2)"></i> <i class="fa fa-times" onclick="cdel(this)"></i> </div> <div class="content-text">{$item['content']}</div> </div>
+                                        {else}
+                                        <div class="box curr" data-type="2" style="overflow: hidden;"> <div class="ibox-tools" style="position: absolute;bottom: 0;"> <i class="fa fa-arrow-up" onclick="cmove(this,1)"></i> <i class="fa fa-arrow-down" onclick="cmove(this,2)"></i> <i class="fa fa-times" onclick="cdel(this)"></i> </div> <img src="{$item['content']}"> </div>
+                                        {/if}
+                                        {/loop}
+                                    </div>
+                                    <script>
+                                        function cmove(objc,cid){
+                                            var $_tobj=  $(objc).parent().parent();
+                                            var index=$_tobj.index();
+                                            if(cid==1)
+                                            {
+                                                if($_tobj.prev().length>0)
+                                                {
+                                                    $_tobj.after( $_tobj.prev() );
+                                                }
+
+                                            }else if(cid==2)
+                                            {
+                                                if($_tobj.next().length>0)
+                                                {
+                                                    $_tobj.next().after($_tobj);
+                                                }
+                                            }
+                                            if($_tobj.attr("data-type")==1){
+                                                $(".right_content").children().eq(0).css("margin-top",$_tobj.offset().top);
+                                            }else{
+                                                $(".right_content").children().eq(1).css("margin-top",$_tobj.offset().top);
+                                            }
+                                        }
+                                        function cdel(objc){
+                                            var $_tobj=  $(objc).parent().parent();
+                                            $(objc).parent().parent().remove();
+                                            $(".right_content").children().hide();
+                                            $(".right_content>div:last").show();
+                                        }
+                                    </script>
+                                    <div class="right_content" style="padding: 0 20px;">
+                                        <textarea style="width: 100%;min-height: 165px;display: none;"></textarea>
+                                        <div style="height: 165px;display: none;">
+                                            {php echo tpl_form_field_image('bimg');}
+                                        </div>
+
+                                        <div style="margin-top: 20px;">
+                                            <button type="button" class="btn btn-primary addcontent">增加文字</button>
+                                            <button type="button" class="btn btn-primary addimg">增加图片</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <input type="button" name="submit" class="btn btn-default" value="提交">
+                                    <a type="button" class="btn btn-default"  href="{php echo $this->createWebUrl($do, array('op'=>'list','xtitleb'=> urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}" >返回</a>
+                                    <input id="res" name="res" type="reset" style="display:none;" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{template 'common/editfoot'}
+<script>
+    $(function () {
+        opstepfun();
+        $("#userlist").on("click","button",function () {
+
+
+            $(this).closest("li").remove();
+
+        });
+        var autouser=-1;
+        $("#btnop").click(function () {
+            console.log(111);
+            $("#stepcontents").show();
+            userlistupdate();
+            if(autouser==-1)
+            {
+                autouser=1;
+                setInterval(function () {
+                    userlistupdate()
+                },1000)
+            }
+        });
+    });
+    var guzhuer = '{$idata["erurl"]}';
+    var $mesaurl= {$mesaurl};
+    function userlistupdate() {
+        if($mesaurl["ident"]!="")
+        {
+            var $postmodel= {};
+            $postmodel["ident"]=  $mesaurl["ident"];
+            $.ajax({
+                type: "post",
+                url: "{php echo $this->createWebUrl('webconfig', array('op'=>'getnewuserlist'));}",
+                dataType: "json",
+                data: $postmodel,
+                success: function (msg) {
+                    if(msg["obj"].length>0){
+                        var phtml=[];
+                        for(var i=0;i<msg["obj"].length;i++)
+                        {
+
+                            phtml.push("<li  data-openid='"+msg["obj"][i]["openid"]+"' data-headimgurl='"+msg["obj"][i]["headimgurl"]+"' data-nickname='"+msg["obj"][i]["nickname"]+"'>")
+                            phtml.push("<img src='"+msg["obj"][i]["headimgurl"]+"'>");
+
+                            phtml.push('<div class="input-group">');
+                            phtml.push(' <span class="input-group-btn">    <button  class=" btn btn-default" type="button"><span><i class="fa fa-remove"></i></span></button></span>');
+                            phtml.push('<span class="input-group-addon" style="width:100px;border-left:none;overflow: hidden;">'+msg["obj"][i]["nickname"]+'</span>');
+                            phtml.push(' </div>');
+
+                            phtml.push("</li>")
+
+
+                        }
+
+                        $("#userlist").append(phtml.join(""));
+                    }
+
+
+                }
+            });
+        }
+    }
+
+    function  opstepfun() {
+
+        require(["jquery",'jquery.qrcode'], function ($, util) {
+            var  $htmlcontents=[];
+
+            $htmlcontents.push("<div  class='messagestep'>");
+            if(guzhuer=="")
+            {
+                $htmlcontents.push("<h2>暂未设定关注的公众号,如果你已经关注公众号请进行下一步,如果没有关注公众号请先关注公众号</h2>")
+            }
+            else
+            {
+                $htmlcontents.push('第一步：如果未关注公众号请先扫码关注公众号【下面二维码】<br/><img src="'+guzhuer+'" width="230">');
+            }
+            $htmlcontents.push("</div>");
+            $htmlcontents.push("<div  class='messagestep'>");
+            if($mesaurl["url"]!="")
+            {
+                $htmlcontents.push('第二步扫描下面二维码 <div id="er2" url="'+$mesaurl["url"]+'" width="230"></div> ');
+
+            }
+            $htmlcontents.push("</div>");
+
+            $htmlcontents.push("<div  class='messagestep'>确认保存</div>");
+            $("#opstep").append($htmlcontents.join(""));
+
+            $("#er2").html('').qrcode({
+                render: 'canvas',
+                width: 230,
+                height: 230,
+                text: $mesaurl["url"]
+            });
+
+        })
+    }
+</script>
+<script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=CE3BZ-ZH6AW-TDQRN-ORJH6-HSPIE-7XB3W"></script>
+<script>
+    $(function(){
+        var markers=[];
+        var longitude=$("input[name='longitude']").val();
+        var latitude=$("input[name='latitude']").val();
+        if(longitude!="" && latitude!=""){
+            var center = new qq.maps.LatLng(latitude, longitude);
+        }else{
+            var center=new qq.maps.LatLng(39.916527,116.397128);
+        }
+        var map = new qq.maps.Map(document.getElementById('container'),{
+            center: center,
+            zoom: 16
+        });
+        var marker = new qq.maps.Marker({
+            map:map,
+            position: center
+        });
+        markers.push(marker);
+        //调用地址解析类
+        geocoder = new qq.maps.Geocoder({
+            complete : function(result){
+                console.log(result);
+                if(result.detail.location!=""){
+                    map.setCenter(result.detail.location);
+                    console.log(result.detail.location);
+                    $("input[name='longitude']").val(result.detail.location.lng);
+                    $("input[name='latitude']").val(result.detail.location.lat);
+                    clearOverlays(markers);
+                    var marker = new qq.maps.Marker({
+                        map:map,
+                        position: result.detail.location
+                    });
+                    markers.push(marker);
+                }
+                console.log(result);
+                if(result.detail.address!=""){
+                    $("input[name='address']").val(result.detail.address);
+                }
+            }
+        });
+        if($("input[name='address']").val()==""){
+            geocoder.getAddress(center);
+        }
+        qq.maps.event.addListener(
+                map,
+                'click',
+                function(event) {
+                    $("input[name='longitude']").val(event.latLng.getLng());
+                    $("input[name='latitude']").val(event.latLng.getLat());
+                    var center = new qq.maps.LatLng(event.latLng.getLat(), event.latLng.getLng());
+                    clearOverlays(markers);
+                    var marker = new qq.maps.Marker({
+                        map:map,
+                        position: center
+                    });
+                    markers.push(marker);
+                    geocoder.getAddress(center);
+                }
+        );
+        $(".search").click(function(){
+            var content=$("input[name='address']").val();
+            console.log(content);
+            if(content!=""){
+                geocoder.getLocation(content);
+            }
+        });
+    });
+    function clearOverlays(overlays) {
+        var overlay;
+        if(overlays.length>0){
+            while (overlay = overlays.pop() ) {
+                overlay.setMap(null);
+            }
+        }
+    }
+</script>
+<script>
+    $(function(){
+        $(".item_content .img-responsive.img-thumbnail").parent().remove();
+        var upload;
+        $(".left-content").on("click",".box",function(){
+            $(this).siblings('.box').removeClass("curr");
+            $(this).addClass("curr");
+            var index=$(this).index();
+            $(".right_content").children().hide();
+            $(".right_content>div:last").show();
+            if($(this).attr("data-type")==1){
+                $(".right_content").children().eq(0).val($(this).find(".content-text").text());
+                $(".right_content").children().eq(0).show();
+                $(".right_content").children().eq(0).css("margin-top",$(this).position().top);
+            }else{
+                $(".right_content").children().eq(1).show();
+                $(".right_content").children().eq(1).find("input[name='bimg']").val($(this).find("img").attr("src"));
+                $(".right_content").children().eq(1).css("margin-top",$(this).position().top);
+            }
+            upload=$(this);
+        });
+        $(".addcontent").click(function(){
+            $(".left-content").find(".box").removeClass("curr");
+            $(".left-content").append('<div class="box curr" data-type="1" style="min-height: 20px;font-size: 20px;"> <div class="ibox-tools" style="position: absolute;bottom: 0;"> <i class="fa fa-arrow-up" onclick="cmove(this,1)"></i> <i class="fa fa-arrow-down" onclick="cmove(this,2)"></i> <i class="fa fa-times" onclick="cdel(this)"></i> </div> <div class="content-text"></div> </div>');
+            upload=$(".left-content .box:last");
+            $(".right_content").children().eq(0).val($(".left-content .box:last").find(".content-text").text());
+            $(".right_content").children().hide();
+            $(".right_content>div:last").show();
+            $(".right_content").children().eq(0).show();
+            $(".right_content").children().eq(0).css("margin-top",$(".left-content .box:last").position().top);
+        });
+        $(".addimg").click(function(){
+            $(".left-content").find(".box").removeClass("curr");
+            $(".left-content").append('<div class="box curr" data-type="2" style="overflow: hidden;"> <div class="ibox-tools" style="position: absolute;bottom: 0;"> <i class="fa fa-arrow-up" onclick="cmove(this,1)"></i> <i class="fa fa-arrow-down" onclick="cmove(this,2)"></i> <i class="fa fa-times" onclick="cdel(this)"></i> </div> <img src="./resource/images/nopic.jpg"> </div>');
+            upload=$(".left-content .box:last");
+            $(".right_content").children().hide();
+            $(".right_content>div:last").show();
+            $(".right_content").children().eq(1).show();
+            $(".right_content").children().eq(1).css("margin-top",$(".left-content .box:last").position().top);
+            $("input[name='bimg']").val("");
+        });
+        $(".right_content").on("keyup"," textarea ",function(){
+            var content=$(this).val();
+            upload.find(".content-text").html(content);
+        })
+        $("body").on('click','.item',function(){
+            var url=$(this).css("background-image");
+            url=url.substring(5,url.length-2);
+            console.log(url);
+            upload.find('img').attr('src',url);
+        });
+        //收集内容
+        function getcontent(){
+            var content=[];
+            $("body").find(".box").each(function(){
+                var item={};
+                if($(this).attr('data-type')==1){
+                    if($(this).find(".content-text").text()!=""){
+                        item['type']=1;
+                        item.content=$(this).find(".content-text").text();
+                        content.push(item);
+                    }
+                }else{
+                    if($(this).find("img").attr("src")!="./resource/images/nopic.jpg"){
+                        item.type=2;
+                        item.content=$(this).find("img").attr("src")
+                        content.push(item);
+                    }
+                }
+            });
+            if(content.length>0){
+                content=JSON.stringify(content);
+                $("input[name='content']").val(content);
+            }
+            $userlist=[];
+            $("#userlist").find("li").each(function () {
+                var tmodel={};
+                tmodel["openid"]=$(this).attr("data-openid");
+                tmodel["headimgurl"]=$(this).attr("data-headimgurl");
+                tmodel["nickname"]=$(this).attr("data-nickname");
+                $userlist.push(tmodel);
+            });
+            if($userlist.length>0){
+                $("input[name='userlist']").val(JSON.stringify($userlist));
+            }
+        }
+        $("input[name='submit']").click(function(){
+            getcontent();
+            var data=$(".form-horizontal").serialize();
+            $.ajax({
+                type:"post",
+                url:"{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'savemodel','version_id'=>$_GPC['version_id'])}",
+                data:data,
+                dataType:'json',
+                success:function(res){
+                    if(res.status==1){
+                        if($("input[name='id']").val()==""){
+                            $("input[name='res']").click();
+                            $("body").find(".img-responsive.img-thumbnail").attr("src","");
+                        }
+                        swal('操作成功!', '操作成功!', 'success');
+                    }else{
+                        swal('操作失败!',res.msg, 'error');
+                    }
+                }
+            })
+        });
+    })
+</script>
+</body>
+</html>

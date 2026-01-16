@@ -1,0 +1,325 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<style>
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {position: static}
+</style>
+<body>
+<!--中心区域-->
+<section class="rel">
+    <h2 class="screen fn font28 bgfff">
+        <dl class="retrie">
+            <dt class="bor_b pd0_24">
+                <a id="filter" href="javascript:;" style="width:auto!important">筛选<i class="sortIconI"></i> </a>
+            </dt>
+            <dd class="default">
+                <!--筛选弹出层-->
+                <section class="interal_filter downlist">
+                    <ul class="form">
+                        <li><span>用户信息：</span><section><input type="text" placeholder="微信昵称/OPENID" id="searchKey"></section></li>
+                        <li><span>参团状态：</span><section >
+                            <p class="select_box rel">
+                                <select id="searchStatus">
+                                    <option value="" >请选择</option>
+                                    <option value="0">未参团</option>
+                                    <option value="1">已参团</option>
+                                </select>
+                            </p>
+                        </section></li>
+                    </ul>
+                    <section class="retrieval mt24 clearfix">
+                        <button type="reset" class="recharge_but font32"> 重置</button>
+                        <button type="button" class="submit_but font32" id="btnSearch"> 搜索</button>
+                    </section>
+                </section>
+            </dd>
+        </dl>
+    </h2>
+</section>
+<section class="mt24" id="ContentList">
+    <ul class="mtaff lottery"  id="LoadLists">
+
+    </ul>
+</section>
+<section class="h24"></section>
+<section class="buttonBox">
+    <section class="buttonFloat">
+        <a href="{php echo $this->createMobileUrl('store.obj_activity',array('act'=>'index'))}" class="db font32 yellowBtn" style="background: #FFD112;">活动列表</a>
+    </section>
+</section>
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="listtpl" type="text/html">
+    <% for(var i = 0; i < rows.length; i++){ %>
+    <li data-json="<%= toJsonStr(rows[i]) %>">
+        <section class="get_time bor_b"><span class="font26 c9">参与时间：<%= rows[i].createtime %></span>
+            <%if(rows[i].qrcode_url!=""){%>
+            <span class="fr font28"><a href="<%= rows[i].qrcode_url %>" class="main_green">查看海报</a></span>
+            <%}else{%>
+            <span class="fr font28">暂无海报</span>
+            <%}%>
+        </section>
+        <section class="staff_info">
+            <img class="tx" src="<%= rows[i].headurl %>" alt="<%= rows[i].nickname %>">
+            <h2 class="fn clearfix">
+                <span class="mr10"><%= rows[i].nickname %></span>
+                <%if(rows[i].status == 1){%>
+                <span style="color:green">(已参团)</span>
+                <%}else{%>
+                <span style="color:red">(未参团)</span>
+                <%}%>
+            </h2>
+            <p>OPENID：<%= rows[i].openid %></p>
+            <p>邀请：<%= rows[i].joins%>人 伪造：<%= rows[i].bogus_joins %>人，佣金：<%= rows[i].money %>元 伪造：<%= rows[i].bogus_money %>元</p>
+        </section>
+        <section class="c9 font24 pd24 bor_t">登记信息：<%= rows[i].register_data %></section>
+        <section class="operation w33 clearfix"><a href="javascript:;" class="operate font28 clickBtn" style="float:right"><span>伪造数据</span></a> </section>
+    </li>
+    <% } %>
+</script>
+<script id="bogustpl" type="text/html">
+    <section>
+        <ul class="publish bgfff">
+            <li class="float">
+                <p>伪造参团人数</p>
+                <section class="form_con selectBox">
+                    <input type="text" maxlength="10" class="form_float_txt" id="bogus_joins" value="<%=bogus_joins%>" placeholder="请输入伪造邀请参团人数！" onkeyup="if(isNaN(this.value)){this.value='0';}">
+                    <span class="arrow_txt">人</span> </section>
+            </li>
+            <li class="float">
+                <p>伪造返利金额</p>
+                <section class="form_con selectBox">
+                    <input type="text" maxlength="10" class="form_float_txt" id="bogus_money" value="<%=bogus_money%>" placeholder="请输入伪造返利金额！" onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}" onblur = "this.value=FloatMoney(this.value)">
+                    <span class="arrow_txt">元</span> </section>
+            </li>
+        </ul>
+        <section class="btn-de">
+            <button type="button" class="Button" id="btn_bogus" data-id="<%=id%>">确定</button>
+            <p class="mt40"> <a href="javascript:;" class="returnLink" onclick="closeWindows()">关闭</a> </p>
+        </section>
+    </section>
+</script>
+<script>
+    $(function () {
+        //点击筛选
+        $('#filter').click(function(){
+            var $filter = $(this);
+            if($filter.hasClass('up')){
+                $filter.removeClass('up');
+                $('.downlist').hide();
+            }else{
+                $filter.addClass('up');
+                $('.downlist').show();
+            }
+        });
+
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //artTemplate扩展方法 json对象转json字符串
+        template.helper("toJsonStr", function(jsonObj) {
+            return JSON.stringify(jsonObj);
+        });
+
+        //点击搜索
+        $('#btnSearch').click(function() {
+            //隐藏筛选弹框
+            $('#filter').removeClass('up');
+            $('.downlist').hide();
+
+            //筛选参数
+            window.searchKey = $('#searchKey').val();
+            window.searchStatus = $('#searchStatus').val();
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.obj_whole_join', array('act' => 'getJsonList','aid' => $aid));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "status":window.searchStatus,
+                                "key":window.searchKey
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                window.delCount = 0;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false);
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var result = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.obj_whole_join', array('act' => 'getJsonList','aid' => $aid));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "status":window.searchStatus,
+                                "key":window.searchKey
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                me.resetload();
+                            }
+                        });
+                    },
+                    threshold : 50
+                });
+            }
+
+        }).trigger("click");
+        $('#LoadLists').on('click','li .operate',function(event){
+            var data = $(this).parents('li').data();
+            var html = template('bogustpl',data.json);
+            layer.open({
+                type: 1,
+                title: ""
+                ,content: html
+                ,anim: 'up'
+                ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+            });
+        });
+        //排行榜数据伪造
+        $(document).delegate("#btn_bogus", "click", function() {
+            var bogus_joins=$("#bogus_joins").val();
+            var bogus_money=$("#bogus_money").val();
+            var id = $(this).data("id");
+            $.ajax({
+                type: "post",
+                url: "{php echo $this->createMobileUrl('store.obj_whole_join', array('act' => 'bogus','aid' => $aid));}",
+                data: {
+                    id: id,
+                    bogus_joins: bogus_joins,
+                    bogus_money: bogus_money
+                },
+                dataType:'json',
+                success: function (data, status) {
+                    if (data.status == 1) {
+                        layer.open({
+                            content: data.msg
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                        setTimeout(function () {window.location.reload()},2000)
+                    }
+                    else {
+                        layer.open({
+                            content: data.msg
+                            ,skin: 'msg'
+                            ,time: 2 //2秒后自动关闭
+                        });
+                    }
+                }
+            });
+        });
+    });
+
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+
+    //关闭关闭弹窗
+    function closeWindows(){
+        layer.closeAll();
+        scroll.beforeClose();
+    }
+</script>
+</body>
+</html>

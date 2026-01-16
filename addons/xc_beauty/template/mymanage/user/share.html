@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {template 'common/listhead'}
+
+    <!--微擎 -->
+    <!--这个放在最后一切平白安全-->
+    <script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+
+
+</head>
+</head>
+
+<body class="nav-md">
+<div class="container body" style="width: 690px;">
+
+    <div class="main_container"  style="overflow-x: hidden;min-height: 100vh;background-color: white">
+        <div class="">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+
+                <div class="panel panel-info">
+                    <div class="panel-heading">筛选</div>
+                    <div class="panel-body">
+                        <form action="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'share','version_id'=>$_GPC['version_id'])}" id="searchform" method="post">
+                            <div class="row" style="padding: 0 15px;">
+                                <div style="width: 25%;display: inline-block;margin-right: 5px;">
+                                    <input type="text" class="form-control" placeholder="用户id" name="openid" value="{$openid}">
+                                </div>
+                                <div style="width: 25%;display: inline-block;margin-right: 5px;">
+                                    <input type="text" class="form-control" placeholder="昵称" name="nick" value="{$nick}">
+                                </div>
+                                <div style="width: 25%;display: inline-block;margin-right: 5px;">
+                                    <button type="submit" class="btn btn-default " style="margin-right:5px;">查询</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_content">
+                        <form action="" method="post" class="form-horizontal form" style="font-size: 12px;margin-top: 10px;">
+                            <input type="hidden" name="token" value="{$_W['token']}">
+
+                            <div class="table-responsive panel-body">
+                                <table class="table-striped table-bordered table-hover dataTables-example table">
+                                    <thead class="navbar-inner">
+                                    <tr>
+                                        <th>用户id</th>
+                                        <th>昵称</th>
+                                        <th style="text-align:right;">操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="level-list">
+                                    {loop $list $index $item}
+                                    <tr>
+                                        <td><div class="type-parent">{$item['openid']}</div></td>
+                                        <td><div class="type-parent">{$item['nick']}</div></td>
+                                        <td style="text-align:right;">
+                                            <a data-dismiss="modal" class="btn btn-info btn-xs choose" data-id="{$item['openid']}" data-name="{$item['nick']}"><i class="fa fa-check-square-o"></i>选择</a>
+                                        </td>
+                                    </tr>
+                                    {/loop}
+                                    </tbody>
+                                </table>
+                                <div style="text-align: right;margin-top: 5px;">
+                                    {$pager}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{template 'common/listfoot'}
+<script>
+    $(function(){
+        $(".choose").click(function(){
+            $("#share_close",window.parent.document).click();
+            var id=$(this).attr("data-id");
+            var name=$(this).attr("data-name");
+            $("#share1",window.parent.document).attr("data-id",id);
+            $("#share1",window.parent.document).attr("data-name",name);
+            $("#share1",window.parent.document).click();
+        });
+    })
+</script>
+</body>
+</html>

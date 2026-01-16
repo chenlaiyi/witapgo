@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>佣金记录列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__PUBLIC__/static/layuiadmin/style/admin.css" media="all">
+</head>
+<style>
+.layui-table-cell, .layui-table-tool-panel li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">卡密列表</div>
+                <div class="layui-card-body">
+                    <div class=" demoTable layui-form" style="margin-bottom:10px">
+                    	<button class="layui-btn" data-type="addgoods">添加卡密</button>
+					    <div class="layui-input-inline">
+			            	<label class="layui-form-label">使用状态</label>
+						    <div class="layui-input-block">
+						      <select  lay-verify="" id="is_status">
+				              	<option value="0">请选择使用状态</option>
+						        <option value="1">待使用</option>
+						        <option value="2">已使用</option>
+						      </select>
+						    </div>
+					  	</div>
+					  	<div class="layui-inline">
+					        <label class="layui-form-label">标签：</label>
+					        <div class="layui-input-block">
+
+					        <select  lay-verify="" id="label" >
+					      	{if empty($labelList)}
+						      	<option value="">暂无标签</option>
+						    {else}
+						    	<option value="0">请选择标签</option>
+						    	{foreach  $labelList as $v}
+						        <option value="{$v['label']}" >{$v['label']}</option>
+						        {/foreach}
+						    {/if}
+					         </select>
+					    	</div>
+					    </div>
+					    {if $pid == 0}
+					    <div class="layui-inline">
+					      <label class="layui-form-label">分销商：</label>
+					      <div class="layui-input-inline">
+					        <input class="layui-input" placeholder="请输入分销商昵称" name="nickname" id="nickname" autocomplete="off">
+					      </div>
+
+					    </div>
+					    {/if}
+					  	<button class="layui-btn" style="margin-left:20px;" data-type="reload">搜索</button>
+					  	<button class="layui-btn " lay-event="selectUpdate" id="selectUpdate">批量修改</button>
+					  	<button class="layui-btn layui-btn-danger" lay-event="getCheckData" id="getCheckData">批量删除</button>
+					  	
+					  	{if $pid == 0}
+					  	<button class="layui-btn  layui-btn-normal" lay-event="transfer" id="transfer">批量划拨</button>
+					  	{/if}
+					  	<button type="button" class="layui-btn layui-btn-warm" id="exportExcel" name="exportExcel">
+                        <i class="layui-icon"></i>导出Excel</button>
+					  	
+					</div>
+					<input type="hidden" name="pid" id="pid" value="{$pid}">
+                    <table class="layui-hide" id="test-table-operate" lay-filter="test-table-operate"></table>
+                    
+                    <script type="text/html" id="test-table-operate-barDemo">
+						{{#  if(d.is_status == 1){ }}
+							<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+						{{#  } }}
+                        	<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+						
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="__PUBLIC__/static/layuiadmin/layui/layui.js"></script>
+<script>
+layui.config({
+    base: '__PUBLIC__/static/layuiadmin/' //静态资源所在路径
+}).extend({
+    index: 'lib/index' //主入口模块
+    ,excel: '../layui/layui_exts/excel/excel',
+}).use(['jquery','index', 'table', 'excel','laydate','form'], function(){
+    var $ = layui.$
+    	,table = layui.table
+        ,admin = layui.admin
+        ,excel = layui.excel
+        ,form = layui.form
+        ,laydate = layui.laydate;
+    
+    	var pid = "{$pid}";
+    	
+    	if(pid != 0){
+    		table.render({
+                elem: '#test-table-operate'
+                ,url:"{:siteUrl('admin/brokerage/card_list',array('pid'=>$pid),'web')}"
+                ,cols: [[
+    				{type:'checkbox'}	
+    				,{field:'label', title: '标签'}
+    				,{field:'card_no', title: '卡号'}
+                    ,{field:'card', title: '卡密'}
+                    ,{field:'count', title: '会员时间（天）'}
+                    ,{field:'use_count', title: '使用限制'}
+                    ,{field:'nickname', title: '使用用户',templet:function(d){
+                     	if(d.uid == 0){
+                     		return "无";
+                     	}else{
+                     		return "<img style='max-width:25px;' src='"+d.avatar+"'></img>"+d.nickname;
+                     	}
+                    }}
+                    ,{field:'is_status', title: '状态', sort: true,templet:function(d){
+    					if(d.is_status == 1){
+                       		return "待使用";
+                       	}else if(d.is_status == 2){
+                       		return "已使用";
+                       	}
+                    }}
+
+                    ,{field:'createtime', title: '添加时间', sort: true ,templet:function(d){
+
+                    	return layui.util.toDateString(d.createtime*1000, "yyyy-MM-dd HH:mm");
+
+                    }}
+                    ,{field:'usetime', title: '使用时间', sort: true ,templet:function(d){
+                    	
+                    	if(d.usetime != 0){
+                        	return layui.util.toDateString(d.usetime*1000, "yyyy-MM-dd HH:mm");
+                        }else{
+                        	return "无";
+                        }
+
+                    }}
+                    ,{width:218, title: '操作', align:'center', toolbar: '#test-table-operate-barDemo'}
+
+                ]]
+                ,page: true
+                
+            });
+    	}else{
+    		table.render({
+                elem: '#test-table-operate'
+                ,url:"{:siteUrl('admin/brokerage/card_list',array('pid'=>$pid),'web')}"
+                ,cols: [[
+    				{type:'checkbox'}	
+    				,{field:'pid', title: '分销商',templet:function(d){
+    					if(d.pid == 0){
+                     		return "无";
+                     	}else{
+	                		return "<img style='max-width:25px;' src='"+d.pAvatar+"'></img>"+d.pName;
+                     	}
+	                }}
+    				,{field:'label', title: '标签'}
+    				,{field:'card_no', title: '卡号'}
+                    ,{field:'card', title: '卡密'}
+                    ,{field:'count', title: '会员时间（天）'}
+                    ,{field:'use_count', title: '使用限制'}
+                    ,{field:'nickname', title: '使用用户',templet:function(d){
+                     	if(d.uid == 0){
+                     		return "无";
+                     	}else{
+                     		return "<img style='max-width:25px;' src='"+d.avatar+"'></img>"+d.nickname;
+                     	}
+                    }}
+                    ,{field:'is_status', title: '状态', sort: true,templet:function(d){
+    					if(d.is_status == 1){
+                       		return "待使用";
+                       	}else if(d.is_status == 2){
+                       		return "已使用";
+                       	}
+                    }}
+
+                    ,{field:'createtime', title: '添加时间', sort: true ,templet:function(d){
+
+                    	return layui.util.toDateString(d.createtime*1000, "yyyy-MM-dd HH:mm");
+
+                    }}
+                    ,{field:'usetime', title: '使用时间', sort: true ,templet:function(d){
+                    	
+                    	if(d.usetime != 0){
+                        	return layui.util.toDateString(d.usetime*1000, "yyyy-MM-dd HH:mm");
+                        }else{
+                        	return "无";
+                        }
+
+                    }}
+                    ,{width:218, title: '操作', align:'center', toolbar: '#test-table-operate-barDemo'}
+
+                ]]
+                ,page: true
+                
+            });
+    	}
+    
+        
+        
+        
+        table.on('tool(test-table-operate)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'del'){
+
+                layer.confirm('确定删除该卡密吗？', function(index){
+                	window.location.href="{:siteUrl('admin/brokerage/del_card','','web')}&id="+data.id;
+                    layer.close(index);
+                });
+            }else if(obj.event === 'edit'){
+
+                window.location.href="{:siteUrl('admin/brokerage/edit_card',array('pid'=>$pid),'web')}&id="+data.id;
+
+            }
+        });
+        
+        
+        $('#getCheckData').on('click', function(){
+        	var checkStatus = table.checkStatus('test-table-operate')
+   	        ,data = checkStatus.data;
+        	layer.confirm('确定删除所选择卡密吗？', function(index){
+           	    var idsJson = data ;
+           		var arrList = new Array();
+           		
+           		for(var i in idsJson){
+               		arrList.push(idsJson[i].id);
+               	}
+               	
+               	window.location.href="{:siteUrl('admin/brokerage/select_del_card','','web')}&ids="+arrList;
+           	   
+           });
+		});
+        
+        
+        $('#selectUpdate').on('click', function(){
+        	var checkStatus = table.checkStatus('test-table-operate')
+   	        ,data = checkStatus.data;
+	       	    var idsJson = data ;
+	       		var arrList = new Array();
+	       		
+	       		for(var i in idsJson){
+	           		arrList.push(idsJson[i].id);
+	           	}
+               	
+	       		if(arrList.length == 0 ){
+	       			layer.msg('需选择卡密');
+            		return false;
+	       		}
+	       		
+	       		layer.open({
+	                type:2,
+	                area: ['55%', '30%'],
+	                title:"批量修改",
+	                btn: ['确定', '取消'],
+	                yes: function(index, layero){
+	                    //按钮【按钮一】的回调
+	                    var body = layer.getChildFrame('body', index);
+	                    var count = body.find("#count").val();
+	                    console.log("count",count);    
+
+	                    $.ajax({
+                        	url:"{:siteUrl('admin/brokerage/select_update_card','','web')}",
+                            data:{'count':count,'ids':arrList},
+                            type:"POST",
+                            success: function(data){
+                            	window.location.href="{:siteUrl('admin/brokerage/card_index',array('pid'=>$pid),'web')}";
+                            }
+                        })	
+	                    
+	                	layer.close(index);
+	                	
+	                },
+	                cancel: function(){ 
+	                    //右上角关闭回调
+	                    
+	                    //return false 开启该代码可禁止点击该按钮关闭
+	                },
+	                content:"{:siteUrl('admin/brokerage/update_card','','web')}",
+	                success:function(){
+	                	
+
+	                }  
+	            });
+		});
+        
+        
+        $('#transfer').on('click', function(){
+        	var checkStatus = table.checkStatus('test-table-operate')
+   	        ,data = checkStatus.data;
+	       	    var idsJson = data ;
+	       		var arrList = new Array();
+	       		
+	       		for(var i in idsJson){
+	       			if(idsJson[i].pid != 0){
+               			layer.msg('选中卡密中包含不可划拨卡密');
+               			return false;
+               		}else{
+               			arrList.push(idsJson[i].id);
+               		}
+	           	}
+               	
+	       		if(arrList.length == 0 ){
+	       			layer.msg('需选择卡密');
+            		return false;
+	       		}
+	       		
+	       		layer.open({
+	                type:2,
+	                area: ['75%', '80%'],
+	                title:"选择分销商",
+	                btn: ['确定', '取消'],
+	                yes: function(index, layero){
+	                    //按钮【按钮一】的回调
+	                    var body = layer.getChildFrame('body', index);
+	                    var pid = body.find("#pid").val();
+	                    console.log("pid",pid);    
+
+	                    $.ajax({
+                        	url:"{:siteUrl('admin/brokerage/transfer_card','','web')}",
+                            data:{'pid':pid,'ids':arrList},
+                            type:"POST",
+                            success: function(data){
+                            	window.location.href="{:siteUrl('admin/brokerage/card_index',array('pid'=>0),'web')}";
+                            }
+                        })	
+	                    
+	                   
+	                    $("#pid").val(pid);
+	                	layer.close(index);
+	                	
+	                },
+	                cancel: function(){ 
+	                    //右上角关闭回调
+	                    
+	                    //return false 开启该代码可禁止点击该按钮关闭
+	                },
+	                content:"{:siteUrl('admin/brokerage/choose_user','','web')}",
+	                success:function(){
+	                	
+
+	                }  
+	            });
+
+		}); 	
+        $('#exportExcel').on('click', function(){
+        	var demoReload = $('#test-table-demoReload');
+            var status = $('#is_status');
+            var con_time = $('#test10');
+			// 模拟从后端接口读取需要导出的数据
+			$.ajax({
+				url: "{:siteUrl('admin/brokerage/card_export',array('pid'=>$pid),'web')}"
+				,data :{
+                    'is_status': status.val(),
+                    'nickname': $('#nickname').val(),
+                    'label': $('#label').val(),
+                    'con_time': con_time.val()
+				}
+				,dataType: 'json'
+				,success(res) {
+					var data = res.data;
+					console.log(data);
+					// 重点！！！如果后端给的数据顺序和映射关系不对，请执行梳理函数后导出
+					data = excel.filterExportData(data, [
+					    'pUser'
+					    ,'label'
+					    ,'card_no'
+						,'card'
+						,'count'
+						,'nickname'
+						,'is_status'
+						,'createtime'
+						,'usetime'
+					]);
+					// 重点2！！！一般都需要加一个表头，表头的键名顺序需要与最终导出的数据一致
+					
+					var sDate =new Date();
+					
+					
+					var year = sDate.getFullYear();
+		            var month = sDate.getMonth() + 1 < 10 ? "0" + (sDate.getMonth() + 1) : sDate.getMonth() + 1;
+		            var date = sDate.getDate() < 10 ? "0" + sDate.getDate() : sDate.getDate();
+		            var hour = sDate.getHours()< 10 ? "0" + sDate.getHours() : sDate.getHours();
+		            var minute = sDate.getMinutes()< 10 ? "0" + sDate.getMinutes() : sDate.getMinutes();
+		            var second = sDate.getSeconds()< 10 ? "0" + sDate.getSeconds() : sDate.getSeconds();
+		            
+		            var dataStr = year +"" + month+"" + date;
+		            
+		            
+					data.unshift({ 
+						pUser: "分销商"
+						, label: "批次"
+						, card_no: "卡号"
+						, card: "卡密"
+						, count: "会员时间（天）"
+						, nickname: "用户信息"
+						, is_status: "状态"
+						, createtime: "添加时间"
+						, usetime: "使用时间"
+					});
+
+					var colConf = LAY_EXCEL.makeColConfig({
+						'B': 200,
+						'D': 200,
+                        'F': 250,
+                        'J': 250,
+                    }, 100)
+                    // 3. 第1行行高40，第二行行高30，默认20
+                    var rowConf = LAY_EXCEL.makeRowConfig(20)
+
+					excel.exportExcel(data, "{$pUser['nickname']}卡密列表"+dataStr+".xlsx", 'xlsx',{
+					    extend: {
+					    	'!cols': colConf
+		                    , '!rows': rowConf
+					    }
+					});
+
+				}
+				,error() {
+					layer.alert('获取数据失败，请检查是否部署在本地服务器环境下');
+				}
+			});
+		  }); 	
+        var $ = layui.$, active = {
+           reload: function(){
+               table.reload('test-table-operate', {
+                 page: {
+                   curr: 1 
+                 }
+                 ,where: {
+                	 'label': $('#label').val(),
+                	 'nickname': $('#nickname').val(),
+                   'is_status': $('#is_status').val()
+                 }
+               });
+             },
+             addgoods:function(){
+          	   window.location.href="{:siteUrl('admin/brokerage/add_card',array('pid'=>$pid),'web')}";
+              }
+       };
+       $('.demoTable .layui-btn').on('click', function(){
+           var type = $(this).data('type');
+           active[type] ? active[type].call(this) : '';
+       });
+    });
+</script>
+</body>
+</html>

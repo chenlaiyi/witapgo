@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {template 'common/edithead'}
+    <!--微擎 -->
+    <!--这个放在最后一切平白安全-->
+    <script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+</head>
+<body class="nav-md" style="min-width: 800px">
+<div>
+    <div class="container xc_edit_from" >
+        <div class="main_container" style="overflow-x: hidden;min-height: calc(100vh - 20px);background-color: white;width: 100%;">
+            <div class="col-md-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_content">
+                        <br/>
+                        <form class="form-horizontal" role="form" method="post" name="submit">
+                            <input type="hidden" class="form-control"  name="xkey" value="{$xkey}">
+                            <input type="hidden" class="form-control"  name="xc[cancel]">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">排队取号按钮背景色</label>
+                                <div class="col-sm-8">
+                                    {php echo tpl_form_field_color('xc[take_color]',$xc['take_color']);}
+                                    <span class="help-block">门店地图页、预约详情页</span>
+                                </div>
+                            </div>
+                            <div class="form-group param" data-name="xc[cancel]">
+                                <label class="col-sm-2 control-label">取消原因</label>
+                                <div class="col-sm-8">
+                                    {if $xc['cancel']}
+                                    {loop $xc['cancel'] $index $item}
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" data-name="content" value="{$item['content']}" placeholder="取消原因">
+                                        <span class="input-group-btn" onclick="parameter.parameter_add(this)">
+                                            <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>
+                                        </span>
+                                        <span class="input-group-btn" onclick="parameter.parameter_del(this)">
+                                            <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>
+                                        </span>
+                                    </div>
+                                    {/loop}
+                                    {else}
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" data-name="content" value="" placeholder="取消原因">
+                                        <span class="input-group-btn" onclick="parameter.parameter_add(this)">
+                                            <button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>
+                                        </span>
+                                        <span class="input-group-btn" onclick="parameter.parameter_del(this)">
+                                            <button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>
+                                        </span>
+                                    </div>
+                                    {/if}
+                                </div>
+                            </div>
+                            <script>
+                                var parameter={
+                                    parameter_add:function(objc){
+                                        $(objc).parent().after('<div class="input-group">' +
+                                                '<input type="text" class="form-control" data-name="content" value="" placeholder="取消原因">' +
+                                                '<span class="input-group-btn" onclick="parameter.parameter_add(this)">' +
+                                                '<button class="btn btn-default" type="button"><i class="fa fa-plus"></i></button>' +
+                                                '</span>' +
+                                                '<span class="input-group-btn" onclick="parameter.parameter_del(this)">' +
+                                                '<button class="btn btn-danger" type="button"><i class="fa fa-remove"></i></button>' +
+                                                '</span>' +
+                                                '</div>')
+                                    },
+                                    parameter_del:function(objc){
+                                        if($(objc).parent().siblings().length>0){
+                                            $(objc).parent().remove();
+                                        }
+                                    }
+                                }
+                            </script>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">呼叫-语音</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" class="js-switch" value="1" name="xc[call_status]"
+                                           data-value="{$xc['call_status']}" data-field="status" onchange="statusChange()" />
+                                </div>
+                            </div>
+                            <div class="form-group call_status">
+                                <label class="control-label col-sm-2">语音</label>
+                                <div class="col-sm-8">
+                                    {php echo tpl_form_field_audio('xc[call_audio]',$xc['call_audio']);}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <input type="button" name="submit" class="btn btn-default" value="提交">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{template 'common/editfoot'}
+<script>
+    $(function(){
+        statusChange();
+        $("input[name='submit']").click(function(){
+            getJson();
+            var data=$(".form-horizontal").serialize();
+            $.ajax({
+                type:"post",
+                url:"{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'take_save','version_id'=>$_GPC['version_id'])}",
+                data:data,
+                dataType:'json',
+                success:function(res){
+                    if(res.status==1){
+                        swal('操作成功!', '操作成功!', 'success');
+                    }else{
+                        swal('操作失败!', '操作失败!', 'error');
+                    }
+                }
+            })
+        });
+    });
+
+    function getJson(){
+        $(".param").each(function(){
+            var list=[];
+            var name=$(this).attr("data-name");
+            $(this).find(".input-group").each(function(){
+                var data={};
+                $(this).find("input").each(function(){
+                    if($(this).val()!=""){
+                        data[$(this).attr("data-name")]=$(this).val();
+                    }
+                });
+                if(JSON.stringify(data)!="{}"){
+                    list.push(data);
+                }
+            });
+            if(list.length>0){
+                $("input[name='"+name+"']").val(JSON.stringify(list));
+            }
+        });
+    }
+
+    function statusChange(){
+        if($("input[name='xc[call_status]']").is(":checked")){
+            $(".call_status").show();
+        }else{
+            $(".call_status").hide();
+        }
+    }
+</script>
+</body>
+</html>

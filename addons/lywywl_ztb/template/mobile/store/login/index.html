@@ -1,0 +1,325 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<!--CSS-->
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+<style>
+    .empowerList { max-height: 7.96rem; overflow-y: scroll }
+    .empowerList li{ border-bottom: 1px solid #e4e4e4; padding: 0.32rem 0}
+    .empowerList li section{ width: 80%; float: left; overflow: hidden; font-size: 0.37rem}
+    .empowerList li input{ width: 20%;float: left; border: 0; background: none; background:#fee002; border-radius: 2px;  padding:0.13rem 0;border-radius: 0.13rem; margin-top: 0.32rem; font-size: 0.37rem}
+    .empowerList li section .company{ display: block; overflow: hidden;text-overflow:ellipsis; white-space: nowrap; margin-top: 0.13rem; margin-bottom: 0.13rem; font-size: 0.42rem}
+    .logo{ text-align: left; padding: 1.3rem 0 1.3rem 0.32rem}
+    .iconLogin{ position: absolute; right: 0.32rem; top:1.33rem; }
+    .iconLogin img{ width: 32px;height:32px;}
+    .iconLogin .tips{ float: left; margin-right: 13px}
+    .iconLogin .tips i{ display: inline-block; height:24px; line-height: 24px;  padding: 0 5px; background:#fffce9; border:1px solid #fee001; font-size: 12px; font-style: normal; color: #a09d86}
+    .iconLogin .tips em{ display: inline-block; width:0;  height:0;  border-top:4px solid transparent;    border-bottom:4px solid transparent;  border-left:4px solid #fee001; top:-1px; position: relative;}
+</style>
+<body class="bgfff">
+<!--中心区域-->
+<section>
+    <form action="{php echo $this->createMobileUrl('store.login',array('act'=>'login'));}" id="store_login" method="post">
+    <section class="logo rel">
+        {if empty($token)}
+        <section class="iconLogin ">
+            <div id="btnPwdLogin">
+                <section class="tips"> <i>密码登录</i><em></em></section>
+                <i><img src="{__MOBILE_STORE_IMG__}/mobile.png"> </i>
+            </div>
+            <div id="btnQrLogin" style="display: none;">
+                <section class="tips"> <i>快捷登录</i><em></em></section>
+                <i><img src="{__MOBILE_STORE_IMG__}/ewm.png"> </i>
+            </div>
+        </section>
+        {else}
+        <section class="iconLogin ">
+            <div>
+                <section class="tips"> <i>扫码授权</i><em></em></section>
+                <i><img src="{__MOBILE_STORE_IMG__}/ewm.png"> </i>
+            </div>
+        </section>
+        {/if}
+        <img src="{if !empty($config['logo'])}{php echo tomedia($config['logo'])}{else}{$_W['siteroot']}addons/lywywl_ztb/resource/mobile/store/images/logo.png{/if}" style="height: auto;"  alt="{$config['name']}"/>
+    </section>
+        {if empty($token)}
+        <div id="boxPwdLogin" style="display: none;">
+            <ul class="login pd0_24">
+                <li>
+                    <input class="loginInput font32" type="tel" placeholder="请输入手机号码" name="mobile" id="mobile" maxlength="11" datatype="m" nullmsg="请输入手机号码！" errormsg="请输入正确的手机号码！">
+                </li>
+                <li class="mt60">
+                    <input class="loginInput font32" type="password" placeholder="请输入登录密码" name="password" id="password" maxlength="16" value="" datatype="*6-16" nullmsg="请输入密码！" errormsg="密码范围在6~16位之间！">
+                </li>
+            </ul>
+            <section class="btn-de mt40">
+                <input name="token" value="{$_W['token']}" type="hidden" />
+                <input type="hidden" name="submit" value="submit"/>
+                <input type="hidden" name="return_url" value="{$_GPC['return_url']}"/>
+                <button type="submit" class="blackButton" id="SubmitBtn">登录</button>
+                <p class="mt40">
+                    <button type="button" class="Button" onclick="register()">注册账号</button>
+                </p>
+            </section>
+            <section class="tc"><a href="{php echo $this->createMobileUrl('store.resetpsd');}" class="font28 c9 d_ib">忘记密码</a></section>
+        </div>
+        <div id="boxQrLogin">
+            {if empty($storeList) || count($storeList) == 0 }
+                <section class="pd0_24 tc">
+                    <img src="{__MOBILE_STORE_IMG__}/warn.png" class="p30" style="width: 80px;"/>
+                    <p class="font30 p30">您当前没有绑定的账户，请使用密码登录！</p>
+                </section>
+                <script type="text/javascript">
+                    $(function(){
+                        $("#btnPwdLogin").hide();
+                        $("#btnQrLogin").show();
+                        $("#boxPwdLogin").show();
+                        $("#boxQrLogin").hide();
+                    });
+                </script>
+            {else}
+                <section class="pd0_24">
+                    <p class="c9 font28">请选择您要登录的账户：</p>
+                    <ul class="empowerList">
+                        {loop $storeList $item}
+                        <li class="clearfix">
+                            <section>
+                                <span class="company">{$item['name']}</span>
+                                <em class="c9 font22">账户：{$item['mobile']} 上次登录：{php echo date('Y-m-d H:i:s', $item['logintime'])}</em>
+                            </section>
+                            {if $item['status']}
+                            <input type="button" class="bind" data-store_id="{$item['id']}" value="确认登录">
+                            {else}
+                            <input type="button" style="background: #ccc;" value="已禁用">
+                            {/if}
+                        </li>
+                        {/loop}
+                    </ul>
+                </section>
+            {/if}
+        </div>
+        {else}
+        {if empty($storeList) || count($storeList) == 0 }
+            <section class="pd0_24 tc">
+                <img src="{__MOBILE_STORE_IMG__}/warn.png" class="p30" style="width: 80px;"/>
+                <p class="font30 p30">您当前没有绑定的账户，不能使用授权登录！</p>
+            </section>
+        {else}
+            <section id="autStore" class="pd0_24">
+                <p class="c9 font28">请选择您要授权的账户：</p>
+                {if $data['ip'] != CLIENT_IP}
+                <p class="main_red font24">二维码IP：{$data['ip']}，与您当前不在同一网络，请谨慎操作！</p>
+                {/if}
+                <ul class="empowerList">
+                    {loop $storeList $item}
+                    <li class="clearfix">
+                        <section>
+                            <span class="company">{$item['name']}</span>
+                            <em class="c9 font22">账户：{$item['mobile']} 上次登录：{php echo date('Y-m-d H:i:s', $item['logintime'])}</em>
+                        </section>
+                        {if $item['status']}
+                        <input type="button" class="auth" data-store_id="{$item['id']}" value="确认授权">
+                        {else}
+                        <input type="button" style="background: #ccc;" value="已禁用">
+                        {/if}
+                    </li>
+                    {/loop}
+                </ul>
+            </section>
+        {/if}
+        <section id="authResult" class="pd0_24 tc" style="display: none;">
+            <img src="{__MOBILE_STORE_IMG__}/ok.png" class="p30" style="width: 80px;"/>
+            <p class="font30 p30">扫码登录授权成功！</p>
+            <button id="btnSuccess" type="button" class="Button">返回商家中心</button>
+        </section>
+        {/if}
+    </form>
+</section>
+<section class="kefu"><a href="javascript:;" id="kefu">联系客服</a></section>
+<script src="{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js"></script>
+<script>
+    $(function(){
+        //为formContent 添加验证事件
+        $("#store_login").Validform({
+            tiptype: function (msg, o, cssctl) {
+                if (!o.obj.is("form")) {
+                    if (o.type == 2) {
+                        //loading带文字
+                        layer.open({
+                            type: 2
+                            , content: '数据提交中'
+                            , time: 999 //999秒后自动关闭
+                        });
+                    } else {
+                        layer.closeAll();
+                        layer.open({
+                            content: msg
+                            , skin: 'msg'
+                            , style: 'bottom:0;'
+                            , time: 2 //2秒后自动关闭
+                        });
+                    }
+                }
+            },
+            ajaxPost: true,
+            tipSweep: true,
+            beforeSubmit: function (curform) {
+                $("#SubmitBtn").attr("disabled", true);
+            },
+            callback: function (data) {
+                layer.closeAll();
+                if(data.status == 1){
+                    layer.open({
+                        content: data.msg
+                        , skin: 'msg'
+                        , time: 2 //2秒后自动关闭
+                        , style: 'bottom:0;'
+                    });
+
+                    setTimeout(function () {
+                        window.location.href = data.url;
+                    }, 2000);
+
+                }else{
+                    layer.open({
+                        content: data.msg
+                        , skin: 'msg'
+                        , time: 2 //2秒后自动关闭
+                        , style: 'bottom:0;'
+                    });
+                    $("#SubmitBtn").attr("disabled", false);
+                }
+            }
+        });
+
+        //联系客服
+        $("#kefu").click(function(){
+            $.ajax({
+                type: "get",
+                url: "{php echo $this->createMobileUrl('store.login',array('act'=>'kefu'))}",
+                success: function (data) {
+                    var html = data;
+                    layer.open({
+                        type: 1,
+                        title: "{$config['name']}微信客服"
+                        ,content: html
+                        ,anim: 'up'
+                        ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+                    });
+                },
+                beforeSend: function () {
+                    //loading
+                    layer.open({
+                        type: 2
+                        , time: 0.2 //999秒后自动关闭
+                    });
+                }
+            });
+        });
+
+        //切换快捷登录
+        $("#btnQrLogin").click(function(){
+            $("#btnQrLogin").hide();
+            $("#btnPwdLogin").show();
+            $("#boxQrLogin").show();
+            $("#boxPwdLogin").hide();
+
+        });
+        //切换密码登录
+        $("#btnPwdLogin").click(function(){
+            $("#btnQrLogin").show();
+            $("#btnPwdLogin").hide();
+            $("#boxQrLogin").hide();
+            $("#boxPwdLogin").show();
+        });
+        //商户快捷登录
+        $(".bind").click(function(){
+            var store_id = $(this).data("store_id");
+            $.ajax({
+                url:"{php echo $this->createMobileUrl('store.login', array('act' => 'bind', 'return_url' => $_GPC['return_url']));}",
+                data:{store_id : store_id},
+                dataType:"json",
+                type:"post",
+                beforeSend:function(){
+                    layer.open({
+                        type: 2
+                        , content: '数据提交中'
+                        , time: 999 //999秒后自动关闭
+                    });
+                },
+                success:function(data){
+                    layer.closeAll();
+                    if(data.status == 1){
+                        if (data.url.length > 0) {
+                            window.location.href = data.url;
+                        } else {
+                            window.location.href = window.location.href;
+                        }
+                    }else{
+                        layer.open({
+                            content: data.msg
+                            ,btn: '确定'
+                        });
+                    }
+                },
+                error:function(){
+                    layer.closeAll();
+                    layer.open({
+                        content: '对不起，请求错误，请刷新后重试！'
+                        ,btn: '确定'
+                    });
+                },
+            })
+        });
+        //商户授权登录
+        $(".auth").click(function(){
+            var store_id = $(this).data("store_id");
+            $.ajax({
+                url:"{php echo $this->createMobileUrl('store.login', array('act' => 'auth', 'token' => $token));}",
+                data:{store_id : store_id},
+                dataType:"json",
+                type:"post",
+                beforeSend:function(){
+                    layer.open({
+                        type: 2
+                        , content: '数据提交中'
+                        , time: 999 //999秒后自动关闭
+                    });
+                },
+                success:function(data){
+                    layer.closeAll();
+                    if(data.status == 1){
+                        $("#autStore").hide();
+                        $("#authResult").show();
+                    }else{
+                        layer.open({
+                            content: data.msg
+                            ,btn: '确定'
+                        });
+                    }
+                },
+                error:function(){
+                    layer.closeAll();
+                    layer.open({
+                        content: '对不起，请求错误，请刷新后重试！'
+                        ,btn: '确定'
+                    });
+                },
+            })
+        });
+        //授权成功
+        $("#btnSuccess").click(function () {
+            location.href = "{php echo $this->createMobileUrl('store.store_member');}";
+        });
+    });
+    //跳转注册
+    function register(){
+        location.href = "{php echo $this->createMobileUrl('store.register');}";
+    }
+    //关闭layer弹窗
+    function closeWindows(){
+        layer.closeAll();
+    }
+</script>
+</body>
+</html>

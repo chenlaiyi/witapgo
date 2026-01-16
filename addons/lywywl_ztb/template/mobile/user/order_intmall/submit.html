@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'user/common/header'}
+<body>
+{if $productModel['is_fedex']==1}
+<section class="pay_tit font28 c9">收货地址</section>
+<section class="bg_fff f-yahei">
+    <a href="{php echo $this->createMobileUrl('user.user_address',array('act'=>'index','store_id'=>$store_id,'pid'=>$productModel['id']))}" rel="external" class="item_addr clearfix">
+        {if $addressModel}
+        <div class="addr fl">
+            <p><span>{$addressModel['username']}</span><span class="pl15">{$addressModel['mobile']}</span></p>
+            <p>{$addressModel['province']}{$addressModel['city']}{$addressModel['county']}{$addressModel['address']}</p>
+        </div>
+        <span></span>
+        {else}
+        <div class="addr fl">
+            <p>请选择收货地址</p>
+        </div>
+        <span></span>
+        {/if}
+    </a>
+</section>
+<div class="h15"></div>
+{/if}
+<!--订单详情-->
+<section class="order_item pay_item">
+    <section class="order_goods">
+        <img src="{php echo tomedia($productModel['thumb_url'])}">
+        <h3>{$productModel['title']}</h3>
+        <p class="font24 c9">
+            <span class="font30 main_red price">{$productModel['score']}</span>积分
+            {if $productModel['paymoney']>0}
+            <span class="font30 black plus">+</span><span class="font30 main_red price">{$productModel['paymoney']}</span>元
+            {/if}
+        </p>
+    </section>
+</section>
+<!--支付-->
+<section class="pay_tit font28 c9">订单需支付</section>
+<section class="pay rel">
+    <img class=" mr10" src="{__MOBILE_USER_IMG__}/pay.png"  alt=""/>
+    <h2>积分支付<em class="main_red"> {$productModel['score']}</em></h2>
+    <p class="font24 c6">账户积分{$userModel['score']}</p>
+</section>
+{if $isUseSys==1}
+<section class="pay rel" id="moneyPay">
+    <img class=" mr10" src="{__MOBILE_USER_IMG__}/yue.png"  alt=""/>
+    <h2>余额可抵扣<em class="main_red" deduction="{php echo min($userModel['money'],$productModel['paymoney'])}">￥0</em></h2>
+    <p class="font24 c6">账户余额{$userModel['money']}</p>
+    <input type="checkbox" id="checkbox2" name="2"/>
+    <label for="checkbox2"></label>
+</section>
+{/if}
+<section class="pay rel" id="wxPay">
+    <img class=" mr10" src="{__MOBILE_USER_IMG__}/weixin.png"  alt=""/>
+    <h2>微信支付<em class="main_red" paymoney="{$productModel['paymoney']}">￥0</em></h2>
+    <p class="font24 c6">&nbsp;</p>
+</section>
+{if $productModel['is_fedex']==0}
+<!--收货信息-->
+<section class="pay_tit font28 c9">收货信息（到店自提）</section>
+<section>
+    <ul class="editInfo addr_new">
+        <li><span class="hd gray_c">收货人</span>
+            <section class="bd">
+                <input id="username" type="text" value="" placeholder="请输入收货人">
+            </section>
+        </li>
+        <li><span class="hd gray_c">手机号码</span>
+            <section class="bd">
+                <input id="mobile" type="number" value="" placeholder="请输入手机号码">
+            </section>
+        </li>
+    </ul>
+</section>
+{/if}
+<!--备注信息-->
+<section class="pay_tit font28 c9">备注信息</section>
+<section class="remark">
+    <textarea id="note" placeholder="请填写备注信息（100字内）" maxlength="100"></textarea>
+</section>
+<section class="pay_submit">
+    <input id="submit" type="button" class="button" value="确认订单"/>
+</section>
+<script type="text/javascript">
+    $(function () {
+        //最多抵扣
+        var deduction = $("#moneyPay").find("em").attr("deduction");
+        if(deduction==0){
+            $("#moneyPay").hide();
+        }else {
+            $("#moneyPay").find("em").text("￥"+deduction);
+        }
+        //微信需支付
+        var paymoney = $("#wxPay").find("em").attr("paymoney");
+        if(paymoney==0){
+            $("#wxPay").hide();
+        }else{
+            $("#wxPay").find("em").text("￥"+paymoney);
+        }
+        //判断显示支付金额
+        function setMoney(){
+            if($("#checkbox2").is(":checked")){
+                if(deduction>=paymoney){
+                    $("#wxPay").hide();
+                }else{
+                    $("#wxPay").show();
+                    $("#wxPay").find("em").text("￥"+(paymoney-deduction));
+                }
+            }else{
+                $("#wxPay").show();
+                $("#wxPay").find("em").text("￥"+paymoney);
+            }
+        }
+        //是否使用余额抵扣
+        $("#checkbox2").change(function () {
+            setMoney();
+        })
+        //默认设置使用余额抵扣
+        //if(deduction>0 && paymoney>0){
+        //    $("#checkbox2").prop("checked",true);
+        //    setMoney();
+        //}
+
+        $("#submit").click(function(){
+            var pid = "{$pid}";
+            var is_fedex = parseInt("{$productModel['is_fedex']}");
+            var addressid = "{$addressid}";
+            var username = "";
+            var mobile = "";
+            if(is_fedex == 0){
+                username = $("#username").val();
+                mobile = $("#mobile").val();
+                if(username.length==0){
+                    layer.open({ content: '请输入收货人', skin: 'msg', time: 2 });
+                    return false;
+                }
+                if(mobile.length==0){
+                    layer.open({ content: '请输入手机号码', skin: 'msg', time: 2 });
+                    return false;
+                }
+                var myreg = /^(1[3,4,5,6,7,8,9]{1}\d{9})$/; //验证手机号正则
+                if(!myreg.test(mobile)){
+                    layer.open({ content: '请输入有效手机号码', skin: 'msg', time: 2 });
+                    return false;
+                }
+            }
+            var note = $("#note").val();
+            var isUseMoney = $("#checkbox2").is(":checked")?1:0;
+            $.ajax({
+                url: "{php echo $this->createMobileUrl('user.order_intmall',array('act'=>'submit','store_id'=>$store_id))}",
+                type: "post",
+                dataType: "json",
+                data: {pid:pid,addressid:addressid,note:note,isUseMoney:isUseMoney,username:username,mobile:mobile},
+                success: function (result) {
+                    if (result.status === 1) {
+                        layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                        if(result.ispay==1){
+                            //跳转支付
+                            window.location.href="{php echo $this->createMobileUrl('user.order_pay',array('act'=>'index','store_id'=>$store_id))}&ordernumber="+result.ordernumber;
+                        }else{
+                            //支付成功
+                            window.location.href="{php echo $this->createMobileUrl('user.order_pay',array('act'=>'ok','store_id'=>$store_id))}&ordernumber="+result.ordernumber;
+                        }
+                        return true;
+                    } else {
+                        layer.open({ content: result.msg, skin: 'msg', time: 2 });
+                        return false;
+                    }
+                }
+            });
+        })
+    })
+</script>
+</body>
+</html>

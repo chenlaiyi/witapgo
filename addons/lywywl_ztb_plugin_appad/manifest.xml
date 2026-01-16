@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.w7.cc" versionCode="">
+	<application setting='false'>
+		<name><![CDATA[劫流广告]]></name>
+		<identifie><![CDATA[lywywl_ztb_plugin_appad]]></identifie>
+		<version><![CDATA[1.0.0]]></version>
+		<ability><![CDATA[助推宝,分销,分销插件,劫流广告,截流赋能,抖音广告,快手广告,西瓜视频广告,淘宝广告]]></ability>
+		<type><![CDATA[business]]></type>
+		<description><![CDATA[通过此插件可开启活动劫流广告选项，用户在活动中指定操作后，开启第三方常用APP可弹出活动设置的口令广告。]]></description>
+		<author><![CDATA[]]></author>
+		<url><![CDATA[]]></url>
+	</application>
+
+	<platform>
+		<subscribes>
+			<message type="text" />
+			<message type="image" />
+			<message type="voice" />
+			<message type="video" />
+			<message type="shortvideo" />
+			<message type="location" />
+			<message type="link" />
+			<message type="subscribe" />
+			<message type="qr" />
+			<message type="trace" />
+			<message type="click" />
+			<message type="merchant_order" />
+			<message type="user_get_card" />
+			<message type="user_del_card" />
+			<message type="user_consume_card" />
+		</subscribes>
+
+		<handles>
+			<message type="text" />
+			<message type="image" />
+			<message type="voice" />
+			<message type="video" />
+			<message type="shortvideo" />
+			<message type="location" />
+			<message type="link" />
+			<message type="subscribe" />
+			<message type="qr" />
+			<message type="trace" />
+			<message type="click" />
+			<message type="merchant_order" />
+			<message type="user_get_card" />
+			<message type="user_del_card" />
+			<message type="user_consume_card" />
+		</handles>
+
+		<rule embed="false" />
+		<card embed="false" />
+		
+		<supports>
+			<item type="app" />
+		</supports>
+        <plugins></plugins> 
+        <plugin-main name="lywywl_ztb" />
+
+	</platform>
+
+	<bindings>
+
+	</bindings>
+
+	<permissions>
+	</permissions>
+
+	<install><![CDATA[install.php]]></install>
+	<uninstall><![CDATA[]]></uninstall>
+	<upgrade><![CDATA[]]></upgrade>
+
+</manifest>

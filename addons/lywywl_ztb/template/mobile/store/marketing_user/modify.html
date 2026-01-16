@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/validform/5.3.2/Validform.css">
+<link href="{MODULE_URL}resource/mobile/plugin/css/common.min.css?v=20170802" rel="stylesheet">
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/util.js"></script>
+<script src="{MODULE_URL}resource/mobile/plugin/js/require.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js//lib/mui.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}resource/mobile/plugin/js/app/common.js"></script>
+<body class="bgf2">
+<form action="{php echo $this->createMobileUrl('store.marketing_user',array('act'=>'modify','aid'=>$aid,'tid'=>$tid));}" id="store_form" method="post">
+    <!--中心区域-->
+    <section class="toux tc">
+        {php echo tpl_app_form_field_avatar('avatar', $model['headurl']);}
+        <p class="font28 black">OPENID：{$model['openid']}</p>
+    </section>
+    <ul class="edit">
+        <li><span>成员名称</span><section><input class="editInput" type="text" datatype="*" id="name" name="model[name]" value="{$model['name']}" nullmsg="请输入团队成员名称！" placeholder="请输入团队成员名称"></section></li>
+        <li><span>团队管理</span>
+            <section>
+                <input type="hidden" name="model[is_manager]" id="is_manager" value="{$model['is_manager']}">
+                <span class="switch switchmanager {php echo $model['is_manager']==1?"switch_on":"switch_off"}" style="position:relative; vertical-align:middle; left:0"><i class="slider"></i></span>
+            </section>
+        </li>
+        <li>
+            <span>隶属团队</span>
+            <section class="form_con selectBox">
+                <select id="class_id" name="model[team_id]" class="font28" >
+                    {loop $teamList $team}
+                    <option value="{$team['id']}" {if $team['id'] == $model['team_id']} selected="selected"{/if}>{$team['name']}</option>
+                    {/loop}
+                </select>
+                <span class="arrow"></span>
+            </section>
+        </li>
+        <li><span>手机号码</span><section><input class="editInput"  type="tel" datatype="m" id="mobile" maxlength="11" name="model[mobile]" value="{$model['mobile']}" nullmsg="请输入成员手机号码！" placeholder="请输入成员手机号码"></section></li>
+        <li><span>成员状态</span>
+            <section>
+                <input type="hidden" name="model[status]" id="status" value="{$model['status']}">
+                <span class="switch switchstatus {php echo $model['status']==1?"switch_on":"switch_off"}" style="position:relative; vertical-align:middle; left:0"><i class="slider"></i></span>
+            </section>
+        </li>
+    </ul>
+    <section class="btn-de">
+        <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+        <input name="token" value="{$_W['token']}" type="hidden" />
+        <input type="hidden" name="submit" value="submit"/>
+        <button type="submit" class="Button" id="SubmitBtn">保存</button>
+    </section>
+</form>
+<script>
+    $(function () {
+        //ios开关
+        $(".switchstatus").click(function(e) {
+            if($(this).hasClass("switch_on")){
+                $(this).removeClass("switch_on");
+                $(this).addClass("switch_off");
+                $("#status").val(0);
+            }
+            else{
+                $(this).removeClass("switch_off");
+                $(this).addClass("switch_on");
+                $("#status").val(1);
+            }
+        });
+
+        $(".switchmanager").click(function(e) {
+            if($(this).hasClass("switch_on")){
+                $(this).removeClass("switch_on");
+                $(this).addClass("switch_off");
+                $("#is_manager").val(0);
+            }
+            else{
+                $(this).removeClass("switch_off");
+                $(this).addClass("switch_on");
+                $("#is_manager").val(1);
+            }
+        });
+
+        require(['{__PLUGIN__}/validform/5.3.2/Validform_v5.3.2_min.js'], function () {
+            //为formContent 添加验证事件
+            $("#store_form").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                                , style: 'bottom:0;'
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if(data.status == 1){
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createMobileUrl('store.marketing_user', array('act' => 'index','aid'=>$aid,'tid'=>$tid));}";
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+
+                    }else{
+                        layer.open({
+                            content: data.msg
+                            , skin: 'msg'
+                            , time: 2 //2秒后自动关闭
+                            , style: 'bottom:0;'
+                        });
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
+

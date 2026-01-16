@@ -1,0 +1,44 @@
+{template '_header'}
+<div class="page-header">当前位置：<span class="text-primary">码科速运</span> </div>
+<div class="page-content">
+    <form id="setform"  {ifp 'goodshelper.set.edit'}action="" method="post"{/if} class="form-horizontal form-validate">
+    <div class="form-group">
+        <label class="col-lg control-label">商家配送：</label>
+        <div class="col-sm-9 col-xs-12">
+            {ifp 'commission.set.edit'}
+            <label class="radio-inline"><input type="radio"  name="data[open]" value="1" {if $data['open'] ==1} checked="checked"{/if} /> 开启</label>
+            <label class="radio-inline"><input type="radio"  name="data[open]" value="0" {if $data['open'] ==0} checked="checked"{/if} /> 关闭</label>
+            {else}
+            {if $data['open'] ==0}关闭{else}开启{/if}
+            {/if}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg control-label must">自定义域名</label>
+        <div class="col-sm-3">
+            <input  name="data[url]" class="form-control" required="required" value="{$data['url']}"></input>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg control-label must">APP ID：</label>
+        <div class="col-sm-3">
+            <input  name="data[app_id]" class="form-control" required="required" value="{$data['app_id']}"></input>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg control-label must">Token</label>
+        <div class="col-sm-3">
+            <input  name="data[token]" class="form-control" required="required" value="{$data['token']}"></input>
+        </div>
+    </div>
+    {ifp 'makeexpress.set.edit'}
+    <div class="form-group">
+        <label class="col-lg control-label"></label>
+        <div class="col-sm-9 col-xs-12">
+            <input type="submit"  value="提交" class="btn btn-primary" />
+        </div>
+    </div>
+    {/if}
+    </form>
+</div>
+{template '_footer'}

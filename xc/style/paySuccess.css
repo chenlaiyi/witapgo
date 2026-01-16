@@ -1,0 +1,143 @@
+   body {
+            font-family: PingFang SC, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .order_box {
+            text-align: center;
+        }
+
+        .order_box .bussiness_avt img {
+            width: 68px;
+            height: 68px;
+            border-radius: 100%;
+            border: 1px solid #E0E0E0;
+        }
+
+        .b_name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333333;
+            margin-top: 6px;
+        }
+
+        .col_box {
+            margin-top: 35px;
+        }
+
+        .col_box .col {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 14px;
+        }
+
+        .col .ct.price {
+            color: #E61515
+        }
+
+        .btns {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            margin-top: 31px;
+        }
+
+        .btns .btn {
+            width: 147px;
+            height: 35px;
+            line-height: 35px;
+            font-size: 14px;
+            border-radius: 39px;
+            border: 1px solid #CD2314;
+            box-sizing: border-box;
+            color: #CD2314;
+        }
+
+        .btns .btn.detail {
+
+            background: linear-gradient(270deg, #D51010 0%, #EF4D2D 100%);
+            color: #fff;
+        }
+        
+  body {
+            font-family: PingFang SC, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .order_box {
+            text-align: center;
+        }
+
+        .b_name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333333;
+            margin-top: 6px;
+        }
+
+        .col_box {
+            margin-top: 35px;
+        }
+
+        .col_box .col {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 14px;
+        }
+
+
+        .btns {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            margin-top: 31px;
+        }
+
+        .btns .btn {
+            width: 160px;
+            height: 35px;
+            line-height: 35px;
+            font-size: 14px;
+            border-radius: 39px;
+            border: 1px solid #CD2314;
+            box-sizing: border-box;
+            color: #CD2314;
+            margin: 0px auto;
+        }
+        .img_box {
+            margin-top: 1px;
+            width: auto;
+            height: 240px;
+        }

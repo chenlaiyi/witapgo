@@ -1,0 +1,601 @@
+<!doctype html>
+<html>
+{template 'store/common/header'}
+<link rel="stylesheet" href="{__PLUGIN__}/dropload/dropload.css">
+<style>
+    /*不滚动样式*/
+    .scroll {position: fixed; width: 100%; height:100%; }
+    body {
+        position: static;
+        /*微信的 iOS 版的禁止调整字体大小*/
+        -webkit-text-size-adjust: 100% !important;
+    }
+    .picMarquee-left .bd .tempWrap{ width:100% !important; }
+</style>
+<script src="{__MOBILE_STORE_JS__}/jquery.flexslider-min.js"></script>
+<script src="{__MOBILE_STORE_JS__}/jquery.SuperSlide.2.1.3.js"></script>
+<body>
+<!--banner切换-->
+<section class="bgfff">
+    <section class="block_home_slider">
+        <section id="home_slider" class="flexslider">
+            <ul class="slides">
+                {loop $slideList $key $slide}
+                <li style="display: none;">
+                    <section class="slide"><a href="{$slide['url']}"><img src="{php echo tomedia($slide['pic_url'])}" alt="{$slide['title']}"/></a></section>
+                </li>
+                {/loop}
+            </ul>
+        </section>
+    </section>
+</section>
+<section class="pd24 bgfff mt24">
+    <div class="picMarquee-left font28">
+        <div class="bd">
+            <ul class="picList">
+                {loop $noticeList $key $notice}
+                {if $notice['types'] == 1}
+                <li>
+                    <div><a href="{$notice['url']}">{$notice['title']}</a></div>
+                </li>
+                {else}
+                <li>
+                    <div><a href="javascript:;" onclick="openNoticeDetails({$notice['id']})">{$notice['title']}</a></div>
+                </li>
+                {/if}
+                {/loop}
+            </ul>
+        </div>
+    </div>
+</section>
+<!--筛选-->
+<section class="bgf2">
+    <section class="job-module">
+        <dl class="retrie w33">
+            <dt>
+                <a id="quyu" href="javascript:;">模板分类<i class="sortIconI"></i> </a>
+                <a id="screening" href="javascript:;">适用节日<i class="sortIconI"></i></a>
+                <a id="default" href="javascript:;">适用行业<i class="sortIconI"></i></a>
+            </dt>
+            <dd class="default">
+                <ul class="filter szqy bor-t downlist">
+                    <li><a href="javascript:;" data-types="0" class="selecttmp allselect active typeallselect">全部</a></li>
+                    {loop $objList $type}
+                    <li><a href="javascript:;" data-types="{$type['id']}" class="selecttmp selecttype">{$type['name']}</a></li>
+                    {/loop}
+                </ul>
+            </dd>
+            <dd class="screening">
+                <ul class="filter szqy bor-t downlist">
+                    <li><a href="javascript:;" data-festival="0" class="selecttmp allselect active festivalallselect">全部</a></li>
+                    {loop $festivalList $festival}
+                    <li><a href="javascript:;" data-festival="{$festival['id']}" class="selecttmp selectfestival">{$festival['name']}</a></li>
+                    {/loop}
+                </ul>
+            </dd>
+            <dd class="default">
+                <ul class="filter szqy bor-t downlist">
+                    <li><a href="javascript:;"  data-festival="0" class="selecttmp allselect active industryallselect" >全部</a></li>
+                    {loop $industryList $industry}
+                    <li><a href="javascript:;" data-industry="{$industry['id']}" class="selecttmp selectindustry">{$industry['name']}</a></li>
+                    {/loop}
+                </ul>
+            </dd>
+
+        </dl>
+    </section>
+</section>
+<section class="bgfff" id="ContentList">
+    <ul class="creatList clearfix" id="LoadLists">
+
+    </ul>
+</section>
+{template 'store/common/footer'}
+<script src="{__PLUGIN__}/dropload/dropload.js"></script>
+<script src="{__PLUGIN__}/artTemplate/template-native-debug.js"></script>
+<script id="promulgatetpl" type="text/html">
+    <section class="pd24">
+        <h2 class="font32 tc fn">活动发布协议</h2>
+    <pre style="white-space: pre-wrap;white-space: -moz-pre-wrap;white-space: -pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;color:#515156;">
+     {php echo htmlspecialchars_decode($config['promulgate'])}
+    </pre>
+        <br>
+        <br>
+        <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">同意并创建</a></section>
+    </section>
+</script>
+<script id="listtpl" type="text/html">
+       <% for(var i = 0; i < rows.length; i++){ %>
+    <li><a href="javascript:;">
+    <h2><em class="font24"><%=rows[i]['activity_types']%></em><span class="font24"><%=rows[i]['use_num']%>商家在用</span> </h2>
+        
+        <section class="activityImg"><img src="<%=rows[i]['thumb_url']%>" alt="<%=rows[i]['name']%>"/>            
+        </section>
+        <p class="font28 "><%=rows[i]['name']%></p>
+        <section class="makeBtn_box">
+            <span class="lookcase showCase" data-title="<%=rows[i]['name']%>" data-types="<%=rows[i]['activity_types']%>" data-intro1="<%=rows[i]['intro1']%>" data-intro2="<%=rows[i]['intro2']%>" data-clone_activity_url="<%=rows[i]["clone_activity_url"]%>" data-token="<%=rows[i]["token"]%>" data-token_links="<%=rows[i]["token_links"]%>">功能介绍>></span>
+            {if $is_show_promulgate}
+            <span class="makeBtn showPromulgate" data-url="<%=rows[i]["activity_url"]%>">马上制作</span>
+            {else}
+            <span class="makeBtn" onclick="javascrtpt:window.location.href='<%=rows[i]['activity_url']%>'">马上制作</span>
+            {/if}
+        </section>
+    </a></li>
+    <% } %>
+</script>
+<script type="text/javascript">
+    /*微信的 Android 版的禁止调整字体大小*/
+    (function() {
+        if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+            handleFontSize();
+        } else {
+            if (document.addEventListener) {
+                document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+            } else if (document.attachEvent) {
+                document.attachEvent("WeixinJSBridgeReady", handleFontSize);
+                document.attachEvent("onWeixinJSBridgeReady", handleFontSize);
+            }
+        }
+        function handleFontSize() {
+            WeixinJSBridge.invoke('setFontSizeCallback', { 'fontSize' : 0 });
+            WeixinJSBridge.on('menu:setfont', function() {
+                WeixinJSBridge.invoke('setFontSizeCallback', { 'fontSize' : 0 });
+            });
+        }
+    })();
+
+    window.url = "";
+
+    $(function () {
+
+        <!--{if !empty($store)}-->
+        <!--{if $store['create_num'] == 0}-->
+        layer.open({
+            content: '您当前已经没有可创建活动次数了，请购买套餐后，再创建活动。'
+            ,btn: ['确定','商家中心']
+            ,shadeClose: false
+            ,yes: function(index){
+                window.location.href = "{php echo $this->createMobileUrl('store.store_renew', array('act' => 'index'));}";
+                layer.close(index);
+            }
+            ,no:function(index){
+                window.location.href = "{php echo $this->createMobileUrl('store.store_member', array('act' => 'index'));}";
+                layer.close(index);
+            }
+        });
+        <!--{else if $store['create_num'] != -1}-->
+        layer.open({
+            content: '当前剩余可创建活动次数为<span style="color:red">{$store['create_num']}</span>次'
+            ,btn: ['确定']
+            ,yes: function(index){
+                layer.close(index);
+            }
+        });
+       <!--{/if}-->
+        <!--{/if}-->
+
+        $('.retrie dt a').click(function(){
+            var $t=$(this);
+            if($t.hasClass('up')){
+                $("#quick-screen1").hide();
+                $(".retrie dt a").removeClass('up');
+                $('.downlist').hide();
+                $('.mask').hide();
+            }else{
+                $("#quick-screen1").show();
+                $(".retrie dt a").removeClass('up');
+                $('.downlist').hide();
+                $t.addClass('up');
+                $('.downlist').eq($(".retrie dt a").index($(this)[0])).show();
+                $('.mask').show();
+            }
+        });
+
+        var page = 0;
+        var pageSize = 10;
+        var dropload_me;
+        var is_first = true;
+
+        //点击搜索
+        $('.selecttmp').click(function() {
+            //隐藏筛选弹框
+            $('#quyu').removeClass('up');
+            $('#screening').removeClass('up');
+            $('#default').removeClass('up');
+            $('.downlist').hide();
+
+            //选中点击选项
+            var $select = $(this);
+            if($select.hasClass('active')){
+                if (!$select.hasClass('allselect'))
+                {
+                    $select.removeClass('active');
+                }
+            }
+            else {
+                if ($select.hasClass('selecttype'))
+                {
+                    if (!$select.hasClass('allselect')) {
+                        $(".typeallselect").removeClass('active');
+                        $select.addClass('active');
+                    }
+                }
+                else if ($select.hasClass('selectfestival'))
+                {
+                    if (!$select.hasClass('allselect')) {
+                        $(".festivalallselect").removeClass('active');
+                        $select.addClass('active');
+                    }
+                }
+                else if ($select.hasClass('selectindustry'))
+                {
+                    if (!$select.hasClass('allselect')) {
+                        $(".industryallselect").removeClass('active');
+                        $select.addClass('active');
+                    }
+                }
+                else
+                {
+                    if ($select.hasClass('typeallselect')) {
+                        $(".typeallselect").addClass('active');
+                        $(".selecttype").removeClass('active');
+                    }
+                    if ($select.hasClass('festivalallselect')) {
+                        $(".festivalallselect").addClass('active');
+                        $(".selectfestival").removeClass('active');
+                    }
+                    if ($select.hasClass('industryallselect')) {
+                        $(".industryallselect").addClass('active');
+                        $(".selectindustry").removeClass('active');
+                    }
+                }
+            }
+
+            //遍历对象获取参数
+            var TypesVal="";
+            $(".selecttype").each(function(){
+                if ($(this).hasClass('active')) {
+                    TypesVal = TypesVal + $(this).data("types") + ",";
+                }
+            });
+            if (TypesVal=="")
+            {
+                $(".typeallselect").addClass('active');
+                $(".selecttype").removeClass('active');
+            }
+            else
+            {
+                TypesVal = TypesVal.substring(0, TypesVal.lastIndexOf(','));
+            }
+
+            var FestivalVal="";
+            $(".selectfestival").each(function(){
+                if ($(this).hasClass('active')) {
+                    FestivalVal = FestivalVal + $(this).data("festival") + ",";
+                }
+            });
+            if (FestivalVal=="")
+            {
+                $(".festivalallselect").addClass('active');
+                $(".selectfestival").removeClass('active');
+            }
+            else
+            {
+                FestivalVal = FestivalVal.substring(0, FestivalVal.lastIndexOf(','));
+            }
+
+            var IndustryVal="";
+            $(".selectindustry").each(function(){
+                if ($(this).hasClass('active')) {
+                    IndustryVal = IndustryVal + $(this).data("industry") + ",";
+                }
+            });
+            if (IndustryVal=="")
+            {
+                $(".industryallselect").addClass('active');
+                $(".selectindustry").removeClass('active');
+            }
+            else
+            {
+                IndustryVal = IndustryVal.substring(0, IndustryVal.lastIndexOf(','));
+            }
+
+            //筛选参数
+            window.searchTypes = TypesVal;
+            window.searchFestival = FestivalVal;
+            window.searchIndustry = IndustryVal;
+
+            //重新从第一页加载
+            if(dropload_me){
+                $('#LoadLists').empty();
+                page = 0;
+                dropload_me.unlock();
+                dropload_me.noData(false);
+                dropload_me.resetload();
+            }
+
+            if(is_first){
+                is_first = false;
+                $('#ContentList').dropload({
+                    scrollArea : window,
+                    domUp : {
+                        domClass   : 'dropload-up',
+                        domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
+                        domUpdate  : '<div class="dropload-update">↑释放更新</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>'
+                    },
+                    domDown : {
+                        domClass   : 'dropload-down',
+                        domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>',
+                        domLoad    : '<div class="dropload-load"><span class="loading"></span>数据加载中...</div>',
+                        domNoData  : '<div class="dropload-noData">暂无更多数据</div>'
+                    },
+                    loadUpFn : function(me){
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.sys_tmp', array('act' => 'getJsonList'));}",
+                            data:{
+                                "page":1,
+                                "pageSize":pageSize,
+                                "obj_types":window.searchTypes,
+                                "festival":window.searchFestival,
+                                "industry":window.searchIndustry
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var html = template("listtpl", data);
+                                $('#LoadLists').html(html);
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                                // 重置页数，重新获取loadDownFn的数据
+                                page = 1;
+                                window.delCount = 0;
+                                // 解锁loadDownFn里锁定的情况
+                                me.unlock();
+                                me.noData(false);
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                //me.resetload();
+                                
+                                //刷新当前页面
+                                location.reload();
+                            }
+                        });
+                    },
+                    loadDownFn : function(me){
+                        dropload_me = me;
+                        page++;
+                        // 拼接HTML
+                        var result = '';
+                        $.ajax({
+                            type: 'GET',
+                            url: "{php echo $this->createMobileUrl('store.sys_tmp', array('act' => 'getJsonList'));}",
+                            data:{
+                                "page":page,
+                                "pageSize":pageSize,
+                                "obj_types":window.searchTypes,
+                                "festival":window.searchFestival,
+                                "industry":window.searchIndustry
+                            },
+                            dataType: 'json',
+                            success: function(data){
+                                var arrLen = data.rows.length;
+                                if(arrLen > 0){
+                                    var html = template("listtpl", data);
+                                    // 如果没有数据
+                                }else{
+                                    // 锁定
+                                    me.lock();
+                                    // 无数据
+                                    me.noData();
+                                }
+                                // 插入数据到页面，放到最后面
+                                $('#LoadLists').append(html);
+                                // 每次数据插入，必须重置
+                                me.resetload()
+                            },
+                            error: function(xhr, type){
+                                layer.open({
+                                    content: '系统错误，稍后重试！'
+                                    ,skin: 'msg'
+                                    ,time: 2 //2秒后自动关闭
+                                });
+                                // 即使加载出错，也得重置
+                                //me.resetload();
+
+                                //刷新当前页面
+                                location.reload();
+                            }
+                        });
+                    },
+                    threshold : 80
+                });
+            }
+
+        });
+
+        $(".typeallselect").trigger("click");
+
+        $('#home_slider').flexslider({
+            animation : 'slide',
+            controlNav : true,
+            directionNav : true,
+            animationLoop : true,
+            slideshow : true,
+            slideshowSpeed : 3000,
+            useCSS : false,
+            autoPlay:true,
+        });
+        jQuery(".picMarquee-left").slide({mainCell:".bd ul",autoPlay:true,effect:"leftMarquee",vis:1,interTime:30});
+
+        //暂无案例
+        $(document).delegate(".noCase", "click", function() {
+            layer.open({
+                content: '亲，案例正在制作中，请稍后查看！'
+                ,skin: 'msg'
+                ,time: 2 //2秒后自动关闭
+            });
+        });
+        //查看案例
+        $(document).delegate(".showCase", "click", function() {
+            var token = $(this).data("token");
+            var token_links = $(this).data("token_links");
+            var types = $(this).data("types");
+            var title = $(this).data("title") + "（"+types+"）";
+            var intro1 = $(this).data("intro1");
+            var intro2 = $(this).data("intro2");
+            var content='<div style="text-align:left;max-height: 300px;overflow-y: auto;margin-top: -30px"><h4>功能特点</h4><p>'+intro1+'</p><h4>功能说明</h4><p>'+intro2+'</p></div>';
+            var clone_activity_url = $(this).data("clone_activity_url");
+            if(token == ""){
+                layer.open({
+                    title: [
+                        title,
+                        'background-color:#fee002; color:#000;'
+                    ],
+                    content: content
+                });
+            }
+            else{
+                //询问框
+                layer.open({
+                    title: [
+                        title,
+                        'background-color:#fee002; color:#000;'
+                    ],
+                    content: content
+                    ,btn: ['使用案例', '查看案例']
+                    ,yes: function(index){
+                        /*{if $is_show_promulgate}*/
+                        window.url = clone_activity_url;
+                        var html = template("promulgatetpl", []);
+                        layer.open({
+                            type: 1
+                            ,content: html
+                            ,anim: 'up'
+                            ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+                        });
+
+                        scroll.afterOpen();
+                        //清空浏览器历史记录
+                        window.history.pushState({title: "title",url:"#"}, "title", "#");
+                        //监听浏览器后退事件
+                        window.addEventListener("popstate",
+                            function(e) {
+                                //后退关闭弹窗
+                                closeWindows2();
+                            }, false);
+                        /*{else}*/
+                        location.href = clone_activity_url;
+                        /*{/if}*/
+                    }
+                    ,no: function(index){
+                        window.location.href=token_links;
+                    }
+                });
+            }
+        });
+
+        //创建活动
+        $('#LoadLists').on('click','.showPromulgate',function(){
+            window.url = $(this).data("url");
+            var html = template("promulgatetpl", []);
+            layer.open({
+                type: 1
+                ,content: html
+                ,anim: 'up'
+                ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+            });
+
+            scroll.afterOpen();
+            //清空浏览器历史记录
+            window.history.pushState({title: "title",url:"#"}, "title", "#");
+            //监听浏览器后退事件
+            window.addEventListener("popstate",
+                    function(e) {
+                        //后退关闭弹窗
+                        closeWindows2();
+                    }, false);
+        });
+    });
+
+    //解决滚动弹窗滚动穿透
+    // scroll.afterOpen 锁定
+    // scroll.beforeClose 解锁
+    var scroll = (function (className) {
+        var scrollTop;
+        return {
+            afterOpen: function () {
+                if(document.scrollingElement){
+                    scrollTop = document.scrollingElement.scrollTop
+                }
+                else{
+                    scrollTop = document.body.scrollTop;
+                }
+                document.body.classList.add(className);
+                document.body.style.top = -scrollTop + 'px';
+            },
+            beforeClose: function () {
+                document.body.classList.remove(className);
+                if(document.scrollingElement){
+                    document.scrollingElement.scrollTop = scrollTop;
+                }
+                document.body.scrollTop = scrollTop;
+            }
+        };
+    })('scroll');
+
+    //关闭关闭弹窗
+    function closeWindows(){
+        layer.closeAll();
+        scroll.beforeClose();
+        window.location.href = window.url;
+    }
+    //打开公告详情
+    function openNoticeDetails(id){
+        $.ajax({
+            type: "post",
+            dataType:'text',
+            url: "{php echo $this->createMobileUrl('store.sys_tmp', array('act' => 'noticeDetails'));}",
+            data: {
+                id: id
+            },
+            success: function (Data) {
+                layer.open({
+                    type: 1
+                    ,content: Data
+                    ,anim: 'up'
+                    ,style: 'position:fixed; left:0; top:0; width:100%; height:100%;overflow:auto;background-color: #F2F2F2; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+                });
+                scroll.afterOpen();
+                //清空浏览器历史记录
+                window.history.pushState({title: "title",url:"#"}, "title", "#");
+                //监听浏览器后退事件
+                window.addEventListener("popstate",
+                    function(e) {
+                        //后退关闭弹窗
+                        closeWindows2();
+                    }, false);
+            },
+            error: function(xhr, type){
+                layer.open({
+                    content: '系统错误，稍后重试！'
+                    ,skin: 'msg'
+                    ,time: 2 //2秒后自动关闭
+                });
+            }
+        });
+    }
+    //关闭关闭弹窗
+    function closeWindows2(){
+        layer.closeAll();
+        scroll.beforeClose();
+    }
+</script>
+</body>
+</html>

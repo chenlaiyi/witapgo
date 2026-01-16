@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">资金管理</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebAppUrl('store_renew');}">续费记录</a></li>
+                            <li><a href="{php echo $this->createWebAppUrl('store_renew',array('act'=>'setmeal'));}">购买套餐</a></li>
+                            <li class="active"><a href="">续费成功</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="row text-center box-body">
+                                <div class="row">
+                                    <div class="col-sm-4 col-md-1">
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-3">
+                                        <div class="color-palette-set">
+                                            <div class="callout callout-info"><span>1.购买下单</span></div>
+                                        </div>
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-3">
+                                        <div class="color-palette-set">
+                                            <div class="callout callout-warning"><span>2.在线支付</span></div>
+                                        </div>
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-3">
+                                        <div class="color-palette-set">
+                                            <div class="callout callout-success"><span><strong>3.续费成功</strong></span></div>
+                                        </div>
+                                    </div><!-- /.col -->
+                                    <div class="col-sm-4 col-md-1">
+                                    </div><!-- /.col -->
+                                </div>
+                            </div>
+                            <div class="row text-center"><h4>恭喜您，续费成功！</h4></div>
+                            <div class="row text-center">
+                                <i class="glyphicon glyphicon-ok" style="font-size: 96px; color:#00a65a;"></i>
+                            </div>
+                            <div class="row text-center">
+                                本次续费的订单编号为：{$payinfo['paynumber']},
+                                {if $payinfo['pay_method'] == 1}
+                                微信支付<code>{$payinfo['endmoney']}</code>元，余额支付<code>{$payinfo['mymoney']}</code>元。
+                                {elseif $payinfo['pay_method'] == 2}
+                                支付宝支付<code>{$payinfo['endmoney']}</code>元，余额支付<code>{$payinfo['mymoney']}</code>元。
+                                {else}
+                                余额支付<code>{$payinfo['mymoney']}</code>元。
+                                {/if}
+
+                            </div>
+                            <div class="row text-center">
+                                <div class="btn-group" style="margin-top: 10px;">
+                                    <button id="btn_start" type="button" class="btn btn-info" onclick="javascript: window.location.href = '{php echo $this->createWebAppUrl("home");}';">
+                                    <span class="fa fa-home" aria-hidden="true"></span>&nbsp;管理首页
+                                    </button>
+                                    <button id="btn_create" type="button" class="btn btn-danger" onclick="javascript: window.location.href = '{php echo $this->createWebAppUrl("store_renew");}';">
+                                    <span class="fa fa-file-text-o" aria-hidden="true"></span>&nbsp;续费记录
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script>
+    $(function () {
+        SelectNav("商家账户续费");
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<section class="pd24">
+    <h2 class="font32 tc fn">{$model['name']}</h2>
+    <section class="mt24 font28 c6">
+        {php echo htmlspecialchars_decode($model['content'])}
+    </section>
+    <br>
+    <br>
+    {if $model['service_id'] > 0}
+    <section class="kefu" style="bottom: 20%;"><a href="javascript:;" onclick="kefu({$model['service_id']});">联系客服</a></section>
+    {/if}
+    <section class="buttonFloat"><a href="javascript:;" class="db font32" style="background-color: #fee002;border-radius: 0.6rem;" onclick="closeWindows()">关闭</a></section>
+</section>

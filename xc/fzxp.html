@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="referrer" content="origin">
+    <meta name="viewport"
+        content="width=device-width, viewport-fit=cover, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <title>祥平反诈中心宣传</title>
+    <link href="style/paySuccess.css" rel="stylesheet">
+    <script type="text/javascript" charset="UTF-8" src="https://wx.gtimg.com/pay_h5/goldplan/js/jgoldplan-1.0.0.js">
+    </script>
+    
+    <script type="text/javascript" src="https://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <div class="order_box">
+        <div class="img_box">
+            <img src="images/gg_fzcenter.jpg" style="width:320px;height:260px">
+        </div>
+        <div class="btns">
+            <div id="backHome" class="btn home" onclick="shouye()">银联厦门反诈宣传</div>
+        </div>
+    </div>
+
+    <script>
+        var homeLink = "https://mp.weixin.qq.com/mp/homepage?__biz=MzAxNTExNTE5MQ==&hid=3&sn=f660d5e284a0e3abe18af47b6049e259&scene=18&devicetype=iOS15.6&version=4.0.6.70123&lang=zh_CN&nettype=WIFI&ascene=7&session_us=gh_c7ecc6f98cb3&fontScale=100&pass_ticket=7B414Lt1cRWIqG75Ma322jt4DnKZyOWk6eCKHs%2F3KFphyP5E7WKakBVR%2FRd%2BTWXD&wx_header=3&scene=1&platform=mac";//首页（例子）
+        function init(){
+             //初始化小票
+             var initData = {
+                action: 'onIframeReady',
+                displayStyle: 'SHOW_CUSTOM_PAGE'
+            }
+            var initPostData = JSON.stringify(initData)
+            parent.postMessage(initPostData, 'https://payapp.weixin.qq.com')
+
+            
+            console.log("初始化");
+           
+            
+        }
+        init();
+
+        //注册点击事件(去首页)
+        function shouye() {
+            var mchData = {
+                action: 'jumpOut',
+                jumpOutUrl: homeLink //跳转的页面
+            }
+            var postData = JSON.stringify(mchData)
+            parent.postMessage(postData, 'https://payapp.weixin.qq.com')
+            console.log("首页");
+
+        }
+    </script>
+</body>
+
+</html>

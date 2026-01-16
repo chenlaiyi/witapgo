@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keywords" http-equiv="{$school['title']}">
+    <link rel="shortcut icon" href="https://manger.daren007.com/attachment/images/global/wechat.jpg">
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/sp_public.css">
+    <link rel="stylesheet" href="{MODULE_URL}public/web/css/index.css">
+    <script src="{MODULE_URL}public/web/js/faceMap.js?v=5.61" type="text/javascript"></script>
+    <title>{$school['title']} - {$schoolset['bgtitle']}</title>
+    <style>
+        .textC {position:relative;float:left;min-width:1rem;margin-top: 0.01rem;overflow:hidden;line-height:0.3rem;height:0.3rem;margin-right: 0.1rem;}
+        .textC span {color: #13BEEC;font-size: 0.3rem;position: absolute;}
+        .c-left_mix{width:50%;padding-left:0.15rem}
+        .teacher_sex {position: relative;width: 45%;height: 100%;margin-bottom: 1%;float:left;}
+        .student_sex {position: relative;width: 45%;height: 100%;margin-bottom: 1%;float:right;}
+        .activity-img{padding: 0.05rem;float:left}
+        .activity-desc{float:left;width:calc(100% - 0.6rem)}
+        .activity-desc h5{ height: 0.2rem;line-height: 0.2rem;padding-top: 0.05rem}
+        .activity-time{font-weight: lighter;background-color: rgba(255, 255, 255, 0.12);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .activity-bj{font-weight: lighter;background-color: rgba(58, 102, 239, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .pull-right{float:right !important;}
+        .activity-bjtz{font-weight: lighter;background-color: rgba(129, 117, 199, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .activity-xyqf{font-weight: lighter;background-color: rgba(255, 108, 96, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .activity-zytz{font-weight: lighter;background-color: rgba(89, 172, 226, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_text{font-weight: lighter;background-color: rgba(169, 216, 110, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_voice{font-weight: lighter;background-color: rgba(252, 179, 34, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_vedio{font-weight: lighter;background-color: rgba(255, 108, 96, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_share{font-weight: lighter;background-color: rgba(129, 117, 199, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .bjq_media{font-weight: lighter;background-color: rgba(89, 172, 226, 0.5);border-radius: 0.44rem;padding: 0 0.06rem;}
+        .in_check_list{height: 100%;width:60%;float:left}
+        .in_check_detail{height: 100%;width:40%;float:left}
+        .head_image{border:1px solid rgba(42, 197, 243, 0.5);width:2rem;height:2rem;margin-left:0.8rem;margin-top:0.2rem}
+        .check_name{margin-left:0.8rem;height: 0.5rem;line-height: 0.5rem;font-size: 0.25rem;width:78%;overflow: hidden;white-space: nowrap;/*不换行*/ text-overflow:ellipsis;/*超出部分文字以...显示*/ }
+        .topnav_box::-webkit-scrollbar{ width: 5px; height:10px; background-color:transparent; }  
+        .topnav_box::-webkit-scrollbar-track { -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); border-radius: 10px; background-color:transparent; }
+        .topnav_box::-webkit-scrollbar-thumb { border-radius: 10px; -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3); background-color:#4f70c5; }
+        .CheckStatus_title{width: 100%;height: 35px;font-size: 16px;color: white;line-height: 35px;}
+        .CS_cell_Box{width: 100%;height: 1.8rem;display: flex;justify-content: space-around;padding:25px 40px 10px 30px}
+        .CS_cell{position: relative;}
+        .CS_cell .word{position: absolute;font-size: 20px;color:white;top:18px;left:10px}
+        .CS_cell .m{font-size: 14px;color:#10bfa8;line-height: 20px;height: 20px;width: 100%;text-align: center;margin-top:5px}
+        .CS_cell .b{font-size: 18px;color:#548dd6;line-height: 30px;height: 30px;width: 100%;text-align: center;margin-top:5px;font-weight: bold;}
+	    .imgBackGround{background-repeat: no-repeat; background-size: cover; background-position: left;}
+        .CheckInfoRoot{padding:10px;height: calc(50% - 20px);background-image: none;background-color:rgba(0, 0, 255, 0.12) ;border: 1px solid #3c3f6f;}
+        .CheckSecondBox{height: calc(100% - 215px);width: 100%;}
+        .CheckSecondBox  .SecTitle{width: 100%;display: flex;justify-content: space-between;}
+        .SecTitle .line{height: 2px;width: calc(50%  - 50px);background-color: #67a8f9;margin-top: 19px;}
+        .SecTitle .jcqk{height: 40px;color:#67a8f9;font-size: 20px;line-height: 40px;text-align: center;position: relative;}
+        .RestStu{height: 40px;color:white;font-size: 20px;line-height: 35px;}
+        .RestStu .t{display: inline-block;width: 80px;font-size: 18px;text-align: right;}
+        .RestStu .n{display: inline-block;border:1px solid black;padding:0 10px;height: 35px;border: 1px solid #2f98ca; border-radius: 5px; box-shadow: 0px 0px 10px 2px #22a5d8;margin-left: 5px; }
+        .CheckPre{height: 40px;color:white;font-size: 18px;line-height: 40px;position: relative;width: 100%;display: flex;}
+        .ColorPre{background-image: url({MODULE_URL}public/web/images/colorpre.png);height: 20px;top:10px;position: absolute;z-index: 2;}
+        .BackPre{background-image: url({MODULE_URL}public/web/images/backpre.png);height: 20px;top:10px;position: absolute;width: 100%;}
+    </style>
+</head>
+<body class="background">
+<div class="expand">
+    <div class="expand_left"></div>
+    <div class="expand_right"></div>
+    <div class="expand_circle"></div>
+</div>
+<div class="open-page">
+    <div class="circle-red">
+        <div class="circle-blue">
+            <div class="circle-yellow"></div>
+        </div>
+    </div>
+</div>
+{template 'common/header_base'}
+<section class="c-content l-content l-justify-top-flex ">
+    <div class="c-content_item l-content_item">
+        <div class="o-box c-left_box1">
+            <div class="o-mix c-left_mix">
+                <img src="{MODULE_URL}public/web/images/teacher_icon.png"
+                     class="o-mix_icon c-left_mix_icon" alt="教师">
+                <div class="o-mix_txt">
+                    <h2 class="o-mix_key">教师实到</h2>
+                    <div class="o-mix_val" ><div class="textC" id="tea_check_today"></div><div style="float:left;position: relative;">人</div></div>
+                </div>
+                </p>
+            </div>
+            <div class="o-mix c-left_mix">
+                <img src="{MODULE_URL}public/web/images/student_icon.png"
+                     class="o-mix_icon c-left_mix_icon" alt="学生">
+                <div class="o-mix_txt">
+                    <h2 class="o-mix_key">学生实到</h2>
+                    <div class="o-mix_val" ><div class="textC" id="stu_check_today"></div><div style="float:left;position: relative;">人</div></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="o-box c-left_box3"></div>
+        <div class="o-box c-left_box2">
+            <div class="teacher_sex "></div>
+            <div class="student_sex"></div>
+        </div>
+        <div class="o-box c-left_box4"></div>
+    </div>
+    <div class="c-content_item l-content_item-c">
+        <div class="o-box c-center_box1" style="padding: 0.1rem;">
+            <div class="o-box c-right_box1 in_check_detail">
+                <div class="o-list">
+                    <div class="head_image">
+                        <img id="big_headimg" class="big_headimgs" src="{php echo tomedia($first_check['thumb'])}" style="width:100%;height: 100%">
+                    </div>
+                    <div class="check_name">
+                        <span >姓名：</span>
+                        <span id="check_name">{$first_check['name']}</span>
+                    </div>
+
+                    <div class="check_name" id="stu_second"   {if $first_check['t_s'] != 'stu'}style="display:none"{/if}>
+                        <span >班级：</span>
+                        <span id="stu_bj">{$first_check['bjname']}</span>
+                    </div>
+                        <div class="check_name" id="tea_second"  {if $first_check['t_s'] != 'tea'}style="display:none"{/if}>
+                            <span >分组：</span>
+                            <span id="tea_fz">{$first_check['fzname']}</span>
+                        </div>
+
+                </div>
+            </div>
+            <div class="o-box c-right_box1 in_check_list">
+                <div class="o-list">
+                    <div class="o-list_title">考勤记录</div>
+                    <div class="data-list_wrap">
+                        <ul class="o-list_wrap check_ul">
+                            {loop $lastkq $row}
+                            <li class="o-list_item inddexs">
+                                <div class="activity-row1">
+                                    <div class="col-xs-3 activity-img" style="width:0.6rem;"><img style="width:0.4rem;height:0.4rem;border-radius:50%;" src="{php echo tomedia($row['thumb'])}" class="img-responsive" alt="">
+                                    </div>
+                                    <div class="col-xs-8 activity-desc">
+                                        <h5>
+                                            <span >{$row['name']}</span>
+                                            <span class="activity-bj">{$row['bjname']}</span>
+                                            {if !empty($row['pname'])}
+                                            <span class="activity-bj" style="background-color: rgba(255,95,187,0.5);">{$row['pname']}</span>
+                                            {/if}
+                                            {if $row['type'] =='进校'}<span class="bjq_share pull-right">{$row['type']}</span>{else}<span class="bjq_voice pull-right">{$row['type']}</span>{/if}
+
+                                        </h5>
+                                        <h5>
+                                            {if $row['checktype'] == 1}
+                                            <span class="activity-time" style="background-color: rgba(37,65,255, 0.5);" >{$row['mac']}</span>
+                                            {else}
+                                            <span class="activity-time" style="background-color: rgba(94, 255, 39, 0.5);" >微信签到</span>
+                                            {/if}
+                                            <span class="activity-time" >{php echo date("Y-m-d H:i",$row['createtime'])}</span></h5>
+                                    </div>
+                                </div>
+                            </li>
+                            {/loop}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="o-box c-center_box2">
+            <figure class="o-mix c-center_mix">
+                <img src="{MODULE_URL}public/web/images/center-icon1.png" class="o-mix_icon c-center_mix_icon"
+                     alt="">
+                <figcaption class="o-mix_txt c-center_mix_txt">
+                    <p class="o-mix_key c-center_mix_key">教师总数</p>
+                    <p class="o-mix_val c-center_mix_val-num"><span id="tea_total">100</span> <span class="c-center_mix_val-txt">人</span></p>
+                </figcaption>
+            </figure>
+            <figure class="o-mix c-center_mix">
+                <img src="{MODULE_URL}public/web/images/center-icon1.png" class="o-mix_icon c-center_mix_icon"
+                     alt="">
+                <figcaption class="o-mix_txt c-center_mix_txt">
+                    <p class="o-mix_key c-center_mix_key">已绑教师数</p>
+                    <p class="o-mix_val c-center_mix_val-num"><span id="tea_bd">100</span> <span class="c-center_mix_val-txt">人</span></p>
+                </figcaption>
+            </figure>
+            <figure class="o-mix c-center_mix">
+                <img src="{MODULE_URL}public/web/images/center-icon1.png" class="o-mix_icon c-center_mix_icon"
+                     alt="">
+                <figcaption class="o-mix_txt c-center_mix_txt">
+                    <p class="o-mix_key c-center_mix_key">学生人数</p>
+                    <p class="o-mix_val c-center_mix_val-num"><span id="stu_total">100</span> <span class="c-center_mix_val-txt">人</span></p>
+                </figcaption>
+            </figure>
+            <figure class="o-mix c-center_mix">
+                <img src="{MODULE_URL}public/web/images/center-icon1.png" class="o-mix_icon c-center_mix_icon"
+                     alt="">
+                <figcaption class="o-mix_txt c-center_mix_txt">
+                    <p class="o-mix_key c-center_mix_key">已绑学生数</p>
+                    <p class="o-mix_val c-center_mix_val-num"><span id="stu_bd">100</span><span class="c-center_mix_val-txt">人</span></p>
+                </figcaption>
+            </figure>
+        </div>
+        <div class="o-box c-center_box3"></div>
+    </div>
+    <div class="c-content_item l-content_item">
+        <div class="o-box c-left_box2 CheckInfoRoot">
+            <div class="CheckStatus_title">
+                {if $keep_MC}晨检状况{else}体温状况{/if}
+            </div>
+            <div class="CS_cell_Box">
+                <div class="CS_cell">
+                    <div class="word">正常</div>
+                    <img src="{MODULE_URL}public/web/images/sixblue.png" style="width: 60px;" >
+                    <div class="b" id="zc">888</div>
+                </div>
+                {if $keep_MC}
+                <div class="CS_cell">
+                    <div class="word">异常</div>
+
+                    <img src="{MODULE_URL}public/web/images/sixblue.png" style="width: 60px;" >
+                    <div class="b" id="yc">888</div>
+                </div>
+                {/if}
+                <div class="CS_cell">
+                    <div class="word">发热</div>
+
+                    <img src="{MODULE_URL}public/web/images/sixred.png" style="width: 60px;" >
+                    <div class="b" id="fr">888</div>
+                </div>
+            </div>
+            <div class="CheckSecondBox" >
+                <div class="SecTitle" >
+                    <div class="line"></div>
+                    <div class="jcqk">检查情况</div>
+                    <div class="line"></div>
+                </div>
+                <div class="RestStu">
+                  <span class="t">剩余学生</span>  
+                  <span class="n" id="nocheckstu">156</span>  
+                </div>
+                <div class="CheckPre">
+                    <div style=" width: 80px;text-align: right;">检查率</div>
+                    <div style=" flex:1;padding:0 9px">
+                        <div style=" height: 100%;position: relative;">
+                                <div class="imgBackGround ColorPre" id="nocheckblcss" style="width: 60%;"></div>
+                                <div class="imgBackGround BackPre" ></div>
+                        </div>
+                    </div>
+                    <div style=" width: 60px;height: 100%;line-height: 40px;">
+                        <span id="nocheckbl">100%</span>   
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <style>
+            .school_table{width: 100%;}
+            .school_thead{width: 100%;display: flex;height: 40px;line-height: 40px;background-color: rgba(49, 107, 255, 0.28);}
+            .school_table .title{width: 40%;text-align: center;font-size: 16px;}
+            .school_table .title:nth-child(1){flex:1}
+            .school_tbody{width: 100%;}
+            .school_tbody .body_tr{width: 100%;display: flex;margin-bottom: 3px;height: 35px;line-height: 35px;background-color: rgba(47, 74, 144, 0.28);}
+            .school_tbody .body_tr .td{width: 40%;text-align: center;font-size: 16px;}
+            .school_tbody .body_tr .td:nth-child(2){width: 20%;}
+            .school_tbody  .body_tr .td:nth-child(1){flex:1}
+            .td .botton{font-size: 12px !important;border: 1px solid #5b92e4;border-radius: 10px;padding:2px 5px;width: 80px;color:#5b92e4;cursor: pointer; }
+        </style>
+
+        <div class="o-box c-right_box4" style="height:50%;    position: relative; margin-bottom: 2%; background-color: rgba(0, 0, 255, 0.12);">
+            <div class="o-list">
+                <div class="data-list_wrap" style="height: 100%;">
+                    <div class="school_table" style="height: 100%;">
+                        <div class="school_thead" >
+                            <div class="title">年级</div>
+                            <div class="title" style="width: 20%;">检查率</div>
+                            <div class="title">数据时间</div>
+                        </div>
+
+                        <div class="school_tbody topnav_box" style="height: calc(100% - 30px); margin: 3px 0; overflow-y: auto;" id="njbl">
+                            <div class="body_tr" data-id="${item.id}">
+                                <div class="td" >年级名称</div>
+                                <div class="td t" >60%</div>
+                                <div class="td s" >2020-02-29 10:11</div>
+                            </div>  
+                        </div>
+                    </div>
+                  
+                
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/jquery.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/echarts.min.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/index.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/sp_bg.js"></script>
+<script type="text/javascript" src="{MODULE_URL}public/web/js/title.js"></script>
+<script type="text/javascript">
+    var GPC_do = "{$_GPC['do']}";
+    //替换表情
+    icon_replace($(".bjq_content"));
+    function icon_replace(content_box) {
+        var face_map_url = "{MODULE_URL}public/web/images/face/";
+        $(content_box).each(function () {
+            //替换表情
+            if (typeof ($(this).html()) != 'undefined') {
+                var desc = $(this).html().replace(/\[([^\]]+)\]/g, function (a, b) {
+                    return "<img class='face_icon' style='width: 0.15rem;' src='" + face_map_url + objMap[b] + ".gif'>";
+                });
+                $(this).html(desc);
+            }
+        })
+    }
+    var AnimateLockArr = [];
+    function NumbersAnimate(Target = null, Numbers = 0, Duration = 100,ClassTag) {
+        this.Duration = Duration;
+        this.Target = Target;
+        this.Numbers = Numbers;
+        this.ClassTag = ClassTag;
+        AnimateLockArr[`${ClassTag}`] = false;
+        this.Animate= function(){
+            var array=this.Numbers.split("");
+            //遍历数组
+            for(var i=0;i<array.length;i++){
+                var currentN=array[i];
+                //数字append进容器
+                var t=$("<span></span>");
+                $(t).append("<span class=\"childNumber "+this.ClassTag+"\">"+array[i]+"</span>");
+                $(t).css("margin-left",0.2*i+"rem");
+                $(this.Target).append(t);
+                //生成滚动数字,根据当前数字大小来定
+                for(var j=0;j<=currentN;j++){
+                    var tt;
+                    if(j==currentN){
+                        tt=$("<span class=\"main "+this.ClassTag+"\"><span>"+j+"</span></span>");
+                    }else{
+                        tt=$("<span class=\"childNumber\">"+j+"</span>");
+                    }
+                    $(t).append(tt);
+                    $(tt).css("margin-top",(j+1)*0.25+"rem");
+                }
+                $(t).animate({marginTop:-((parseInt(currentN)+1)*0.25)+"rem"},this.Duration,function(){
+                    $(this).find(".childNumber").remove();
+                });
+            }
+        };
+        this.ChangeNumber=function(numbers){
+            if( AnimateLockArr[`${ClassTag}`] == false){
+                if(this.Numbers != numbers){
+                    AnimateLockArr[`${ClassTag}`] = true;
+                    var oldArray=this.Numbers.split("");
+                    var newArray=numbers.split("");
+                    for(var i=0;i<oldArray.length;i++){
+                        var o=oldArray[i];
+                        var n=newArray[i];
+                        if(o!=n){
+                            var c=$($(".main."+this.ClassTag)[i]);
+                            var top=parseInt($($(c).find("span")[0]).css("marginTop").replace('px', ''));
+                            for(var j=0;j<=n;j++){
+                                var nn=$("<span>"+j+"</span>");
+                                if(j==n){
+                                    nn=$("<span>"+j+"</span>");
+                                }else{
+                                    nn=$("<span class=\"yy \">"+j+"</span>");
+                                }
+                                $(c).append(nn);
+                                $(nn).css("margin-top",(j+1)*25+top+"px");
+                            }
+                            var margintop=parseInt($(c).css("marginTop").replace('px', ''));
+                            $(c).animate({marginTop:-((parseInt(n)+1)*25)+margintop+"px"},this.Duration,function(){
+                                $($(this).find("span")[0]).remove();
+                                $(".yy").remove();
+                            });
+                        }
+                    }
+                    this.Numbers=numbers;
+                    setTimeout(function () {
+                        AnimateLockArr[`${ClassTag}`] = false ;
+                    }, this.Duration);
+                }
+            }
+        }
+
+    }
+    var  NumbersAnimate_tea =new NumbersAnimate("#tea_check_today",'{$tea_check_today}',1500,'tea');
+    var  NumbersAnimate_stu =new NumbersAnimate("#stu_check_today",'{$stu_check_today}',1500,'stu');
+    //主体ajax
+    $(function () {
+        NumbersAnimate_tea.Animate();
+        NumbersAnimate_stu.Animate();
+        $.ajax({
+            url: "{php echo $this->createWebUrl('bdindex',array('op'=>'firstdata','schoolid'=>$schoolid))}",
+            type: "POST",
+            dataType: "json",
+            success: function (res) {
+                $('#tea_total').html(res.middleNum.AllTeaNum);
+                $('#tea_bd').html(res.middleNum.TeaBDNum);
+                $('#stu_total').html(res.middleNum.AllStuNum);
+                $('#stu_bd').html(res.middleNum.StuBDNum);
+                drawCharts($(".student_sex")[0], res.stusex);
+                drawCharts($(".teacher_sex")[0], res.teasex);
+                drawCharts($(".c-left_box3")[0], res.jhgn);
+                drawCharts($(".c-left_box4")[0], res.stu_nj);
+                drawCharts($(".c-center_box3")[0], res.njchecktoday);
+            }
+        });
+      setTimeout(function () {
+          checknewinfo({$lastxxtzid},{$lastbjqid},{$lastkqid});
+        }, 1000);
+    });
+    //实时ajax
+    function checknewinfo(lastxxtzid,lastbjqid,lastkqid){
+        $.ajax({
+            url: "{php echo $this->createwebUrl('bdindex',array('op'=>'real_time_data','schoolid'=>$schoolid))}",
+            data: {weid: "{$weid}",xxtzid:lastxxtzid,bjqid:lastbjqid,kqid:lastkqid},
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                //校园动态
+                // if(data.lasttz.check == true){
+                //     let xydt_html = ' <li class="o-list_item inddexs" style="height: 0rem">' +
+                //                     '   <div class="activity-row1">' +
+                //                     '       <div class="col-xs-3 activity-img" style="width:0.6rem;"><img style="width:0.4rem;height:0.4rem;border-radius:50%;" src="'+data.lasttz.data.thumb +'" class="img-responsive" alt="">' +
+                //                     '       </div>' +
+                //                     '       <div class="col-xs-8 activity-desc">' +
+                //                     '           <h5>' +
+                //                     '               <span >'+data.lasttz.data.tname +'</span>' +
+                //                     '               <span class="activity-bj">'+data.lasttz.data.bjname +'</span>' +
+                //                     '               <span class="activity-time" >'+data.lasttz.data.createtime +'</span>';
+                //     if(data.lasttz.data.type == 2){
+                //         xydt_html += '<span class="activity-xyqf pull-right">校园通知</span>';
+                //     }
+                //     if(data.lasttz.data.type == 1){
+                //         xydt_html += '<span class="activity-bjtz pull-right">班级通知</span>';
+                //     }
+                //     if(data.lasttz.data.type == 3){
+                //         xydt_html += '<span class="activity-zytz pull-right">作业通知</span>';
+                //     }
+                //      xydt_html +=   '           </h5>' +
+                //                     '           <h5>'+ data.lasttz.data.title + '</h5>' +
+                //                     '       </div>' +
+                //                     '   </div>\n' +
+                //                     ' </li>';
+                //     $(xydt_html).prependTo('.xytz_ul').fadeIn('slow');
+                //     let _first=$('.xytz_ul li:first');
+                //     _first.animate({height: '+0.52rem'}, "normal");
+                //     let _last=$('.xytz_ul li:last');
+                //     setTimeout(function () {
+                //         _last.remove();
+                //     }, 2000);
+                //   }
+                //班级圈
+                // if(data.lastbjq.check == true){
+                //     let bjq_html = '<li class="o-list_item inddexs"  style="height: 0rem">' +
+                //                     '   <div class="activity-row1">' +
+                //                     '       <div class="col-xs-3 activity-img" style="width:0.6rem;"><img style="width:0.4rem;height:0.4rem;border-radius:50%;" src="' +data.lastbjq.data.avatar + '" class="img-responsive" alt="">' +
+                //                     '       </div>' +
+                //                     '       <div class="col-xs-8 activity-desc">' +
+                //                     '           <h5>' +
+                //                     '               <span >'+ data.lastbjq.data.shername +'</span>' +
+                //                     '               <span class="activity-bj">' + data.lastbjq.data.bjname +'</span>' +
+                //                     '               <span class="activity-time" >' +data.lastbjq.data.createtime +'</span>' ;
+
+                //     if(data.lastbjq.data.msgtype == 1){
+                //         bjq_html += '<span class="bjq_text  pull-right">图文</span>';
+                //     }
+                //     if(data.lastbjq.data.msgtype == 2){
+                //         bjq_html += '<span class="bjq_voice  pull-right">语音</span>';
+                //     }
+                //     if(data.lastbjq.data.msgtype == 3){
+                //         bjq_html += '<span class="bjq_video pull-right">视频</span>';
+                //     }
+                //     if(data.lastbjq.data.msgtype == 4){
+                //         bjq_html += '<span class="bjq_share pull-right">分享</span>';
+                //     }
+                //     if(data.lastbjq.data.msgtype == 5){
+                //         bjq_html += '<span class="bjq_media pull-right">多媒体</span>';
+                //     }
+                //     bjq_html += '           </h5>' +
+                //                 '           <h5 class="bjq_content">' + data.lastbjq.data.content +'</h5>' +
+                //                 '       </div>' +
+                //                 '   </div>' +
+                //                 '</li>';
+                //     $(bjq_html).prependTo('.bjq_ul').fadeIn('slow');
+                //     let _first=$('.bjq_ul li:first');
+                //     _first.animate({height: '+0.52rem'}, "normal");
+                //     let _last=$('.bjq_ul li:last');
+                //     setTimeout(function () {
+                //         _last.remove();
+                //     }, 2000);
+                //     icon_replace($(".bjq_content"));
+                // }
+                if(data.lastkq.check == true){
+                    let kq_html =  '<li class="o-list_item inddexs" >' +
+                                    '   <div class="activity-row1">' +
+                                    '       <div class="col-xs-3 activity-img" style="width:0.6rem;"><img style="width:0.4rem;height:0.4rem;border-radius:50%;" src="'+ data.lastkq.data.thumb +'" class="img-responsive" alt="">' +
+                                    '       </div>' +
+                                    '       <div class="col-xs-8 activity-desc">' +
+                                    '           <h5>' +
+                                    '               <span >' + data.lastkq.data.name+ '</span>' +
+                                    '               <span class="activity-bj">'+ data.lastkq.data.bjname +'</span>\n' ;
+                    if(data.lastkq.data.pname){
+                        kq_html +=' <span class="activity-bj" style="background-color: rgba(255,95,187,0.5);">'+data.lastkq.data.pname +'</span>';
+                    }
+                    if(data.lastkq.data.type == '进校'){
+                        kq_html += '<span class="bjq_share pull-right">'+ data.lastkq.data.type +'</span>';
+                    }else{
+                        kq_html += '<span class="bjq_voice pull-right">'+ data.lastkq.data.type +'</span>';
+                    }
+                    kq_html +=  '           </h5>' +
+                                '           <h5>' ;
+                    if(data.lastkq.data.checktype == 1){
+                        kq_html +=' <span class="activity-time" style="background-color: rgba(37,65,255, 0.5);" >'+ data.lastkq.data.mac+'</span>';
+                    }else{
+                        kq_html +=' <span class="activity-time" style="background-color: rgba(94, 255, 39, 0.5);" >微信签到</span>';
+                    }
+                    kq_html +=  '           <span class="activity-time" >'+data.lastkq.data.createtime +'</span></h5>' +
+                                '       </div>' +
+                                '   </div>' +
+                                '</li>';
+                    let add_img = ' <img id="big_headimg" class="big_headimgs" src="'+data.lastkq.data.thumb + '" style="width:100%;height: 100%">';
+                    fly(kq_html,add_img,data.lastkq.data);
+                    let _last=$('.check_ul li:last');
+                    setTimeout(function () {
+                        _last.remove();
+                    }, 400);
+
+                }
+                    NumbersAnimate_tea.ChangeNumber(data.tea_check_today);
+                    NumbersAnimate_stu.ChangeNumber(data.stu_check_today);
+                drawCharts($(".c-center_box3")[0], data.njchecktoday);
+                setTimeout(function(){checknewinfo(data.lasttz.data.id,data.lastbjq.data.id,data.lastkq.data.id)}, 1000);
+            },
+            error: function () {
+                setTimeout(function(){checknewinfo(lastxxtzid,lastbjqid,lastkqid)}, 1000);
+            },
+        });
+
+    };
+    function fly(kq_html,add_img,data) {
+        var cart = $('.activity-img');
+        let firstimg = cart[0].children;
+        var imgtodrag = $("#big_headimg");
+		let clonetop = Number(cart.offset().top + firstimg[0].offsetTop);
+        let cloneleft = Number(cart.offset().left + firstimg[0].clientWidth/8);
+        if (imgtodrag) {
+            var imgclone = imgtodrag.clone().offset({top: imgtodrag.offset().top,left: imgtodrag.offset().left})
+            .css({
+				'position': 'absolute',
+				'height': 'calc(2rem - 2px)',
+				'width': 'calc(2rem - 2px)',
+                'opacity': '0.5',
+				'z-index': '100'
+            })
+            .appendTo($('body'))
+                .animate({
+                'top':  clonetop,
+                    'left': cloneleft,
+                    'width': firstimg[0].clientWidth,
+                    'height': firstimg[0].clientHeight,
+                    'border-radius':'50%',
+            }, 500, 'easeInOutExpo');
+
+            imgclone.fadeOut(100,function () {
+                $(kq_html).hide().prependTo('.check_ul').slideDown(300);
+                $("#big_headimg").remove();
+                $(add_img).hide().prependTo(".head_image").fadeIn("normal");
+                //$(".big_headimg").attr("src",data.lastkq.data.thumb);
+                $("#check_name").html(data.name);
+                if(data.t_s == 'stu'){
+                    $("#stu_bj").html(data.bjname);
+
+                    $("#tea_second").slideUp("fast");
+                    $("#stu_second").slideDown("fast");
+                }else if(data.t_s == 'tea'){
+                    $("#tea_fz").html(data.fzname);
+
+                    $("#tea_second").slideDown("fast");
+                    $("#stu_second").slideUp("fast");
+                }
+            });
+        }
+    }
+    //打开时加载动画
+    setTimeout(function () {
+        $(".expand_circle").css({"display": "none"});
+        $(".expand_left").css({"transform": "translateX(100%)"});
+        $(".expand_right").css({"transform": "translateX(-100%)"});
+        setTimeout(function () {
+            $(".expand").css({"z-index": -1});
+        }, 500)
+    }, 1000);
+
+        
+    /************获取体温,口腔,学校检测率数据**************/ 
+    GetCheckData()
+    function GetCheckData(){
+        $.ajax({
+            url:  "{php echo $this->createwebUrl('bdindex',array('op'=>'GetCheckData','schoolid'=>$schoolid))}",
+            type: "post",
+            dataType: "json",
+            success: function (res) {
+                for(let i in res){
+                    $(`#${i}`).text(`${res[i]}`)
+                    if(`${i}` == 'nocheckbl'){
+                        $("#nocheckblcss").css({"width":`${res[i]}`});
+                    }
+                }
+                setTimeout(function(){GetCheckData()}, 1000 * 60);
+            },
+            error: function () {
+                setTimeout(function(){GetCheckData()}, 1000 * 60);
+            },
+        });
+    }
+    /************获取体温,口腔,学校检测率数据**************/ 
+
+    /************获取每个年级的检测率**************/ 
+    GetNjCheckData()
+    function GetNjCheckData(){
+        $.ajax({
+            url:  "{php echo $this->createwebUrl('bdindex',array('op'=>'GetNjCheckData','schoolid'=>$schoolid))}",
+            type: "post",
+            dataType: "json",
+            success: function (res) {
+                let data = res.data
+                
+                let html = '';
+                for(let item of data){
+
+                    html += `<div class="body_tr" data-id="${item.sid}">
+                                <div class="td" >${item.sname}</div>
+                                <div class="td t" >${item.njbl}</div>
+                                <div class="td s" >${item.nowtime}</div>
+                            </div>  `
+                }
+                $("#njbl").html(html)
+                setTimeout(function(){GetNjCheckData()}, 1000 * 60);
+            },
+            error: function () {
+                setTimeout(function(){GetNjCheckData()}, 1000 * 60);
+            },
+        });
+    }
+    /************获取每个年级的检测率**************/ 
+
+</script>
+</body>
+</html>

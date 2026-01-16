@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+	<style>
+		.uc-info { line-height: 20px; }
+	</style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+
+					<!-- 模板消息 -->
+					<!-- <li {if $operation == 'display'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('',['do'=>'module/tpl_msg'])}">公众号模板消息</a>
+					</li> -->
+					<!-- 添加 -->
+					{if empty($one['id']) && $operation == 'wxmsg_post'}
+					<li class="layui-this">
+						<a href="{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'wxmsg_post'])}">
+							<span>添加</span>
+						</a>
+					</li>
+					{/if}
+					<!-- 编辑 -->
+					{if ($one['id']) && $operation == 'wxmsg_post'}
+					<li class="layui-this">
+						<a href="{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'wxmsg_post','id'=>$one['id']])}">
+							<span>编辑</span>
+						</a>
+					</li>
+					{/if}
+
+					<!-- 订阅消息 -->
+					<li {if $operation == 'rss'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'rss'])}">订阅消息</a>
+					</li>
+					<!-- 添加 -->
+					{if empty($one['id']) && $operation == 'rss_post'}
+					<li class="layui-this">
+						<a href="{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'rss_post'])}">
+							<span>添加</span>
+						</a>
+					</li>
+					{/if}
+					<!-- 编辑 -->
+					{if ($one['id']) && $operation == 'rss_post'}
+					<li class="layui-this">
+						<a href="{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'rss_post','id'=>$one['id']])}">
+							<span>编辑</span>
+						</a>
+					</li>
+					{/if}
+
+					<!-- 短信 -->
+					<!-- <li {if $operation == 'sms'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'sms'])}">短信</a>
+					</li> -->
+					<!-- 添加 -->
+					{if empty($one['id']) && $operation == 'post'}
+					<li class="layui-this">
+						<a href="{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'post'])}">
+							<span>添加</span>
+						</a>
+					</li>
+					{/if}
+					<!-- 编辑 -->
+					{if ($one['id']) && $operation == 'post'}
+					<li class="layui-this">
+						<a href="{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'post','id'=>$one['id']])}">
+							<span>编辑</span>
+						</a>
+					</li>
+					{/if}
+
+					<!-- <li {if $operation == 'sync'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'sync'])}">同步</a>
+					</li> -->
+				</ul>
+			</div>
+
+		{if $operation == 'display'}
+
+
+		{else if $operation == 'wxmsg'}
+			<div>
+				<div class="layui-form">
+					<div class="box-tools">
+						<div class="box-search">
+							<div class="layui-input-inline">
+								<input type="text" name="keyword" value="{$keyword}" class="layui-input"
+									placeholder="标题">
+							</div>
+							<div class="layui-input-inline">
+								<button class="layui-btn" lay-submit lay-filter="table-search"
+									id="table-search">搜索</button>
+							</div>
+						</div>
+					</div>
+					<div class="box-list-img">
+						<table id="sl-table" lay-filter="sl-table"></table>
+					</div>
+				</div>
+
+				<div class="script">
+					<script type="text/html" id="toolbar">
+						<div class="layui-btn-container">
+							<button class="layui-btn layui-btn-sm" lay-event="add">
+								添加</button>
+							<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
+								删除</button>
+						</div>
+					</script>
+					<script type="text/html" id="operation">
+						<div class="box-btn-panel">
+							<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del"
+								title="ID:{{d.id}}">
+								删除
+							</button>
+						</div>
+					</script>
+					<script>
+						layui.use(['laypage', 'layer', 'table', 'form'], function() {
+							my_laypage = layui.laypage;
+							my_layer = layui.layer;
+							my_table = layui.table;
+							my_form = layui.form;
+
+							url_post = "{php echo webUrl('',['do'=>'module/tpl_msg','op' =>'wxmsg_post'])}";
+							url_list = "{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'wxmsg_list'])}";
+							url_delete = "{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'wxmsg_delete'])}";
+
+							table_list = my_table.render({
+								elem: '#sl-table'
+								, toolbar: '#toolbar'
+								, even: false
+								, url: url_list
+								, cols: [[
+									// type: 'numbers',
+									{type: 'checkbox'}
+									, {field: 'sl_title', title: "标题", sort: true}
+									, {field: 'tpl_id', title: "模板ID", sort: true}
+									, {field: 'touser', title: "接收人OPENID", sort: true}
+									, {field: 'mark', title: "备注", sort: true}
+									, {title: "操作", width: 100, templet: '#operation', fixed: 'right'}
+								]]
+								, height: 'full-190'
+								, page: {
+									theme: '#1E9FFF'
+								}
+							});
+						});
+					</script>
+				</div>
+			</div>
+
+
+		{else if $operation == 'wxmsg_post'}
+			<div>
+				<form class="layui-form" action="" method="post" enctype="multipart/form-data">
+					<input type="hidden" name="id" value="{$one['id']}" />
+					<!-- 消息类型 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">消息类型</label>
+						<div class="layui-input-block">
+							<select name="options[tpl_type]" lay-verify="required">
+								<option value="">请选择...</option>
+								{loop $list_wxmsg_type $index $item}
+									<option value="{$item['type']}"
+										{if $item['type'] == $one['tpl_type'] }selected{/if}>{$item['sl_title']}</option>
+								{/loop}
+							</select>
+						</div>
+					</div>
+					<!-- 接收人OPENID -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">接收人OPENID</label>
+						<div class="layui-input-block">
+							<input type="text" class="layui-input" name="options[touser]"
+								placeholder="接收人OPENID" value="{$one['touser']}" />
+							<div class="layui-form-mid layui-word-aux">
+								<span>公众号OPENID</span>
+								<a id="get-openid" style="color: #1E9FFF;" href="javascript:;">获取</a>
+							</div>
+						</div>
+					</div>
+					<!-- 备注 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">备注</label>
+						<div class="layui-input-block">
+							<textarea name="options[mark]" placeholder="备注" class="layui-textarea">{$one['mark']}</textarea>
+						</div>
+					</div>
+
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="save">保存</button>
+							<button class="layui-btn" lay-submit lay-filter="save"
+								data-type="saveAndAdd">保存并新增</button>
+							<a href="{php echo webUrl('', ['do'=>'module/tpl_msg', 'op'=>'wxmsg'])}"
+								class="layui-btn layui-btn-primary">取消</a>
+							<input type="hidden" name="token" value="{$_W['token']}" />
+						</div>
+					</div>
+
+					<div class="layui-form-item">
+						<label class="layui-form-label">提醒</label>
+						<div class="layui-input-block">
+							<div class="layui-form-mid layui-word-aux">
+								<div style="color: #1E9FFF;">需要在公众号后台添加服务类目才能正常使用</div>
+								<div>IT科技 -> 互联网|电子商务</div>
+							</div>
+						</div>
+					</div>
+
+				</form>
+
+				<script>
+					layui.use('form', function(){
+						var form = layui.form;
+
+						form.on('submit(save)', function(data){
+							let subType = data.elem.dataset.type;
+							let url = "{php echo webUrl('', ['do'=>'module/tpl_msg', 'op'=>'wxmsg_post'])}";
+							var $obj = $(this);
+
+							if (!$obj.hasClass('lock')) {
+								$obj.addClass('lock'); // 不能再点击
+
+								$.ajax({
+									type: "POST",
+									url: url,
+									dataType: 'json',
+									data: data.field,
+									success: function (rs) {
+										if (rs && rs.code.toString() === '0') {
+											layer.msg('保存成功' , {
+												time: 500
+											}, function () {
+												if (subType && subType.toString() === 'saveAndAdd') {
+													window.location.href = "{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'wxmsg_post'])}";
+												} else {
+													window.location.href = "{php echo webUrl('',['do'=>'module/tpl_msg'])}";
+												}
+											});
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+											});
+										}
+										$obj.removeClass('lock');
+									},
+									error: function () {
+										layer.msg('保存过程发生错误，请与管理员联系', {
+											offset: '20%',
+										});
+										$obj.removeClass('lock');
+									}
+								});
+							}
+
+							return false;
+						});
+
+						// get-openid
+						$('#get-openid').click(function () {
+							layer.open({
+								offset: '10%',
+								area: ['720px','80%'],
+								title: "公众号获取OPENID",
+								type: 1,
+								shift: 2,
+								shadeClose: true, //开启遮罩关闭
+								content: $('#img-openid')
+							});
+						});
+					});
+				</script>
+			</div>
+
+
+		{else if $operation == 'rss'}
+			<div>
+				<div class="layui-form">
+					<div class="box-tools">
+						<div class="box-search">
+							<div class="layui-input-inline">
+								<input type="text" name="keyword" value="{$keyword}" class="layui-input"
+									placeholder="标题">
+							</div>
+							<div class="layui-input-inline">
+								<button class="layui-btn" lay-submit lay-filter="table-search"
+									id="table-search">搜索</button>
+							</div>
+						</div>
+					</div>
+					<div class="box-list-img">
+						<table id="sl-table" lay-filter="sl-table"></table>
+					</div>
+				</div>
+
+				<div class="script">
+					<script type="text/html" id="toolbar">
+						<div class="layui-btn-container">
+							<button class="layui-btn layui-btn-sm"
+								lay-event="add">添加</button>
+							<button class="layui-btn layui-btn-sm layui-btn-danger"
+								lay-event="delete">删除</button>
+						</div>
+					</script>
+					<script type="text/html" id="operation">
+						<div class="box-btn-panel">
+							<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del"
+								title="ID:{{d.id}}">删除</button>
+						</div>
+					</script>
+					<script>
+						layui.use(['laypage', 'layer', 'table', 'form'], function() {
+							my_laypage = layui.laypage;
+							my_layer = layui.layer;
+							my_table = layui.table;
+							my_form = layui.form;
+
+							url_post = "{php echo webUrl('',['do'=>'module/tpl_msg','op' =>'rss_post'])}";
+							url_list = "{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'rss_list'])}";
+							url_delete = "{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'rss_delete'])}";
+
+							table_list = my_table.render({
+								elem: '#sl-table'
+								, toolbar: '#toolbar'
+								, even: false
+								, url: url_list
+								, cols: [[
+									// type: 'numbers',
+									{type: 'checkbox'}
+									, {field: 'sl_title', title: "标题", sort: true}
+									, {field: 'tpl_id', title: "模板ID", sort: true}
+									, {field: 'mark', title: "备注", sort: true}
+									, {title: "操作", width: 100, templet: '#operation', fixed: 'right'}
+								]]
+								, height: 'full-190'
+								, page: {
+									theme: '#1E9FFF'
+								}
+							});
+						});
+					</script>
+				</div>
+			</div>
+
+
+		{else if $operation == 'rss_post'}
+			<div>
+				<form class="layui-form" action="" method="post" enctype="multipart/form-data">
+					<input type="hidden" name="id" value="{$one['id']}" />
+					<!-- 消息类型 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">消息类型</label>
+						<div class="layui-input-block">
+							<select name="options[tpl_type]" lay-verify="required">
+								<option value="">请选择...</option>
+								{loop $list_tpl_type $index $item}
+									<option value="{$item['type']}"
+										{if $item['type'] == $one['tpl_type'] }selected{/if}>{$item['sl_title']}</option>
+								{/loop}
+							</select>
+						</div>
+					</div>
+					<!-- 备注 -->
+					<div class="layui-form-item">
+						<label class="layui-form-label">备注</label>
+						<div class="layui-input-block">
+							<textarea name="options[mark]" placeholder="备注" class="layui-textarea">{$one['mark']}</textarea>
+						</div>
+					</div>
+
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="save">保存</button>
+							<button class="layui-btn" lay-submit lay-filter="save" data-type="saveAndAdd">保存并新增</button>
+							<a href="{php echo webUrl('', ['do'=>'module/tpl_msg', 'op'=>'rss'])}"
+								class="layui-btn layui-btn-primary">取消</a>
+							<input type="hidden" name="token" value="{$_W['token']}" />
+						</div>
+					</div>
+
+					<div class="layui-form-item">
+						<label class="layui-form-label">提醒</label>
+						<div class="layui-input-block">
+							<div class="layui-form-mid layui-word-aux">
+								<div style="color: #1E9FFF;">需要在微信小程序后台添加服务类目才能正常使用</div>
+								<div>体育 -> 体育场馆服务</div>
+							</div>
+						</div>
+					</div>
+
+				</form>
+
+				<script>
+					layui.use('form', function(){
+						var form = layui.form;
+
+						form.on('submit(save)', function(data){
+							let subType = data.elem.dataset.type;
+							let url = "{php echo webUrl('', ['do'=>'module/tpl_msg', 'op'=>'rss_post'])}";
+							var $obj = $(this);
+
+							if (!$obj.hasClass('lock')) {
+								$obj.addClass('lock'); // 不能再点击
+
+								$.ajax({
+									type: "POST",
+									url: url,
+									dataType: 'json',
+									data: data.field,
+									success: function (rs) {
+										if (rs && rs.code.toString() === '0') {
+											layer.msg('保存成功' , {
+												time: 500
+											}, function () {
+												if (subType && subType.toString() === 'saveAndAdd') {
+													window.location.href = "{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'rss_post'])}";
+												} else {
+													window.location.href = "{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'rss'])}";
+												}
+											});
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+											});
+										}
+										$obj.removeClass('lock');
+									},
+									error: function () {
+										layer.msg('保存过程发生错误，请与管理员联系', {
+											offset: '20%',
+										});
+										$obj.removeClass('lock');
+									}
+								});
+							}
+
+							return false;
+						});
+					});
+				</script>
+			</div>
+
+
+		{else if $operation == 'sms'}
+			<div>
+				<div class="layui-form">
+					<div class="box-tools">
+						<div class="box-search">
+							<div class="layui-input-inline">
+								<input type="text" name="keyword" value="{$keyword}" class="layui-input"
+									placeholder="标题">
+							</div>
+							<div class="layui-input-inline">
+								<button class="layui-btn" lay-submit lay-filter="table-search"
+									id="table-search">搜索</button>
+							</div>
+						</div>
+					</div>
+					<div class="box-list-img">
+						<table id="sl-table" lay-filter="sl-table"></table>
+					</div>
+				</div>
+
+				<div class="script">
+					<script type="text/html" id="toolbar">
+						<div class="layui-btn-container">
+							<button class="layui-btn layui-btn-sm" lay-event="add">
+								添加</button>
+							<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">
+								删除</button>
+						</div>
+					</script>
+					<script type="text/html" id="operation">
+						<div class="box-btn-panel">
+							<button class="layui-btn layui-btn-sm" lay-event="edit" title="ID:{{d.id}}">
+								编辑
+							</button>
+							<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del"
+								title="ID:{{d.id}}">
+								删除
+							</button>
+						</div>
+					</script>
+					<script>
+						layui.use(['laypage', 'layer', 'table', 'form'], function() {
+							my_laypage = layui.laypage;
+							my_layer = layui.layer;
+							my_table = layui.table;
+							my_form = layui.form;
+
+							url_post = "{php echo webUrl('',['do'=>'module/tpl_msg','op' =>'sms_post'])}";
+							url_list = "{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'sms_list'])}";
+							url_delete = "{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'sms_delete'])}";
+
+							table_list = my_table.render({
+								elem: '#sl-table'
+								, toolbar: '#toolbar'
+								, even: false
+								, url: url_list
+								, cols: [[
+									// type: 'numbers',
+									{type: 'checkbox'}
+									, {field: 'sl_title', title: "标题", sort: true}
+									, {field: 'status_format', title: "搜索", sort: true}
+									, {title: "操作", width: 160, templet: '#operation', fixed: 'right'}
+								]]
+								, height: 'full-190'
+								, page: {
+									theme: '#1E9FFF'
+								}
+							});
+						});
+					</script>
+				</div>
+			</div>
+
+
+		{else if $operation == 'sms_post'}
+			<div>
+				<form class="layui-form" action="" method="post" enctype="multipart/form-data">
+					<input type="hidden" name="id" value="{$one['id']}" />
+					<div>
+						<!-- 状态 -->
+						<div class="layui-form-item">
+							<label class="layui-form-label">状态</label>
+							<div class="layui-input-block">
+								<input type="radio" name="status" value="1" title="启用"
+									{if $one['status']==1 || empty($one['id']) }checked{/if}>
+								<input type="radio" name="status" value="0" title="禁用"
+									{if $one['status']==0 && $one['id'] }checked{/if}>
+							</div>
+						</div>
+						<!-- 标题 -->
+						<div class="layui-form-item">
+							<label class="layui-form-label">标题</label>
+							<div class="layui-input-block">
+								<input type="text" name="sl_title" lay-verify="required"
+									value="{$one['sl_title']}" class="layui-input">
+							</div>
+						</div>
+						<!-- 短信平台 -->
+						<div class="layui-form-item">
+							<label class="layui-form-label">短信平台</label>
+							<div class="layui-input-block">
+								<?php $support_msgs = [
+									'Alidysmslite' => '阿里云',
+								]; ?>
+								<select name="options[type]">
+									{loop $support_msgs $index $item}
+										{php $type_selected = ($setting['type'] == $index) ? 'selected' : ''; }
+									<option value="{$index}" {php echo $type_selected; }>{$item}</option>
+									{/loop}
+								</select>
+								<div class="layui-form-mid layui-word-aux">
+									<span style="color: red;">15分钟内只会收到一条信息</span>
+									<span>目前只支持阿里云</span>
+								</div>
+							</div>
+						</div>
+						<!-- 短信Appkey -->
+						<div class="layui-form-item">
+							<label class="layui-form-label">短信Appkey</label>
+							<div class="layui-input-block">
+								<input type="text" name="options[appkey]"
+								value="{$setting['appkey']}" class="layui-input">
+							</div>
+						</div>
+						<!-- 短信secret -->
+						<div class="layui-form-item">
+							<label class="layui-form-label">短信secret</label>
+							<div class="layui-input-block">
+								<input type="password" name="options[secret]"
+								value="{$setting['secret']}" class="layui-input">
+							</div>
+						</div>
+						<!-- 短信签名 -->
+						<div class="layui-form-item">
+							<label class="layui-form-label">短信签名</label>
+							<div class="layui-input-block">
+								<input type="text" name="options[sign]"
+								value="{$setting['sign']}" class="layui-input">
+								<div class="layui-form-mid layui-word-aux">用于发送短信的签名，例如：深蓝网络</div>
+							</div>
+						</div>
+						<!-- 短信模板ID -->
+						<div class="layui-form-item">
+							<label class="layui-form-label">短信模板ID</label>
+							<div class="layui-input-block">
+								<input type="text" name="options[sms_id]"
+								value="{$setting['sms_id']}" class="layui-input">
+								<div class="layui-form-mid layui-word-aux">
+									例如SMS_9626548，模板DEMO（报告老板，在 ${time} 有新的预约，请及时处理。）
+									${time}=时间，${phone}=手机号
+								</div>
+							</div>
+						</div>
+						<!-- 测试短信号码 -->
+						<div class="layui-form-item">
+							<label class="layui-form-label">测试短信号码</label>
+							<div class="layui-input-block">
+								<input type="text" name="options[mobile]"
+								value="{$setting['mobile']}" class="layui-input">
+								<div class="layui-form-mid layui-word-aux">例如 13579246810</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="layui-tab-content fixed" id="data-submit">
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button class="layui-btn" lay-submit lay-filter="save">保存</button>
+								<button class="layui-btn" lay-submit lay-filter="save"
+								data-type="saveAndAdd">保存并新增</button>
+								<a href="{php echo webUrl('',['do'=>'module/tpl_msg'])}"
+									class="layui-btn layui-btn-primary">取消</a>
+								<input type="hidden" name="token" value="{$_W['token']}" />
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<script>
+					layui.use('form', function(){
+						var form = layui.form;
+
+						form.on('submit(save)', function(data){
+							let subType = data.elem.dataset.type;
+							let url = "{php echo webUrl('', ['do'=>'module/tpl_msg', 'op'=>'post'])}";
+							var $obj = $(this);
+
+							if (!$obj.hasClass('lock')) {
+								$obj.addClass('lock'); // 不能再点击
+
+								$.ajax({
+									type: "POST",
+									url: url,
+									dataType: 'json',
+									data: data.field,
+									success: function (rs) {
+										if (rs && rs.code.toString() === '0') {
+											layer.msg('保存成功' , {
+												time: 500
+											}, function () {
+												if (subType && subType.toString() === 'saveAndAdd') {
+													window.location.href = "{php echo webUrl('',['do'=>'module/tpl_msg','op'=>'post'])}";
+												} else {
+													window.location.href = "{php echo webUrl('',['do'=>'module/tpl_msg'])}";
+												}
+											});
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+											});
+										}
+										$obj.removeClass('lock');
+									},
+									error: function () {
+										layer.msg('保存过程发生错误，请与管理员联系', {
+											offset: '20%',
+										});
+										$obj.removeClass('lock');
+									}
+								});
+							}
+
+							return false;
+						});
+					});
+				</script>
+			</div>
+
+
+		{/if}
+
+		{if $operation == 'sync'}
+			<div class="layui-form-item">
+				<label class="layui-form-label">提示</label>
+				<div class="layui-input-block">
+					<div class="layui-form-mid layui-word-aux">微信小程序模板消息同步到本地服务器，请注意备份</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label"></label>
+				<div class="layui-input-block">
+					<div class="layui-form-mid layui-word-aux">
+						<span style="color: red;font-weight: bold;">注：没什么事，请不要轻易乱点同步，导致数据丢失后果自己承担</span>
+					</div>
+				</div>
+			</div>
+			<form class="layui-form" action="" method="post" enctype="multipart/form-data">
+				<div class="layui-form-item">
+					<div class="layui-input-block">
+						<button class="layui-btn" lay-submit lay-filter="save">同步</button>
+						<input type="hidden" name="token" value="{$_W['token']}" />
+					</div>
+				</div>
+			</form>
+
+			<script>
+				layui.use('form', function(){
+					var form = layui.form;
+
+					form.on('submit(save)', function(data){
+						let url = "{php echo webUrl('', ['do'=>'module/tpl_msg', 'op'=>'sync'])}";
+						var $obj = $(this);
+
+						if (!$obj.hasClass('lock')) {
+							$obj.addClass('lock'); // 不能再点击
+
+							$.ajax({
+								type: "POST",
+								url: url,
+								dataType: 'json',
+								data: data.field,
+								success: function (rs) {
+
+									if (rs && rs.code.toString() === '0') {
+										layer.msg(rs.data , {
+											offset: '20%',
+											time: 1000
+										}, function () {
+											window.location.href = "{php echo webUrl('', ['do'=>'module/tpl_msg'])}";
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+										});
+									}
+									$obj.removeClass('lock');
+								},
+								error: function () {
+									layer.msg('保存过程发生错误，请与管理员联系', {
+										offset: '20%',
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						}
+						return false;
+					});
+				});
+			</script>
+		{/if}
+
+		</div>
+	</div>
+
+	<div id="img-openid">
+		<img src="{MODULE_URL}template/public/image/get-openid.png" alt="get-openid">
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

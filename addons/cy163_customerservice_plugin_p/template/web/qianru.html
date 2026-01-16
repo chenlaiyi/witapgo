@@ -1,0 +1,20 @@
+{template 'common/header'}
+<div class="we7-page-title">嵌入设置（插件）</div>
+<div class="alert alert-info">原始 qianru 模板缺失，已提供基础占位页面。请在代码逻辑中继续保存/展示所需字段。</div>
+{if !empty($cservicelist)}
+  <table class="table table-hover">
+    <thead><tr><th>ID</th><th>客服</th><th>脚本预览</th></tr></thead>
+    <tbody>
+    {loop $cservicelist $item}
+      <tr>
+        <td>{$item['id']}</td>
+        <td>{$item['name']}</td>
+        <td><textarea class="form-control" rows="3">{php echo htmlspecialchars_decode($item['scripthtml']);}</textarea></td>
+      </tr>
+    {/loop}
+    </tbody>
+  </table>
+{else}
+  <div class="text-center text-muted">暂无数据</div>
+{/if}
+{template 'common/footer'}

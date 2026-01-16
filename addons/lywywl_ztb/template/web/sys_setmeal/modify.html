@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">系统</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebUrl('sys_setmeal', array('act' => 'index'));}">套餐列表</a>
+                            </li>
+                            <li class="active"><a href="#">{if !empty($model['id'])}编辑{else}创建{/if}套餐</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <form class="form-horizontal" name="form_content" id="form_content" method="post">
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title"><i class="fa fa-circle-o"></i> {if !empty($model['id'])}编辑{else}创建{/if}套餐信息</h3>
+                                        <div class="box-tools pull-right">
+                                            <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="name" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>充值套餐名称</label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control" datatype="*" id="name" maxlength="20" name="model[name]" nullmsg="请输入充值套餐名称！" placeholder="请输入充值套餐名称" type="text" value="{$model['name']}"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="money" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>套餐支付金额</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="money" maxlength="10" name="model[money]"  placeholder="请输入购买套餐需要支付的金额"
+                                                      onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}" onblur = "this.value=FloatMoney(this.value)"  step="0.01" type="number" value="{$model['money']}"/>
+                                                    <span class="input-group-addon">元</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请填写用户购买概套餐所需要支付的金额，<code>同时用户账户余额也可用于套餐的支付</code>。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="day" class="col-sm-2 control-label"><span class="text-red">(*)</span>充值续费天数</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="day" maxlength="10" name="model[day]" placeholder="请输入支付购买后可使用天数"
+                                                           onkeyup="this.value=this.value.replace(/\D/g,'')"
+                                                           onafterpaste="this.value=this.value.replace(/\D/g,'')" step="1" type="number" value="{$model['day']}"/>
+                                                    <span class="input-group-addon">天</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请填写商家支付购买后账户累加使用的天数，<code>到期账户将在充值时间进行累加、未到期账户将在到期时间上进行累加</code>。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="create_num" class="col-sm-2 control-label"><span class="text-red">(*)</span>可创建活动数量</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="create_num" maxlength="10" name="model[create_num]" placeholder="请输入可创建活动数量"
+                                                           step="1" max="10000" type="number" value="{$model['create_num']}"/>
+                                                    <span class="input-group-addon">次</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请填写商家支付购买后账户可创建活动数量，<code>-1为不限次数</code>。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>套餐专属客服</label>
+                                            <div class="col-sm-10">
+                                                <select id="service_id" name="model[service_id]" class="form-control select2" style = "width: 100%;">
+                                                    <option value="0" >请选择</option>
+                                                    {loop $serviceList $service}
+                                                    <option value="{$service['id']}" {if $service['id'] == $model['service_id']} selected="selected"{/if}>{$service['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 请选择该套餐的专属咨询客服，不设置请留空。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>热门推荐套餐</label>
+                                            <div class="col-sm-10">
+                                                <label>
+                                                    <input type="radio" name="model[is_hot]" id="is_hot0" class="flat-blue" value="0" {if $model['is_hot']==0} checked {/if}> 关闭
+                                                </label>&nbsp;&nbsp;
+                                                <label>
+                                                    <input type="radio" name="model[is_hot]" id="is_hot1" class="flat-blue" value="1" {if $model['is_hot']==1} checked {/if}> 开启
+                                                </label>&nbsp;&nbsp;
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 开启后将在套餐选项卡右上角展示热门图标。</p>
+                                            </div>
+                                        </div>
+                                        {if $plug_storeinvite}
+                                        <div class="form-group">
+                                            <label for="money" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>分销一级返利</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="invite_rebate_money" maxlength="10" name="model[invite_rebate_money]"  placeholder="请输入分销一级返利金额"
+                                                           onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}" onblur = "this.value=FloatMoney(this.value)"  step="0.01" type="number" value="{$model['invite_rebate_money']}"/>
+                                                    <span class="input-group-addon">元</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong>商家分销一级返利，<code>商家邀请其他商家入驻购买套餐，一级返利金额</code> 。</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="money" class="col-sm-2 control-label"><span
+                                                    class="text-red">(*)</span>分销二级返利</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input class="form-control" id="invite_rebate2_money" maxlength="10" name="model[invite_rebate2_money]"  placeholder="请输入分销二级返利金额"
+                                                           onkeyup = "if(isNaN(this.value)){this.value='0.00';}else{this.value}" onblur = "this.value=FloatMoney(this.value)"  step="0.01" type="number" value="{$model['invite_rebate2_money']}"/>
+                                                    <span class="input-group-addon">元</span>
+                                                </div>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> </strong>商家分销二级返利，<code>商家邀请其他商家入驻购买套餐，二级返利金额</code> 。</p>
+                                            </div>
+                                        </div>
+                                        {/if}
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label"><span class="text-red">(*)</span>充值套餐内容</label>
+                                            <div class="col-sm-10">
+                                                {php echo tpl_ueditor('model[content]',$model['content']);}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="status2" class="col-sm-2 control-label">充值套餐状态</label>
+                                            <div class="col-sm-10">
+                                                <input data-off-text="关闭" data-on-text="开启" data-size="mini" id="status"
+                                                       type="checkbox" value="true" {if $model['status']==1}checked{/if}/>
+                                                <input id="status2" name="model[status]" type="hidden"
+                                                       value="{$model['status']}"/>
+                                                <p class="help-block"><strong class="text-danger">提示：</strong> 选择套餐开启/关闭状态，关闭套餐后充值列表中将不在显示该套餐信息</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sort" class="col-sm-2 control-label">
+                                                <span class="text-red">(*)</span>充值套餐排序
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input class="form-control"  datatype="n" id="sort" name="model[sort]" nullmsg="信息排序必须填写！" onkeyup="if(isNaN(this.value)) this.value='0';" placeholder="请输入信息排序字段" type="text" value="{$model['sort']}">
+                                                <p class="help-block">请输入数字 例如：1|6|10等数字，注意：此字段只能为数字 信息将按照排序字段正序排列</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <input id="id" name="id" type="hidden" value="{$model['id']}"/>
+                                                <input type="hidden" name="token" value="{$_W['token']}"/>
+                                                <input type="hidden" name="submit" value="submit"/>
+                                                <button type="submit" class="btn btn-primary" id="SubmitBtn">
+                                                    <i class="fa fa-pencil"></i> 提交
+                                                </button>
+                                                <button type="reset" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> 重置
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script>
+    $(function () {
+        SelectNav("充值套餐");
+
+        myrequire(['select2','bootstrap-switch','icheck', 'validform'], function () {
+
+            //初始化icheck控件radio
+            $('input[type="checkbox"].flat-blue, input[type="radio"].flat-blue').iCheck({
+                checkboxClass: 'icheckbox_flat-blue',
+                radioClass: 'iradio_flat-blue'
+            });
+
+            //绑定更改状态操作
+            $('#status').bootstrapSwitch({
+                onSwitchChange: function (event, state) {
+                    var status = state ? 1 : 0;
+                    $("#status2").val(status);
+                }
+            });
+
+            //初始化select2控件
+            $(".select2").select2();
+
+            //为formContent 添加验证事件
+            $("#form_content").Validform({
+                tiptype: function (msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type == 2) {
+                            //loading带文字
+                            layer.open({
+                                type: 2
+                                , content: '数据提交中'
+                                , time: 999 //999秒后自动关闭
+                            });
+                        } else {
+                            layer.closeAll();
+                            layer.open({
+                                content: msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    }
+                },
+                ajaxPost: true,
+                tipSweep: true,
+                beforeSubmit: function (curform) {
+                    $("#SubmitBtn").attr("disabled", true);
+                },
+                callback: function (data) {
+                    layer.closeAll();
+                    if (data.status == 1) {
+                        Command: toastr["success"](data.msg, "成功提示");
+                        if (data.type == 1) {
+                            setTimeout(function () {
+                                window.location.href = "{php echo $this->createWebUrl('sys_setmeal', array('act' => 'index'));}";
+                            }, 2000);
+                        } else {
+                            setTimeout(function () {
+                                window.location.reload();
+                            }, 2000);
+                        }
+                    }
+                    else if (data.status == "2") {
+                        Command: toastr["warning"](data.msg, "验证提示");
+                        $("#SubmitBtn").attr("disabled", false);
+                    }
+                    else {
+                        Command: toastr["error"](data.msg, "错误提示");
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 2000);
+                    }
+                }
+            });
+
+        });
+
+    });
+</script>
+</body>
+</html>

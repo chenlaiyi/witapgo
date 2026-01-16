@@ -1,0 +1,202 @@
+<official-account></official-account>
+<view class="app">
+    <view class="container" wx:if="{{banners.banner}}">
+        <view class="page-body">
+            <view class="page-section page-section-spacing swiper">
+                <swiper autoplay="{{autoplay}}" duration="{{duration}}" indicatorDots="{{indicatorDots}}" interval="{{interval}}">
+                    <block wx:for="{{banners.banner}}" wx:for-item="banner" wx:key="banners">
+                        <navigator openType="navigate" url="../detail/detail?url={{banner.link}}" wx:if="{{banner.link}}">
+                            <swiper-item>
+                                <image backgroundSize="cover" class="userinfo-avatar" src="{{banner.thumb}}"></image>
+                            </swiper-item>
+                        </navigator>
+                        <navigator openType="navigate" url="../home/home?schoolid={{schoolid}}" wx:else>
+                            <swiper-item>
+                                <image backgroundSize="cover" class="userinfo-avatar" src="{{banner.thumb}}"></image>
+                            </swiper-item>
+                        </navigator>
+                    </block>
+                </swiper>
+            </view>
+        </view>
+    </view>
+    <swiper autoplay="true" circviewar="true" class="swiper_container" interval="2000" vertical="true" wx:if="{{banners.bannername}}">
+        <swiper-item wx:for="{{banners.bannername}}" wx:key="gonggao">
+            <view class="swiper_item">{{item}}</view>
+        </swiper-item>
+    </swiper>
+    <view class="btnList" style="border-bottom:none;height:{{centerheight}}" wx:if="{{centericon.length>=1}}">
+        <view class="ul">
+            <view class="li" style="float: center; display: block; aviewgn: 25%;">
+                <view class="btnDiv" wx:for="{{centericon}}" wx:key="centericon">
+                    <navigator openType="navigate" url="../detail/detail?url={{item.url}}">
+                        <view class="ico">
+                            <image src="{{item.icon}}" style="-webkit-touch-callout: none; -webkit-user-select: none;"></image>
+                        </view>
+                        <view class="span">{{item.name}}</view>
+                    </navigator>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view wx:if="{{tuijian.length>=1}}">
+        <view class="clear"></view>
+        <view class="clear"></view>
+        <view class="newsList" style="border-bottom: unset;">
+            <view class="title" style="line-height:27px;font-size:15px;vertical-align: middle;text-align: center;">
+                <span class="line1" style="vertical-align: 10%;margin-right:10px"></span>
+                <span style="white-space:pre;"></span>
+                <span>    推荐课程   </span>
+                <span style="white-space:pre;"></span>
+                <span class="line1" style="vertical-align: 10%;margin-left:11px;"></span>
+            </view>
+        </view>
+        <view class="showPic" style="padding:12px;" wx:for="{{tuijian}}" wx:key="tuijian">
+            <view class="box_swipe" style="  max-width: 640px;  margin: 0 auto;  margin-bottom: 0px;">
+                <view class="box_swipeul">
+                    <view class="box_swipeli" style="height: 160px;">
+                        <navigator openType="navigate" url="../detail/detail?url={{item.url}}">
+                            <image class="tjimg" src="{{item.icon}}"></image>
+                        </navigator>
+                        <span class="title11" style="color:#fff;width:70%;padding: unset;z-index:2; height: 25px;font-size: 15px;padding-left:9px;">{{item.name}}</span>
+                        <span class="title11" style="color:#fbff4c;width:30%;float:right;text-align:left;padding-left:297px;height:25px;font-size:15px;">{{item.pirce}}</span>
+                    </view>
+                </view>
+                <view style="background-color: rgba(14, 14, 14, 0.65);height: 30px;margin-top: -35px;"></view>
+            </view>
+        </view>
+    </view>
+    <view wx:if="{{kecheng.length>=1}}">
+        <view class="clear"></view>
+        <view class="clear"></view>
+        <view class="appointment">
+            <view class="app-title">精品课程
+        <navigator class="more1" openType="navigate" url="../detail/detail?url={{morekc}}">
+                    <view class="app-title1" style="display:flex;justify-content:flex-end;">更多</view>
+                </navigator>
+            </view>
+            <navigator openType="navigate" url="../detail/detail?url={{item.url}}" wx:for="{{kecheng}}" wx:key="kecheng">
+                <view class="top1">
+                    <view class="top-tr">
+                        <image class="top-trimg" src="{{item.icon}}"></image>
+                    </view>
+                    <view class="top1-info">
+                        <view class="toin-name">{{item.name}}</view>
+                        <view class="toin-info">{{item.renshu}}</view>
+                        <view class="toin-pirce">{{item.pirce}}<view class="kcinfo">查看详情</view>
+                        </view>
+                    </view>
+                </view>
+            </navigator>
+        </view>
+    </view>
+    <view wx:if="{{xygg.length>=1}}">
+        <view class="clear"></view>
+        <view class="clear"></view>
+        <view class="appointment">
+            <view class="app-title">校园公告
+        <navigator class="more1" openType="navigate" url="../detail/detail?url={{xxgglist}}">
+                    <view class="app-title1" style="display:flex;justify-content:flex-end;">更多</view>
+                </navigator>
+            </view>
+            <navigator openType="navigate" url="../detail/detail?url={{item.url}}" wx:for="{{xygg}}" wx:key="xygg">
+                <view class="top">
+                    <view class="top-tr">
+                        <image class="top-trimg" src="{{item.icon}}"></image>
+                    </view>
+                    <view class="top-info">
+                        <view class="toin-name">{{item.title}}</view>
+                        <view class="toin-info">{{item.description}}</view>
+                    </view>
+                </view>
+            </navigator>
+        </view>
+    </view>
+    <view wx:if="{{xyxw.length>=1}}">
+        <view class="clear"></view>
+        <view class="clear"></view>
+        <view class="appointment">
+            <view class="app-title">校园新闻
+        <navigator class="more1" openType="navigate" url="../detail/detail?url={{xxxwlist}}">
+                    <view class="app-title1" style="display:flex;justify-content:flex-end;">更多</view>
+                </navigator>
+            </view>
+            <navigator openType="navigate" url="../detail/detail?url={{item.url}}" wx:for="{{xyxw}}" wx:key="xyxw">
+                <view class="top">
+                    <view class="top-tr">
+                        <image class="top-trimg" src="{{item.icon}}"></image>
+                    </view>
+                    <view class="top-info">
+                        <view class="toin-name">{{item.title}}</view>
+                        <view class="toin-info">{{item.description}}</view>
+                    </view>
+                </view>
+            </navigator>
+        </view>
+    </view>
+    <view wx:if="{{xywz.length>=1}}">
+        <view class="clear"></view>
+        <view class="clear"></view>
+        <view class="appointment">
+            <view class="app-title">精美文选
+        <navigator class="more1" openType="navigate" url="../detail/detail?url={{xxwzlist}}">
+                    <view class="app-title1" style="display:flex;justify-content:flex-end;">更多</view>
+                </navigator>
+            </view>
+            <navigator openType="navigate" url="../detail/detail?url={{item.url}}" wx:for="{{xywz}}" wx:key="xywz">
+                <view class="top">
+                    <view class="top-tr">
+                        <image class="top-trimg" src="{{item.icon}}"></image>
+                    </view>
+                    <view class="top-info">
+                        <view class="toin-name">{{item.title}}</view>
+                        <view class="toin-info">{{item.description}}</view>
+                    </view>
+                </view>
+            </navigator>
+        </view>
+    </view>
+    <view class="clear" style="height:70px"></view>
+</view>
+<view class="common_mb_bg" wx:if="{{ismb}}"></view>
+<view class="hotel_footer">
+    <view class="ft_item {{item.ishome?'on':''}}" style="width:{{itemwiht}}" wx:for="{{footleft}}" wx:key="footleft">
+        <navigator openType="redirect" url="{{item.url}}">
+            <form reportSubmit="true">
+                <button class="login-user" data-btnid="{{item.id}}" data-name="footer" formType="submit">
+                    <image src="{{item.icon2}}" wx:if="{{item.ishome}}"></image>
+                    <image src="{{item.icon}}" wx:else></image>
+                    <text>{{item.name}}</text>
+                </button>
+            </form>
+        </navigator>
+    </view>
+    <view wx:if="{{center.length>=1}}">
+        <view class="mid" style="width:{{itemwiht}}">
+            <image animation="{{animPlus}}" bindtap="plus" class="img-plus-style" src="{{footercenter.icon}}" style="background-color:{{footercenter.color}};"></image>
+            <navigator openType="navigate" url="{{item.url}}" wx:for="{{center}}" wx:key="center">
+                <form reportSubmit="true">
+                    <button class="login-user" data-btnid="{{item.id}}" data-name="footer" formType="submit">
+                        <image animation="{{animCollect}}" bindtap="{{collect}}" class="img-style" src="{{item.icon}}" style="background-color:{{item.color}}" wx:if="{{item.ssort==1}}"></image>
+                        <image animation="{{animTranspond}}" bindtap="{{transpond}}" class="img-style" src="{{item.icon}}" style="background-color:{{item.color}}" wx:elif="{{item.ssort==2}}"></image>
+                        <image animation="{{animInput}}" bindtap="{{input}}" class="img-style" src="{{item.icon}}" style="background-color:{{item.color}}" wx:elif="{{item.ssort==3}}"></image>
+                        <view animation="{{animCollect1}}" bindtap="{{collect1}}" class="centertxet" style="color:#fff;font-size:13px;" wx:if="{{item.ssort==1}}">{{item.name}}</view>
+                        <view animation="{{animTranspond1}}" bindtap="{{transpond1}}" class="centertxet" style="color:#fff;font-size:13px;" wx:if="{{item.ssort==2}}">{{item.name}}</view>
+                        <view animation="{{animInput1}}" bindtap="{{input1}}" class="centertxet" style="color:#fff;font-size:13px;" wx:if="{{item.ssort==3}}">{{item.name}}</view>
+                    </button>
+                </form>
+            </navigator>
+        </view>
+    </view>
+    <view class="ft_item {{item.ishome?'on':''}}" style="width:{{itemwiht}}" wx:for="{{footright}}" wx:key="footright">
+        <navigator openType="redirect" url="{{item.url}}">
+            <form reportSubmit="true">
+                <button class="login-user" data-btnid="{{item.id}}" data-name="footer" formType="submit">
+                    <image src="{{item.icon2}}" wx:if="{{item.ishome}}"></image>
+                    <image src="{{item.icon}}" wx:else></image>
+                    <text>{{item.name}}</text>
+                </button>
+            </form>
+        </navigator>
+    </view>
+</view>

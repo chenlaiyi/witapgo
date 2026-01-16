@@ -1,0 +1,50 @@
+<div class="form-group">
+    <label class="col-lg control-label">新生机构名称</label>
+    <div class="col-sm-9 col-xs-12">
+        {ifp 'unionpay.set.edit'}
+        <input type='text' class='form-control' name='data[hnapay_realname]' value="{$data['hnapay_realname']}" />
+        {else}
+        <div class='form-control-static'>{$data['hnapay_realname']}</div>
+        {/if}
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg control-label">新生机构编号</label>
+    <div class="col-sm-9 col-xs-12">
+        {ifp 'unionpay.set.edit'}
+        <input type='text' class='form-control' name='data[hnapay_channelId]' value="{$data['hnapay_channelId']}" />
+        {else}
+        <div class='form-control-static'>{$data['hnapay_channelId']}</div>
+        {/if}
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg control-label">新生机构密钥</label>
+    <div class="col-sm-9 col-xs-12">
+        {ifp 'unionpay.set.edit'}
+        <input type='text' class='form-control' name='data[hnapay_secret]' value="{$data['hnapay_secret']}" />
+        {else}
+        <div class='form-control-static'>{$data['hnapay_secret']}</div>
+        {/if}
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg control-label">新生结算费率</label>
+    <div class="col-sm-9 col-xs-12">
+        {ifp 'unionpay.set.edit'}
+        <input type='text' class='form-control' name='data[hnapay_feilv]' value="{$data['hnapay_feilv']}" />
+        {else}
+        <div class='form-control-static'>{$data['hnapay_feilv']}</div>
+        {/if}
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg control-label">新生银联1000+结算费率</label>
+    <div class="col-sm-9 col-xs-12">
+        {ifp 'unionpay.set.edit'}
+        <input type='text' class='form-control' name='data[hnapay_upfeilv]' value="{$data['hnapay_upfeilv']}" />
+        {else}
+        <div class='form-control-static'>{$data['hnapay_upfeilv']}</div>
+        {/if}
+    </div>
+</div>

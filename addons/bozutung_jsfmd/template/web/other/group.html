@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li {if $operation == 'display'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('',['do'=>'other/group'])}">操作员管理</a>
+					</li>
+					{if $operation == 'admin_post' && empty($one['id']) }
+					<li class="layui-this">
+						<a href="{php echo webUrl('',['do'=>'other/group','op'=>'admin_post'])}">添加</a>
+					</li>
+					{/if}
+					{if $operation == 'admin_post' && ($one['id']) }
+					<li class="layui-this">
+						<a href="{php echo webUrl('',['do'=>'other/group','op'=>'admin_post','id'=>$one['id']])}">编辑</a>
+					</li>
+					{/if}
+					<li {if $operation == 'role'} class="layui-this" {/if}>
+						<a href="{php echo webUrl('',['do'=>'other/group','op'=>'role'])}">角色管理</a>
+					</li>
+					{if $operation == 'role_post' && empty($one['id']) }
+					<li class="layui-this">
+						<a href="{php echo webUrl('',['do'=>'other/group','op'=>'role_post'])}">添加</a>
+					</li>
+					{/if}
+					{if $operation == 'role_post' && ($one['id']) }
+					<li class="layui-this">
+						<a href="{php echo webUrl('',['do'=>'other/group','op'=>'role_post','id'=>$one['id']])}">编辑</a>
+					</li>
+					{/if}
+					{if $operation == 'authorize' }
+					<li class="layui-this">
+						<a href="{php echo webUrl('',['do'=>'other/group','op'=>'authorize','id'=>$one['id']])}">权限</a>
+					</li>
+					{/if}
+				</ul>
+			</div>
+
+		{if $operation == 'display'}
+			<div>
+				<div class="layui-form">
+					<div class="box-tools">
+						<div class="box-search">
+							<div class="layui-input-inline">
+								<input type="text" name="keyword" value="{$keyword}" class="layui-input" placeholder="标题">
+							</div>
+							<div class="layui-input-inline">
+								<button class="layui-btn" lay-submit lay-filter="table-search" id="table-search">搜索</button>
+							</div>
+						</div>
+					</div>
+					<div class="box-list-img">
+						<table id="sl-table" lay-filter="sl-table"></table>
+					</div>
+				</div>
+
+				<div class="script">
+					<script type="text/html" id="toolbar">
+						<div class="layui-btn-container">
+							<button class="layui-btn layui-btn-sm" lay-event="add">添加</button>
+							<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">批量删除</button>
+						</div>
+					</script>
+					<script type="text/html" id="thumb">
+						<div class="box-table-img">
+							<img src="{{d.out_thumb_url}}" data-url="{{d.out_thumb_url}}"
+								onerror="this.src='{MODULE_URL}template/public/image/nopic.png'">
+						</div>
+					</script>
+					<script type="text/html" id="operation">
+						<a href="javascript:;" class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+						<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del">删除</a>
+					</script>
+					<script>
+						layui.use(['laypage', 'layer', 'table', 'form'], function() {
+							my_laypage = layui.laypage;
+							my_layer = layui.layer;
+							my_table = layui.table;
+							my_form = layui.form;
+
+							url_post = "{php echo webUrl('',['do'=>'other/group','op' =>'admin_post'])}";
+							url_list = "{php echo webUrl('',['do'=>'other/group','op'=>'admin_list'])}";
+							url_delete = "{php echo webUrl('',['do'=>'other/group','op'=>'admin_delete'])}";
+
+							table_list = my_table.render({
+								elem: '#sl-table'
+								, toolbar: '#toolbar'
+								, even: false
+								, url: url_list
+								, cols: [[
+									// type: 'numbers',
+									{type: 'checkbox'}
+									, {field: 'id', width: 60, title: 'ID', sort: true}
+									, {field: 'sort', title: '排序', width: '7%', sort: true}
+									, {field: 'user_name', title: '用户(平台)', sort: true}
+									, {field: 'role', title: '角色', sort: true}
+									, {field: 'last_time', title: '最后登录时间', sort: true}
+									, {field: 'status_format', title: '状态', width: 80, sort: true}
+									, {field: 'mark', title: '备注', sort: true}
+									, {title: '操作', width: 160, templet: '#operation'}
+								]]
+								, height: 'full-190'
+								, page: {
+									theme: '#1E9FFF'
+								}
+							});
+						});
+					</script>
+				</div>
+			</div>
+
+
+		{else if $operation == 'admin_post'}
+			<div>
+				<form class="layui-form fixed" action="" method="post" enctype="multipart/form-data" id="data-form">
+					<input type="hidden" name="id" value="{$one['id']}" />
+					<div class="layui-tab-content">
+						<!-- 状态 -->
+						<div class="layui-form-item">
+							<label class="layui-form-label">状态</label>
+							<div class="layui-input-block">
+								<input type="radio" name="status" value="1" title="启用"
+									{if $one['status']=='1' || empty($one['id']) }checked{/if}>
+								<input type="radio" name="status" value="0" title="禁用"
+									{if $one['status']=='0' && $one['id'] }checked{/if}>
+							</div>
+						</div>
+						<!-- 排序 -->
+						<div class="layui-form-item">
+							<label class="layui-form-label">排序</label>
+							<div class="layui-input-block">
+								<input type="text" name="sort" value="{$one['sort']}"
+									class="layui-input" placeholder="数字越大越靠前">
+							</div>
+						</div>
+						<!-- 平台用户 -->
+						<div class="layui-form-item">
+							<label class="layui-form-label">平台用户</label>
+							<div class="layui-input-block">
+								{php echo slwl_tpl_form_show_mp_user('mp_user_id', $one_user);}
+							</div>
+						</div>
+						<!-- 角色 -->
+						<div class="layui-form-item">
+							<label class="layui-form-label">角色</label>
+							<div class="layui-input-block">
+								<select name="group_id" lay-verify="required">
+									<option value="">请选择...</option>
+									{loop $role_list $index $item}
+										<option value="{$item['id']}" {if $item['id']==$one['id'] }selected{/if}>{$item['title']}</option>
+									{/loop}
+								</select>
+							</div>
+						</div>
+						<!-- 备注 -->
+						<div class="layui-form-item">
+							<label class="layui-form-label">备注</label>
+							<div class="layui-input-block">
+								<textarea name="mark" placeholder="备注" class="layui-textarea">{$one['mark']}</textarea>
+							</div>
+						</div>
+					</div>
+					<div class="layui-tab-content fixed" id="data-submit">
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button class="layui-btn" lay-submit lay-filter="save">保存</button>
+								<button class="layui-btn" lay-submit lay-filter="save" data-type="saveAndAdd">保存并新增</button>
+								<a href="{php echo webUrl('',['do'=>'other/group'])}" class="layui-btn layui-btn-primary">取消</a>
+								<input type="hidden" name="token" value="{$_W['token']}" />
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<script>
+					layui.use('form', function(){
+						var form = layui.form;
+
+						form.on('submit(save)', function(data){
+							let subType = data.elem.dataset.type;
+							let url = "{php echo webUrl('',['do'=>'other/group','op'=>'admin_post'])}";
+							var $obj = $(this);
+
+							if (!$obj.hasClass('lock')) {
+								$obj.addClass('lock'); // 不能再点击
+
+								$.ajax({
+									type: "POST",
+									url: url,
+									dataType: 'json',
+									data: data.field,
+									success: function (rs) {
+										if (rs && rs.code.toString() === '0') {
+											layer.msg('保存成功' , {
+												time: 500
+											}, function () {
+												if (subType && subType.toString() === 'saveAndAdd') {
+													window.location.href = "{php echo webUrl('',['do'=>'other/group','op'=>'admin_post'])}";
+												} else {
+													window.location.href = "{php echo webUrl('',['do'=>'other/group'])}";
+												}
+											});
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+											});
+										}
+										$obj.removeClass('lock');
+									},
+									error: function () {
+										layer.msg('保存过程发生错误，请与管理员联系', {
+											offset: '20%',
+										});
+										$obj.removeClass('lock');
+									}
+								});
+							}
+
+							return false;
+						});
+					});
+				</script>
+			</div>
+
+
+		{else if $operation == 'role'}
+			<div>
+				<div class="layui-form">
+					<div class="box-tools">
+						<div class="box-search">
+							<div class="layui-input-inline">
+								<input type="text" name="keyword" value="{$keyword}" class="layui-input" placeholder="标题">
+							</div>
+							<div class="layui-input-inline">
+								<button class="layui-btn" lay-submit lay-filter="table-search" id="table-search">搜索</button>
+							</div>
+						</div>
+					</div>
+					<div class="box-list-img">
+						<table id="role-table" lay-filter="role-table"></table>
+					</div>
+				</div>
+
+				<div class="script">
+					<script type="text/html" id="toolbar">
+						<div class="layui-btn-container">
+							<button class="layui-btn layui-btn-sm" lay-event="add">添加</button>
+							<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">批量删除</button>
+						</div>
+					</script>
+					<script type="text/html" id="thumb">
+						<div class="box-table-img">
+							<img src="{{d.out_thumb_url}}" data-url="{{d.out_thumb_url}}"
+								onerror="this.src='{MODULE_URL}template/public/image/nopic.png'">
+						</div>
+					</script>
+					<script type="text/html" id="operation">
+						<div class="td-button">
+							<a href="javascript:;" class="layui-btn layui-btn-sm" lay-event="authorize">权限</a>
+							<a href="javascript:;" class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+							<a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="del">删除</a>
+						</div>
+					</script>
+					<script>
+						layui.use(['laypage', 'layer', 'table', 'form'], function() {
+							my_laypage = layui.laypage;
+							my_layer = layui.layer;
+							my_table = layui.table;
+							my_form = layui.form;
+
+							url_post = "{php echo webUrl('',['do'=>'other/group','op' =>'role_post'])}";
+							url_list = "{php echo webUrl('',['do'=>'other/group','op'=>'role_list'])}";
+							url_delete = "{php echo webUrl('',['do'=>'other/group','op'=>'role_delete'])}";
+
+							let url_auth = "{php echo webUrl('',['do'=>'other/group','op' =>'authorize'])}";
+
+							table_list = my_table.render({
+								elem: '#role-table'
+								, toolbar: '#toolbar'
+								, even: false
+								, url: url_list
+								, cols: [[
+									// type: 'numbers',
+									{type: 'checkbox'}
+									, {field: 'id', width: 60, title: 'ID', sort: true}
+									, {field: 'sort', title: '排序', width: '8%', sort: true}
+									, {field: 'title', title: '角色名称', sort: true}
+									, {field: 'desc', title: '描述', sort: true}
+									, {field: 'status_format', title: '状态', width: '10%', sort: true}
+									, {title: '操作', width: 200, templet: '#operation'}
+								]]
+								, height: 'full-190'
+								, page: {
+									theme: '#1E9FFF'
+								}
+							});
+
+							//头工具栏事件
+							my_table.on('toolbar(role-table)', function (obj)
+							{
+								var checkStatus = my_table.checkStatus(obj.config.id);
+								switch (obj.event) {
+									case 'add':
+										window.location.href = url_post;
+										break;
+									case 'delete':
+										var obj_data = checkStatus.data;
+
+										if (obj_data == '') {
+											layer.msg('至少也得选一个吧', {offset: '20%'});
+											return false;
+										}
+										layer.msg('拼命加载中,请耐心等待...', {
+											icon: 16,
+											time: 0,
+											offset: '20%',
+											shade: 0.1,
+										});
+										var ids = [];
+										if (obj_data.length > 0) {
+											$.each(obj_data, function (i, e) {
+												ids.push(e.id);
+											});
+
+											funDelete(url_delete, ids, function(rst) {
+												layer.close(layer.index);
+												if (rst && rst['code']=='0') {
+													table_list.reload(); // 表格重载
+													layer.msg('成功删除', {
+														offset: '20%',
+													});
+												} else {
+													if (rst) {
+														layer.msg(rst['msg'], {
+															offset: '20%',
+														});
+													} else {
+														layer.msg('未知错误', {
+															offset: '20%',
+														});
+													}
+												}
+											});
+										} else {
+											layer.close(layer.index);
+											layer.msg('对象为空', {icon: 2});
+											return false;
+										}
+										break;
+									case 'isAll':
+										layer.msg(checkStatus.isAll ? '全选' : '未全选');
+										break;
+								};
+							});
+
+							//监听行工具事件
+							my_table.on('tool(role-table)', function (obj)
+							{
+								var obj_data = obj.data;
+								if (obj.event === 'del') {
+									var ids = [];
+									ids.push(obj_data.id);
+
+									funDelete(url_delete, ids, function(rst) {
+										if (rst && rst['code']=='0') {
+											obj.del();
+											layer.msg('成功删除', {
+												offset: '20%',
+											});
+										} else {
+											if (rst) {
+												layer.msg(rst['msg'], {
+													offset: '20%',
+												});
+											} else {
+												layer.msg('未知错误', {
+													offset: '20%',
+												});
+											}
+										}
+									});
+								} else if (obj.event === 'edit') {
+									window.location.href = url_post + '&id=' + obj_data.id;
+
+								} else if (obj.event === 'authorize') {
+									window.location.href = url_auth + '&id=' + obj_data.id;
+
+								}
+							});
+						});
+					</script>
+				</div>
+			</div>
+
+
+		{else if $operation == 'role_post'}
+			<div>
+				<form class="layui-form fixed" action="" method="post" enctype="multipart/form-data" id="data-form">
+					<input type="hidden" name="id" value="{$one['id']}" />
+					<div class="layui-tab-content">
+						<div class="layui-form-item">
+							<label class="layui-form-label">状态</label>
+							<div class="layui-input-block">
+								<input type="radio" name="status" value="1" title="启用"
+									{if $one['status']=='1' || empty($one['id']) }checked{/if}>
+								<input type="radio" name="status" value="0" title="禁用"
+									{if $one['status']=='0' && $one['id'] }checked{/if}>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">排序</label>
+							<div class="layui-input-block">
+								<input type="number" name="sort" min="1" oninput="if(value.length>10)value=value.slice(0,10)"
+									value="{$one['sort']}" class="layui-input" placeholder="数字越大越靠前">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">角色名称</label>
+							<div class="layui-input-block">
+								<input type="text" name="title_val" lay-verify="required" value="{$one['title']}" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">角色描述</label>
+							<div class="layui-input-block">
+								<textarea name="desc" placeholder="描述" class="layui-textarea">{$one['desc']}</textarea>
+							</div>
+						</div>
+					</div>
+					<div class="layui-tab-content fixed" id="data-submit">
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button class="layui-btn" lay-submit lay-filter="save">保存</button>
+								<button class="layui-btn" lay-submit lay-filter="save" data-type="saveAndAdd">保存并新增</button>
+								<a href="{php echo webUrl('',['do'=>'other/group','op'=>'role'])}" class="layui-btn layui-btn-primary">取消</a>
+								<input type="hidden" name="token" value="{$_W['token']}" />
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<script>
+					layui.use('form', function(){
+						var form = layui.form;
+
+						form.on('submit(save)', function(data){
+							let subType = data.elem.dataset.type;
+							let url = "{php echo webUrl('',['do'=>'other/group','op'=>'role_post'])}";
+							var $obj = $(this);
+
+							if (!$obj.hasClass('lock')) {
+								$obj.addClass('lock'); // 不能再点击
+
+								$.ajax({
+									type: "POST",
+									url: url,
+									dataType: 'json',
+									data: data.field,
+									success: function (rs) {
+										if (rs && rs.code.toString() === '0') {
+											layer.msg('保存成功' , {
+												time: 500
+											}, function () {
+												if (subType && subType.toString() === 'saveAndAdd') {
+													window.location.href = "{php echo webUrl('',['do'=>'other/group','op'=>'role_post'])}";
+												} else {
+													window.location.href = "{php echo webUrl('',['do'=>'other/group','op'=>'role'])}";
+												}
+											});
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+											});
+										}
+										$obj.removeClass('lock');
+									},
+									error: function () {
+										layer.msg('保存过程发生错误，请与管理员联系', {
+											offset: '20%',
+										});
+										$obj.removeClass('lock');
+									}
+								});
+							}
+							return false;
+						});
+					});
+				</script>
+			</div>
+
+
+		{else if $operation == 'authorize'}
+			<div>
+				<style>
+					.authorize .panel { padding: 30px; }
+				</style>
+				<form class="layui-form fixed" action="" method="post" enctype="multipart/form-data" id="data-form">
+					<input type="hidden" name="id" value="{$one['id']}" />
+					<div class="layui-tab-content">
+						{loop $sys_menu $index $item}
+						<fieldset class="layui-elem-field authorize">
+							<legend>
+								<input type="checkbox" value="1" lay-skin="primary" lay-filter="checkbox-all"
+									title="全选">
+								<span>{$item['title']}</span>
+							</legend>
+							<div class="panel">
+								{loop $item['items'] $key $value}
+								<input type="checkbox" name="options[{$index}][{$key}]" value="1" lay-filter="checkbox-item"
+									lay-skin="primary" title="{$value['title']}" {if $value['checked'] }checked{/if} >
+								{/loop}
+							</div>
+						</fieldset>
+						{/loop}
+					</div>
+					<div class="layui-tab-content fixed" id="data-submit">
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button class="layui-btn" lay-submit lay-filter="save">保存</button>
+								<a href="{php echo webUrl('',['do'=>'other/group','op'=>'role'])}"
+									class="layui-btn layui-btn-primary">取消</a>
+								<input type="hidden" name="token" value="{$_W['token']}" />
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<script>
+					layui.use('form', function(){
+						var form = layui.form;
+
+						render(); // 刷新
+
+						form.on('submit(save)', function(data){
+							let subType = data.elem.dataset.type;
+							let url = "{php echo webUrl('',['do'=>'other/group','op'=>'authorize'])}";
+							var $obj = $(this);
+
+							if (!$obj.hasClass('lock')) {
+								$obj.addClass('lock'); // 不能再点击
+
+								$.ajax({
+									type: "POST",
+									url: url,
+									dataType: 'json',
+									data: data.field,
+									success: function (rs) {
+										if (rs && rs.code.toString() === '0') {
+											layer.msg('保存成功' , {
+												time: 500
+											}, function () {
+												window.location.href = "{php echo webUrl('',['do'=>'other/group','op'=>'role'])}";
+											});
+										} else {
+											layer.msg(rs.msg, {
+												offset: '20%',
+											});
+										}
+										$obj.removeClass('lock');
+									},
+									error: function () {
+										layer.msg('保存过程发生错误，请与管理员联系', {
+											offset: '20%',
+										});
+										$obj.removeClass('lock');
+									}
+								});
+							}
+							return false;
+						});
+
+						// 全选
+						form.on('checkbox(checkbox-all)', function(data){
+							let $obj = $(data.elem);
+							let checkbox_status = this.checked;
+							let $panel_item = $obj.closest('.authorize').find('.panel input[type=checkbox]');
+							$obj.closest('.authorize').find('.panel input[type=checkbox]').each(function (i, e) {
+								$(e).prop('checked', checkbox_status);
+							});
+							form.render('checkbox'); //刷新
+						});
+
+						// 元素选择
+						form.on('checkbox(checkbox-item)', function(data){
+							let _this = this;
+							let $obj = $(data.elem);
+							let $panel_item = $obj.closest('.panel').find('input[type=checkbox]');
+							let $panel_item_checked = $obj.closest('.panel').find('input[type=checkbox]:checked');
+							let $panel_authorize = $obj.closest('.authorize').find('legend input[type=checkbox]');
+
+							if (_this.checked) {
+								if ($panel_item.length == $panel_item_checked.length) {
+									$panel_authorize.prop('checked', true);
+									form.render('checkbox'); //刷新
+								}
+							} else {
+								$panel_authorize.prop('checked', false);
+								form.render('checkbox'); //刷新
+							}
+						});
+
+						function render() {
+							$('.authorize').each(function (i, e) {
+								let $elem = $(e);
+
+								let $panel_item = $elem.find('.panel input[type=checkbox]');
+								let $panel_item_checked = $elem.find('.panel input[type=checkbox]:checked');
+								let $panel_authorize = $elem.find('legend input[type=checkbox]');
+
+								console.log($panel_item.length);
+								console.log($panel_item_checked.length);
+								console.log($panel_item.length == $panel_item_checked.length);
+
+								if ($panel_item.length == $panel_item_checked.length) {
+									$panel_authorize.prop('checked', true);
+								}
+							});
+							form.render('checkbox'); //刷新
+						}
+					});
+				</script>
+			</div>
+
+		{/if}
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

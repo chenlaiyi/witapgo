@@ -1,0 +1,2 @@
+<?php
+ goto HRqkU; NqJ3w: include_once IA_ROOT . "\x2f\141\144\x64\157\156\x73\57" . $xcmodule . "\x2f\x63\x6f\155\155\157\x6e\x2f\x66\165\156\143\x74\151\x6f\x6e\56\x70\150\160"; goto pDdmE; lpa3g: global $xcmodule, $_W; goto pVVQZ; pVVQZ: $xcmodule = "\170\143\x5f\x62\x65\x61\165\x74\171"; goto NqJ3w; HRqkU: defined("\111\x4e\x5f\x49\101") or exit("\101\143\x63\x65\x73\x73\x20\104\145\x6e\151\x65\x64"); goto lpa3g; pDdmE: class xc_beauty_plugin_take_numberModuleWxapp extends WeModuleWxapp { }

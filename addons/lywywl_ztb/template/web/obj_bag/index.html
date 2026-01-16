@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{template 'web/common/header'}
+<style>
+    .we7-modal-dialog .modal-footer .btn, .modal-dialog .modal-footer .btn {
+        display: inline-block;
+        vertical-align: top;
+        min-width: 90px;  }
+    .we7-modal-dialog .modal-footer .btn+.btn, .modal-dialog .modal-footer .btn+.btn {
+        margin-left: 5px; margin-bottom: 10px;  }
+</style>
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {template 'web/common/top'}
+    <!-- 左侧导航 -->
+    {template 'web/common/sidebar'}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">活动</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="">活动列表</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <label for="SearchStore" class="col-sm-1 control-label">平台商家</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchStore">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $storeList $value}
+                                                    <option value="{$value['id']}">{$value['name']}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                            <label for="SearchKey" class="col-sm-1 control-label">活动名称</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="SearchKey"
+                                                       placeholder="活动名称/活动编号/活动TOKEN">
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchProcess">活动进度</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchProcess">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $timetype $type $value}
+                                                    <option value="{$type}">{$value}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <label class="control-label col-sm-1" for="SearchStatus">活动状态</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchStatus">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="1">启用</option>
+                                                    <option value="0">禁用</option>
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchTime">创建时间</label>
+                                            <div class="col-sm-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control pull-right" id="SearchTime"
+                                                           placeholder="开始时间 - 结束时间" readonly>
+                                                </div>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchCheckStatus">审核状态</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchCheckStatus">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    {loop $activityCheckStatus $index $types}
+                                                    <option value="{$index}">{$types}</option>
+                                                    {/loop}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索
+                                            </button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置检索</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="box" class="table-responsive">
+                                <div id="toolbar" class="btn-group">
+                                    <button id="btn_delete" type="button" class="btn btn-danger">
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;删除
+                                    </button>
+                                </div>
+                                <table id="tb_bandlist" class="table text-nowrap" data-reorderable-columns="true" ></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="copyTarget" style="opacity: 0;"></div>
+    </div>
+    <!-- 底部版权 -->
+    {template 'web/common/footer'}
+</div>
+<script id="datatpl" type="text/html">
+    <form class="form-horizontal" name="form_content" id="form_content" method="post">
+        <table class="table table-hover">
+            <tr>
+                <th width="20%">活动名称</th>
+                <td width="80%"><%= title %></td>
+            </tr>
+            <tr>
+                <th width="20%">活动状态</th>
+                <td width="80%"><%= check_statusname %></td>
+            </tr>
+            <tr>
+                <th width="20%">处理时间</th>
+                <td width="80%"><%= updatetime %></td>
+            </tr>
+            <% if(check_status != 2){ %>
+            <tr>
+                <th width="20%">驳回原因</th>
+                <td width="80%">
+                    <textarea class="form-control" cols="20" id="refuse" placeholder="驳回操作时请填写驳回原因..." rows="3"><%=check_note%></textarea>
+                </td>
+            </tr>
+            <% } %>
+
+            <tr>
+                <th width="20%">检测结果</th>
+                <td width="80%"><span id="span_ad_testing">点击下方检测按钮！</span></td>
+            </tr>
+        </table>
+    </form>
+</script>
+<script>
+    $(function () {
+        //设置选中导航
+        SelectNav("抢&nbsp;&nbsp;福&nbsp;&nbsp;袋");
+
+        require(["daterangepicker"], function () {
+            //时间搜索
+            $('#SearchTime').daterangepicker({
+                format: "YYYY/MM/DD"
+            });
+        });
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            myrequire(['bootstrap-table-zh-cn', 'bootstrap-table-editable','bootstrap-table-fixed-columns'], function () {
+                $(".select2").select2();
+                //1.初始化Table
+                var oTable = new TableInit();
+                oTable.Init();
+                //2.初始化Button的点击事件
+                var oButtonInit = new ButtonInit();
+                oButtonInit.Init();
+            });
+        });
+
+    });
+
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $('#tb_bandlist').bootstrapTable({
+                url: "{php echo $this->createWebUrl('obj_bag', array('act' => 'getJsonList'));}",         //请求后台的URL（*）
+                method: 'get',                      //请求方式（*）
+                toolbar: '#toolbar',                //工具按钮用哪个容器
+                striped: true,                      //是否显示行间隔色
+                cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true,                   //是否显示分页（*）
+                sortable: true,                    //是否启用排序
+                sortName: "id",                   //排序字段
+                sortOrder: "desc",                   //排序方式
+                queryParams: oTableInit.queryParams,//传递参数（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true,                  //是否显示所有的列
+                showRefresh: true,                  //是否显示刷新按钮
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: false,                //是否启用点击选中行
+                height: 575,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+                showToggle: false,                    //是否显示详细视图和列表视图的切换按钮
+                cardView: false,                    //是否显示详细视图
+                detailView: false,                   //是否显示父子表
+                fixedColumns: true,                    //冻结列开启关闭
+                fixedNumber: 1,                        //冻结列数量
+                onLoadError: function () {  //加载失败时执行
+                    Command: toastr["error"]("对不起，网络繁忙，请稍后再试！", "错误提示");
+                },
+                columns: [{
+                    checkbox: true
+                }, {
+                    field: 'id',
+                    title: '编号',
+                    titleTooltip: '当前信息的唯一编号，数据主键',
+                    sortable: true
+                }, {
+                    field: 'store_id',
+                    title: '平台商家',
+                    titleTooltip: '活动隶属商家',
+                    sortable: true,
+                },{
+                    field: 'tmp_id',
+                    title: '使用模板',
+                    titleTooltip: '发布信息隶属的平台商家',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return row.tmp_name ;
+                    }
+                },  {
+                    field: 'title',
+                    title: '活动名称',
+                    titleTooltip: '创建分享红包活动的名称',
+                    sortable: true,
+                }, {
+                    field: 'models',
+                    title: '活动模式',
+                    titleTooltip: '用户参与活动的方式',
+                    formatter: function (value, row, index) {
+                        if (value == 0) {
+                            return "<span class='label bg-teal'>普通模式</span>";
+                        }else if (value == 1)  {
+                            return "<span class='label bg-blue'>积分模式</span>";
+                        }
+                    }
+                }, {
+                    field: 'start_time',
+                    title: '开始时间',
+                    titleTooltip: '创建分享红包活动开始时间',
+                    sortable: true,
+                }, {
+                    field: 'end_time',
+                    title: '结束时间',
+                    titleTooltip: '创建分享红包活动结束时间',
+                    sortable: true,
+                }, {
+                    field: 'status',
+                    title: '活动状态',
+                    titleTooltip: '创建分享红包活动当前状态',
+                    sortable: true,
+                    formatter: statusFormatter
+                }, {
+                    field: 'check_status',
+                    title: '审核状态',
+                    titleTooltip: '创建活动审核状态',
+                    sortable: true,
+                    formatter:function(value, row, index){
+                        if (value == 1) {
+                            return "<span class='badge bg-yellow'>" + row.check_statusname + "</span>";
+                        } else if (value == 2) {
+                            return "<span class='badge bg-green'>" + row.check_statusname + "</span>";
+                        } else {
+                            return "<span class='badge bg-red'>" + row.check_statusname + "</span>";
+                        }
+                    }
+                }, {
+                    field: 'repost_num',
+                    title: '分享总量',
+                    titleTooltip: '红包活动被用户分享的次数',
+                    sortable: true,
+                }, {
+                    field: 'get_num',
+                    title: '参与人数',
+                    titleTooltip: '红包活动参与人数',
+                    sortable: true,
+                }, {
+                    field: 'click_num',
+                    title: '曝光总量',
+                    titleTooltip: '红包活动的访问总量',
+                    sortable: true,
+                }, {
+                    field: 'createtime',
+                    title: '创建时间',
+                    titleTooltip: '创建信息的时间',
+                    sortable: true,
+                }, {
+                    field: 'updatetime',
+                    title: '编辑时间',
+                    titleTooltip: '编辑信息的时间',
+                    sortable: true,
+                }, {
+                    field: 'action',
+                    title: '操作',
+                    titleTooltip: '点击下方按钮对信息进行操作',
+                    width: 60,
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+        };
+
+        //得到查询的参数
+        oTableInit.queryParams = function (params) {
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                pageSize: params.limit,  //每页大小
+                page: params.offset / params.limit + 1,//页码
+                sortOrder: params.order,//排序
+                sortName: params.sort,//排序字段
+                key: $("#SearchKey").val(), //关键词
+                status: $("#SearchStatus").val(), //信息状态
+                process: $("#SearchProcess").val(), //信息状态
+                store_id: $("#SearchStore").val(),
+                timer: $("#SearchTime").val(), //信息状态
+                check_status:$("#SearchCheckStatus").val()
+            };
+            return temp;
+        };
+        return oTableInit;
+    };
+
+    function operateFormatter(value, row, index) {
+        return [
+            '<button class="oper btn btn-info btn-xs" href="javascript:void(0)" title="操作菜单">',
+            '<i class="fa fa-edit"></i> 操作菜单',
+            '</button>',
+        ].join('');
+    }
+    window.operateEvents = {
+        'click .oper': function (e, value, row, index) {
+            require(["jquery", "util"], function(){
+
+                var footer = '<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_share" style="margin-left: 5px;margin-bottom: 10px;">分享日志</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_draw">中奖纪录</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_prize">奖项管理</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_modify">编辑活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_remove">删除活动</button><button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" id="btn_marketing">溯源统计</button><button type="button" class="btn btn-default" data-dismiss="modal" data-title="'+row.title+'" data-updatetime="'+row.updatetime+'" data-check_status="'+row.check_status+'" data-check_statusname="'+row.check_statusname+'" data-check_note="'+row.check_note+'" data-id="'+ row.id +'" id="btn_check" '+(row.check_status!=0?'':'style="display:none"')+'>活动审核</button>{if $plug_bigscreen}<button type="button" class="btn btn-default" data-dismiss="modal" data-id="'+ row.id +'" data-activitytitle="'+row.title+'" id="btn_project">数据投屏</button>{/if}';
+                var modalobj = util.dialog(row.title,'<div class=link-modal><div style=text-align:center;><img src={php echo $this->createWebUrl('obj_bag', array('act' => 'objQrPreview' ));}&token='+ row.token +'&id='+ row.id +'><p>请用微信浏览器打开，即可预览活动！</p><p><div class="input-group input-group-sm"><input type="text" class="form-control" value="'+ row.links +'"><span class="input-group-btn"><button class="btn btn-info btn-flat btn_copy" type="button" id="btn_copy" data-clipboard-action="copy" data-clipboard-target="#copyTarget">复制地址</button></span></div></p></div></div>',footer,{containerName:'obj-container'});
+                modalobj.modal({'keyboard': true});
+                modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                modalobj.modal('show');
+            });
+
+            require(["clipboard"], function (Clipboard) {
+                //复制预览网址
+                new Clipboard('#btn_copy', {
+                    text: function(trigger) {
+                        $("#copyTarget").text(''+ row.links +'');  /*放入目标对象*/
+                        return trigger.getAttribute('aria-label');
+                    }
+                });
+            });
+        },
+    };
+
+    function statusFormatter(value, row, index) {
+        return [
+            '<input name="status"   rowid="' + row.id + '" type="checkbox" data-size="mini" data-on-text="开启" data-off-text="关闭" ' + (row.status == 1 ? "checked" : "") + ' />'
+        ].join('');
+    }
+
+    //加载成功时执行
+    $('#tb_bandlist').on('load-success.bs.table column-switch.bs.table', function (data) {
+        $('#tb_bandlist').bootstrapTable('resetView');
+        //绑定更改状态操作
+        $(':checkbox[name="status"]').bootstrapSwitch({
+            onSwitchChange: function (event, state) {
+                var status = state ? 1 : 0;
+                var rowId = parseInt($(this).attr("rowid"));
+                $.ajax({
+                    type: "post",
+                    dataType:'json',
+                    url: "{php echo $this->createWebUrl('obj_bag', array('act' => 'setStatus'));}",
+                    data: {
+                        "id": rowId,
+                        "status": status
+                    },
+                    success: function (jsonData, status) {
+                        if (jsonData.status == 1) {
+                            Command: toastr["success"](jsonData.msg, "成功提示");
+                        }
+                        else {
+                            Command: toastr["error"](jsonData.msg, "错误提示");
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+    var ButtonInit = function () {
+        var oInit = new Object();
+        var postdata = {};
+
+        oInit.Init = function () {
+            $("#btn_delete").click(function () {
+                var arrselections = $("#tb_bandlist").bootstrapTable('getSelections');
+                if (arrselections.length <= 0) {
+                    Command: toastr["warning"]("请选择需要操作的数据！", "选择提示");
+                    return;
+                }
+
+                var ids = '';
+                for (var i = 0; i < arrselections.length; i++) {
+                    ids += arrselections[i].id + ",";
+                }
+                ids = ids.substr(0, ids.length - 1);
+
+                //询问框
+                layer.open({
+                    content: '你确定要删除吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        $.ajax({
+                            type: "post",
+                            dataType:'json',
+                            url: "{php echo $this->createWebUrl('obj_bag', array('act' => 'delList'));}",
+                            data: {"ids": ids},
+                            success: function (data, status) {
+                                if (data.status == 1) {
+                                    Command: toastr["success"](data.msg, "成功提示");
+                                    $("#tb_bandlist").bootstrapTable('refresh');
+                                }
+                                else {
+                                    Command: toastr["error"](data.msg, "错误提示");
+                                }
+                            }
+                        });
+                        layer.close(index);
+                    }
+                });
+            });
+            //查询操作
+            $("#btn_query").click(function () {
+                $("#tb_bandlist").bootstrapTable('refresh');
+            });
+            //编辑操作
+            $(document).delegate("#btn_modify", "click", function() {
+                var editurl = "{php echo $this->createWebUrl('obj_bag', array('act' => 'modify'));}&id=$";
+                window.location.href = editurl.replace('$', $(this).data("id"));
+            });
+            //奖项管理
+            $(document).delegate("#btn_prize", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebUrl('obj_bag_prize', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //记录管理
+            $(document).delegate("#btn_draw", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebUrl('user_draw', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //分享管理
+            $(document).delegate("#btn_share", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebUrl('user_share', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //溯源管理
+            $(document).delegate("#btn_marketing", "click", function() {
+                var qrcodeurl = "{php echo $this->createWebUrl('marketing_team', array('act' => 'index'));}&aid=$";
+                window.location.href = qrcodeurl.replace('$', $(this).data("id"));
+            });
+            //删除操作
+            $(document).delegate("#btn_remove", "click", function() {
+			    var id = $(this).data("id");
+                var title = $(this).data("activitytitle");
+                //询问框
+                layer.open({
+                    content: '你确定要删除<code>['+title+']</code>这个活动吗？'
+                    , btn: ['确定', '取消']
+                    , yes: function (index) {
+                        $.ajax({
+                            type: "post",
+                            dataType:'json',
+                            url: "{php echo $this->createWebUrl('obj_bag', array('act' => 'del'));}",
+                            data: {
+                                id: id
+                            },
+                            success: function (data, status) {
+                                if (data.status == 1) {
+                                    Command: toastr["success"](data.msg, "成功提示");
+                                    $("#tb_bandlist").bootstrapTable('refresh');
+                                }
+                                else {
+                                    Command: toastr["error"](data.msg, "错误提示");
+                                }
+                            }
+                        });
+                        layer.close(index);
+                    }
+                });
+            });
+            //审核弹窗
+            $(document).delegate("#btn_check", "click", function() {
+                var id = $(this).data("id");
+                var title = $(this).data("title");
+                var check_statusname = $(this).data("check_statusname");
+                var updatetime = $(this).data("updatetime");
+                var check_note = $(this).data("check_note");
+                var check_status = $(this).data("check_status");
+                myrequire([ 'arttemplate'], function (template) {
+                    var data={title:title,check_statusname:check_statusname,updatetime:updatetime,check_note:check_note,check_status:check_status};
+                    var dataHtml = template("datatpl", data);
+                    require(["jquery", "util"], function(){
+                        var footer;
+                        if (check_status==1)
+                        {
+                            footer = ' <button type="button" class="btn btn-success" data-dismiss="modal" id="btn_dispose" data-id="'+ id +'"><i class="glyphicon glyphicon-ok"></i>审核</button> <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn_refuse" data-id="'+ id +'"><i class="glyphicon glyphicon-remove"></i>驳回</button> <button type="button" id="btn_close" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                        }
+                        else
+                        {
+                            footer = ' <button type="button"  id="btn_close" class="btn btn-default" data-dismiss="modal">关闭</button>';
+                        }
+
+                        {if $isadcheck == 1 }
+                            footer = '<span class="btn btn-warning" id="btn_ad_testing" data-id="'+ id +'"><i class="glyphicon glyphicon-zoom-out"></i>广告词检测</span>'+ footer;
+                        {/if}
+                        var modalobj = util.dialog('活动审核',dataHtml ,footer,{containerName:'fedex-container'});
+                        modalobj.modal({'keyboard': true});
+                        modalobj.find('.modal-body').css({'overflow-y':'auto' });
+                        modalobj.modal('show');
+                    });
+                });
+            });
+            $(document).delegate("#btn_close", "click", function() {
+                setTimeout(function () {
+                    $("body").removeAttr("style");
+                },500)
+            });
+
+            //检测系统广告词
+            $(document).delegate("#btn_ad_testing", "click", function() {
+                var id = $(this).data("id");
+                $.ajax({
+                    type: "post",
+                    dataType:'json',
+                    url: "{php echo $this->createWebUrl('obj_bag', array('act' => 'adtesting'));}",
+                    data: {
+                        "id": id
+                    },
+                    success: function (jsonData, status) {
+                        if (jsonData.status == 1) {
+                            $("#span_ad_testing")[0].innerText = jsonData.msg;
+                            $("#span_ad_testing").attr("style","color:green");
+                        }
+                        else {
+                            var message = "该活动包含广告词禁止词汇，请酌情修改！</br>";
+                            var key_array = Object.entries(jsonData.Detect);
+                            key_array.map(function(value,index){
+                                message += "禁止词:["+value[0]+"]；  提示:["+value[1]+"]</br>";
+                            });
+                            $("#span_ad_testing")[0].innerHTML = message;
+                            $("#span_ad_testing").attr("style","color:red");
+                        }
+                    }
+                });
+            });
+
+            //审核通过
+            $(document).delegate("#btn_dispose", "click", function() {
+                var id = $(this).data("id");
+                $.ajax({
+                    type: "post",
+                    dataType:'json',
+                    url: "{php echo $this->createWebUrl('obj_bag', array('act' => 'setDispose'));}",
+                    data: {
+                        "id": id
+                    },
+                    success: function (jsonData, status) {
+                        if (jsonData.status == 1) {
+                            Command: toastr["success"](jsonData.msg, "成功提示");
+                            $("#tb_bandlist").bootstrapTable('refresh');
+                        }
+                        else {
+                            Command: toastr["error"](jsonData.msg, "错误提示");
+                        }
+                    }
+                });
+            });
+            //审核驳回
+            $(document).delegate("#btn_refuse", "click", function() {
+                var id = $(this).data("id");
+                var refuse = $("#refuse").val();
+                if (refuse == "") {
+                    layer.open({
+                        content: '驳回操作时请填写驳回原因！',
+                        btn: '确定'
+                    });
+                    return;
+                }
+                $.ajax({
+                    type: "post",
+                    dataType:'json',
+                    url: "{php echo $this->createWebUrl('obj_bag', array('act' => 'setRefuse'));}",
+                    data: {
+                        "id": id,
+                        "refuse":refuse
+                    },
+                    success: function (jsonData, status) {
+                        if (jsonData.status == 1) {
+                            Command: toastr["success"](jsonData.msg, "成功提示");
+                            $("#tb_bandlist").bootstrapTable('refresh');
+                        }
+                        else {
+                            Command: toastr["error"](jsonData.msg, "错误提示");
+                        }
+                    }
+                });
+            });
+            //投屏操作
+            $(document).delegate('#btn_project', "click", function(){
+                var id = $(this).data("id");
+                $.ajax({
+                    type: "get",
+                    url: "{php echo $this->createWebUrl('obj_activity', array('act' => 'getProjectCode'));}&id="+id,
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+                            var projectCode = data.data['project_code'];
+                            var title = data.data['title'];
+                            var request_time = data.data['project_request_rate'];
+                            var or_bigscreen = data.data['or_bigscreen'];
+
+
+                            layer.open({
+                                title: [title,
+                                    'background-color:#F4F5F9; color:#5D5D5E; margin:0; text-align:left; height:50px; line-height:50px;'
+                                ]
+                                ,style: 'width:700px; max-width:700px;'
+                                ,anim: 'up'
+                                ,content: "<div class=\"form-inline\" style=\"margin-bottom: 10px; text-align: left;\">\n" +
+                                    "       <label style=\"width: 90px\" for=\"projectCode\">数据投屏密码: </label>&nbsp;\n" +
+                                    "       <input id=\"projectCode\" type=\"text\" class=\"form-control\" style=\"width: 300px;  height: 20px;\" maxlength=\"6\" placeholder=\"填写投屏密码 不填默认为没有密码\" value=\""+ projectCode +"\">&nbsp;&nbsp;\n" +
+                                    "        <button id=\"randProjectCode\" class=\"btn btn-info\" style=\"width: 80px; height: 20px;\">随机密码</button>\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"margin-bottom: 20px; display: flex; flex-wrap: nowrap;\">\n" +
+                                    "        <label style=\"width: 90px\"  for=\"projectCode\"></label>&nbsp;\n" +
+                                    "        <div><strong class=\"text-danger\">提示：</strong>投屏密码为查看数据时验证的密码，不填写则默认查看数据时没有密码,密码长度最长6位</div>\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"text-align: left;\">\n" +
+                                    "        <label style=\"width: 90px\">接口请求频率: </label>&nbsp;\n" +
+                                    "        <label><input type=\"radio\" name=\"request_time\" value= 15 "+ (request_time == 15 ? 'checked' : '') +"> 15s/次</label>&nbsp;\n" +
+                                    "        <label><input type=\"radio\" name=\"request_time\" value= 30 "+ (request_time == 30 ? 'checked' : '') +"> 30s/次</label>&nbsp;\n" +
+                                    "        <label><input type=\"radio\" name=\"request_time\" value= 60 "+ (request_time == 60 ? 'checked' : '') +"> 60s/次</label>&nbsp;\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"margin-bottom: 20px; display: flex; flex-wrap: nowrap;\">\n" +
+                                    "        <label style=\"width: 90px\"  for=\"projectCode\"></label>&nbsp;\n" +
+                                    "        <div><strong class=\"text-danger\">提示：</strong>设置数据请求频率，时间越长，请求频率越低，时间越短，需要服务器配置越高</div>\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"text-align: left;\">\n" +
+                                    "        <label style=\"width: 90px\">是否开启投屏: </label>&nbsp;\n" +
+                                    "        <label><input type=\"radio\" name=\"or_bigscreen\" value=0 "+ (or_bigscreen == 0 ? 'checked' : '') +"> 关闭</label>\n" +
+                                    "        <label><input type=\"radio\" name=\"or_bigscreen\" value=1 "+ (or_bigscreen == 1 ? 'checked' : '') +"> 开启</label>\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"margin-bottom: 10px; display: flex; flex-wrap: nowrap;\">\n" +
+                                    "        <label style=\"width: 90px\"  for=\"projectCode\"></label>&nbsp;\n" +
+                                    "        <div><strong class=\"text-danger\">提示：</strong>关闭投屏则活动数据无法显示</div>\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"text-align: left;\">\n" +
+                                    "        <label style=\"width: 90px\">投屏主题颜色: </label>&nbsp;\n" +
+                                    "        <label><input type=\"radio\" name=\"title_color\" value=\"blue\" checked> 蓝色</label>\n" +
+                                    "        <label><input type=\"radio\" name=\"title_color\" value=\"red\"> 红色</label>\n" +
+                                    "        <label><input type=\"radio\" name=\"title_color\" value=\"purple\"> 紫色</label>\n" +
+                                    "        <label><input type=\"radio\" name=\"title_color\" value=\"white\"> 白色</label>\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"margin-bottom: 10px; display: flex; flex-wrap: nowrap;\">\n" +
+                                    "        <label style=\"width: 90px\"  for=\"projectCode\"></label>&nbsp;\n" +
+                                    "        <div><strong class=\"text-danger\">提示：</strong>设置投屏显示的主题颜色</div>\n" +
+                                    "    </div>\n" +
+                                    "    <div class=\"form-inline\" style=\"text-align: center; margin-top: 20px;\">\n" +
+                                    "        <button id=\"createProjectCode\" class=\"btn btn-info\"  style=\"width: 80px; height: 20px; margin-right: 10px;\" data-id=\""+ id +"\">保存数据</button>\n" +
+                                    "        <button id=\"toProject\" class=\"btn btn-success\" style=\"width: 80px; height: 20px;\" data-id=\""+ id +"\">数据投屏</button>\n" +
+                                    "    </div>"
+                            })
+                        }
+                        else {
+
+                            Command: toastr["error"](data.msg, "错误提示");
+                        }
+                    }
+                });
+            })
+            //跳转数据投屏
+            $(document).delegate("#toProject", "click", function(){
+                var id = parseInt($(this).data("id"));
+                var color = $('[name="title_color"]:checked').val();
+                var url = "{php echo __MURL('bigscreen.login', array('act'=> 'index'), true, true)}&id="+id+'&color='+color;
+                window.open(url).location;
+            })
+            //提交投屏密码
+            $(document).delegate("#createProjectCode", "click", function(){
+                var params = {
+                    id: parseInt($(this).data("id")),
+                    projectCode: $('#projectCode').val(),
+                    projectRequestRate: $('[name="request_time"]:checked').val(),
+                    or_bigscreen: $('[name="or_bigscreen"]:checked').val()
+                }
+
+                $.ajax({
+                    type: "post",
+                    url: "{php echo $this->createWebUrl('obj_activity', array('act' => 'updateProjectCode'));}",
+                    data: params,
+                    dataType:'json',
+                    success: function (data) {
+                        if (data.status == 1) {
+
+                            Command: toastr["success"](data.msg, "成功提示");
+                        }
+                        else {
+
+                            Command: toastr["error"](data.msg, "错误提示");
+                        }
+                    }
+                });
+            })
+            //随机生成投屏密码
+            $(document).delegate("#randProjectCode", "click", function(){
+                var code = randCode();
+                $('#projectCode').val(code);
+            })
+            //生成随机字符串
+            function randCode(len = 6){
+                var randStr = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                var code = '';
+                for(var i = 0; i < len; i++){
+                    var rand = Math.floor(Math.random() * randStr.length);
+                    code = code + randStr[rand];
+                }
+                return code;
+            }
+        };
+        return oInit;
+    };
+</script>
+</body>
+</html>

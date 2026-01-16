@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<title>{$school['title']}</title>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes" />
+  <link type="text/css" rel="stylesheet" href="{OSSURL}public/web/font-awesome5pro/css/all.min.css" />
+  {php echo register_jssdks();}
+  <script src="{MODULE_URL}public/mobile/vue-quill-editor/js/quill.js"></script>
+  <link href="{MODULE_URL}public/mobile/vue-quill-editor/css/quill.core.css" rel="stylesheet">
+  <link href="{MODULE_URL}public/mobile/vue-quill-editor/css/quill.snow.css" rel="stylesheet">
+  <link href="{MODULE_URL}public/mobile/vue-quill-editor/css/quill.bubble.css" rel="stylesheet">
+</head>
+<body>
+  <style>
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+  </style>
+
+  <div class="" style="width: 100%;height: 100%;">
+
+    <div
+      style="height: 40px;width: 100%;position: relative;border-bottom: 1px solid black;display: flex;font-size: 12px;">
+      <div style="height: 100%;width: 40px;top: 0;left: 0;text-align: center;line-height: 40px;" onclick="window.location.href='javascript:history.back(-1);'">
+        返回
+      </div>
+      <div style="width: 100%;text-align: center;line-height: 40px;flex:1;font-size: 16px;">
+        属性列表
+      </div>
+      <div style="height: 100%;width: 40px;top: 0;left: 0;text-align: center;line-height: 40px;"> </div>
+    </div>
+
+    <style>
+      #attr-box{width :100%;height: 100%;position: relative;}
+      #attr-box,#attr-box *{ box-sizing: border-box;}
+      .loading-spiner{padding-top: 40px;display: flex;justify-content: space-around;height: 100%;position: absolute;width: 100%;background-color: white;top: 0;left: 0;z-index: 2;}
+      .load-content-box{position: absolute;top: 0;left: 0;width: 100%;}
+      .attr-cell{border-bottom: 1px solid gainsboro;}
+      .attr-cell.inline{display: flex;min-height: 35px;padding:10px;width: 100%;align-items: center;}
+      .attr-arrow{width: 15px;text-align: right;font-size: 14px;color:#53afc3;margin-left: 5px;}
+      .attr-title{font-size: 16px;color:#2e2d2d;}
+      .attr-content{font-size: 14px;color:#636363;transition: max-height .2s;}
+      .attr-cell.inline .attr-content{text-align: right;flex:1}
+      .attr-cell.inline .attr-title{flex:1;}
+      .attr-cell.muti .attr-title,.attr-cell.muti .attr-content{padding:0 10px;}
+      .attr-cell.muti .attr-title{border-bottom: 1px solid #fdfdfd;display: flex;align-items: center;padding:10px; }
+      .attr-cell.muti .attr-content{line-height: 20px;max-height: 200px;overflow: hidden;position: relative;}
+      .attr-cell.muti .attr-content .real-content{text-indent: 2em;margin: 10px 0;}
+      .attr-cell.muti .attr-content .real-image{position: relative;width: 100%;height: 100%;object-fit: contain;}
+      .more-btn{position: absolute;bottom: 0;left: 0;width: 100%;height: 38px;--ShadowColor:rgba(255, 255, 255,.95) }
+      .more-btn-content{position: absolute;bottom: 0;left: 0;width: 100%;height: 23px;height: 23px;text-align: center;background-color:var(--ShadowColor);line-height: 15px;box-shadow: 0 2px 18px 18px var(--ShadowColor);font-size: 12px;}
+      .more-btn-content span{display: inline-block;background-color: rgba(83, 175, 195, 0.1);border-radius: 15px;width: 80px;height: 20px;line-height: 20px;}
+      .clear{line-height: unset !important;text-indent: 0 !important;}
+      .rich-content img{max-width: 100%;}
+      .slide-enter-active, .slide-leave-active { transition: height .1s; }
+      .slide-enter, .slide-leave-to{ height: 0; }
+      .pop-window-box{position: fixed;height: 100%;width: 100%;background-color: white;z-index: 2;top:0;left:100%;transition: left .15s;overflow: auto; }
+      .pop-window-box .pop-window-cell{width: 100%;min-height: 40px;padding:10px;background-color: white;font-size: 14px;border-bottom: 10px solid #f9f9f9;}
+      .pop-window-box .pop-window-cell .tips-info{font-size: 12px;color: gray;line-height: 20px;}
+      .pop-window-cell.title{line-height: 20px;font-weight: bold;font-size: 16px;}
+      .pop-window-cell.edit-content{border-bottom: 50px solid transparent;padding:0}
+      .pop-window-cell.edit-content .edit-content-title{padding:10px;min-height: 40px;}
+      .pop-window-cell.edit-content .textarea-box{border: 1px solid #efefef;border-radius: 5px;min-height: 60px;padding:10px}
+      .pop-window-cell.edit-content .textarea-box>textarea{width: 100%;resize: none;border: none;outline: unset;}
+      .pop-window-cell.edit-content .input-box{border: 1px solid #efefef;border-radius: 5px;position: relative;}
+      .pop-window-cell.edit-content .input-box .masker-white{position: absolute;top:0;left: 0;width: 100%;height: 30px;background-color: white;pointer-events: none;line-height: 30px;padding-left: 10px;z-index: 2;}
+      .pop-window-cell.edit-content .input-box>input{width: 100%;resize: none;border: none;outline: unset;line-height: 25px;padding:2px 10px}
+      .flex-c{display: flex;align-items: center;}
+      .vue-switch-re{width: var(--baseWidth);position: relative;height: 40px;--lineColor:gray;--baseWidth:50px}
+      .vue-switch-re .slide-line{height: 12px;border-radius: 10px;position: absolute;top:14px;border: 1px solid var(--lineColor);overflow: hidden;transition:  all .15s;}
+      .vue-switch-re .slide-line.off-line{right:5px;}
+      .vue-switch-re .slide-line.on-line{left:5px;border:unset;background-color: #78c8f7;border:1px solid #5ebdf5}
+      .vue-switch-re .slide-line.off-line,.vue-switch-re.switch-on .slide-line.on-line{width: calc(var(--baseWidth) - 10px);}
+      .vue-switch-re .slide-line.on-line,.vue-switch-re.switch-on .slide-line.off-line{width: 0;}
+      .vue-switch-re .slide-btn{width: 20px;height: 20px;position: absolute;top:10px;left: 1px;background-color: white;border-radius: 10px;border: 1px solid var(--lineColor);transition:  all .15s;}
+      .vue-switch-re.switch-on .slide-btn{left: calc(var(--baseWidth) - 21px)}
+      .editbtn-box{position:absolute;bottom: 0;width: 100%;height: 50px;background-color: white;display: flex;justify-content: space-evenly;align-items: center;padding-bottom: constant(safe-area-inset-bottom);
+        padding-bottom: env(safe-area-inset-bottom);}
+      .editbtn-box .edit-btn{padding:5px 25px;font-size: 16px;line-height: 20px;border-radius: 15px;}
+      .editbtn-box .edit-btn.sure{background-color: #2095e8;color:white}
+      .editbtn-box .edit-btn.cancel{border:1px solid #a8c9e0;color:#91a9de}
+      .filetype-select-box{display: flex;align-items: center;line-height: 20px;}
+      .coverd-select-box{position: relative;height: 20px;width: 100px;}
+      .coverd-select-box .coverd-cell{position: absolute;top: 0;left: 0;width: 100%;height: 100%; background-color: white;}
+      .coverd-select-box .coverd-cell.coverd-top{z-index: 2;pointer-events: none;border-bottom: 1px solid #d0d0d0;}
+      .coverd-select-box .coverd-cell.coverd-bottom{z-index: 1;outline: none;}
+      .upfile-img-box{width: 50vw;height: 50vw;position: relative;overflow: hidden;}
+      .upfile-img-box>img{width: 100%;height: 100%;object-fit: contain;background-color: #f7f7f7;position: relative;}
+      .upfile-img-btn-box{flex:1;text-align: center;align-items: center;display: flex;justify-content: space-around;}
+      .choose-img-btn{padding:5px 20px;background-color: #4b9ccc;border-radius: 10px;width: 100px;color:white}
+      .choose-img-btn.file{padding: 2px 10px;border-radius: 5px;font-size: 12px;margin-left: 10px;}
+      .more-btn-upfile{position: absolute;bottom: 0;left: 0;width: 100%;height: 38px;--ShadowColor:rgba(218, 215, 215, 0.95)}
+    </style>
+
+
+    <div style="height: calc(100% - 41px);overflow: auto;">
+      <!-- VUE 部分内容 -->
+      <div id="attr-box">
+        <!-- 加载中显示内容 -->
+        <div v-if="!loadingDone" class="loading-spiner">
+          <div style="text-align: center;">
+            <i class="fas fa-spin fa-spinner" style="font-size: 30px;"></i>
+            <div>加载中</div>
+          </div>
+        </div>
+        <!-- 加载完成后显示内容 -->
+        <div class="load-content-box">
+          <div style="width: 100%;">
+ 
+            <div v-for="(item,index) of attrDataList">
+              <!-- 单行内容 -->
+              <div
+                v-if="item.attrType === 'number' || item.attrType === 'date' || item.attrType === 'phone' || item.attrType === 'idcard' "
+                class="attr-cell inline " @click="EditAttr(item)">
+                <div class="attr-title">{{item.attrName}}</div>
+                <div class="attr-content">{{CheckIsDataFail(item.content,'text')}}</div>
+                <div class="attr-arrow" >
+                  <i v-if="!item.lockStatus" class="fas fa-chevron-right "></i>
+                  <i v-else class="fas fa-lock" style="color:#ff7e7e"></i>
+                </div>
+              </div>
+              <!-- 多行内容 文本 -->
+              <div v-if="item.attrType === 'text' " class="attr-cell muti">
+                <div class="attr-title"  @click="EditAttr(item)">
+                  <div style="flex:1">
+                    {{item.attrName}}
+                  </div>
+                  <div class="attr-arrow"  >
+                    <i v-if="!item.lockStatus" class="fas fa-chevron-right "></i>
+                    <i v-else class="fas fa-lock" style="color:#ff7e7e"></i>
+                  </div>
+                </div>
+                <div :ref="`mutiRef${index}`" :data-org="index" :org="index" class="attr-content"
+                  :style="{ 'max-height': item.showDetial ? item.fullHeiht + 'px' : '200px' }">
+                  <div class="real-content">
+                    {{CheckIsDataFail(item.content,'text')}}
+                  </div>
+                  <transition name="slide"> <div v-if="item.showDetial" style="height: 35px;"> </div> </transition>
+                  <div v-if="item.overHeight && !item.showDetial" class="more-btn" @click="SwitchShowStatus(index)">
+                    <div class="more-btn-content">
+                      <span > 展示更多 <i class="fas fa-angle-down"></i></span>
+                    </div>
+                  </div>
+                  <div v-if="item.showDetial" class="more-btn" @click="SwitchShowStatus(index)">
+                    <div class="more-btn-content">
+                      <span> 收起 <i class="fas fa-angle-up"></i></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 多行内容 图片 -->
+              <div v-if="item.attrType === 'image' " class="attr-cell muti">
+                <div class="attr-title"  @click="EditAttr(item)">
+                  <div style="flex:1">
+                    {{item.attrName}}
+                  </div>
+                  <div class="attr-arrow">
+                    <i v-if="!item.lockStatus" class="fas fa-chevron-right "></i>
+                    <i v-else class="fas fa-lock" style="color:#ff7e7e"></i>
+                  </div>
+                </div>
+                <div v-if="CheckIsDataFail(item.content)" :data-org="index" :org="index" class="attr-content"
+                  style="height:160px"  @click="wxImageShow(item.imageLink)">
+                    <img class="real-image" :src="item.imageLink">
+                    <div class="more-btn">
+                      <div class="more-btn-content">
+                        <span> 查看大图 <i class="fas fa-search"></i></span>
+                      </div>
+                    </div>
+                </div>
+                <div v-else  class="attr-content" style="min-height: 40px;line-height: 40px;">
+                  暂无内容
+                </div>
+              </div>
+              <!-- 多行内容 文档 -->
+              <div v-if="item.attrType === 'file' " class="attr-cell muti">
+                <div class="attr-title"  @click="EditAttr(item)">
+                  <div style="flex:1">
+                    {{item.attrName}}
+                  </div>
+                  <div class="attr-arrow">
+                    <i v-if="!item.lockStatus" class="fas fa-chevron-right "></i>
+                    <i v-else class="fas fa-lock" style="color:#ff7e7e"></i>
+                  </div>
+                </div>
+                <div v-if="CheckIsDataFail(item.content)" :ref="`mutiRef${index}`" :data-org="index" :org="index" class="attr-content"
+                  :style="{ 'max-height': item.showDetial ? item.fullHeiht + 'px' : '200px' }">
+                  <div class="real-content" style="word-wrap: break-word;">
+                    <a style="color:#4cacfd" :href="item.fileLink"> {{item.fileName}}.{{item.fileExtra}}</a>
+                  </div>
+                </div>
+                <div v-else  class="attr-content" style="min-height: 40px;line-height: 40px;">
+                  暂无内容
+                </div>
+              </div>
+                <!-- 多行内容 富文本 -->
+                <div v-if="item.attrType === 'richtext' " class="attr-cell muti">
+                <div class="attr-title"  @click="EditAttr(item)">
+                  <div style="flex:1">
+                    {{item.attrName}}
+                  </div>
+                  <div class="attr-arrow">
+                    <i v-if="!item.lockStatus" class="fas fa-chevron-right "></i>
+                    <i v-else class="fas fa-lock" style="color:#ff7e7e"></i>
+                  </div>
+                </div>
+                <div v-if="CheckIsDataFail(item.content)" :ref="`mutiRef${index}`" :data-org="index" :org="index" class="attr-content clear"
+                  :style="{ 'max-height': item.showDetial ? item.fullHeiht + 'px' : '200px' }">
+                  <div class="real-content clear rich-content" v-html="item.content"> </div>
+                  <transition name="slide"> <div v-if="item.showDetial" style="height: 35px;"> </div> </transition>
+                  <div v-if="item.overHeight && !item.showDetial" class="more-btn" @click="SwitchShowStatus(index)">
+                    <div class="more-btn-content">
+                      <span> 展示更多 <i class="fas fa-angle-down"></i></span>
+                    </div>
+                  </div>
+                  <div v-if="item.showDetial" class="more-btn" @click="SwitchShowStatus(index)">
+                    <div class="more-btn-content">
+                      <span> 收起 <i class="fas fa-angle-up"></i></span>
+                    </div>
+                  </div>
+                </div>
+                <div v-else  class="attr-content" style="min-height: 40px;line-height: 40px;">
+                  暂无内容
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 弹窗部分 -->
+        <div  class="pop-window-box" :style="{'left':inEditStatus?0:'100%'}">
+          <div class="pop-window-cell title" >
+            {{editItem.attrName}}
+          </div>
+          <div v-if="IsTeacher" class="pop-window-cell flex-c" >
+            <div style="flex:1" >
+              <div> 锁定状态 : <span v-if="editItem.lockStatus" style="color:red">锁定</span> <span v-else style="color:gray">未锁定</span>  </div>
+              <div class="tips-info"> 锁定后学生无法编辑只能查看 </div>
+            </div>
+            <div>
+              <div :class="editItem.lockStatus ? 'switch-on' : 'swich-off' " class="vue-switch-re" @click="SwitchLockStatus()">
+                <div class="slide-line off-line"> </div>
+                <div class="slide-line on-line"> </div>
+                <div class="slide-btn"></div>
+              </div>
+            </div>
+          </div>
+          <div class="pop-window-cell edit-content">
+            <!-- 文本 -->
+            <div v-if="editItem.attrType === 'text'" >
+              <div class="edit-content-title"> 编辑内容 </div>
+              <div style="padding:0 10px" >
+                <div class="textarea-box">
+                  <textarea v-model="editItem.content" rows="10"></textarea>
+                </div>
+              </div>
+            </div>
+            <!-- 数字 非日期 -->
+            <div v-if="editItem.attrType === 'idcard' || editItem.attrType === 'number' || editItem.attrType === 'phone'">
+              <div class="edit-content-title">
+                编辑内容
+                <!-- TODO:根据不同类型，做不同提示 -->
+                <span class="tips-info" style="margin-left: 10px;"> 锁定后学生无法编辑只能查看 </span>
+              </div>
+              <div style="padding:0 10px" >
+                <div class="input-box">
+                  <input type="text" v-model="editItem.content" >
+                </div>
+              </div>
+            </div>
+            <!-- 日期 -->
+            <div v-if="editItem.attrType === 'date'" >
+              <div class="edit-content-title"> 编辑内容 </div>
+              <div style="padding:0 10px" >
+                <div class="input-box">
+                  <div class="masker-white">
+                  {{editItem.content}}</div>
+                  <input type="date" v-model="editItem.content" style="height: 30px;">
+                </div>
+              </div>
+            </div>
+            <!-- 富文本 -->
+            <div v-if="editItem.attrType === 'richtext'">
+              <div class="edit-content-title">
+                编辑内容
+                <span class="tips-info" style="margin-left: 10px;"> 手机端与电脑端编辑效果有部分差异，请知悉 </span>
+              </div>
+              <div style="max-height: 60vh;overflow: auto;padding:0 10px">
+                <quill-editor
+                  :content="editItem.content"
+                  @change="onEditorChange($event)"
+                />
+              </div>
+            </div>
+            <!-- 图片或文件 -->
+            <div v-if="editItem.attrType === 'image' || editItem.attrType === 'file' ">
+              <div class="edit-content-title">
+                编辑内容
+                <span class="tips-info" style="margin-left: 10px;"> 请上传对应的文件 </span>
+              </div>
+              <div style="padding:10px;">
+                <div class="filetype-select-box">
+                  <div> 文件类型：</div>
+                  <div class="coverd-select-box">
+                    <div class="coverd-cell coverd-top">{{upFileType}}
+                      <span style="float: right;" > <i class="fas fa-caret-down"></i> </span>
+                    </div>
+                    <select class="coverd-cell coverd-bottom" v-model="editItem.attrType" @change="SwitchFileType">
+                      <option value="image">图片</option>
+                      <option value="file">文件</option>
+                    </select>
+                  </div>
+                </div>
+                <div v-if="editItem.attrType === 'image'" class="tips-info" style="margin-left: 10px;margin-top: 5px;">
+                  <i class="fas fa-exclamation-circle"></i> 仅能上传图片
+                </div>
+                <div v-if="editItem.attrType === 'file'" class="tips-info" style="margin-left: 10px;margin-top: 5px;">
+                  <i class="fas fa-exclamation-circle"></i>  所有上传的文件都会当作普通文件处理，不识别文件类型
+                </div>
+              </div>
+
+              <!-- 图片 -->
+              <div v-if="editItem.attrType === 'image'"  style="padding:0 10px;display: flex;" >
+                <div class="upfile-img-box"  @click="wxImageShow(editItem.imageLink)">
+                  <img :src="CheckIsDataFail(LinkTemp) ? LinkTemp :'{MODULE_URL}public/mobile/img/imageClose.png' " />
+                  <div v-if="CheckIsDataFail(LinkTemp) " class="more-btn-upfile">
+                    <div class="more-btn-content">
+                      <span> 查看大图 <i class="fas fa-search"></i></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="upfile-img-btn-box">
+                  <span class="choose-img-btn" @click="wxChooseImage()">上传图片</span>
+                </div>
+              </div>
+
+              <!-- 文件 -->
+              <div v-if="editItem.attrType === 'file' " style="padding:0 10px;">
+                <div>
+                  <div style="display: flex;">
+                    <div>上传文件</div>
+                    <div class="coverd-select-box">
+                      <div class="coverd-cell coverd-top" style="border:none">
+                        <span class="choose-img-btn file" >重新上传</span>
+                      </div>
+                      <input class="coverd-cell coverd-bottom" ref="upfile_input" style="opacity: 0;"  type="file" accept="*" @change="getUpFile($event)" />
+                    </div>
+                  </div>
+                  <div class="tips-info" style="margin-left: 10px;margin-top: 5px;">
+                    重新上传的文件不支持预览
+                  </div>
+                  <div v-if="CheckIsDataFail(editItem.fileName) " style="padding: 10px 0;">
+                    <a  style="color:#4cacfd" :href="editItem.fileLink"> {{editItem.fileName}}.{{editItem.fileExtra}}</a>
+                  </div>
+                  <div v-else style="padding: 10px 0;color:red">暂无文件 </div>
+                </div>
+                <div>
+                  <div style="padding:5px 0">附件名称</div>
+                  <div class="input-box" style="flex:1;display: flex;align-items: center;overflow: hidden;">
+                    <input type="text" style="flex: 1;" v-model="editItem.fileName" >
+                    <div style="height: 29px;padding: 0 10px;background-color: #dedede;line-height: 29px;">.{{editItem.fileExtra}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 底部按钮 -->
+          <div class="editbtn-box">
+            <div class="edit-btn sure" @click="ConfirmEditAttr">确定</div>
+            <div class="edit-btn cancel" @click="HistoryBack">取消</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <script type="text/javascript" src="{MODULE_URL}public/mobile/js/vue.min.js"></script> -->
+
+    <!-- 开发版本，包含更多错误信息 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="{MODULE_URL}public/mobile/vue-quill-editor/js/vue-quill-editor.js"></script>
+    <script type="text/javascript" src="{MODULE_URL}public/mobile/js/axios.min.js"></script>
+    <script type="text/javascript" src="{MODULE_URL}public/mobile/js/jquery-1.10.1.min.js"></script>
+    <script type="text/javascript" src="{MODULE_URL}public/mobile/js/remaster.main.js?v=tttttttttttt2211ttt12213213312312332321122"></script>
+
+
+    <script>
+
+      //反转义html
+      function HTMLDecode(str) {
+        var temp = "";
+        if(str.length == 0) return "";
+        temp = str.replace(/&amp;/g,"&");
+        temp = temp.replace(/&lt;/g,"<");
+        temp = temp.replace(/&gt;/g,">");
+        temp = temp.replace(/&nbsp;/g," ");
+        temp = temp.replace(/&#39;/g,"\'");
+        temp = temp.replace(/&quot;/g,"\"");
+        return temp;
+      }
+
+      var WeixinApi = (function () {
+        return {
+          imagePreview: imagePreview
+        };
+        "use strict";
+        /**
+         * 调起微信Native的图片播放组件。
+         * 这里必须对参数进行强检测，如果参数不合法，直接会导致微信客户端crash
+         *
+         * @param {String} curSrc 当前播放的图片地址
+         * @param {Array} srcList 图片地址列表
+         */
+        function imagePreview(curSrc, srcList) {
+          if (!curSrc || !srcList || srcList.length == 0) {
+            return;
+          }
+          WeixinJSBridge.invoke('imagePreview', {
+            'current': curSrc,
+            'urls': srcList
+          });
+        }
+        return {
+          version: "2.5",
+          ready: wxJsBridgeReady,
+          imagePreview: imagePreview
+        };
+      })();
+
+    
+
+     
+
+
+      Vue.use(window.VueQuillEditor)
+      var AttrVM = new Vue({
+        el: '#attr-box',
+        data() {
+          return {
+            IsTeacher:false,
+            IsAuth:false,
+            UploadFile:null,
+            images:{
+              localId:[],
+              serverId:[]
+            },
+            ImgChooseServerId:'',
+            originObj:{
+              "overHeight": false,
+              "showDetial": false,
+              "fullHeiht": 0
+              // "lockStatus":false
+            },
+            loadingDone: false,
+            attrDataList:[],
+            inEditStatus:false,
+            editItem:{
+              
+            },
+            // LinkTemp:'https://profile.csdnimg.cn/7/B/2/4_showbo'
+          }
+        },
+        async mounted() {
+          _InieHistoryListen();
+          let _self = this,
+            RefsArr = _self.$refs
+          await _self.GetAllData()
+          await _self.$nextTick()
+          console.log(this.attrDataList);
+          for (let i in RefsArr) {
+            let Item = RefsArr[i],
+              scrollHeight = Item[0].scrollHeight,
+              offsetHeight = Item[0].offsetHeight,
+              Index = Item[0].getAttribute('org')
+            if (scrollHeight > offsetHeight) {
+              _self.attrDataList[Index].overHeight = true
+            }
+          }
+          _INIT_ReTips();
+          _self.loadingDone = !_self.loadingDone
+        },
+        methods: {
+           wxImageShow(src) {
+        WeixinApi.imagePreview(src, [src]);
+      },
+          onEditorBlur(quill) {
+            console.log('editor blur!', quill)
+          },
+          onEditorFocus(quill) {
+            console.log('editor focus!', quill)
+          },
+          onEditorReady(quill) {
+            console.log('editor ready!', quill)
+          },
+          onEditorChange({ quill, html, text }) {
+            let _self = this
+            _self.editItem.content = html
+          },
+          //检查是否有内容，如果有内容则输出对应内容，如果无内容则输出无
+          CheckIsDataFail:function(value,rtType = 'boolean'){
+            if(value !== null && value !== '' && value !== 'null'  && value !== undefined){
+              return rtType === 'boolean' ? true  : value
+            }
+            return rtType === 'boolean' ? false  : '暂无内容'
+          },
+          //切换显示更多状态
+          SwitchShowStatus: function (index) {
+            let _self = this,
+                RefName = 'mutiRef'+index;
+            _self.attrDataList[index].fullHeiht = _self.$refs[RefName][0].scrollHeight+40
+            _self.attrDataList[index].showDetial = !_self.attrDataList[index].showDetial
+          },
+          //获取所有数据/更新全量数据
+          GetAllData: async function(){
+            let _self = this
+            let getAttrData = await axios.get("{php echo $this->createMobileUrl('comajax', array('schoolid' => $_GPC['schoolid'],'weid' => $_W['uniacid'],'op'=>'getAttributeList','sid'=>$_GPC['sid'],'fztid'=>$_GPC['fztid'],'tid'=>$_GPC['tid'],'kc_id'=>$_GPC['kc_id']))}")
+            _self.IsAuth = getAttrData.data.attropera //教师操作权限
+            _self.IsTeacher = getAttrData.data.isteacher //教师显示锁定开关按钮
+            getAttrData.data.list.map((x,y)=>{
+              if(x.attrType === 'richtext' && x.content){
+                x.content = HTMLDecode(x.content)
+              }
+              x = Object.assign({},x,_self.originObj)
+              _self.$set(_self.attrDataList, y, x)
+            })
+            return
+          },
+
+
+          HistoryBack:function(){
+            window.history.back()
+          },
+
+          //编辑属性
+          EditAttr:function(item){
+            let _self = this
+            if((item.lockStatus === true && _self.IsTeacher === false) || (_self.IsAuth === false && _self.IsTeacher === true) ){
+              return
+            }
+            _self.inEditStatus = true
+            _self.editItem =Object.assign({},deepClone(item))
+            PushHistoryStack('AttrVM.CancelEditAttr');
+          },
+          // 退出编辑属性
+          CancelEditAttr:function(){
+            let _self = this
+            _self.inEditStatus = false
+            _self.editItem = {}
+            _self.ImgChooseServerId = ''
+            _self.UploadFile = null
+            _self.images={ localId:[], serverId:[] }
+          },
+          //切换锁定状态
+          SwitchLockStatus:function(){
+            this.editItem.lockStatus = !this.editItem.lockStatus
+          },
+          //选择图片 - 微信
+          wxChooseImage:function(){
+            let _self = this
+            wx.chooseImage({
+              success: function (res) {
+                try {
+                  _self.images.localId = res.localIds;
+                  var obj=new Image();
+                  obj.src=res.localIds[0];
+                  _self.imagesUploadWx();
+                } catch (error) {
+                  alert("上传失败，请稍后重试")
+                }
+              }
+            });
+          },
+          //上传图片 - 微信
+          imagesUploadWx:function(){
+            let _self = this
+           
+            wx.uploadImage({
+              localId: _self.images.localId[0],
+              isShowProgressTips:1,//// 默认为1，显示进度提示
+              success: function (res) {
+                 _self.$set(_self.editItem,'imageLink',_self.images.localId[0])
+
+                // _self.editItem = Object.assign({}, _self.editItem, { fileLink:_self.images.localId[0] })
+                // _self.LinkTemp = _self.images.localId[0]
+                // alert(_self.images.localId[0])
+                _self.ImgChooseServerId = res.serverId
+              },
+              fail: function (res) {
+                alert(JSON.stringify(res));
+              }
+            });
+          },
+          //选择文件后的处理 
+          getUpFile:function(event){
+            let file = this.$refs.upfile_input.files[0],
+                _self = this,
+                imgStr = /\.(jpg|jpeg|png|bmp|BMP|JPG|PNG|JPEG)$/;
+           
+            console.log(file.size);
+            if(imgStr.test(file.name)) {
+              alert("如若需要上传图片类文件，请选择文件类型为\"图片\"后重新上传");
+              return false;
+            }
+            let size = file.size  ;
+            if(size > 5 * 1024 * 1024){
+              alert("上传文件大小必须小于5MB")
+              return false;
+            }
+            let idx = file.name.lastIndexOf(".");
+            if (idx != -1){
+              let ext = file.name.substr(idx+1).toUpperCase();
+              _self.$set(_self.editItem,'fileExtra',ext.toLowerCase())
+              _self.$set(_self.editItem,'fileName',file.name.substr(0,idx))
+              _self.$set(_self.editItem,'content',file.path)
+              // _self.editItem.content = 
+              _self.UploadFile = file
+              return
+            }
+            alert("异常，请重新选择文件")
+            return
+          },
+          // 确定按钮
+          ConfirmEditAttr:async function(){
+            let _self = this,
+                formData = new FormData(),
+                config = {
+                  headers: {
+                    'Content-Type': 'multipart/form-data'
+                  }
+                }
+
+                //TODO:这里验证身份证/手机号格式 _self.editItem.content
+                if(_self.editItem.attrType === 'phone'){
+                  let phone = _self.editItem.content
+                  let phonereg = /^1(3[0-9]|4[5,7]|5[0,1,2,3,5,6,7,8,9]|6[2,5,6,7]|7[0,1,7,8]|8[0-9]|9[1,8,9])\d{8}$/;
+                  if(phonereg.test(phone) === false) 
+                  { 
+                    alert("手机号输入不合法"); 
+                    return false; 
+                  }
+                }
+
+                if(_self.editItem.attrType === 'idcard'){
+                  let card = _self.editItem.content
+                  let cardreg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+                  if(cardreg.test(card) === false) 
+                  { 
+                    alert("身份证输入不合法"); 
+                    return false; 
+                  }
+                }
+
+            for(let i in _self.editItem){
+              formData.append(i,_self.editItem[i])
+            }
+            formData.append("fileUpload",_self.UploadFile)
+            formData.append("ImgChooseServerId",_self.ImgChooseServerId)
+            let SendEdit = await axios.post("{php echo $this->createMobileUrl('comajax', array('op'=>saveAttribute,'schoolid' => $_GPC['schoolid'],'weid'=>$_W['uniacid'],'sid'=>$_GPC['sid'],'fztid'=>$_GPC['fztid'],'tid'=>$_GPC['tid'],'kc_id'=>$_GPC['kc_id']))}",formData,config)
+            if(SendEdit.data.result){
+              _self.GetAllData()
+              ReTipsShow("保存成功！")
+             ;
+            }
+            /**
+             * 
+             * SendEdit.data.msg
+             * 如果成功,window.history.back() , _self.GetAllData()
+             * 
+             * 
+             */
+          },
+          //切换上传的文件类型
+          SwitchFileType:function(){
+            let _self = this,
+            editItemTemp = _self.editItem
+            console.log(_self.editItem);
+            if(editItemTemp.attrType === 'image'){
+              _self.UploadFile = null
+            }else{
+              _self.ImgChooseServerId = null
+              _self.images={ localId:[], serverId:[] }
+            }
+          }
+        },
+        computed: {
+          editor() {
+            return this.$refs.myQuillEditor.quill
+          },
+          LinkTemp(){
+            return this.editItem.imageLink
+          },
+          FileContent(){
+            return this.editItem.content
+          },
+          upFileType(){
+            if(this.editItem.attrType === 'image'){
+              return '图片'
+            }
+            if(this.editItem.attrType === 'file'){
+              return '文件'
+            }
+            return '错误格式'
+          }
+        },
+      });
+    </script>
+  </div>
+</body>
+</html>

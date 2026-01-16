@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{$_W['slwl']['lang']['sys_name']}</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="">
+	{template 'public/header'}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+	{template 'public/top'}
+	{template 'public/left'}
+
+	<div class="layui-body">
+		<div class="layui-main">
+
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li class="layui-this">
+						<a href="{php echo webUrl('incDecBalance', ['uid'=>$uid, 'nickname'=>$_GPC['nickname'], 'balance'=>$_GPC['balance']])}">增减余额</a>
+					</li>
+					<li>
+						<a href="{php echo webUrl('membership')}">返回</a>
+					</li>
+				</ul>
+			</div>
+
+			<form class="layui-form fixed" action="" method="post" enctype="multipart/form-data" id="data-form">
+				<input type="hidden" name="uid" value="{$uid}">
+				<!-- 昵称 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">昵称</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input readonly" value="{$_GPC['nickname']}" readonly>
+					</div>
+				</div>
+				<!-- 当前余额 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">当前余额</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input readonly" value="{$_GPC['balance']}" readonly>
+					</div>
+				</div>
+				<!-- 增减额度 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">增减额度</label>
+					<div class="layui-input-block">
+						<input type="number" name="delta" min="1" oninput="if(value.length>8)value=value.slice(0,8)"
+							class="layui-input">
+						<div class="layui-form-mid layui-word-aux">单位：元</div>
+					</div>
+				</div>
+				<!-- 原因 -->
+				<div class="layui-form-item">
+					<label class="layui-form-label">原因</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" lay-verify="required" name="reason">
+					</div>
+				</div>
+
+
+				<div class="layui-tab-content" id="data-submit">
+					<div class="layui-form-item">
+						<div class="layui-input-block">
+							<button class="layui-btn" lay-submit lay-filter="save">保存</button>
+							<a href="{php echo webUrl('membership')}" class="layui-btn layui-btn-primary">取消</a>
+							<input type="hidden" name="token" value="{$_W['token']}" />
+						</div>
+					</div>
+				</div>
+			</form>
+			<script>
+				layui.use('form', function(){
+					var form = layui.form;
+
+					form.on('submit(save)', function(data){
+						let subType = data.elem.dataset.type;
+						let url = "{php echo webUrl('incDecBalance')}";
+						var $obj = $(this);
+
+						if (!$obj.hasClass('lock')) {
+							$obj.addClass('lock'); // 不能再点击
+
+							$.ajax({
+								type: "POST",
+								url: url,
+								dataType: 'json',
+								data: data.field,
+								success: function (rs) {
+
+									if (rs && rs.code.toString() === '0') {
+										layer.msg('保存成功' , {
+											time: 500
+										}, function () {
+											window.location.href = "{php echo webUrl('membership')}";
+										});
+									} else {
+										layer.msg(rs.msg, {
+											offset: '20%',
+										});
+									}
+									$obj.removeClass('lock');
+								},
+								error: function () {
+									layer.msg('保存过程发生错误，请与管理员联系', {
+										offset: '20%',
+									});
+									$obj.removeClass('lock');
+								}
+							});
+						}
+
+						return false;
+					});
+				});
+			</script>
+		</div>
+	</div>
+
+	{template 'public/copyright'}
+</div>
+
+{template 'public/footer'}
+</body>
+</html>

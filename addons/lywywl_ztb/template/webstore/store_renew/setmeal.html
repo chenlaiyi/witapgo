@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+{php include $this->template('common/header')}
+<style>
+    .renew_core ul{ margin:20px 0;}
+    .renew_core ul li{ width:20%; position:relative; float:left; color:#3b3b3b; border:1px solid #acacac; border-radius:10px; text-align:center; padding:0 0 20px 0;box-sizing: border-box; margin-right:20px; margin-bottom: 20px; }
+    .renew_core ul li h2{ font-size: 16px; height: 65px; line-height: 1.5em;  padding:25px 10px 0 10px}
+    .renew_core ul li p{ padding:0.1% 0}
+    .renew_core ul li p strong{ font-size:30px; line-height: 1.2em}
+    .renew_core ul li.on{ background:#000; border:1px solid #000; color:#fff;}
+    .renew_core ul li.on p{ color:#fee002;}
+    .renew_core ul li.on p.cfff{ color:#fff}
+    .renew_core ul li i{ background:#fee002; color:#000; font-size:16px; font-style:normal; padding:5px  10px; line-height:1.2em; display:inline-block; border-radius:10px 0rem 10px 0; position:absolute; left:-1px; top:-1px;}
+    .renew_core ul li div{ text-align: center}
+    .renew_core ul li div a{ display: inline-block; width: 36%; height: 34px; line-height: 34px; text-align: center; background:#fee002; color: #000; margin: 0 10px; border-radius:30px; font-size: 14px;border:1px solid #fee002; }
+    .renew_core ul li div a:nth-child(2){ border:1px solid #000; color:#fee002; background: #000 }
+    .renew_core ul li.on div a:nth-child(2){ border:1px solid #fee002; color:#fee002; background: #000 }
+</style>
+<body class="skin-blue sidebar-mini fixed">
+<div class="wrapper">
+    <!-- 头部菜单 -->
+    {php include $this->template('common/top')}
+    <!-- 左侧导航 -->
+    {php include $this->template('common/sidebar')}
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+        <section class="content-header">
+            <i></i>
+            <h1>
+                {$title}
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{php echo $this->createWebAppUrl('home');}"><i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li class="active">资金管理</li>
+                <li class="active">{$title}</li>
+            </ol>
+        </section>
+        <!-- 主体内容 -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li><a href="{php echo $this->createWebAppUrl('store_renew');}">续费记录</a></li>
+                            <li class="active"><a href="">购买套餐</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title"><i class="fa fa-search"></i> 筛选条件</h3>
+                                    <div class="box-tools pull-right">
+                                        <button class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                        <button class="btn btn-box-tool" data-widget="remove"><i
+                                                class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                                <form id="formSearch" class="form-horizontal">
+                                    <div class="box-body">
+                                        <div class="row">
+                                            <label for="SearchKey" class="col-sm-1 control-label">套餐名称</label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control" id="SearchKey" placeholder="套餐名称/套餐编号">
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchIshot">热门状态</label>
+                                            <div class="col-sm-3">
+                                                <select class="form-control select2" id="SearchIshot">
+                                                    <option value="" selected="selected">请选择</option>
+                                                    <option value="1">热门</option>
+                                                    <option value="0">普通</option>
+                                                </select>
+                                            </div>
+                                            <label class="control-label col-sm-1" for="SearchTime">发布时间</label>
+                                            <div class="col-sm-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control pull-right" id="SearchTime" placeholder="开始时间 - 结束时间" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer clearfix">
+                                        <div class="btn-group pull-right">
+                                            <button id="btn_query" type="button" class="btn btn-sm btn-info">开始检索
+                                            </button>
+                                            <button type="reset" class="btn btn-sm btn-default">重置检索</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="box" class="renew_core">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 底部版权 -->
+    {php include $this->template('common/footer')}
+</div>
+<script id="temptpl" type="text/html">
+    <ul class="clearfix">
+    <%for(i = 0; i < rows.length; i ++) {%>
+    <li>
+        <% if(rows[i].is_hot == 1) {%>
+        <i>推荐</i>
+        <%}%>
+        <h2 class="fn">续费套餐：<%= rows[i].name %></h2>
+        <p><span class="">￥</span><strong><%= rows[i].money %></strong></p>
+        <p class="cfff" >续费天数：<%= rows[i].day %>天</p>
+        <p class="cfff" >活动数量：<%= rows[i].create_num==-1?'不限':rows[i].create_num %>&nbsp;&nbsp;</p>
+        <div>
+            <a href="{php echo $this->createWebAppUrl('store_renew', array('act' => 'setmeal_order'));}&id=<%= rows[i].id %>">去购买</a>
+            <a href="{php echo $this->createWebAppUrl('store_renew', array('act' => 'setmeal_info'));}&id=<%= rows[i].id %>">查看详情</a> </div>
+    </li>
+    <%}%>
+    </ul>
+</script>
+<script id="kefutpl" type="text/html">
+    <table class="table table-hover">
+        <tr>
+            <th width="20%">客服昵称</th>
+            <td width="80%"><%= name %></td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">客服头像</th>
+            <td width="80%">
+                <img src="<%= headurl %>" alt="<%= name %>" width="100">
+            </td>
+        </tr>
+        <tr>
+            <th width="20%" style="vertical-align: middle;">微信二维码</th>
+            <td width="80%">
+                <img src="<%= qrcode %>" alt="<%= name %>" width="100">
+            </td>
+        </tr>
+        <tr>
+            <th width="20%">手机号码</th>
+            <td width="80%"><%= mobile %></td>
+        </tr>
+    </table>
+</script>
+<script>
+    $(function () {
+        SelectNav("商家账户续费");
+
+        require(["daterangepicker"], function () {
+            //时间搜索
+            $('#SearchTime').daterangepicker({
+                format: "YYYY/MM/DD"
+            });
+        });
+        myrequire(['select2', 'bootstrap-switch', 'bootstrap-editable', 'bootstrap-table'], function () {
+            myrequire(['bootstrap-table-zh-cn', 'bootstrap-table-editable','bootstrap-table-fixed-columns'], function () {
+                $(".select2").select2();
+                myrequire([ 'arttemplate'], function (template) {
+
+                    LoadData();
+
+                    //加载数据
+                    function LoadData() {
+                        $("#box").html("<div class='load-down'><div class='load-load'><span class='loading'></span>数据加载中...</div></div>");
+                        $.ajax({
+                            type: "post",
+                            dataType:'json',
+                            url: "{php echo $this->createWebAppUrl('store_renew', array('act' => 'getSetmealJsonList'));}",
+                            data: { key: $("#SearchKey").val(),is_hot: $("#SearchIshot").val(),timer: $("#SearchTime").val()},
+                            success: function (data) {
+                                var html = template("temptpl", data);
+                                $("#box").html(html);
+                            }
+                        });
+                    }
+
+                    //模板筛选
+                    $("#btn_query").click(function () {
+                        LoadData();
+                    });
+                });
+            });
+        });
+    });
+
+</script>
+</body>
+</html>

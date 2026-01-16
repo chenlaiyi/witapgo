@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {template 'common/edithead'}
+    <!--微擎 -->
+    <!--这个放在最后一切平白安全-->
+    <script type="text/javascript" src="./resource/js/require.js?v=20170915"></script>
+    <script type="text/javascript">
+        //编辑器里使用
+        var urobj=[];
+    </script>
+</head>
+<body class="nav-md" style="min-width: 800px">
+<div>
+    <div class="container xc_edit_from" >
+        <div class="main_container" style="overflow-x: hidden;min-height: calc(100vh - 20px);background-color: white;width: 100%;">
+            <div class="col-md-12 col-xs-12">
+                <div class="x_panel">
+                    <ul class="we7-page-tab">
+                        <li >
+                            <a  href="{php echo $this->createWebUrl($do, array('op'=>'list','xtitleb'=>urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}">
+                                {$xtitleb}- {$xtitlea}列表  </a></li>
+                        <li><a href="{php echo $this->createWebUrl($do, array('op'=>'edit','xtitleb'=>urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}">{$xtitleb}- {$xtitlea}增加</a></li>
+                    </ul>
+                    <div class="x_content">
+                        <br/>
+                        <form id="sign-form" class="form-horizontal" role="form" method="post" action="{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'savemodel','version_id'=>$_GPC['version_id'])}" name="submit" style="padding: 20px 0;">
+                            <input type="hidden" name="id" value="{$list['id']}">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">名称</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="xc[name]" value="{$list['name']}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">封面</label>
+                                <div class="col-sm-8">
+                                    {php echo tpl_form_field_image('xc[simg]',$list['simg']);}
+                                    <span class="help-block">200*200</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">项目图片</label>
+                                <div class="col-sm-8">
+                                    {php echo tpl_form_field_multi_image('xc[bimg]',$list['bimg']);}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">价格</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="xc[price]" value="{$list['price']}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">核销次数</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="xc[can_use]" value="{$list['can_use']}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="col-sm-2 control-label">服务方式</label>
+                                <div class="col-sm-8">
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="xc[home]" value="1" {if $list['home']==1}checked{/if}>上门服务
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="checkbox" class="ui-radio" name="xc[shop]" value="1" {if $list['shop']==1}checked{/if}>到店服务
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="col-sm-2 control-label">预约时间</label>
+                                <div class="col-sm-8">
+                                    <label class="radio inline">
+                                        <input type="radio" class="ui-radio" name="xc[date_type]" value="1" {if $list['date_type']==1}checked{/if}>默认时间
+                                    </label>
+                                    <label class="radio inline">
+                                        <input type="radio" class="ui-radio" name="xc[date_type]" value="2" {if $list['date_type']==2}checked{/if}>技师时间
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group date_type1">
+                                <label class="col-sm-2 control-label">预约人数</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="xc[member]" value="{$list['member']}">
+                                    <span class="help-block">预约时间段限制人数时每单抵扣人数（默认1）</span>
+                                </div>
+                            </div>
+                            <div class="date_type2">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">服务时间</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="服务时间" name="xc[service_times]" value="{$list[service_times]}">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button">分钟</button>
+                                        </span>
+                                        </div>
+                                        <span class="help-block">预约时间选择技师时间时需填写</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label  class="col-sm-2 control-label">时间间隔</label>
+                                    <div class="col-sm-8">
+                                        <label class="radio inline">
+                                            <input type="radio" class="ui-radio" name="xc[date_interval]" value="1" {if $list['date_interval']==1}checked{/if}>有
+                                        </label>
+                                        <label class="radio inline">
+                                            <input type="radio" class="ui-radio" name="xc[date_interval]" value="-1" {if $list['date_interval']==-1}checked{/if}>无
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">折扣功能</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" class="js-switch" value="1" name="xc[sale_status]"
+                                           data-value="{$list['sale_status']}" data-field="status">
+                                </div>
+                            </div>
+                            {if $plugin_take_number}
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">取号</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" class="js-switch" value="1" name="xc[take_status]"
+                                           data-value="{$list['take_status']}" data-field="status">
+                                </div>
+                            </div>
+                            {/if}
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">状态</label>
+                                <div class="col-sm-8">
+                                    <input type="checkbox" class="js-switch" value="1" name="xc[status]"
+                                           data-value="{$list['status']}" data-field="status">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">排序</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"  name="xc[sort]" value="{$list['sort']}">
+                                </div>
+                            </div>
+                            <div class="form-group item_content">
+                                <label class="col-sm-2 control-label">详情</label>
+                                <div class="col-sm-10 content_type2">
+                                    {php echo tpl_ueditor('xc[content]',$list['content']);}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <input type="button" name="submit" class="btn btn-default" value="提交">
+                                    <a type="button" class="btn btn-default"  href="{php echo $this->createWebUrl($do, array('op'=>'list','xtitleb'=> urlencode($xtitleb),'xtitlea'=>urlencode($xtitlea),'new'=>1));}" >返回</a>
+                                    <input id="res" name="res" type="reset" style="display:none;" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{template 'common/editfoot'}
+<script>
+    function date_type(){
+        var date_type=$("input[name='xc[date_type]']:checked").val();
+        if(date_type==1){
+            $(".date_type1").show();
+            $(".date_type2").hide();
+        }else if(date_type==2){
+            $(".date_type1").hide();
+            $(".date_type2").show();
+        }
+    }
+    date_type();
+    $(function(){
+        $("input[name='xc[date_type]']").change(function(){
+            date_type();
+        });
+
+        $("input[name='submit']").click(function(){
+            var data=$(".form-horizontal").serialize();
+            $.ajax({
+                type:"post",
+                url:"{url 'site/entry/'.$_GPC['do'],array('m'=>$_GPC['m'],'op'=>'savemodel','version_id'=>$_GPC['version_id'])}",
+                data:data,
+                dataType:'json',
+                success:function(res){
+                    if(res.status==1){
+                        if($("input[name='id']").val()==""){
+                            $("input[name='res']").click();
+                            $("body").find(".img-responsive.img-thumbnail").attr("src","");
+                        }
+                        swal('操作成功!', '操作成功!', 'success');
+                    }else{
+                        swal('操作失败!', '操作失败!', 'error');
+                    }
+                }
+            })
+        });
+    })
+</script>
+</body>
+</html>
