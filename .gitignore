@@ -71,3 +71,4 @@ __MACOSX/
 # 微信验证文件
 MP_verify_*.txt
 WW_verify_*.txt
+.env
