@@ -1,6 +1,6 @@
 <?php
 /*
- * 人人商城
+ * 点点商城
  *
  * 青岛易联互动网络科技有限公司
  * http://www.we7shop.cn
@@ -774,7 +774,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage {
         $query = array_merge($query, $surprisedInfo);
         // 判断是否是优惠券
         if ($query['category'] === '优惠券') {
-            // 查询人人商城优惠券信息
+            // 查询点点商城优惠券信息
             $table = 'ewei_shop_coupon';
             $where = array(
                 'id' => $surprisedInfo['value'],

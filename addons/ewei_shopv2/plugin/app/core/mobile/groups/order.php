@@ -1,7 +1,7 @@
 <?php
 
 /*
- * 人人商城
+ * 点点商城
  *
  * 青岛易联互动网络科技有限公司
  * http://www.we7shop.cn
@@ -537,7 +537,7 @@ class Order_EweiShopV2Page extends AppMobilePage
                     $credit['deductprice'] = 0;
                 }
             }else{
-                /*人人商城积分抵扣比例*/
+                /*点点商城积分抵扣比例*/
                 $sys_data = m('common')->getPluginset('sale');
                 //商品最多抵扣金额,
                 if($goods['deduct']>0){

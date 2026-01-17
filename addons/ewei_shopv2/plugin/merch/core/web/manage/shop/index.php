@@ -1,5 +1,5 @@
 <?php
-/*珍贵资源 请勿转卖*/
+/*TapGo 独立版本 - 请勿非法传播*/
 require EWEI_SHOPV2_PLUGIN . 'merch/core/inc/page_merch.php';
 class Index_EweiShopV2Page extends MerchWebPage
 {

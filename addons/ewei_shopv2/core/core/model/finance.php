@@ -1,5 +1,5 @@
 <?php
-/*珍贵资源 请勿转卖*/
+/*TapGo 独立版本 - 请勿非法传播*/
 class Finance_EweiShopV2Model
 {
 	/**
@@ -1537,7 +1537,7 @@ class Finance_EweiShopV2Model
 	}
 
 	/**
-     * 支付宝单笔打款(author - 人人商城-洋葱)
+     * 支付宝单笔打款(author - 点点商城-洋葱)
      * @param $aliPayAccount array('account'=>'支付宝账号','name'=>'支付宝姓名','money'=>'需要支付的金额',) 可以是 二维数组
      * @param $config array('partner'=>'PID','account_name'=>'真实的支付账户名','email'=>'支付账号','key'=>'MD5秘钥',)
      * @param string $remark 支付备注 : 默认是 : 现金提现
@@ -1586,7 +1586,7 @@ class Finance_EweiShopV2Model
 	}
 
 	/**
-     * 查询支付宝单笔打款(author - 人人商城-洋葱)
+     * 查询支付宝单笔打款(author - 点点商城-洋葱)
      * @param array $config 支付宝参数配置
      * @param string $order_id 支付宝转账单据号
      * @param string $out_biz_no 商户转账唯一订单号
@@ -1638,7 +1638,7 @@ class Finance_EweiShopV2Model
 	}
 
 	/**
-     * 支付宝参数生成签名(author - 人人商城-洋葱)
+     * 支付宝参数生成签名(author - 点点商城-洋葱)
      * @param array $public 请求参数
      * @param array $config array('private_key'=>'应用私钥')
      * @return array

@@ -1,5 +1,5 @@
 <?php
-/*珍贵资源 请勿转卖*/
+/*TapGo 独立版本 - 请勿非法传播*/
 class Notice_EweiShopV2Model
 {
 	protected function getUrl($do, $query = NULL)

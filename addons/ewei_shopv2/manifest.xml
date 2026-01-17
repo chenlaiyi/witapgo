@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns="http://www.we7.cc" versionCode="0.8,1.0">
 	<application setting="false">
-		<name><![CDATA[人人商城V3]]></name>
+		<name><![CDATA[点点商城V3]]></name>
 		<identifie><![CDATA[ewei_shopv2]]></identifie>
 		<version><![CDATA[3.28.30]]></version>
 		<type><![CDATA[business]]></type>
-		<ability><![CDATA[人人商城(分销),多用户分权，淘宝商品一键转换，多种插件支持。]]></ability>
-		<description><![CDATA[人人商城(分销)，多项信息模板，强大的自定义规格设置]]></description>
-		<author><![CDATA[人人商城]]></author>
-		<url><![CDATA[http://www.w7.cc]]></url>
+		<ability><![CDATA[点点商城(分销),多用户分权，淘宝商品一键转换，多种插件支持。]]></ability>
+		<description><![CDATA[点点商城(分销)，多项信息模板，强大的自定义规格设置 - TapGo 独立版本]]></description>
+		<author><![CDATA[TapGo Team]]></author>
+		<url><![CDATA[https://w.itapgo.com]]></url>
 	</application>
 	<platform>
 		<subscribes>

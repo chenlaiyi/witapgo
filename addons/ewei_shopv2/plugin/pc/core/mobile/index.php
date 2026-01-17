@@ -25,7 +25,7 @@ class IndexController extends PluginMobilePage
 		$data = $this->model->getData('home');
 		$data['layout'] = $this->model->getTemplateSetting();
 		$info = m('common')->getSysset('shop');
-		$data['title'] = empty($info['name']) ? '人人商城' : $info['name'];
+		$data['title'] = empty($info['name']) ? '点点商城' : $info['name'];
 		$data['seckill'] = plugin_run('seckill::getTaskSeckillInfo');
 
 		if (isset($_GET['debug'])) {

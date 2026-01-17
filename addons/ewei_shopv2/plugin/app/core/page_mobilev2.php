@@ -1,5 +1,5 @@
 <?php
-/*珍贵资源 请勿转卖*/
+/*TapGo 独立版本 - 请勿非法传播*/
 function filterEmptyData($result)
 {
 	foreach ($result as $k => $v) {

@@ -115,7 +115,7 @@ class PluginMobilePage extends MobilePage
             'basePath' => EWEI_SHOPV2_LOCAL . "plugin/{$plugin}/static",
             'staticPath' => EWEI_SHOPV2_LOCAL . "static/",
             'appJsPath' => EWEI_SHOPV2_LOCAL . "static/js/app",
-            'title' => '人人商城',
+            'title' => '点点商城',
         );
 
         if (empty($params)) {

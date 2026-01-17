@@ -1,5 +1,5 @@
 <?php
-/*珍贵资源 请勿转卖*/
+/*TapGo 独立版本 - 请勿非法传播*/
 error_reporting(0);
 define('IN_MOBILE', true);
 require dirname(__FILE__).'/../../../../framework/bootstrap.inc.php';

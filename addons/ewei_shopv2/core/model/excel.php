@@ -1,5 +1,5 @@
 <?php
-/*珍贵资源 请勿转卖*/
+/*TapGo 独立版本 - 请勿非法传播*/
 if (!defined('IN_IA')) {
     exit('Access Denied');
 }
@@ -32,7 +32,7 @@ class Excel_EweiShopV2Model {
         require_once IA_ROOT . '/framework/library/phpexcel/PHPExcel.php';
         $data = m('common')->getSysset('shop');
         $excel = new PHPExcel();
-        $excel->getProperties()->setCreator(empty($data['name'])?'人人商城':$data['name'])->setLastModifiedBy(empty($data['name'])?'人人商城':$data['name'])->setTitle("Office 2007 XLSX Test Document")->setSubject("Office 2007 XLSX Test Document")->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")->setKeywords("office 2007 openxml php")->setCategory("report file");
+        $excel->getProperties()->setCreator(empty($data['name'])?'点点商城':$data['name'])->setLastModifiedBy(empty($data['name'])?'点点商城':$data['name'])->setTitle("Office 2007 XLSX Test Document")->setSubject("Office 2007 XLSX Test Document")->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")->setKeywords("office 2007 openxml php")->setCategory("report file");
         $sheet = $excel->setActiveSheetIndex(0);
         $rownum = 1;
         foreach ($params['columns'] as $key => $column) {
@@ -134,7 +134,7 @@ class Excel_EweiShopV2Model {
         require_once IA_ROOT . '/framework/library/phpexcel/PHPExcel.php';
 
         $excel = new PHPExcel();
-        $excel->getProperties()->setCreator("人人商城")->setLastModifiedBy("人人商城")->setTitle("Office 2007 XLSX Test Document")->setSubject("Office 2007 XLSX Test Document")->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")->setKeywords("office 2007 openxml php")->setCategory("report file");
+        $excel->getProperties()->setCreator("点点商城")->setLastModifiedBy("点点商城")->setTitle("Office 2007 XLSX Test Document")->setSubject("Office 2007 XLSX Test Document")->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")->setKeywords("office 2007 openxml php")->setCategory("report file");
         $sheet = $excel->setActiveSheetIndex(0);
         $rownum = 1;
 

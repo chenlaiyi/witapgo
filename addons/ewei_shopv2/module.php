@@ -1,4 +1,10 @@
 <?php
+/**
+ * [TapGo E-commerce] 点点商城 - 核心模块
+ * Copyright (c) 2025 TapGo Team
+ * Independent E-commerce Platform
+ * @website https://w.itapgo.com
+ */
 if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
