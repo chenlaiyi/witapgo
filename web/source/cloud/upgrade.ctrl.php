@@ -1,7 +1,11 @@
 <?php
 /**
- * [WeEngine System] Copyright (c) 2014 WE7.CC
- * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ * [TapGo E-commerce System] Copyright (c) 2025 TapGo Team
+ * 独立电商平台 - 基于 WeEngine 框架
+ *
+ * @package     TapGo E-commerce
+ * @version     1.0.0
+ * @license     Proprietary
  */
 defined('IN_IA') or exit('Access Denied');
 
@@ -9,6 +13,10 @@ load()->model('cloud');
 load()->func('communication');
 load()->func('db');
 load()->model('system');
+
+// TapGo 独立版本管理 - 禁用微擎云端升级
+$_W['is独立版本'] = true;
+$_W['upgrade_server'] = 'local';  // 使用本地升级，不连接微擎云端
 
 $cloud_ready = cloud_prepare();
 if (is_error($cloud_ready)) {
