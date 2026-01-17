@@ -51,13 +51,13 @@
 	</form>
 	<form action="" class="we7-form form" id="form2" ng-if="showinfo">
 		<div class="form-group">
-			<label class="col-sm-2 control-label">官方购买应用标识符({{moduleNum}})</label>
+			<label class="col-sm-2 control-label">TapGo 应用标识符({{moduleNum}})</label>
 			<div class="col-sm-5">
 				<textarea name="cloudcfg[ignore][module]" class="form-control" rows="4" readonly="readonly">{{cloudcfg.ignore.module}}</textarea>
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label">官方购买模板标识符({{themeNum}})</label>
+			<label class="col-sm-2 control-label">TapGo 模板标识符({{themeNum}})</label>
 			<div class="col-sm-5">
 				<textarea name="cloudcfg[ignore][theme]" class="form-control" rows="4" readonly="readonly">{{cloudcfg.ignore.theme}}</textarea>
 			</div>
@@ -146,7 +146,7 @@
 			<div class="panel we7-panel">
 				<div class="panel-heading we7-padding hidden">
 					<span class="col-sm-2 we7-padding-none color-gray">最新版本</span>
-					<span class="col-sm-7 we7-padding-none">微擎 {{upgrade.family}}{{upgrade.version}}【{{upgrade.release}}】版</span>
+					<span class="col-sm-7 we7-padding-none">TapGo {{upgrade.family}}{{upgrade.version}}【{{upgrade.release}}】版</span>
 				</div>
 				<div class="panel-body we7-padding">
 					<div class="form-group">
@@ -169,15 +169,15 @@
 						<div class="form-controls col-sm-10 form-control-static">
 							<div class="">
 								<input id='agreement_0' type="checkbox" name='agreement_0' autocomplete="off" />
-								<label for="agreement_0">确保您的系统文件官方文件保持一致，避免被非法篡改，远离盗版</label>
+								<label for="agreement_0">确保您的系统文件与 TapGo 官方文件保持一致，避免被非法篡改</label>
 							</div>
 							<div class="">
 								<input id='agreement_1' type="checkbox" name='agreement_1' autocomplete="off"/>
-								<label for="agreement_1">已经做好了相关文件的备份工作，认同官方的更新行为并自愿承担更新所存在的风险</label>
+								<label for="agreement_1">已经做好了相关文件的备份工作，认同 TapGo 的更新内容并自愿承担更新所存在的风险</label>
 							</div>
 							<div class="">
 								<input id='agreement_2' type="checkbox" name='agreement_2' autocomplete="off"/>
-								<label for="agreement_2">认同“购买系统商业授权后进行商业化运营”的协议</label>
+								<label for="agreement_2">认同 TapGo 系统使用协议</label>
 							</div>
 						</div>
 					</div>

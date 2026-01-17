@@ -27,7 +27,7 @@
 			<div class="item">
 				<div class="title">更新说明</div>
 				<div class="count"><span></span> </div>
-				<a href="https://user.w7.cc/v2/console/{$_W['setting']['site']['key']}/go-license-console" target='_blank'>查看</a>
+				<a href="https://w.itapgo.com" target='_blank'>查看</a>
 			</div>
 		</div>
 		<div class="upgrade-info" ng-if="upgrade && upgrade.upgrade">
@@ -36,15 +36,15 @@
 				<div class="we7-form">
 					<div class="upgrade-agree">
 						<input id='agreement_0' type="checkbox" name='agreement_0' autocomplete="off" />
-						<label for="agreement_0">确保您的系统文件官方文件保持一致，避免被非法篡改，远离盗版</label>
+						<label for="agreement_0">确保您的系统文件与 TapGo 官方文件保持一致，避免被非法篡改</label>
 					</div>
 					<div class="upgrade-agree">
 						<input id='agreement_1' type="checkbox" name='agreement_1' autocomplete="off"/>
-						<label for="agreement_1">已经做好了相关文件的备份工作，更新即同意官方的更新内容并自愿承担更新所存在的风险</label>
+						<label for="agreement_1">已经做好了相关文件的备份工作，更新即同意 TapGo 的更新内容并自愿承担更新所存在的风险</label>
 					</div>
 					<div class="upgrade-agree">
 						<input id='agreement_2' type="checkbox" name='agreement_2' autocomplete="off"/>
-						<label for="agreement_2">认同“购买系统商业授权后进行商业化运营”的协议</label>
+						<label for="agreement_2">认同 TapGo 系统使用协议</label>
 					</div>
 				</div>
 			</div>
@@ -65,12 +65,8 @@
 		</div>
 	</div>
 
-	<div class="upgrade-wechat">
-		<img src="//cdn.w7.cc/images/2018/12/27/KoQkSCmzxpGjDtRDWgov4gG8STCaG7MaBtdPKIgL.jpeg?imageView2/5/w/105/format/png" alt="">
-		<div class="info">
-			<p class="title">更新说明和官方公告请关注"<span class="color-default">微擎团队订阅号</span>"查看</p>
-			<p class="">赶快扫码关注吧</p>
-		</div>
+	<div class="upgrade-wechat" style="display:none;">
+		<!-- TapGo 独立版本，无需关注外部订阅号 -->
 	</div>
 	<div class="modal fade" id="error-file" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog we7-modal-dialog">
@@ -216,11 +212,11 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 class="text-center"><span>微擎新模式用户须知</span></h4>
+					<h4 class="text-center"><span>TapGo 系统更新须知</span></h4>
 				</div>
 				<div class="modal-body overflow-auto">
 					<div class="alert we7-page-alert">
-						<i class="wi wi-info-sign"></i>本次更新，微擎系统模式改变，请认真阅读更新须知，谨慎选择。<a href="" target="_blank" class="color-default hidden">用户协议详情至论坛查询</a>
+						<i class="wi wi-info-sign"></i>本次更新，请认真阅读更新须知，谨慎选择。<a href="https://w.itapgo.com" target="_blank" class="color-default">访问 TapGo 官网</a>
 					</div>
 					<div class="we7-empty-blcok we7-margin-bottom-sm" id="tipmessage"></div>
 				</div>
@@ -262,7 +258,7 @@
 							var tips = data.message.message.tips;
 							var html = '';
 							for(var i in tips) {
-								html = html + '<p>' + tips[i].version + '更新微擎新模式详情：</p>' + '<div>' + tips[i].message + '</div>'
+								html = html + '<p>' + tips[i].version + '更新详情：</p>' + '<div>' + tips[i].message + '</div>'
 							}
 							$('#tipmessage')[0].innerHTML = html;
 						}, 100)
