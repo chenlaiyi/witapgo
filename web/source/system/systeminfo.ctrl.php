@@ -1,7 +1,8 @@
 <?php
 /**
- * [WeEngine System] Copyright (c) 2014 WE7.CC
- * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ * [TapGo E-commerce System] Copyright (c) 2025 TapGo Team
+ * Independent E-commerce Platform
+ * @website https://w.itapgo.com
  */
 defined('IN_IA') or exit('Access Denied');
 
@@ -66,11 +67,10 @@ if ('display' == $do) {
 
 		$info['attach']['url'] = empty($_W['setting']['remote_complete_info']['type']) ? $_W['siteroot'] . $_W['config']['upload']['attachdir'] . '/' : $_W['setting']['remote_complete_info'][attachment_get_type($_W['setting']['remote_complete_info']['type'])]['url'];
 
-	$info['company'] = '&#22777;&#38155;&#28304;&#30721;';//qwj
-	$info['developers'] = array();//array('袁文涛', '任超 (米粥)', '马德坤', '宋建君 (Gorden)', '赵波', '杨峰', '卜睿君', '张宏', '高建业', '葛海波', '马莉娜', '樊永康', '王玉', '翟佳佳', '张拯', '张玮');
-	$info['operators'] =  array();//array('侯琪琪 (琪琪)', '杨欣雨 (小雨)', '赵小雷 (擎擎)', '蔡帅帅 (小帅)', '朱传宝 (阿宝)', '蒋康康 (阿康)', '王鹏 (鹏鹏)');
-	//qwj
-	$info['exchange_group'] = array('link' => 'http://www.yfphp.cn/', 'title' => 'yfphp.cn');
+	$info['company'] = 'TapGo Team';
+	$info['developers'] = array('TapGo Development Team');
+	$info['operators'] = array('TapGo Operations Team');
+	$info['exchange_group'] = array('link' => 'https://w.itapgo.com', 'title' => 'TapGo 官网');
 	if ($_W['isajax']) {
 		iajax(0, $info);
 	}

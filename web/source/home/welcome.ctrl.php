@@ -1,17 +1,18 @@
 <?php
 /**
- * [WeEngine System] Copyright (c) 2014 WE7.CC
- * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ * [TapGo E-commerce System] Copyright (c) 2025 TapGo Team
+ * Independent E-commerce Platform
+ * @website https://w.itapgo.com
  */
 defined('IN_IA') or exit('Access Denied');
-load()->model('extension');//qwj
+load()->model('extension');//TapGo
 load()->model('welcome');
 load()->model('module');
 load()->model('miniapp');
 load()->model('message');
 load()->model('visit');
 
-load()->model('cache');//qwj
+load()->model('cache');//TapGo
 $dos = array('platform', 'system', 'ext', 'account_ext', 'get_fans_kpi', 'get_system_upgrade', 'get_upgrade_modules', 'get_module_statistics', 'get_not_installed_modules', 'system_home', 'set_top', 'set_default', 'add_welcome', 'ignore_update_module', 'get_workerorder', 'add_welcome_shortcut', 'remove_welcome_shortcut', 'build_account_modules');
 $do = in_array($do, $dos) ? $do : 'platform';
 
@@ -24,7 +25,7 @@ if (ACCOUNT_MANAGE_NAME_EXPIRED == $_W['highest_role'] && in_array($do, array('s
 }
 
 if ('get_not_installed_modules' == $do) {
-	cache_build_uninstalled_module();//qwj
+	cache_build_uninstalled_module();//TapGo
 	$not_installed_modules = module_uninstall_list();
 	iajax(0, $not_installed_modules);
 }

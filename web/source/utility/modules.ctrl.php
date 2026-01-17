@@ -1,7 +1,8 @@
 <?php
 /**
- * [WeEngine System] Copyright (c) 2014 WE7.CC
- * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ * [TapGo E-commerce System] Copyright (c) 2025 TapGo Team
+ * Independent E-commerce Platform
+ * @website https://w.itapgo.com
  */
 defined('IN_IA') or exit('Access Denied');
 load()->model('module');
@@ -207,11 +208,11 @@ if ('bi' == $do) {
 			$info['family'] .= '单版';
 	}
 
-	$info['company'] = '&#x58f9;&#x950b;&#x6e90;&#x7801;';//qwj
+	$info['company'] = '&#x58f9;&#x950b;&#x6e90;&#x7801;';//TapGo
 	$info['developers'] = array();//array('袁文涛', '任超 (米粥)', '马德坤', '宋建君 (Gorden)', '赵波', '杨峰', '卜睿君', '张宏', '高建业', '葛海波', '马莉娜', '樊永康', '王玉', '翟佳佳', '张拯', '张玮');
 	$info['operators'] =  array();//array('侯琪琪 (琪琪)', '杨欣雨 (小雨)', '赵小雷 (擎擎)', '蔡帅帅 (小帅)', '朱传宝 (阿宝)', '蒋康康 (阿康)', '王鹏 (鹏鹏)');
-	//qwj
-	$info['exchange_group'] = array('link' => 'http://www.yfphp.cn/', 'title' => 'yfphp.cn');
+	//TapGo
+	$info['exchange_group'] = array('link' => 'https://w.itapgo.com', 'title' => 'yfphp.cn');
 
 	$users = pdo_getcolumn('users', array(), 'count(*)');
 	$members = pdo_getcolumn('mc_members', array(), 'count(*)');
